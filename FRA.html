@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beyond Earth</title>
+    <link rel="icon" href="be_icon.png" type="x-icon">
+    <link rel="stylesheet" href="fra.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- Main -->
+    <div class="div-h1">
+        <h1><img src="gfx/fra/texticon.png" class="h1-text-icon"><span class="h1-loc"></span><img src="gfx/fra/h1coa.png" class="h2-text-icon"></h1>
+        <div class="div-h2">
+            <div class="div-desc-win grid">
+                <a href="#poi001"><p class="poi"><span class="poi001"></span></p></a>
+                <a href="#poi002"><p class="poi"><span class="poi002"></span></p></a>
+                <a href="#poi003"><p class="poi"><span class="poi003"></span></p></a>
+                <a href="#poi004"><p class="poi"><span class="poi004"></span></p></a>
+                <a href="#poi005"><p class="poi"><span class="poi005"></span></p></a>
+                <a href="#poi006"><p class="poi"><span class="poi006"></span></p></a>
+                <a href="#poi007"><p class="poi"><span class="poi007"></span></p></a>
+                <a href="#poi008"><p class="poi"><span class="poi008"></span></p></a>
+                <a href="#poi009"><p class="poi"><span class="poi009"></span></p></a>
+            </div>
+            <div class="div-desc-win grid" id="poi001">
+                <div class="div-desc img"><span class="poi001-desc"></span></div>
+                <div class="div-desc img png" style="background-image: url(gfx/FRA/flag.png);"></div>
+            </div>            
+            <div class="div-desc-win" id="poi002">
+                <h2><span class="poi002"></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi002-desc"></span></div>
+            </div>
+            <div class="div-desc-win" id="poi003">
+                <h2><span class="poi003"></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi003-desc"></span></div>
+            </div>
+            <div class="div-desc-win" id="poi004">
+                <h2><span class="poi004"></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi004-desc"></span></div>
+            </div>
+            <div class="div-desc-win" id="poi005">
+                <h2><span class="poi005"></span><span style="font-size: 20px; margin-left: 10px;"><i>Known Aristocrat</i></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi005-desc"></span></div>
+            </div>
+            <div class="div-desc-win" id="poi006">
+                <h2><span class="poi006"></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi006-desc"></span></div>
+            </div>
+            <div class="div-desc-win" id="poi007">
+                <h2><span class="poi007"></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi007-desc"></span></div>
+            </div>
+            <div class="div-desc-win" id="poi008">
+                <h2><span class="poi008"></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi008-desc"></span></div>
+            </div>
+            <div class="div-desc-win" id="poi009">
+                <h2><span class="poi009"></span><span style="font-size: 20px; margin-left: 10px;"><i>Al-Hakim's Manifesto</i></span><img src="gfx/fra/h2coa.png" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi009-desc"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio -->
+    <audio id="music" autoplay loop>
+        <source src="sfx/be_music.ogg" type="audio/ogg">
+    </audio>
+
+    <audio id="audio">
+        <source src="sfx/be_click.wav" type="audio/wav">
+    </audio>
+
+    <!-- Scripts -->
+    <script>
+        $(document).ready(function() {
+            var bgm = document.getElementById("music");
+            bgm.volume = 0.0;
+
+            var hso = document.getElementById("audio");
+            hso.volume = 0.4;
+            
+            $(".poi").mouseenter(function() {
+                hso.play();
+            });
+        });
+    </script>
+
+    <!-- Localisation -->
+    <script src="loc/loc.js"></script>
+
+    <!-- Filters -->
+    <div class="grain"></div>
+</body>
+</html>

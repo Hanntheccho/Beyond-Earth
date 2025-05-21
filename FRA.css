@@ -1,0 +1,161 @@
+:root {
+    --clr01: #f6f7ff;
+    --clr02: #8a8ec6;
+    --clrbd: #c5c9ec;
+    --clrh1: #29215b;
+    --clrb1: #16182c;
+    --clrb2: #0a06216e;
+    --clrbs: #4a4b72;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+body {
+    margin: 0;
+    font-family: Helvetica, sans-serif;
+    color: var(--clrbd);
+    background-color: var(--clrb1);
+    background-image: 
+        url('gfx/FRA/flagbg.png'),
+        url('gfx/fra/coab1.png'),
+        url('gfx/fra/coab2.png');
+    background-position: center -300px, center calc(50% - 30px), center calc(50% - 30px);
+    background-size: auto, 240px, 160px;
+    background-repeat: repeat, repeat, repeat;
+    background-attachment: auto, auto, auto;
+}
+.div-h1 {
+    padding-bottom: 1px;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 0 600px #000000, 0 0 600px #000000;
+}
+.div-h2 {
+    max-width: 100%;
+    margin: 0 auto;
+}
+.div-desc-win {
+    background-color: var(--clrb2);
+    margin: 20px;
+    border: 4px solid;
+    border-color: var(--clrbs);
+}
+.div-desc-win.grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+h1 {
+    margin: 0px;
+    padding: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 40px;
+    text-transform: uppercase;
+    line-height: 50px;
+    background-image:
+        linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
+        url('gfx/fra/coah1.png'),
+        linear-gradient(to top, var(--clr01), var(--clr02));
+    background-position: 0 0, 20px 16px, 0 0;
+    background-size: auto, 22px, auto;
+    background-repeat: auto, repeat, auto;
+    color: var(--clrh1);
+    box-shadow: 0 4px 0 var(--clrbs);
+    display: flex;
+}
+.h1-text-icon {
+    vertical-align: text-top;
+    padding-right: 4px;
+    height: 50px;
+}
+h2 {
+    margin: 20px;
+    margin-right: 24px;
+    padding: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 32px;
+    text-transform: uppercase;
+    padding-left: 14px;
+    line-height: 50px;
+    background-image:
+        linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
+        url('gfx/fra/coah1.png'),
+        linear-gradient(to top, var(--clr01), var(--clr02));
+    background-position: 0 0, 20px 16px, 0 0;
+    background-size: auto, 22px, auto;
+    background-repeat: auto, repeat, auto; 
+    color: var(--clrh1);
+    box-shadow: 4px 4px 0 var(--clrbs);
+    display: flex;
+}
+.h2-text-icon {
+    margin-left: auto;
+    height: 50px;
+}
+.div-desc {
+    margin: 40px;
+    margin-right: 80px;
+    margin-left: 80px;
+    padding: 28px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: var(--clrb2);
+    box-shadow: 4px 0 0 var(--clrbs), -4px 0 0 var(--clrbs);
+}
+.div-desc.img {
+    max-width: 50%;
+    margin-right: 0px;
+}
+.div-desc.img.png {
+    flex: 1;
+    max-width: none;
+    background-position: center;
+    margin: 44px;
+    margin-right: 80px;
+    margin-left: 10px;
+    box-shadow: 4px 4px 0 var(--clrbs), -4px -4px 0 var(--clrbs), -4px 4px 0 var(--clrbs), 4px -4px 0 var(--clrbs);
+}
+p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    text-align: justify;
+    line-height: 1.5;
+}
+.p-text-icon {
+    vertical-align: text-top;
+    height: 18px;
+    padding-right: 4px;
+}
+.poi {
+    cursor: pointer;
+    margin: 10px;
+    padding: 10px;
+    font-size: 20px;
+    width: fit-content;
+    height: fit-content;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow: none;
+    border: 2px solid;
+    border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
+    transition: transform 0.3s ease;
+}
+.poi:hover {
+    filter: brightness(0.6);
+}
+.grain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    pointer-events: none;
+    background: url('gfx/noisy-background.png') repeat;
+    background-size: 300px 300px;
+    background-attachment: fixed;
+    opacity: 0.1;
+}
