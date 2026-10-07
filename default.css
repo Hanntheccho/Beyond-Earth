@@ -1,29 +1,59 @@
 :root {
-    --clr01: #f6f7ff;
-    --clr02: #8a8ec6;
-    --clrbd: #c5c9ec;
-    --clrh1: #29215b;
-    --clrb1: #16182c;
-    --clrb2: #0a06216e;
-    --clrbs: #4a4b72;
+    --clr01: #f6f9ff;
+    --clr02: #afafaf;
+    --clrbd: #ececec;
+    --clrh2: #ffffff0e;
+    --clrh1loc: #000000c5;
+    --clrh2loc: #ffffff;
+    --clrb1: #0f0f0f;
+    --clrb2: #1b1b1b4d;
+    --clrbs: #8b8b8b31;
+    --clrpt: #ffffffc7;
+    --clrbt: #ffffff;
 }
 a {
     text-decoration: none;
     color: inherit;
 }
+b {
+    font-weight: inherit;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: var(--clrbt);
+}
+p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-align: justify;
+    line-height: 1.5;
+    color: var(--clrpt);
+}
 body {
-    margin: 0;
-    font-family: Helvetica, sans-serif;
-    color: var(--clrbd);
-    background-color: var(--clrb1);
-    background-image: 
-        url('gfx/FRA/flagbg.png'),
-        url('gfx/fra/coab1.png'),
-        url('gfx/fra/coab2.png');
-    background-position: center -300px, center calc(50% - 30px), center calc(50% - 30px);
-    background-size: auto, 240px, 160px;
-    background-repeat: repeat, repeat, repeat;
-    background-attachment: auto, auto, auto;
+  margin: 0;
+  font-family: Helvetica, sans-serif;
+  color: var(--clrbd);
+  background-color: var(--clrb1);
+  position: relative;
+  isolation: isolate;
+}
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-repeat: repeat;
+}
+body::before {
+  background: url("be_icon_w.svg") center calc(50% - 30px) / 240px repeat;
+  opacity: 0.04;
+}
+body::after {
+  background: url("be_icon_w.svg") center calc(50% - 30px) / 160px repeat;
+  opacity: 0.01;
 }
 .div-h1 {
     padding-bottom: 1px;
@@ -46,53 +76,52 @@ body {
     flex-wrap: wrap;
 }
 h1 {
-    margin: 0px;
     padding: 2px;
     white-space: nowrap;
     overflow: hidden;
-    font-size: 40px;
+    font-size: 30px;
     text-transform: uppercase;
-    line-height: 50px;
+    letter-spacing: 30px;
+    padding-left: 20px;
+    line-height: 60px;
     background-image:
         linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
-        url('gfx/fra/coah1.png'),
+        url('be_icon_b_o10.svg'),
         linear-gradient(to top, var(--clr01), var(--clr02));
     background-position: 0 0, 20px 16px, 0 0;
     background-size: auto, 22px, auto;
     background-repeat: auto, repeat, auto;
-    color: var(--clrh1);
-    box-shadow: 0 4px 0 var(--clrbs);
+    color: var(--clrh1loc);
+    box-shadow: 0 8px 0 var(--clrbs);
     display: flex;
+    font-weight: bold;
 }
 .h1-text-icon {
-    vertical-align: text-top;
-    padding-right: 4px;
-    height: 50px;
+    margin-left: auto;
+    height: 60px;
+    opacity: 0.2;
 }
 h2 {
     margin: 20px;
     margin-right: 24px;
     padding: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    font-size: 32px;
-    text-transform: uppercase;
-    padding-left: 14px;
-    line-height: 50px;
-    background-image:
-        linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
-        url('gfx/fra/coah1.png'),
-        linear-gradient(to top, var(--clr01), var(--clr02));
-    background-position: 0 0, 20px 16px, 0 0;
-    background-size: auto, 22px, auto;
-    background-repeat: auto, repeat, auto; 
-    color: var(--clrh1);
-    box-shadow: 4px 4px 0 var(--clrbs);
+    white-space: normal;
+    overflow-wrap: anywhere;
     display: flex;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 15px;
+    padding-left: 16px;
+    line-height: 50px;
+    background-color: var(--clrh2);
+    color: var(--clrh2loc);
+    box-shadow: 0 4px 0 var(--clrbs);
+    font-weight: 400;
 }
 .h2-text-icon {
     margin-left: auto;
     height: 50px;
+    opacity: 0.2;
 }
 .div-desc {
     margin: 40px;
@@ -104,11 +133,11 @@ h2 {
     background-color: var(--clrb2);
     box-shadow: 4px 0 0 var(--clrbs), -4px 0 0 var(--clrbs);
 }
-.div-desc.img {
+.div-desc.txt {
     max-width: 50%;
     margin-right: 0px;
 }
-.div-desc.img.png {
+.div-desc.txt.img {
     flex: 1;
     max-width: none;
     background-position: center;
@@ -116,24 +145,23 @@ h2 {
     margin-right: 80px;
     margin-left: 10px;
     box-shadow: 4px 4px 0 var(--clrbs), -4px -4px 0 var(--clrbs), -4px 4px 0 var(--clrbs), 4px -4px 0 var(--clrbs);
-}
-p {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 16px;
-    text-align: justify;
-    line-height: 1.5;
+    opacity: 0.4;
 }
 .p-text-icon {
-    vertical-align: text-top;
-    height: 18px;
-    padding-right: 4px;
+    position: relative;
+    width: 1px;
+    height: 1px;
+    transform: scale(180);
+    opacity: 0.1;
 }
 .poi {
     cursor: pointer;
-    margin: 10px;
-    padding: 10px;
-    font-size: 20px;
+    margin: 4px;
+    margin-right: 2px;
+    padding: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 12px;
     width: fit-content;
     height: fit-content;
     text-transform: uppercase;
