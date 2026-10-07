@@ -95,6 +95,15 @@
     <script src="loc/loc.js"></script>
 
     <!-- Filters -->
+    <div class="cursor-glow" aria-hidden="true"></div>
     <div class="grain"></div>
+    <script>
+        if (window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            window.addEventListener('pointermove', function(event) {
+                document.documentElement.style.setProperty('--cursor-x', event.clientX + 'px');
+                document.documentElement.style.setProperty('--cursor-y', event.clientY + 'px');
+            }, { passive: true });
+        }
+    </script>
 </body>
 </html>

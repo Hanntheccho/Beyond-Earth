@@ -11,16 +11,19 @@
     --clrpt: #ffffffc7;
     --clrbt: #ffffff;
 }
+
 a {
     text-decoration: none;
     color: inherit;
 }
+
 b {
     font-weight: inherit;
     text-transform: uppercase;
     letter-spacing: 6px;
     color: var(--clrbt);
 }
+
 p {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -30,6 +33,7 @@ p {
     line-height: 1.5;
     color: var(--clrpt);
 }
+
 body {
   margin: 0;
   font-family: Helvetica, sans-serif;
@@ -55,6 +59,7 @@ body::after {
   background: url("be_icon_w.svg") center calc(50% - 30px) / 160px repeat;
   opacity: 0.01;
 }
+
 .div-h1 {
     padding-bottom: 1px;
     max-width: 1200px;
@@ -75,6 +80,7 @@ body::after {
     display: flex;
     flex-wrap: wrap;
 }
+
 h1 {
     padding: 2px;
     white-space: nowrap;
@@ -101,6 +107,7 @@ h1 {
     height: 60px;
     opacity: 0.2;
 }
+
 h2 {
     margin: 20px;
     margin-right: 24px;
@@ -123,6 +130,7 @@ h2 {
     height: 50px;
     opacity: 0.2;
 }
+
 .div-desc {
     margin: 40px;
     margin-right: 80px;
@@ -147,6 +155,7 @@ h2 {
     box-shadow: 4px 4px 0 var(--clrbs), -4px -4px 0 var(--clrbs), -4px 4px 0 var(--clrbs), 4px -4px 0 var(--clrbs);
     opacity: 0.4;
 }
+
 .p-text-icon {
     position: relative;
     width: 1px;
@@ -154,6 +163,7 @@ h2 {
     transform: scale(180);
     opacity: 0.1;
 }
+
 .poi {
     cursor: pointer;
     margin: 4px;
@@ -169,11 +179,8 @@ h2 {
     box-shadow: none;
     border: 2px solid;
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
-    transition: transform 0.3s ease;
 }
-.poi:hover {
-    filter: brightness(0.6);
-}
+
 .grain {
     position: fixed;
     top: 0;
@@ -186,4 +193,62 @@ h2 {
     background-size: 300px 300px;
     background-attachment: fixed;
     opacity: 0.1;
+}
+
+.cursor-glow {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+        220px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+        #ffffff0a,
+        transparent 70%
+    );
+}
+
+/* Motion: subtle entrance and hover feedback */
+.div-desc-win {
+    animation: panel-enter 650ms cubic-bezier(.2, .7, .2, 1) both;
+}
+
+.div-desc-win:nth-child(2) { animation-delay: 70ms; }
+.div-desc-win:nth-child(3) { animation-delay: 120ms; }
+.div-desc-win:nth-child(4) { animation-delay: 170ms; }
+
+@keyframes panel-enter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.poi {
+    transition: transform 180ms ease, background-color 180ms ease, filter 180ms ease;
+}
+
+.poi:hover {
+    transform: translateY(-3px);
+    background-color: #ffffff12;
+    filter: brightness(1.2);
+}
+
+.div-desc-win:target {
+    border-color: #ffffff70;
+    box-shadow: 0 0 24px #ffffff16;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
