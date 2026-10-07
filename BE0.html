@@ -118,8 +118,8 @@
                 scrollUpdatePending = true;
                 window.requestAnimationFrame(function() {
                     const scrollY = window.scrollY;
-                    document.documentElement.style.setProperty('--bg-scroll-large', Math.max(-120, -scrollY * 0.08) + 'px');
-                    document.documentElement.style.setProperty('--bg-scroll-small', Math.max(-60, -scrollY * 0.04) + 'px');
+                    document.documentElement.style.setProperty('--bg-scroll-large', (-scrollY * 0.08) + 'px');
+                    document.documentElement.style.setProperty('--bg-scroll-small', (-scrollY * 0.04) + 'px');
                     scrollUpdatePending = false;
                 });
             }, { passive: true });
