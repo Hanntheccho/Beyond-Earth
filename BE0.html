@@ -28,10 +28,14 @@
                 <a href="#poi008"><p class="poi"><span class="poi008"></span></p></a>
                 <a href="#poi009"><p class="poi"><span class="poi009"></span></p></a>
             </div>
-            <div class="div-desc-win grid" id="poi001">
+            <div class="div-desc-win" id="poi001">
+                <h2><span class="poi001"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
+                <div class="div-desc"><span class="poi001-desc"></span></div>
+            </div>
+            <!--<div class="div-desc-win grid" id="poi001">
                 <div class="div-desc txt"><span class="poi001-desc"></span></div>
                 <div class="div-desc txt img" style="background-image: url(gfx/FRA/coa_w_stars.svg);"></div>
-            </div>
+            </div>-->
             <div class="div-desc-win" id="poi002">
                 <h2><span class="poi002"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                 <div class="div-desc"><span class="poi002-desc"></span></div>
@@ -98,10 +102,26 @@
     <div class="cursor-glow" aria-hidden="true"></div>
     <div class="grain"></div>
     <script>
-        if (window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (window.matchMedia('(pointer: fine)').matches && !prefersReducedMotion) {
             window.addEventListener('pointermove', function(event) {
                 document.documentElement.style.setProperty('--cursor-x', event.clientX + 'px');
                 document.documentElement.style.setProperty('--cursor-y', event.clientY + 'px');
+            }, { passive: true });
+        }
+
+        if (!prefersReducedMotion) {
+            let scrollUpdatePending = false;
+            window.addEventListener('scroll', function() {
+                if (scrollUpdatePending) return;
+                scrollUpdatePending = true;
+                window.requestAnimationFrame(function() {
+                    const scrollY = window.scrollY;
+                    document.documentElement.style.setProperty('--bg-scroll-large', Math.max(-120, -scrollY * 0.08) + 'px');
+                    document.documentElement.style.setProperty('--bg-scroll-small', Math.max(-60, -scrollY * 0.04) + 'px');
+                    scrollUpdatePending = false;
+                });
             }, { passive: true });
         }
     </script>
