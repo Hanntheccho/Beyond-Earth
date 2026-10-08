@@ -163,12 +163,13 @@ h2 {
 }
 .div-desc-toggle {
     display: block;
-    margin: 0 0 8px auto;
+    margin: 0 0 -6px auto;
     padding: 0 8px;
-    border: 1px solid var(--clrbs);
+    border: 2px solid var(--clrbs);
+    border-left: 33px solid var(--clrbs);
     background: transparent;
     color: var(--clrpt);
-    font: inherit;
+    font: Arial, sans-serif;
     font-size: 18px;
     line-height: 1.2;
     cursor: pointer;
