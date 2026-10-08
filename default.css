@@ -161,6 +161,30 @@ h2 {
     background-color: var(--clrb2);
     box-shadow: 4px 0 0 var(--clrbs), -4px 0 0 var(--clrbs);
 }
+.div-desc-toggle {
+    display: block;
+    margin: 0 0 8px auto;
+    padding: 0 8px;
+    border: 1px solid var(--clrbs);
+    background: transparent;
+    color: var(--clrpt);
+    font: inherit;
+    font-size: 18px;
+    line-height: 1.2;
+    cursor: pointer;
+}
+.div-desc-toggle:hover,
+.div-desc-toggle:focus-visible {
+    color: var(--clrbt);
+    border-color: var(--clr02);
+}
+.div-desc.is-collapsed .div-desc-content {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 3;
+}
 .div-desc.txt {
     max-width: 50%;
     margin-right: 0px;
