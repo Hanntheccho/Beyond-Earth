@@ -259,20 +259,6 @@ h2 {
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
 }
 
-.grain {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1001;
-    pointer-events: none;
-    background: url('gfx/noisy-background.png') repeat;
-    background-size: 300px 300px;
-    background-attachment: fixed;
-    opacity: 0.1;
-}
-
 .cursor-glow {
     position: fixed;
     inset: 0;
