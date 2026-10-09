@@ -232,12 +232,14 @@ h2 {
     text-transform: uppercase;
     font-size: 12px;
     letter-spacing: 6px;
-    color: #ffffff44;
+    color: #ffffff5e;
 }
 .bg-text-line {
     flex: none;
-    animation: scroll-left 18s linear infinite;
+    animation: scroll-left 120s linear infinite;
 }
+.positive { color: #7ee787ab; }
+.negative { color: #ff7b72ab; }
 @keyframes scroll-left {
     from { transform: translateX(100vw); }
     to   { transform: translateX(-100%); }

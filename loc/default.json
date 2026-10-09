@@ -1,5 +1,5 @@
 {
-    "bg-text": "+23.2% Lithium-ion Materials | +10.2% Superconductors | -6.3% Polymers | -1.2% R.E.E. | +5.6% Graphene | +12.4% Silicon | +8.9% Cobalt | +3.1% Nickel | +4.7% Copper | +2.3% Aluminum | +1.8% Iron | +0.9% Titanium | +0.5% Magnesium | +0.2% Zinc | -0.1% Lead | -0.3% Tin | -0.5% Silver | -0.7% Gold",
+    "bg-text-txt": "<span class=\"positive\">+23.2%</span> Lithium | <span class=\"positive\">+10.2%</span> Copper | <span class=\"negative\">-6.3%</span> Crude Oil | <span class=\"negative\">-1.2%</span> Rare-Earth Elements | <span class=\"positive\">+5.6%</span> Graphene | <span class=\"positive\">+12.4%</span> Helium-3 | <span class=\"positive\">+8.9%</span> Titanium | <span class=\"positive\">+3.1%</span> Steel | <span class=\"positive\">+4.7%</span> Concrete | <span class=\"positive\">+2.3%</span> Aluminum | <span class=\"positive\">+1.8%</span> Silicon | <span class=\"positive\">+0.9%</span> Biopolymer | <span class=\"positive\">+0.5%</span> Super Alloys | <span class=\"negative\">-0.1%</span> Manganese | <span class=\"negative\">-0.3%</span> Coal | <span class=\"negative\">-0.5%</span> Uranium",
     "h1-loc": "Beyond Earth",
     "h1-version": "HTML v0.0.1",
     "beintro": "22nd Century, 2200 AD",
