@@ -16,46 +16,38 @@ function getHtmlFileName() {
  */
 async function fetchLocalization(language) {
     const htmlFileName = getHtmlFileName();
-
-    // First try the page-specific localization
-    const pageLocPath = `loc/${htmlFileName}/${language}.json`;
-
-    try {
-        let response = await fetch(pageLocPath);
-
-        if (response.ok) {
-            return await response.json();
-        }
-
-        // If the language doesn't exist for this page, try English
-        if (language !== 'en') {
-            const englishPath = `loc/${htmlFileName}/en.json`;
-            response = await fetch(englishPath);
-
-            if (response.ok) {
-                return await response.json();
-            }
-        }
-    } catch (error) {
-        console.warn(`Could not load ${pageLocPath}`, error);
-    }
-
-    // Page-specific localization doesn't exist.
-    // Fall back to the default localization.
     const defaultPath = 'loc/default.json';
-
+    let defaultData;
     try {
         const response = await fetch(defaultPath);
-
         if (!response.ok) {
             throw new Error(`Failed to load ${defaultPath}`);
         }
-
-        return await response.json();
+        defaultData = await response.json();
     } catch (error) {
         console.error('Failed to load default localization:', error);
         throw error;
     }
+
+    // Use the page's requested language when available, otherwise its English
+    // file. Any keys absent from that file retain their default.json values.
+    const pageLanguages = language === 'en' ? ['en'] : [language, 'en'];
+    let pageData = {};
+
+    for (const pageLanguage of pageLanguages) {
+        const pageLocPath = `loc/${htmlFileName}/${pageLanguage}.json`;
+        try {
+            const response = await fetch(pageLocPath);
+            if (response.ok) {
+                pageData = await response.json();
+                break;
+            }
+        } catch (error) {
+            console.warn(`Could not load ${pageLocPath}`, error);
+        }
+    }
+
+    return { ...defaultData, ...pageData };
 }
 
 

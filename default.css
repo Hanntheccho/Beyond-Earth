@@ -10,6 +10,7 @@
     --clrbs: #8b8b8b31;
     --clrpt: #ffffffc7;
     --clrbt: #ffffff;
+    --max-width: 800px;
 }
 
 a {
@@ -73,7 +74,7 @@ body::after {
 
 .div-h1 {
     padding-bottom: 1px;
-    max-width: 800px;
+    max-width: var(--max-width);
     margin: 0 auto;
     box-shadow: 0 0 600px #000000, 0 0 600px #000000;
 }
@@ -101,7 +102,7 @@ h1 {
     font-size: 30px;
     text-transform: uppercase;
     letter-spacing: 25px;
-    padding-left: 10px;
+    padding-left: 12px;
     background-image:
         linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
         url('be_icon_b_o10.svg'),
@@ -137,7 +138,7 @@ h2 {
     font-size: 20px;
     text-transform: uppercase;
     letter-spacing: 15px;
-    padding-left: 16px;
+    padding-left: 18px;
     line-height: 50px;
     background-color: var(--clrh2);
     color: var(--clrh2loc);
@@ -200,6 +201,7 @@ h2 {
         transition: none;
     }
 }
+
 .div-desc.txt {
     max-width: 50%;
     margin-right: 0px;
@@ -213,6 +215,32 @@ h2 {
     margin-left: 10px;
     box-shadow: 4px 4px 0 var(--clrbs), -4px -4px 0 var(--clrbs), -4px 4px 0 var(--clrbs), 4px -4px 0 var(--clrbs);
     opacity: 0.4;
+}
+
+.bg-text {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-color: #ffffff0a;
+    z-index: -1000;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 6px;
+    color: #ffffff44;
+}
+.bg-text-line {
+    flex: none;
+    animation: scroll-left 18s linear infinite;
+}
+@keyframes scroll-left {
+    from { transform: translateX(100vw); }
+    to   { transform: translateX(-100%); }
 }
 
 .p-text-icon {
@@ -246,7 +274,7 @@ h2 {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1000;
+    z-index: 1001;
     pointer-events: none;
     background: url('gfx/noisy-background.png') repeat;
     background-size: 300px 300px;
