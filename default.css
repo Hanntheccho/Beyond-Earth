@@ -96,6 +96,28 @@ body::after {
     flex-wrap: wrap;
 }
 
+.btn20 {
+    cursor: pointer;
+    margin: 2px;
+    margin-right: 2px;
+    padding: 6px 20px 6px 20px;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow: none;
+    background-color: var(--clrbs);
+}
+.top-btns {
+    margin: 20px;
+    margin-bottom: -18px;
+    margin-top: -10px;
+}
+.top-btns.grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 h1 {
     margin-top: 1px;
     padding: 2px;
@@ -151,7 +173,7 @@ h2 {
 }
 .h2-text-icon {
     margin-left: auto;
-    height: 40px;
+    height: 46px;
     opacity: 0.12;
 }
 
@@ -246,17 +268,52 @@ h2 {
     cursor: pointer;
     margin: 4px;
     margin-right: 2px;
-    padding: 8px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding: 4px 8px 4px 8px;
     font-size: 12px;
-    width: fit-content;
-    height: fit-content;
     text-transform: uppercase;
     text-align: center;
     box-shadow: none;
     border: 2px solid;
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
+}
+
+.poi span[data-tooltip] {
+    position: relative;
+}
+
+.poi span[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    z-index: 10;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    width: max-content;
+    max-width: min(280px, 70vw);
+    padding: 8px 10px;
+    border: 1px solid var(--clrbs);
+    background: var(--clrbgt);
+    color: var(--clrbd);
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    line-height: 1.5;
+    text-align: left;
+    text-transform: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    box-shadow: 0 4px 16px #00000080;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, 4px);
+    transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
+}
+
+.poi:hover span[data-tooltip]::after,
+.div-desc-win.grid a:focus-visible span[data-tooltip]::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
 }
 
 .cursor-glow {

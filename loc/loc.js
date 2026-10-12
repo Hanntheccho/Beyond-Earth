@@ -70,6 +70,14 @@ async function loadLocalization(language) {
             } else {
                 console.warn(`No element found for key: ${key}`);
             }
+
+            // Tooltip values can reference localized HTML keys. Show their
+            // readable text without exposing markup in the tooltip.
+            document.querySelectorAll(`[data-tooltip="${key}"]`).forEach(element => {
+                const tooltipText = document.createElement('div');
+                tooltipText.innerHTML = value;
+                element.dataset.tooltip = tooltipText.textContent.trim();
+            });
         });
     } catch (error) {
         console.error(`Error loading localization for ${language}:`, error);
