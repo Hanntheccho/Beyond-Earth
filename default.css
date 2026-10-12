@@ -277,11 +277,12 @@ h2 {
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
 }
 
-.poi span[data-tooltip] {
+.has-tooltip {
+    display: inline-block;
     position: relative;
+    z-index: 1;
 }
-
-.poi span[data-tooltip]::after {
+.has-tooltip::after {
     content: attr(data-tooltip);
     position: absolute;
     z-index: 10;
@@ -292,11 +293,10 @@ h2 {
     padding: 8px 10px;
     border: 1px solid var(--clrbs);
     background: var(--clrbgt);
-    color: var(--clrbd);
+    color: var(--clrpt);
     font-size: 12px;
-    font-weight: normal;
-    letter-spacing: 1px;
-    line-height: 1.5;
+    letter-spacing: 2px;
+    line-height: 1.2;
     text-align: left;
     text-transform: none;
     white-space: normal;
@@ -308,12 +308,15 @@ h2 {
     transform: translate(-50%, 4px);
     transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
 }
-
-.poi:hover span[data-tooltip]::after,
-.div-desc-win.grid a:focus-visible span[data-tooltip]::after {
+.has-tooltip:hover::after,
+.has-tooltip:focus-visible::after {
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, 0);
+}
+.has-tooltip:hover,
+.has-tooltip:focus-visible {
+    z-index: 20;
 }
 
 .cursor-glow {
