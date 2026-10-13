@@ -107,6 +107,13 @@ body::after {
     box-shadow: none;
     background-color: var(--clrbs);
 }
+.btn20 {
+    transition: background-color 180ms ease, filter 180ms ease;
+}
+.btn20:hover {
+    background-color: #ffffff12;
+    filter: brightness(0.8);
+}
 .top-btns {
     margin: 20px;
     margin-bottom: -18px;
@@ -264,18 +271,7 @@ h2 {
     opacity: 0.1;
 }
 
-.poi {
-    cursor: pointer;
-    margin: 4px;
-    margin-right: 2px;
-    padding: 4px 8px 4px 8px;
-    font-size: 12px;
-    text-transform: uppercase;
-    text-align: center;
-    box-shadow: none;
-    border: 2px solid;
-    border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
-}
+.poi,
 .poi-small {
     cursor: pointer;
     margin: 4px;
@@ -288,6 +284,9 @@ h2 {
     border: 2px solid;
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
 }
+.poi-small span {
+    font-size: 10px;
+}
 
 .has-tooltip {
     display: inline-block;
@@ -299,7 +298,7 @@ h2 {
     z-index: 1100;
     box-sizing: border-box;
     width: max-content;
-    max-width: min(360px, 70vw);
+    max-width: min(420px, 70vw);
     max-height: min(60vh, 420px);
     overflow: auto;
     padding: 12px 14px;
@@ -369,11 +368,12 @@ h2 {
     }
 }
 
-.poi {
+.poi,
+.poi-small {
     transition: transform 180ms ease, background-color 180ms ease, filter 180ms ease;
 }
-
-.poi:hover {
+.poi:hover,
+.poi-small:hover {
     transform: translateY(-3px);
     background-color: #ffffff12;
     filter: brightness(1.2);
