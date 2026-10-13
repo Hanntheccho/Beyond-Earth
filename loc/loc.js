@@ -71,12 +71,10 @@ async function loadLocalization(language) {
                 console.warn(`No element found for key: ${key}`);
             }
 
-            // Tooltip values can reference localized HTML keys. Show their
-            // readable text without exposing markup in the tooltip.
+            // Keep localized markup so tooltip descriptions can render basic
+            // formatting such as paragraphs, bold, and italics.
             document.querySelectorAll(`[data-tooltip="${key}"]`).forEach(element => {
-                const tooltipText = document.createElement('div');
-                tooltipText.innerHTML = value;
-                element.dataset.tooltip = tooltipText.textContent.trim();
+                element.dataset.tooltip = value;
             });
         });
     } catch (error) {

@@ -287,7 +287,7 @@ h2 {
     z-index: 1100;
     box-sizing: border-box;
     width: max-content;
-    max-width: min(320px, 70vw);
+    max-width: min(360px, 70vw);
     max-height: min(60vh, 420px);
     overflow: auto;
     padding: 12px 14px;
@@ -304,6 +304,21 @@ h2 {
     box-shadow: 0 4px 16px #00000080;
     overscroll-behavior: contain;
     scrollbar-color: var(--clr02) var(--clrbs);
+}
+.tooltip-popup b,
+.tooltip-popup strong {
+    font-weight: inherit;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--clrbt);
+}
+.tooltip-popup p {
+    margin: 0 0 0.75em;
+    font-size: inherit;
+    letter-spacing: inherit;
+}
+.tooltip-popup p:last-child {
+    margin-bottom: 0;
 }
 .has-tooltip:hover,
 .has-tooltip:focus-visible {

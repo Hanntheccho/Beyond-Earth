@@ -152,7 +152,7 @@ document.querySelectorAll('.has-tooltip').forEach(function(trigger, index) {
             popup = document.createElement('div');
             popup.id = 'tooltip-popup-' + index;
             popup.className = 'tooltip-popup';
-            popup.textContent = trigger.dataset.tooltip || '';
+            popup.innerHTML = trigger.dataset.tooltip || '';
             popup.setAttribute('role', 'tooltip');
             popup.addEventListener('pointerenter', function() {
                 clearTimeout(tooltipCloseTimer);
