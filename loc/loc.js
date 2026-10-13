@@ -59,6 +59,7 @@ async function fetchLocalization(language) {
 async function loadLocalization(language) {
     try {
         const data = await fetchLocalization(language);
+        window.localizationData = data;
 
         Object.entries(data).forEach(([key, value]) => {
             const elements = document.querySelectorAll(`.${key}`);

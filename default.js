@@ -87,29 +87,67 @@ positionTooltips();
 window.addEventListener('resize', positionTooltips);
 window.addEventListener('scroll', positionTooltips, { passive: true });
 
-let tooltipCloseTimer;
+let tooltipEntries = [];
+let tooltipEntryId = 0;
 let tooltipSwitchTimer;
-let activeTooltipPopup = null;
-let activeTooltipTrigger = null;
+let tooltipSwitchTrigger = null;
+const tooltipBoundElements = new WeakSet();
 
-function removeActiveTooltip() {
-    clearTimeout(tooltipCloseTimer);
-    clearTimeout(tooltipSwitchTimer);
-    if (activeTooltipPopup) activeTooltipPopup.remove();
-    if (activeTooltipTrigger) activeTooltipTrigger.removeAttribute('aria-describedby');
-    activeTooltipPopup = null;
-    activeTooltipTrigger = null;
+function tooltipParentFor(trigger) {
+    for (let index = tooltipEntries.length - 1; index >= 0; index--) {
+        if (tooltipEntries[index].popup.contains(trigger)) return tooltipEntries[index];
+    }
+    return null;
 }
 
-function closeTooltip(popup, trigger) {
-    clearTimeout(tooltipCloseTimer);
-    tooltipCloseTimer = setTimeout(function() {
+function tooltipEntryFor(trigger) {
+    return tooltipEntries.find(entry => entry.trigger === trigger);
+}
+
+function tooltipHasDescendant(entry) {
+    return tooltipEntries.some(candidate => {
+        let parent = candidate.parent;
+        while (parent) {
+            if (parent === entry) return true;
+            parent = parent.parent;
+        }
+        return false;
+    });
+}
+
+function removeTooltipEntry(entry, rescheduleParent) {
+    tooltipEntries
+        .filter(candidate => {
+            let parent = candidate.parent;
+            while (parent) {
+                if (parent === entry) return true;
+                parent = parent.parent;
+            }
+            return false;
+        })
+        .reverse()
+        .forEach(child => removeTooltipEntry(child, false));
+
+    clearTimeout(entry.closeTimer);
+    entry.popup.remove();
+    entry.trigger.removeAttribute('aria-describedby');
+    tooltipEntries = tooltipEntries.filter(candidate => candidate !== entry);
+
+    if (rescheduleParent && entry.parent && tooltipEntries.includes(entry.parent)) {
+        closeTooltip(entry.parent);
+    }
+}
+
+function closeTooltip(entry) {
+    clearTimeout(entry.closeTimer);
+    entry.closeTimer = setTimeout(function() {
         const active = document.activeElement;
-        if (trigger.matches(':hover') || popup.matches(':hover') || active === trigger || popup.contains(active)) {
+        if (entry.trigger.matches(':hover') || entry.popup.matches(':hover') ||
+            active === entry.trigger || entry.popup.contains(active) || tooltipHasDescendant(entry)) {
             return;
         }
-        if (activeTooltipPopup === popup) removeActiveTooltip();
-    }, 500);
+        if (tooltipEntries.includes(entry)) removeTooltipEntry(entry, true);
+    }, 250);
 }
 
 function positionTooltip(popup, trigger) {
@@ -140,60 +178,112 @@ function positionTooltip(popup, trigger) {
     popup.style.top = top + 'px';
 }
 
-document.querySelectorAll('.has-tooltip').forEach(function(trigger, index) {
-    function showTooltip() {
-        clearTimeout(tooltipCloseTimer);
-        let popup = document.getElementById('tooltip-popup-' + index);
-        if (activeTooltipPopup && activeTooltipPopup !== popup) {
-            removeActiveTooltip();
-            popup = null;
-        }
-        if (!popup) {
-            popup = document.createElement('div');
-            popup.id = 'tooltip-popup-' + index;
-            popup.className = 'tooltip-popup';
-            popup.innerHTML = trigger.dataset.tooltip || '';
-            popup.setAttribute('role', 'tooltip');
-            popup.addEventListener('pointerenter', function() {
-                clearTimeout(tooltipCloseTimer);
-                clearTimeout(tooltipSwitchTimer);
-            });
-            popup.addEventListener('pointerleave', function() {
-                closeTooltip(popup, trigger);
-            });
-            document.body.appendChild(popup);
-            trigger.setAttribute('aria-describedby', popup.id);
-        }
-        activeTooltipPopup = popup;
-        activeTooltipTrigger = trigger;
-        positionTooltip(popup, trigger);
+function localizeTooltipContent(popup) {
+    if (!window.localizationData) return;
+
+    popup.querySelectorAll('[class]').forEach(function(element) {
+        const localizationKey = Array.from(element.classList)
+            .find(className => Object.prototype.hasOwnProperty.call(window.localizationData, className));
+        if (localizationKey) element.innerHTML = window.localizationData[localizationKey];
+    });
+}
+
+function showTooltip(trigger) {
+    clearTimeout(tooltipSwitchTimer);
+    const existing = tooltipEntryFor(trigger);
+    if (existing) {
+        clearTimeout(existing.closeTimer);
+        positionTooltip(existing.popup, trigger);
+        return;
     }
 
+    const parent = tooltipParentFor(trigger);
+    if (parent) {
+        tooltipEntries
+            .filter(entry => {
+                let ancestor = entry.parent;
+                while (ancestor) {
+                    if (ancestor === parent) return true;
+                    ancestor = ancestor.parent;
+                }
+                return false;
+            })
+            .reverse()
+            .forEach(entry => removeTooltipEntry(entry, false));
+    } else {
+        tooltipEntries.slice().reverse().forEach(entry => removeTooltipEntry(entry, false));
+    }
+
+    const popup = document.createElement('div');
+    popup.id = 'tooltip-popup-' + (++tooltipEntryId);
+    popup.className = 'tooltip-popup';
+    const tooltipValue = trigger.dataset.tooltip || '';
+    popup.innerHTML = window.localizationData &&
+        Object.prototype.hasOwnProperty.call(window.localizationData, tooltipValue)
+        ? window.localizationData[tooltipValue]
+        : tooltipValue;
+    popup.setAttribute('role', 'tooltip');
+    popup.style.zIndex = String(1100 + tooltipEntries.length * 20);
+
+    const entry = { trigger, popup, parent, closeTimer: null };
+    popup.addEventListener('pointerenter', function() {
+        clearTimeout(entry.closeTimer);
+        clearTimeout(tooltipSwitchTimer);
+    });
+    popup.addEventListener('pointerleave', function() {
+        closeTooltip(entry);
+    });
+
+    document.body.appendChild(popup);
+    trigger.setAttribute('aria-describedby', popup.id);
+    tooltipEntries.push(entry);
+    localizeTooltipContent(popup);
+    positionTooltip(popup, trigger);
+    popup.querySelectorAll('.has-tooltip').forEach(bindTooltip);
+}
+
+function bindTooltip(trigger) {
+    if (tooltipBoundElements.has(trigger)) return;
+    tooltipBoundElements.add(trigger);
+
     trigger.addEventListener('pointerenter', function() {
-        if (activeTooltipPopup && activeTooltipTrigger !== trigger) {
-            clearTimeout(tooltipSwitchTimer);
-            tooltipSwitchTimer = setTimeout(showTooltip, 250);
+        const existing = tooltipEntryFor(trigger);
+        if (existing) {
+            clearTimeout(existing.closeTimer);
             return;
         }
-        showTooltip();
+
+        if (tooltipEntries.length) {
+            clearTimeout(tooltipSwitchTimer);
+            tooltipSwitchTrigger = trigger;
+            tooltipSwitchTimer = setTimeout(function() {
+                if (trigger.matches(':hover')) showTooltip(trigger);
+            }, 150);
+        } else {
+            showTooltip(trigger);
+        }
     });
     trigger.addEventListener('pointerleave', function() {
-        clearTimeout(tooltipSwitchTimer);
-        const popup = document.getElementById('tooltip-popup-' + index);
-        if (popup) closeTooltip(popup, trigger);
+        if (tooltipSwitchTrigger === trigger) {
+            clearTimeout(tooltipSwitchTimer);
+            tooltipSwitchTrigger = null;
+        }
+        const entry = tooltipEntryFor(trigger);
+        if (entry) closeTooltip(entry);
     });
-    trigger.addEventListener('focusin', showTooltip);
+    trigger.addEventListener('focusin', function() {
+        showTooltip(trigger);
+    });
     trigger.addEventListener('focusout', function() {
-        const popup = document.getElementById('tooltip-popup-' + index);
-        if (popup) closeTooltip(popup, trigger);
+        const entry = tooltipEntryFor(trigger);
+        if (entry) closeTooltip(entry);
     });
-});
+}
+
+document.querySelectorAll('.has-tooltip').forEach(bindTooltip);
 
 function repositionOpenTooltips() {
-    document.querySelectorAll('.has-tooltip').forEach(function(trigger, index) {
-        const popup = document.getElementById('tooltip-popup-' + index);
-        if (popup) positionTooltip(popup, trigger);
-    });
+    tooltipEntries.forEach(entry => positionTooltip(entry.popup, entry.trigger));
 }
 
 window.addEventListener('resize', repositionOpenTooltips);

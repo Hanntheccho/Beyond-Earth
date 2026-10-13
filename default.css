@@ -276,6 +276,18 @@ h2 {
     border: 2px solid;
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
 }
+.poi-small {
+    cursor: pointer;
+    margin: 4px;
+    margin-right: 2px;
+    padding: 4px 8px 4px 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow: none;
+    border: 2px solid;
+    border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
+}
 
 .has-tooltip {
     display: inline-block;
