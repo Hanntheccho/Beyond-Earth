@@ -282,16 +282,16 @@ h2 {
     position: relative;
     z-index: 1;
 }
-.has-tooltip::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    z-index: 10;
-    left: 50%;
-    bottom: calc(100% + 10px);
+.tooltip-popup {
+    position: fixed;
+    z-index: 1100;
+    box-sizing: border-box;
     width: max-content;
-    max-width: min(280px, 70vw);
-    padding: 8px 10px;
-    border: 1px solid var(--clrbs);
+    max-width: min(320px, 70vw);
+    max-height: min(60vh, 420px);
+    overflow: auto;
+    padding: 12px 14px;
+    border: 4px solid var(--clrbs);
     background: var(--clrbgt);
     color: var(--clrpt);
     font-size: 12px;
@@ -302,17 +302,8 @@ h2 {
     white-space: normal;
     overflow-wrap: anywhere;
     box-shadow: 0 4px 16px #00000080;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translate(-50%, 4px);
-    transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
-}
-.has-tooltip:hover::after,
-.has-tooltip:focus-visible::after {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
+    overscroll-behavior: contain;
+    scrollbar-color: var(--clr02) var(--clrbs);
 }
 .has-tooltip:hover,
 .has-tooltip:focus-visible {
