@@ -35,6 +35,13 @@ p {
     line-height: 1.5;
     color: var(--clrpt);
 }
+.p-text-icon {
+    position: relative;
+    width: 1px;
+    height: auto;
+    transform: scale(180);
+    opacity: 0.1;
+}
 
 body {
   margin: 0;
@@ -203,20 +210,20 @@ h2 {
     padding-bottom: 8px;
     box-shadow: 4px 0 0 var(--clrbs), -4px 0 0 var(--clrbs);
 }
-.div-desc:has(.lyscore-desc) {
+.div-desc.has-background {
     position: relative;
     isolation: isolate;
 }
-.div-desc:has(.lyscore-desc)::before {
+.div-desc.has-background::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: url("gfx/FRA/coa_w_stars.svg") center / cover no-repeat;
-    background-size: 90% auto;
+    z-index: -1;
+    background-image: var(--desc-bg, url("be_icon_w.svg"));
     background-position: center;
+    background-size: 90% auto;
     background-repeat: no-repeat;
     opacity: 0.1;
-    z-index: -1;
 }
 .div-desc-toggle {
     display: block;
@@ -286,14 +293,6 @@ h2 {
 @keyframes scroll-left {
     from { transform: translateX(100vw); }
     to   { transform: translateX(-100%); }
-}
-
-.p-text-icon {
-    position: relative;
-    width: 1px;
-    height: auto;
-    transform: scale(180);
-    opacity: 0.1;
 }
 
 .poi,
