@@ -10,6 +10,30 @@ $(document).ready(function() {
     });
 });
 
+document.querySelectorAll('.top-btns [data-panel]').forEach(function(button) {
+    button.addEventListener('click', function() {
+        const panelId = button.dataset.panel;
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+
+        document.querySelectorAll('.div-h2 .content-panel').forEach(function(candidate) {
+            const isActive = candidate === panel;
+            candidate.hidden = !isActive;
+            candidate.setAttribute('aria-hidden', String(!isActive));
+        });
+
+        document.querySelectorAll('.top-btns [data-panel]').forEach(function(candidate) {
+            candidate.setAttribute('aria-pressed', String(candidate === button));
+        });
+    });
+
+    // Mouse clicks focus buttons in some browsers; that focus would keep the
+    // button's tooltip open after the pointer leaves. Preserve keyboard focus.
+    button.addEventListener('click', function(event) {
+        if (event.detail > 0) button.blur();
+    });
+});
+
 document.querySelectorAll('.div-desc').forEach(function(description, index) {
     const content = document.createElement('div');
     content.className = 'div-desc-content';

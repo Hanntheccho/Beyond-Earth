@@ -14,32 +14,53 @@
         <div class="bg-text bg-text"><div class="bg-text-line"><span class="bg-text-txt"></span></div></div>
         <a href="BE0.html"><h1><span class="h1-title"><span class="h1-loc"></span><span class="h1-version"></span></span><img src="be_icon_b.svg" class="h1-text-icon"></h1></a>
         <div class="top-btns grid">
-            <p class="btn20 has-tooltip" data-tooltip="mondaymarket-desc"><span class="mondaymarket"></span></p>
-            <p class="btn20 has-tooltip" data-tooltip="worldwire-desc"><span class="worldwire"></span></p>
-            <p class="btn20 has-tooltip" data-tooltip="globaltrust-desc"><span class="globaltrust"></span></p>
-            <p class="btn20 has-tooltip" data-tooltip="lyscore-desc"><span class="lyscore"></span></p>
+            <button class="btn20" type="button" data-panel="mondaymarket-panel"><span class="mondaymarket"></span></button>
+            <button class="btn20" type="button" data-panel="worldwire-panel" aria-pressed="true"><span class="worldwire"></span></button>
+            <button class="btn20" type="button" data-panel="globaltrust-panel"><span class="globaltrust"></span></button>
+            <button class="btn20" type="button" data-panel="lyscore-panel"><span class="lyscore"></span></button>
         </div>
         <div class="div-h2">
-            <div class="div-desc-win">
-                <h2><span class="beintro"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
-                <div class="div-desc"><span class="beintro-desc"></span></div>
-            </div>
-            <div class="div-desc-win grid">
-                <p class="poi has-tooltip" data-tooltip="poiFRA-desc"><span class="poiFRA"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiGER-desc"><span class="poiGER"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiNAU-desc"><span class="poiNAU"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiNSA-desc"><span class="poiNSA"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiBRA-desc"><span class="poiBRA"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiSLA-desc"><span class="poiSLA"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiIND-desc"><span class="poiIND"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiCHI-desc"><span class="poiCHI"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiPAU-desc"><span class="poiPAU"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiALF-desc"><span class="poiALF"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiANC-desc"><span class="poiANC"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiARC-desc"><span class="poiARC"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiPLY-desc"><span class="poiPLY"></span></p>
-                <p class="poi has-tooltip" data-tooltip="poiKIL-desc"><span class="poiKIL"></span></p>
-            </div>
+            <section class="content-panel" id="mondaymarket-panel" hidden aria-hidden="true">
+                <div class="div-desc-win">
+                    <h2><span class="mondaymarket"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
+                    <div class="div-desc"><span class="mondaymarket-desc"></span></div>
+                </div>
+            </section>
+            <section class="content-panel" id="worldwire-panel" aria-hidden="false">
+                <div class="div-desc-win">
+                    <h2><span class="worldwire"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
+                    <div class="div-desc"><span class="worldwire-desc"></span></div>
+                </div>
+            </section>
+            <section class="content-panel" id="globaltrust-panel" hidden aria-hidden="true">
+                <div class="div-desc-win">
+                    <h2><span class="globaltrust"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
+                    <div class="div-desc"><span class="globaltrust-desc"></span></div>
+                </div>
+            </section>
+            <section class="content-panel" id="lyscore-panel" hidden aria-hidden="true">
+                <div class="div-desc-win">
+                    <h2><span class="lyscore"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
+                    <div class="div-desc"><span class="lyscore-desc"></span></div>
+                </div>
+                <div class="div-desc-win grid">
+                    <p class="poi has-tooltip" data-tooltip="beintro-desc"><span class="beintro"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiFRA-desc"><span class="poiFRA"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiGER-desc"><span class="poiGER"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiNAU-desc"><span class="poiNAU"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiNSA-desc"><span class="poiNSA"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiBRA-desc"><span class="poiBRA"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiSLA-desc"><span class="poiSLA"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiIND-desc"><span class="poiIND"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiCHI-desc"><span class="poiCHI"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiPAU-desc"><span class="poiPAU"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiALF-desc"><span class="poiALF"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiANC-desc"><span class="poiANC"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiARC-desc"><span class="poiARC"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiPLY-desc"><span class="poiPLY"></span></p>
+                    <p class="poi has-tooltip" data-tooltip="poiKIL-desc"><span class="poiKIL"></span></p>
+                </div>
+            </section>
         </div>
     </div>
 

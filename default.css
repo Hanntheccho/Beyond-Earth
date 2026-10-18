@@ -102,17 +102,27 @@ body::after {
     margin-right: 2px;
     padding: 6px 20px 6px 20px;
     font-size: 14px;
+    letter-spacing: 4px;
     text-transform: uppercase;
     text-align: center;
     box-shadow: none;
     background-color: var(--clrbs);
+    color: inherit;
+    font-family: inherit;
+    border: 0;
 }
 .btn20 {
     transition: background-color 180ms ease, filter 180ms ease;
 }
 .btn20:hover {
-    background-color: #ffffff12;
-    filter: brightness(0.8);
+    filter: brightness(0.6);
+}
+.btn20[aria-pressed="true"] {
+    outline: 2px solid var(--clrtxt);
+    outline-offset: 1px;
+}
+.content-panel[hidden] {
+    display: none;
 }
 .top-btns {
     margin: 20px;
@@ -192,6 +202,21 @@ h2 {
     padding-top: 8px;
     padding-bottom: 8px;
     box-shadow: 4px 0 0 var(--clrbs), -4px 0 0 var(--clrbs);
+}
+.div-desc:has(.lyscore-desc) {
+    position: relative;
+    isolation: isolate;
+}
+.div-desc:has(.lyscore-desc)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("gfx/FRA/coa_w_stars.svg") center / cover no-repeat;
+    background-size: 90% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    z-index: -1;
 }
 .div-desc-toggle {
     display: block;
