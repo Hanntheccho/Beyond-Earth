@@ -47,7 +47,73 @@ async function fetchLocalization(language) {
         }
     }
 
-    return { ...defaultData, ...pageData };
+    const localization = { ...defaultData, ...pageData };
+    const keywords = await fetchKeywords();
+
+    return applyKeywordFormatting(localization, keywords);
+}
+
+let keywordPromise;
+
+/** Load the shared list once; it applies to default and page-specific locales. */
+function fetchKeywords() {
+    if (!keywordPromise) {
+        keywordPromise = fetch('loc/keywords.json').then(response => {
+            if (!response.ok) throw new Error('Failed to load loc/keywords.json');
+            return response.json();
+        }).catch(error => {
+            console.warn('Could not load shared localization keywords:', error);
+            return [];
+        });
+    }
+    return keywordPromise;
+}
+
+/** Bold whole keyword matches in text nodes, leaving existing HTML markup intact. */
+function applyKeywordFormatting(localization, keywords) {
+    if (!Array.isArray(keywords) || keywords.length === 0) return localization;
+
+    const escaped = keywords
+        .filter(keyword => typeof keyword === 'string' && keyword.length > 0)
+        .sort((a, b) => b.length - a.length)
+        .map(keyword => keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    if (escaped.length === 0) return localization;
+
+    // Unicode letters, numbers, and underscores count as word characters.
+    const matcher = new RegExp(`(?<![\\p{L}\\p{N}_])(${escaped.join('|')})(?![\\p{L}\\p{N}_])`, 'giu');
+
+    for (const [key, value] of Object.entries(localization)) {
+        if (typeof value !== 'string' || !value) continue;
+
+        const template = document.createElement('template');
+        template.innerHTML = value;
+        const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+        for (const textNode of textNodes) {
+            if (textNode.parentElement?.closest('b')) continue;
+            matcher.lastIndex = 0;
+            const text = textNode.nodeValue;
+            if (!matcher.test(text)) continue;
+            matcher.lastIndex = 0;
+
+            const replacement = document.createDocumentFragment();
+            let lastIndex = 0;
+            for (const match of text.matchAll(matcher)) {
+                replacement.append(document.createTextNode(text.slice(lastIndex, match.index)));
+                const bold = document.createElement('b');
+                bold.textContent = match[0];
+                replacement.append(bold);
+                lastIndex = match.index + match[0].length;
+            }
+            replacement.append(document.createTextNode(text.slice(lastIndex)));
+            textNode.replaceWith(replacement);
+        }
+
+        localization[key] = template.innerHTML;
+    }
+    return localization;
 }
 
 

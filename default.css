@@ -15,6 +15,15 @@
     --max-width: 800px;
 }
 
+button {
+    cursor: pointer;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow: none;
+    background: none;
+    font-family: inherit;
+}
+
 a {
     text-decoration: none;
     color: inherit;
@@ -23,8 +32,6 @@ a {
 b {
     font-weight: inherit;
     text-transform: uppercase;
-    letter-spacing: 6px;
-    color: var(--clrbt);
 }
 
 p {
@@ -34,6 +41,12 @@ p {
     text-align: justify;
     line-height: 1.5;
     color: var(--clrpt);
+}
+p b {
+    font-weight: inherit;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: var(--clrbt);
 }
 .p-text-icon {
     position: relative;
@@ -104,15 +117,11 @@ body::after {
 }
 
 .btn20 {
-    cursor: pointer;
     margin: 2px;
     margin-right: 2px;
     padding: 6px 20px 6px 20px;
     font-size: 14px;
     letter-spacing: 4px;
-    text-transform: uppercase;
-    text-align: center;
-    box-shadow: none;
     background-color: var(--clrbs);
     color: inherit;
     font-family: inherit;
@@ -295,21 +304,25 @@ h2 {
     to   { transform: translateX(-100%); }
 }
 
-.poi,
-.poi-small {
-    cursor: pointer;
+.poi {
     margin: 4px;
     margin-right: 2px;
     padding: 4px 8px 4px 8px;
     font-size: 12px;
-    text-transform: uppercase;
-    text-align: center;
-    box-shadow: none;
+    color: var(--clr01);
+    letter-spacing: 4px;
     border: 2px solid;
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
+    transition: transfrom 180ms ease, background-color 180ms ease, filter 180ms ease;
 }
-.poi-small span {
-    font-size: 10px;
+.poi:hover {
+    transform: translateY(-3px);
+    background-color: #ffffff12;
+    filter: brightness(1.2);
+}
+.poi[aria-pressed="true"] {
+    outline: 2px solid #00000000;
+    outline-offset: 1px;
 }
 
 .has-tooltip {
@@ -390,17 +403,6 @@ h2 {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.poi,
-.poi-small {
-    transition: transform 180ms ease, background-color 180ms ease, filter 180ms ease;
-}
-.poi:hover,
-.poi-small:hover {
-    transform: translateY(-3px);
-    background-color: #ffffff12;
-    filter: brightness(1.2);
 }
 
 .div-desc-win:target {
