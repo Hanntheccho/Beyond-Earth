@@ -7,18 +7,7 @@
     if (!companies.length) return;
 
     const svgNS = 'http://www.w3.org/2000/svg';
-    const width = 600, height = 600, gap = 4;
-    const outlineBrightness = 1.6;
-
-    function adjustBrightness(hexColor, brightness) {
-        const match = /^#?([0-9a-f]{6})$/i.exec(hexColor || '');
-        if (!match) return hexColor || '#626b70';
-        const hex = match[1];
-        const channels = [0, 2, 4].map(index =>
-            Math.min(255, Math.round(parseInt(hex.slice(index, index + 2), 16) * brightness))
-        );
-        return `#${channels.map(channel => channel.toString(16).padStart(2, '0')).join('')}`;
-    }
+    const width = 600, height = 600, gap = 8;
 
     function add(parent, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -47,7 +36,7 @@
         function layout(items, x, y, w, h) {
             if (items.length === 1) {
                 const company = items[0];
-                const outlineColor = adjustBrightness(company.color, outlineBrightness);
+                const outlineColor = company.color || '#626b70';
                 const tile = add(svg, 'g', { class: 'market-tile' });
                 const clipId = `market-clip-${companies.indexOf(company)}`;
                 const defs = svg.querySelector('defs') || add(svg, 'defs', {});
@@ -57,8 +46,9 @@
                 });
                 const rect = add(tile, 'rect', {
                     x, y, width: Math.max(0, w - gap), height: Math.max(0, h - gap),
-                    rx: 0, class: 'market-tile-surface', fill: company.color || '#626b70',
-                    'fill-opacity': 0.1, stroke: outlineColor, 'stroke-width': 1
+                    rx: 0, class: 'market-tile-surface', fill: '#1b1b1bed',
+                    color: company.color || '#626b70',
+                    stroke: outlineColor, 'stroke-width': 1, 'stroke-opacity': 0.82
                 });
                 add(rect, 'title', {}, `${company.name}: €$${company.value.toLocaleString()} billion`);
                 {

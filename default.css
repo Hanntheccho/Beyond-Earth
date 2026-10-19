@@ -2,11 +2,9 @@
     --clr01: #ffffff;
     --clr02: #afafaf;
     --clrbd: #ececec;
-    --clrh2: #ffffff0e;
     --clrh1loc: #000000c5;
     --clrh2loc: #ffffff;
     --clrb1: #0f0f0f;
-    --clrb2: #1b1b1b4d;
     --clrbs: #8b8b8b31;
     --clrpt: #ffffffc7;
     --clrbt: #ffffff;
@@ -210,17 +208,11 @@ body::after {
 }
 
 .affinity-map {
-    --affinity-supremacy: #57b7ff;
-    --affinity-harmony: #55d68b;
-    --affinity-purity: #f2c14e;
-    --affinity-mastery: #f28c45;
-    --affinity-synergy: #ff6f91;
-    --affinity-divinity: #c28aff;
     position: relative;
     width: min(calc(100% - 40px), 660px);
     aspect-ratio: 600 / 520;
     margin: 12px auto 28px;
-    background: radial-gradient(ellipse at center, #ffffff08, transparent 68%);
+    background: radial-gradient(ellipse at center, #ffffff18, transparent 68%);
 }
 .affinity-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .affinity-link { fill: none; stroke-width: 3; opacity: .78; filter: drop-shadow(0 0 5px #ffffff20); }
@@ -239,18 +231,14 @@ body::after {
     border: 1px solid color-mix(in srgb, var(--affinity-color), transparent 30%);
     border-radius: 50%;
     color: var(--affinity-color);
-    background: #151719ed;
+    background: #1b1b1bed;
     box-shadow: 0 0 18px color-mix(in srgb, var(--affinity-color), transparent 82%), inset 0 0 16px color-mix(in srgb, var(--affinity-color), transparent 92%);
     transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
     z-index: 2;
 }
-.affinity-node:hover, .affinity-node:focus-visible { transform: scale(1.09); background: #202326; box-shadow: 0 0 24px color-mix(in srgb, var(--affinity-color), transparent 58%); outline: none; }
+.affinity-node:hover, .affinity-node:focus-visible { transform: scale(1.09); background: #222222ed; box-shadow: 0 0 24px color-mix(in srgb, var(--affinity-color), transparent 58%); outline: none; }
 .affinity-node > span { font-size: clamp(22px, 4vw, 34px); line-height: 1; }
-.affinity-node small { color: #e7e7e7; font-size: clamp(8px, 1.5vw, 10px); letter-spacing: 1px; text-transform: uppercase; }
-.affinity-node--neutral { border-style: dashed; background: #202020f2; }
-.affinity-map-key { position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%); display: flex; align-items: center; gap: 7px; white-space: nowrap; color: #898989; font: 9px 'Consolas', monospace; letter-spacing: 1px; }
-.affinity-map-key i { width: 15px; border-top: 3px solid #d68fc1; }
-.affinity-map-key i.soft { margin-left: 8px; border-top: 2px dashed #aaa; opacity: .5; }
+.affinity-node--neutral { border-style: dashed; }
 @media (max-width: 520px) {
     .affinity-map { width: calc(100% - 12px); }
     .affinity-link { stroke-width: 2; }
@@ -274,11 +262,14 @@ body::after {
     pointer-events: none;
     opacity: 0.2;
 }
-.market-chart .market-tile rect {
-    transition: filter 100ms linear;
+.market-chart .market-tile .market-tile-surface {
+    filter: drop-shadow(0 0 8px color-mix(in srgb, currentColor, transparent 82%));
+    transition: filter 140ms ease, stroke-width 140ms ease, stroke-opacity 140ms ease;
 }
-.market-chart .market-tile:hover rect {
-    filter: brightness(1.8) saturate(1.6);
+.market-chart .market-tile:hover .market-tile-surface {
+    filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor, transparent 58%));
+    stroke-width: 2.5;
+    stroke-opacity: 1;
 }
 
 .btn20 {
@@ -291,8 +282,6 @@ body::after {
     color: inherit;
     font-family: inherit;
     border: 0;
-}
-.btn20 {
     transition: background-color 180ms ease, filter 180ms ease;
 }
 .btn20:hover {
@@ -302,9 +291,11 @@ body::after {
     outline: 2px solid var(--clrtxt);
     outline-offset: 1px;
 }
+
 .content-panel[hidden] {
     display: none;
 }
+
 .top-btns {
     margin: 20px;
     margin-bottom: -12px;
@@ -461,7 +452,7 @@ h2 {
     letter-spacing: 4px;
     border: 2px solid;
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
-    transition: transfrom 180ms ease, background-color 180ms ease, filter 180ms ease;
+    transition: transform 180ms ease, background-color 180ms ease, filter 180ms ease;
 }
 .poi:hover {
     transform: translateY(-3px);
