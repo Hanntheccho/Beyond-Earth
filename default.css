@@ -63,6 +63,7 @@ body {
     background-color: var(--clrb1);
     position: relative;
     isolation: isolate;
+    min-width: var(--max-width);
 }
 body::before,
 body::after {
@@ -207,8 +208,53 @@ body::after {
     r: 6px;
     filter: drop-shadow(0 0 4px #ffffff88);
 }
-.scenario-chart-plot svg {
-    min-width: 600px;
+
+.affinity-map {
+    --affinity-supremacy: #57b7ff;
+    --affinity-harmony: #55d68b;
+    --affinity-purity: #f2c14e;
+    --affinity-mastery: #f28c45;
+    --affinity-synergy: #ff6f91;
+    --affinity-divinity: #c28aff;
+    position: relative;
+    width: min(calc(100% - 40px), 660px);
+    aspect-ratio: 600 / 520;
+    margin: 12px auto 28px;
+    background: radial-gradient(ellipse at center, #ffffff08, transparent 68%);
+}
+.affinity-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.affinity-link { fill: none; stroke-width: 3; opacity: .78; filter: drop-shadow(0 0 5px #ffffff20); }
+.affinity-link--strong { stroke-width: 5; opacity: .9; }
+.affinity-link--soft { stroke-dasharray: 5 9; stroke-width: 2; opacity: .26; }
+.affinity-node-frame { width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
+.affinity-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: var(--affinity-node-size, 84px);
+    height: var(--affinity-node-size, 84px);
+    padding: 4px;
+    border: 1px solid color-mix(in srgb, var(--affinity-color), transparent 30%);
+    border-radius: 50%;
+    color: var(--affinity-color);
+    background: #151719ed;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--affinity-color), transparent 82%), inset 0 0 16px color-mix(in srgb, var(--affinity-color), transparent 92%);
+    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    z-index: 2;
+}
+.affinity-node:hover, .affinity-node:focus-visible { transform: scale(1.09); background: #202326; box-shadow: 0 0 24px color-mix(in srgb, var(--affinity-color), transparent 58%); outline: none; }
+.affinity-node > span { font-size: clamp(22px, 4vw, 34px); line-height: 1; }
+.affinity-node small { color: #e7e7e7; font-size: clamp(8px, 1.5vw, 10px); letter-spacing: 1px; text-transform: uppercase; }
+.affinity-node--neutral { border-style: dashed; background: #202020f2; }
+.affinity-map-key { position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%); display: flex; align-items: center; gap: 7px; white-space: nowrap; color: #898989; font: 9px 'Consolas', monospace; letter-spacing: 1px; }
+.affinity-map-key i { width: 15px; border-top: 3px solid #d68fc1; }
+.affinity-map-key i.soft { margin-left: 8px; border-top: 2px dashed #aaa; opacity: .5; }
+@media (max-width: 520px) {
+    .affinity-map { width: calc(100% - 12px); }
+    .affinity-link { stroke-width: 2; }
+    .affinity-link--strong { stroke-width: 3.5; }
 }
 
 .market-chart {
@@ -220,7 +266,6 @@ body::after {
     display: block;
     width: 90%;
     height: auto;
-    min-width: 600px;
     margin: 14px auto 32px;
 }
 .market-chart text.market-tag {
