@@ -10,42 +10,31 @@ $(document).ready(function() {
     });
 });
 
-document.querySelectorAll('.top-btns [data-panel]').forEach(function(button) {
-    button.addEventListener('click', function() {
-        const panelId = button.dataset.panel;
-        const panel = document.getElementById(panelId);
-        if (!panel) return;
+function setupPanelSwitcher(buttonSelector, panelSelector, targetAttribute) {
+    const buttons = document.querySelectorAll(buttonSelector);
+    const panels = document.querySelectorAll(panelSelector);
 
-        document.querySelectorAll('.div-h2 .content-panel').forEach(function(candidate) {
-            const isActive = candidate === panel;
-            candidate.hidden = !isActive;
-            candidate.setAttribute('aria-hidden', String(!isActive));
-        });
+    buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const targetId = button.getAttribute(targetAttribute);
+            const activePanel = document.getElementById(targetId);
+            if (!activePanel) return;
 
-        document.querySelectorAll('.top-btns [data-panel]').forEach(function(candidate) {
-            candidate.setAttribute('aria-pressed', String(candidate === button));
-        });
-    });
-});
+            panels.forEach(function(panel) {
+                const isActive = panel === activePanel;
+                panel.hidden = !isActive;
+                panel.setAttribute('aria-hidden', String(!isActive));
+            });
 
-document.querySelectorAll('#MIT-panel [data-chart-panel]').forEach(function(button) {
-    button.addEventListener('click', function() {
-        const chartId = button.dataset.chartPanel;
-        const chartPanel = document.getElementById(chartId);
-        if (!chartPanel) return;
-
-        document.querySelectorAll('#MIT-panel .scenario-chart-plot').forEach(function(chart) {
-            const panel = chart.closest('.div-desc-win');
-            const isActive = panel === chartPanel;
-            panel.hidden = !isActive;
-            panel.setAttribute('aria-hidden', String(!isActive));
-        });
-
-        document.querySelectorAll('#MIT-panel [data-chart-panel]').forEach(function(candidate) {
-            candidate.setAttribute('aria-pressed', String(candidate === button));
+            buttons.forEach(function(candidate) {
+                candidate.setAttribute('aria-pressed', String(candidate === button));
+            });
         });
     });
-});
+}
+
+setupPanelSwitcher('.top-btns [data-panel]', '.div-h2 .content-panel', 'data-panel');
+setupPanelSwitcher('#MIT-panel [data-chart-panel]', '#MIT-panel .div-desc-win[id^="wrld"]', 'data-chart-panel');
 
 function positionTooltips() {
     document.querySelectorAll('.has-tooltip').forEach(function(element) {
