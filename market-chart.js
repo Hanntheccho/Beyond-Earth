@@ -7,7 +7,18 @@
     if (!companies.length) return;
 
     const svgNS = 'http://www.w3.org/2000/svg';
-    const width = 600, height = 600, gap = 0;
+    const width = 600, height = 600, gap = 4;
+    const outlineBrightness = 1.6;
+
+    function adjustBrightness(hexColor, brightness) {
+        const match = /^#?([0-9a-f]{6})$/i.exec(hexColor || '');
+        if (!match) return hexColor || '#626b70';
+        const hex = match[1];
+        const channels = [0, 2, 4].map(index =>
+            Math.min(255, Math.round(parseInt(hex.slice(index, index + 2), 16) * brightness))
+        );
+        return `#${channels.map(channel => channel.toString(16).padStart(2, '0')).join('')}`;
+    }
 
     function add(parent, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -18,12 +29,12 @@
     }
 
     function labelSize(value) {
-        if (value > 10000) return 32;
-        if (value > 7000) return 26;
-        if (value > 5000) return 20;
-        if (value > 3000) return 14;
-        if (value > 1500) return 10;
-        return 10;
+        if (value > 10000) return 200;
+        if (value > 7000) return 160;
+        if (value > 5000) return 130;
+        if (value > 3000) return 100;
+        if (value > 1500) return 80;
+        return 60;
     }
 
     function render(plot) {
@@ -36,16 +47,30 @@
         function layout(items, x, y, w, h) {
             if (items.length === 1) {
                 const company = items[0];
-                const rect = add(svg, 'rect', {
+                const outlineColor = adjustBrightness(company.color, outlineBrightness);
+                const tile = add(svg, 'g', { class: 'market-tile' });
+                const clipId = `market-clip-${companies.indexOf(company)}`;
+                const defs = svg.querySelector('defs') || add(svg, 'defs', {});
+                const clip = add(defs, 'clipPath', { id: clipId, clipPathUnits: 'userSpaceOnUse' });
+                add(clip, 'rect', {
+                    x, y, width: Math.max(0, w - gap), height: Math.max(0, h - gap)
+                });
+                const rect = add(tile, 'rect', {
                     x, y, width: Math.max(0, w - gap), height: Math.max(0, h - gap),
-                    rx: 2, fill: company.color || '#626b70', stroke: '#17191c', 'stroke-width': 1
+                    rx: 0, class: 'market-tile-surface', fill: company.color || '#626b70',
+                    'fill-opacity': 0.1, stroke: outlineColor, 'stroke-width': 1
                 });
                 add(rect, 'title', {}, `${company.name}: €$${company.value.toLocaleString()} billion`);
-                if (w > 38 && h > 22) {
-                    add(svg, 'text', {
-                        x: x + (w - gap) / 2, y: y + (h - gap) / 2,
-                        'text-anchor': 'middle', 'dominant-baseline': 'middle', class: 'market-tag',
-                        'font-size': `${labelSize(company.value)}px`
+                {
+                    const fontSize = labelSize(company.value);
+                    const label = add(tile, 'text', {
+                        x: x + (w - gap) / 2,
+                        y: y + (h - gap) / 2,
+                        'text-anchor': 'middle', 'dominant-baseline': 'central',
+                        'alignment-baseline': 'central',
+                        class: 'market-tag', 'clip-path': `url(#${clipId})`,
+                        fill: outlineColor,
+                        'font-size': `${fontSize}px`
                     }, company.tag);
                 }
                 return;
@@ -69,7 +94,8 @@
             }
         }
 
-        layout(companies, 0, 0, width, height);
+        const padding = 6;
+        layout(companies, padding, padding, width - padding * 2, height - padding * 2);
         plot.replaceChildren(svg);
     }
 

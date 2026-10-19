@@ -221,12 +221,19 @@ body::after {
     width: 90%;
     height: auto;
     min-width: 600px;
-    margin: 0 auto 36px;
+    margin: 14px auto 32px;
 }
 .market-chart text.market-tag {
-    fill: #fff;
-    font-family: "Consolas", monospace;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
     pointer-events: none;
+    opacity: 0.2;
+}
+.market-chart .market-tile rect {
+    transition: filter 100ms linear;
+}
+.market-chart .market-tile:hover rect {
+    filter: brightness(1.8) saturate(1.6);
 }
 
 .btn20 {
