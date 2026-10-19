@@ -87,9 +87,13 @@ function applyKeywordFormatting(localization, keywords) {
 
         const template = document.createElement('template');
         template.innerHTML = value;
-        const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
         const textNodes = [];
-        while (walker.nextNode()) textNodes.push(walker.currentNode);
+        // Keywords are for descriptive copy only. Leave labels and other
+        // localization strings outside paragraphs untouched.
+        template.content.querySelectorAll('p').forEach(paragraph => {
+            const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) textNodes.push(walker.currentNode);
+        });
 
         for (const textNode of textNodes) {
             if (textNode.parentElement?.closest('b')) continue;

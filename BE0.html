@@ -10,13 +10,17 @@
 </head>
 <body>
     <!-- Main -->
+    <div class="be-info">
+        <span class="be-info-txt"></span>
+    </div>
+    <div class="bg-text"><div class="bg-text-line"><span class="bg-text-txt"></span></div></div>
     <div class="div-h1">
-        <div class="bg-text bg-text"><div class="bg-text-line"><span class="bg-text-txt"></span></div></div>
         <a href="BE0.html"><h1><span class="h1-title"><span class="h1-loc"></span><span class="h1-version"></span></span><img src="be_icon_b.svg" class="h1-text-icon"></h1></a>
         <div class="top-btns grid">
             <button class="btn20" type="button" data-panel="BE0-panel" aria-pressed="true"><span class="BE0"></span></button>
             <button class="btn20" type="button" data-panel="MMA-panel"><span class="MMA"></span></button>
             <button class="btn20" type="button" data-panel="GLT-panel"><span class="GLT"></span></button>
+            <button class="btn20" type="button" data-panel="MIT-panel"><span class="MIT"></span></button>
             <button class="btn20" type="button" data-panel="LYS-panel"><span class="LYS"></span></button>
         </div>
         <div class="div-h2">
@@ -38,6 +42,12 @@
                     <div class="div-desc"><span class="GLT-desc"></span></div>
                 </div>
             </section>
+            <section class="content-panel" id="MIT-panel" hidden aria-hidden="true">
+                <div class="div-desc-win">
+                    <h2><span class="MIT"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
+                    <div class="div-desc has-background" style="--desc-bg: url('gfx/text_icons/mit.svg')"><span class="MIT-desc"></span></div>
+                </div>
+            </section>
             <section class="content-panel" id="LYS-panel" hidden aria-hidden="true">
                 <div class="div-desc-win">
                     <h2><span class="LYS"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
@@ -45,6 +55,9 @@
                 </div>
                 <div class="div-desc-win grid">
                     <button class="poi has-tooltip" type="button" data-tooltip="poiBE0-desc"><span class="poiBE0"></span></button>
+                    <button class="poi has-tooltip" type="button" data-tooltip="poi001-desc"><span class="poi001"></span></button>
+                    <button class="poi has-tooltip" type="button" data-tooltip="poi002-desc"><span class="poi002"></span></button>
+                    <button class="poi has-tooltip" type="button" data-tooltip="poi003-desc"><span class="poi003"></span></button>
                     <button class="poi has-tooltip" type="button" data-tooltip="poiFRA-desc"><span class="poiFRA"></span></button>
                     <button class="poi has-tooltip" type="button" data-tooltip="poiGER-desc"><span class="poiGER"></span></button>
                     <button class="poi has-tooltip" type="button" data-tooltip="poiNAU-desc"><span class="poiNAU"></span></button>
