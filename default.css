@@ -133,6 +133,9 @@ body::after {
     fill: #c6c6c6;
     font: 12px Helvetica, Arial, sans-serif;
 }
+.scenario-chart-plot text.year-label {
+    font-size: 10px;
+}
 .scenario-chart-plot svg {
     min-width: 500px;
 }

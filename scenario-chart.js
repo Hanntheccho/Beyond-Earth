@@ -43,14 +43,30 @@
             add(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, stroke: '#383838', 'stroke-width': 1 });
             add(svg, 'text', { x: margin.left - 10, y: yy + 4, 'text-anchor': 'end' }, Number(value.toPrecision(3)).toString());
         }
+        const firstYear = sorted[0].year;
+        const lastYear = sorted[sorted.length - 1].year;
+        const yearTicks = [];
+        for (let year = firstYear; year <= lastYear; year += 25) yearTicks.push(year);
+        if (yearTicks[yearTicks.length - 1] !== lastYear) yearTicks.push(lastYear);
+        yearTicks.forEach(year => {
+            const xx = x(year);
+            add(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, stroke: '#888', 'stroke-width': 1 });
+            const label = document.createElementNS(svgNS, 'text');
+            label.setAttribute('x', xx);
+            label.setAttribute('y', height - 15);
+            label.setAttribute('text-anchor', 'middle');
+            label.setAttribute('class', 'year-label');
+            label.textContent = String(year);
+            svg.append(label);
+        });
         const line = sorted.map((point, index) => `${index ? 'L' : 'M'} ${x(point.year)} ${y(point.value)}`).join(' ');
         add(svg, 'path', { d: line, fill: 'none', stroke: color, 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
         sorted.forEach(point => {
             const px = x(point.year), py = y(point.value);
             add(svg, 'circle', { cx: px, cy: py, r: 5, fill: color });
-            add(svg, 'text', { x: px, y: height - 18, 'text-anchor': 'middle' }, String(point.year));
         });
-        add(svg, 'text', { x: margin.left, y: 17, fill: '#fff' }, `${series.replace(/[_-]+/g, ' ')} (${plot.dataset.unit || ''})`);
+        const seriesLabel = series.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
+        add(svg, 'text', { x: margin.left, y: 17, fill: '#fff' }, `${seriesLabel} (${plot.dataset.unit || ''})`);
         plot.replaceChildren(svg);
     }
 

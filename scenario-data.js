@@ -1,15 +1,11 @@
 // Fictional interpretation of the scenario's global mean surface temperature.
 // Pre-modern values are especially approximate. The dip after 2070 represents
 // temporary nuclear-winter cooling, followed by recovery as ash settles.
-// These are narrative estimates, not a climate-model output. Population uses
-// billions of people, with a postwar decline and gradual recovery by 2200.
+// These are narrative estimates, not model output. Population and displacement
+// use billions of people; crop yield is an index (2020 = 100); sea level is
+// relative to 1900. The 50 m sea-level endpoint is intentional extreme fiction.
 window.scenarioChartData = {
     temperature: [
-        { year: 1900, value: 13.8 },
-        { year: 1910, value: 13.8 },
-        { year: 1920, value: 13.8 },
-        { year: 1930, value: 13.9 },
-        { year: 1940, value: 13.9 },
         { year: 1950, value: 13.9 },
         { year: 1960, value: 14.0 },
         { year: 1970, value: 14.0 },
@@ -44,7 +40,6 @@ window.scenarioChartData = {
         { year: 2200, value: 18.1 }
     ],
     population: [
-        { year: 1900, value: 1.65 },
         { year: 1950, value: 2.53 },
         { year: 1960, value: 3.0 },
         { year: 1970, value: 3.7 },
@@ -68,5 +63,68 @@ window.scenarioChartData = {
         { year: 2150, value: 8.7 },
         { year: 2180, value: 9.0 },
         { year: 2200, value: 9.236 }
+    ],
+    seaLevel: [
+        { year: 1950, value: 0.06 },
+        { year: 2000, value: 0.14 },
+        { year: 2020, value: 0.20 },
+        { year: 2030, value: 0.4 },
+        { year: 2050, value: 0.9 },
+        { year: 2070, value: 1.9 },
+        { year: 2080, value: 3.9 },
+        { year: 2090, value: 6.9 },
+        { year: 2100, value: 10.9 },
+        { year: 2120, value: 19.9 },
+        { year: 2150, value: 31.9 },
+        { year: 2180, value: 42.9 },
+        { year: 2200, value: 50.0 }
+    ],
+    cropYield: [
+        { year: 1950, value: 38 },
+        { year: 2000, value: 75 },
+        { year: 2020, value: 100 },
+        { year: 2030, value: 108 },
+        { year: 2050, value: 118 },
+        { year: 2070, value: 122 },
+        { year: 2075, value: 100 },
+        { year: 2080, value: 75 },
+        { year: 2090, value: 70 },
+        { year: 2100, value: 72 },
+        { year: 2120, value: 82 },
+        { year: 2150, value: 92 },
+        { year: 2180, value: 100 },
+        { year: 2200, value: 105 }
+    ],
+    co2: [
+        { year: 1950, value: 311 },
+        { year: 2000, value: 370 },
+        { year: 2020, value: 415 },
+        { year: 2030, value: 445 },
+        { year: 2050, value: 525 },
+        { year: 2070, value: 650 },
+        { year: 2075, value: 690 },
+        { year: 2080, value: 700 },
+        { year: 2090, value: 700 },
+        { year: 2100, value: 690 },
+        { year: 2120, value: 680 },
+        { year: 2150, value: 665 },
+        { year: 2180, value: 650 },
+        { year: 2200, value: 640 }
+    ],
+    displaced: [
+        { year: 1950, value: 0.05 },
+        { year: 2000, value: 0.05 },
+        { year: 2020, value: 0.08 },
+        { year: 2030, value: 0.12 },
+        { year: 2050, value: 0.3 },
+        { year: 2070, value: 0.5 },
+        { year: 2075, value: 1.2 },
+        { year: 2080, value: 1.8 },
+        { year: 2090, value: 1.7 },
+        { year: 2100, value: 1.5 },
+        { year: 2120, value: 1.2 },
+        { year: 2150, value: 0.9 },
+        { year: 2180, value: 0.7 },
+        { year: 2200, value: 0.5 }
     ]
 };
