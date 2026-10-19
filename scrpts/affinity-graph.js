@@ -19,42 +19,41 @@
         { id: 'neutral', name: 'Neutral', symbol: '◉', description: 'affNTR-desc', color: '#ffffff', x: 300, y: 260 }
     ];
 
-    // Use one coordinate source for both line endpoints and node centers.
-    // Every pair connects; the six edges around the perimeter are emphasized.
-    const definitions = document.createElementNS(svgNS, 'defs');
+    // Emphasized perimeter links join neighbors; faint blended links meet at Neutral.
     const ideologicalNodes = affinities.slice(0, 6);
-    for (let firstIndex = 0; firstIndex < ideologicalNodes.length; firstIndex++) {
-        for (let secondIndex = firstIndex + 1; secondIndex < ideologicalNodes.length; secondIndex++) {
-            const first = ideologicalNodes[firstIndex];
-            const second = ideologicalNodes[secondIndex];
-            const gradient = document.createElementNS(svgNS, 'linearGradient');
-            gradient.id = `affinity-link-${first.id}-${second.id}`;
-            gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
-            gradient.setAttribute('x1', first.x);
-            gradient.setAttribute('y1', first.y);
-            gradient.setAttribute('x2', second.x);
-            gradient.setAttribute('y2', second.y);
-            const start = document.createElementNS(svgNS, 'stop');
-            start.setAttribute('stop-color', first.color);
-            const end = document.createElementNS(svgNS, 'stop');
-            end.setAttribute('offset', '1');
-            end.setAttribute('stop-color', second.color);
-            gradient.append(start, end);
-            definitions.append(gradient);
-
-            const line = document.createElementNS(svgNS, 'line');
-            line.setAttribute('x1', first.x);
-            line.setAttribute('y1', first.y);
-            line.setAttribute('x2', second.x);
-            line.setAttribute('y2', second.y);
-            const neighbors = secondIndex === firstIndex + 1 || (firstIndex === 0 && secondIndex === 5);
-            line.setAttribute('class', `affinity-link${neighbors ? ' affinity-link--strong' : ' affinity-link--soft'}`);
-            line.setAttribute('stroke', `url(#${gradient.id})`);
-            svg.append(line);
-        }
-    }
-    // Neutral stays central and connects lightly to each affinity.
     const neutral = affinities[6];
+    const definitions = document.createElementNS(svgNS, 'defs');
+
+    function addGradient(id, from, to) {
+        const gradient = document.createElementNS(svgNS, 'linearGradient');
+        gradient.id = id;
+        gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
+        gradient.setAttribute('x1', from.x);
+        gradient.setAttribute('y1', from.y);
+        gradient.setAttribute('x2', to.x);
+        gradient.setAttribute('y2', to.y);
+        const start = document.createElementNS(svgNS, 'stop');
+        start.setAttribute('stop-color', from.color);
+        const end = document.createElementNS(svgNS, 'stop');
+        end.setAttribute('offset', '1');
+        end.setAttribute('stop-color', to.color);
+        gradient.append(start, end);
+        definitions.append(gradient);
+        return `url(#${id})`;
+    }
+
+    ideologicalNodes.forEach((affinity, index) => {
+        const neighbor = ideologicalNodes[(index + 1) % ideologicalNodes.length];
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('x1', affinity.x);
+        line.setAttribute('y1', affinity.y);
+        line.setAttribute('x2', neighbor.x);
+        line.setAttribute('y2', neighbor.y);
+        line.setAttribute('class', 'affinity-link affinity-link--strong');
+        line.setAttribute('stroke', addGradient(`affinity-neighbor-${affinity.id}-${neighbor.id}`, affinity, neighbor));
+        svg.append(line);
+    });
+
     ideologicalNodes.forEach(affinity => {
         const line = document.createElementNS(svgNS, 'line');
         line.setAttribute('x1', neutral.x);
@@ -62,7 +61,7 @@
         line.setAttribute('x2', affinity.x);
         line.setAttribute('y2', affinity.y);
         line.setAttribute('class', 'affinity-link affinity-link--soft');
-        line.setAttribute('stroke', '#dedede');
+        line.setAttribute('stroke', addGradient(`affinity-neutral-${affinity.id}`, neutral, affinity));
         svg.append(line);
     });
     svg.insertBefore(definitions, svg.firstChild);
