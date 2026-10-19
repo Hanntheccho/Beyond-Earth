@@ -32,7 +32,7 @@
         max += padding;
         const x = year => margin.left + ((year - sorted[0].year) / ((sorted.at(-1).year - sorted[0].year) || 1)) * innerWidth;
         const y = value => margin.top + ((max - value) / (max - min)) * innerHeight;
-        const color = plot.dataset.color || '#d9a441';
+        const color = plot.dataset.color || '#d94141';
 
         const meta = document.createElement('div');
         meta.className = 'scenario-chart-meta';
@@ -77,7 +77,7 @@
         if (eventYear >= firstYear && eventYear <= lastYear) {
             const eventX = x(eventYear);
             add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top, y2: height - margin.bottom, stroke: '#ff3333', 'stroke-width': 1.5, 'stroke-dasharray': '4 4' });
-            const tagWidth = 132, tagHeight = 18;
+            const tagWidth = 132, tagHeight = 19;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
             add(svg, 'rect', { x: tagX, y: margin.top + -7, width: tagWidth, height: tagHeight, rx: 3, fill: '#2a1111', stroke: '#ff3333', 'stroke-width': 0.8 });
             add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top + 6, 'text-anchor': 'middle', class: 'chart-event-label' }, '2070 · GREAT MISTAKE');

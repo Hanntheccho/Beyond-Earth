@@ -22,6 +22,8 @@
     "wrldpops": "Wrld Pops",
     "wrldslvl": "Wrld Sea Lvl",
     "wrldcrop": "Wrld Crop Yield",
+    "wrldbiod": "Wrld Biodiversity",
+    "wrldfrsh": "Freshwater Per Person",
     "wrldco2e": "Atmospheric CO₂",
     "wrldpopx": "Displaced Population",
     "be-info-txt": "<p>WRLD Date 101902</p><p>WRLD Temp <span class=\"neutral\">18.1°C</span></p><p>WRLD Pops <span class=\"neutral\">9.236B</span></p><p>WRLD SLVL <span class=\"neutral\">+50.0M</span></p><p>WRLD CO2E <span class=\"neutral\">640PPM</span></p>",

@@ -3,7 +3,9 @@
 // temporary nuclear-winter cooling, followed by recovery as ash settles.
 // These are narrative estimates, not model output. Population and displacement
 // use billions of people; crop yield is an index (2020 = 100); sea level is
-// relative to 1900. The 50 m sea-level endpoint is intentional extreme fiction.
+// relative to 1900. Biodiversity is an index (1950 = 100), and freshwater is
+// renewable freshwater availability per person. The 50 m sea-level endpoint
+// and later trajectories are intentional extreme fiction.
 window.scenarioChartData = {
     temperature: [
         { year: 1950, value: 13.9 },
@@ -126,5 +128,43 @@ window.scenarioChartData = {
         { year: 2150, value: 0.9 },
         { year: 2180, value: 0.7 },
         { year: 2200, value: 0.5 }
+    ],
+    biodiversity: [
+        { year: 1950, value: 100 },
+        { year: 1970, value: 94 },
+        { year: 1990, value: 86 },
+        { year: 2000, value: 80 },
+        { year: 2010, value: 74 },
+        { year: 2020, value: 68 },
+        { year: 2030, value: 63 },
+        { year: 2050, value: 54 },
+        { year: 2070, value: 45 },
+        { year: 2075, value: 32 },
+        { year: 2080, value: 28 },
+        { year: 2090, value: 26 },
+        { year: 2100, value: 27 },
+        { year: 2120, value: 30 },
+        { year: 2150, value: 34 },
+        { year: 2180, value: 39 },
+        { year: 2200, value: 45 }
+    ],
+    freshwater: [
+        { year: 1950, value: 14000 },
+        { year: 1970, value: 11500 },
+        { year: 1990, value: 9000 },
+        { year: 2000, value: 7500 },
+        { year: 2010, value: 6500 },
+        { year: 2020, value: 5800 },
+        { year: 2030, value: 5100 },
+        { year: 2050, value: 4200 },
+        { year: 2070, value: 3500 },
+        { year: 2075, value: 2500 },
+        { year: 2080, value: 2100 },
+        { year: 2090, value: 1700 },
+        { year: 2100, value: 1500 },
+        { year: 2120, value: 1600 },
+        { year: 2150, value: 1900 },
+        { year: 2180, value: 2400 },
+        { year: 2200, value: 3000 }
     ]
 };

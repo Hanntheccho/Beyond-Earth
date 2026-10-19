@@ -143,6 +143,7 @@ body::after {
 .scenario-chart-plot {
     box-sizing: border-box;
     margin: 20px auto;
+    margin-top: -10px;
     width: 95%;
     min-height: 260px;
     overflow-x: auto;
@@ -174,18 +175,7 @@ body::after {
     filter: drop-shadow(0 0 4px #ffffff88);
 }
 .scenario-chart-plot svg {
-    min-width: 500px;
-}
-@media (max-width: 600px) {
-    .climate-chart {
-        padding: 0 8px 10px;
-    }
-    .scenario-chart-plot {
-        min-height: 220px;
-    }
-    .scenario-chart-plot svg {
-        min-width: 500px;
-    }
+    min-width: 600px;
 }
 
 .btn20 {
