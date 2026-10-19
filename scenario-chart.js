@@ -21,7 +21,7 @@
         if (!sorted.length) return;
 
         const width = 800, height = 360;
-        const margin = { top: 28, right: 28, bottom: 48, left: 64 };
+        const margin = { top: 20, right: 28, bottom: 48, left: 64 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         let min = Math.min(...sorted.map(point => point.value));

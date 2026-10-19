@@ -28,61 +28,6 @@ document.querySelectorAll('.top-btns [data-panel]').forEach(function(button) {
     });
 });
 
-document.querySelectorAll('.div-desc').forEach(function(description, index) {
-    const content = document.createElement('div');
-    content.className = 'div-desc-content';
-
-    while (description.firstChild) {
-        content.appendChild(description.firstChild);
-    }
-
-    const toggle = document.createElement('button');
-    toggle.className = 'div-desc-toggle';
-    toggle.type = 'button';
-    toggle.setAttribute('aria-controls', 'description-content-' + index);
-    content.id = 'description-content-' + index;
-    description.append(toggle, content);
-
-    function setExpanded(expanded) {
-        const wasExpanded = toggle.getAttribute('aria-expanded') === 'true';
-
-        if (expanded !== wasExpanded) {
-            content.style.maxHeight = content.getBoundingClientRect().height + 'px';
-            content.getBoundingClientRect();
-            description.classList.toggle('is-collapsed', !expanded);
-            content.style.maxHeight = expanded ? content.scrollHeight + 'px' : '4.5em';
-        }
-
-        toggle.setAttribute('aria-expanded', String(expanded));
-        toggle.textContent = expanded ? '−' : '+';
-    }
-
-    content.addEventListener('transitionend', function(event) {
-        if (event.propertyName === 'max-height' && toggle.getAttribute('aria-expanded') === 'true') {
-            content.style.maxHeight = 'none';
-        }
-    });
-
-    toggle.addEventListener('click', function() {
-        setExpanded(toggle.getAttribute('aria-expanded') !== 'true');
-    });
-
-    const initiallyExpanded = description.dataset.collapsed !== 'true';
-    description.classList.toggle('is-collapsed', !initiallyExpanded);
-    toggle.setAttribute('aria-expanded', String(initiallyExpanded));
-    toggle.textContent = initiallyExpanded ? '−' : '+';
-});
-
-document.querySelectorAll('.div-desc-win.grid a[href^="#poi"]').forEach(function(link) {
-    link.addEventListener('click', function() {
-        const poi = document.getElementById(link.hash.slice(1));
-        const toggle = poi && poi.querySelector('.div-desc-toggle');
-        if (toggle && toggle.getAttribute('aria-expanded') !== 'true') {
-            toggle.click();
-        }
-    });
-});
-
 function positionTooltips() {
     document.querySelectorAll('.has-tooltip').forEach(function(element) {
         const bounds = element.getBoundingClientRect();

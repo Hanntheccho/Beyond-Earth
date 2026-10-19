@@ -109,11 +109,31 @@ body::after {
 .div-desc-win {
     margin: 20px;
     border: 4px solid;
+    border-left: 12px solid;
     border-color: var(--clrbs);
 }
 .div-desc-win.grid {
     display: flex;
     flex-wrap: wrap;
+}
+.div-desc-win {
+    animation: panel-enter 650ms cubic-bezier(.2, .7, .2, 1) both;
+}
+.div-desc-win:nth-child(2) { animation-delay: 70ms; }
+.div-desc-win:nth-child(3) { animation-delay: 120ms; }
+.div-desc-win:nth-child(4) { animation-delay: 170ms; }
+@keyframes panel-enter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.div-desc-win:target {
+    border-color: #ffffff70;
 }
 
 .scenario-chart-meta {
@@ -217,8 +237,8 @@ body::after {
 }
 .top-btns {
     margin: 20px;
-    margin-bottom: -18px;
-    margin-top: -10px;
+    margin-bottom: -12px;
+    margin-top: -4px;
 }
 .top-btns.grid {
     display: flex;
@@ -274,7 +294,7 @@ h2 {
     padding-left: 18px;
     line-height: 40px;
     color: var(--clrh2loc);
-    box-shadow: 0 4px 0 var(--clrbs);
+    border-bottom: 4px solid var(--clrbs);
     font-weight: normal;
     align-items: flex-end;
     justify-content: flex-start;
@@ -292,7 +312,12 @@ h2 {
     padding: 28px;
     padding-top: 8px;
     padding-bottom: 8px;
-    box-shadow: 4px 0 0 var(--clrbs), -4px 0 0 var(--clrbs);
+    border-left: 4px solid var(--clrbs);
+    border-right: 4px solid var(--clrbs);
+    max-height: 26rem;
+    overflow-y: auto;
+    scrollbar-color: var(--clr02) var(--clrbs);
+    scrollbar-width: thin;
 }
 .div-desc.has-background {
     position: relative;
@@ -305,49 +330,9 @@ h2 {
     z-index: -1;
     background-image: var(--desc-bg, url("be_icon_w.svg"));
     background-position: center;
-    background-size: 90% auto;
+    background-size: auto 90%;
     background-repeat: no-repeat;
     opacity: 0.1;
-}
-.div-desc-toggle {
-    display: block;
-    margin: 0 0 -6px auto;
-    padding: 0 8px;
-    border: 2px solid var(--clrbs);
-    border-left: 33px solid var(--clrbs);
-    background: transparent;
-    color: var(--clrpt);
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    line-height: 1.2;
-    cursor: pointer;
-}
-.div-desc-toggle:hover,
-.div-desc-toggle:focus-visible {
-    color: var(--clrbt);
-    border-color: var(--clr02);
-}
-.div-desc.is-collapsed .div-desc-content {
-    margin-bottom: 19px;
-    max-height: 4.5em;
-    position: relative;
-}
-.div-desc-content {
-    overflow: hidden;
-    transition: max-height 350ms ease;
-}
-.div-desc.is-collapsed .div-desc-content::after {
-    content: "…";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding-left: 1em;
-    background: var(--clrb2);
-}
-@media (prefers-reduced-motion: reduce) {
-    .div-desc-content {
-        transition: none;
-    }
 }
 
 .be-info {
@@ -428,12 +413,14 @@ h2 {
     overflow: auto;
     padding: 12px 14px;
     border: 4px solid var(--clrbs);
+    border-left: 12px solid var(--clrbs);
     background: var(--clrbgt);
     white-space: normal;
     overflow-wrap: anywhere;
     box-shadow: 0 4px 16px #00000080;
     overscroll-behavior: contain;
     scrollbar-color: var(--clr02) var(--clrbs);
+    scrollbar-width: thin;
 }
 .tooltip-popup p {
     margin: 0 0 0.75em;
@@ -453,31 +440,6 @@ h2 {
         #ffffff0a,
         transparent 70%
     );
-}
-
-/* Motion: subtle entrance and hover feedback */
-.div-desc-win {
-    animation: panel-enter 650ms cubic-bezier(.2, .7, .2, 1) both;
-}
-
-.div-desc-win:nth-child(2) { animation-delay: 70ms; }
-.div-desc-win:nth-child(3) { animation-delay: 120ms; }
-.div-desc-win:nth-child(4) { animation-delay: 170ms; }
-
-@keyframes panel-enter {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.div-desc-win:target {
-    border-color: #ffffff70;
-    box-shadow: 0 0 24px #ffffff16;
 }
 
 @media (prefers-reduced-motion: reduce) {
