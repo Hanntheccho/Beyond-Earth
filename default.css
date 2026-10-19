@@ -423,6 +423,9 @@ h2 {
     background-color: #ffffff12;
     filter: brightness(1.2);
 }
+.poi[aria-pressed="true"] {
+    background-color: #ffffff2a;
+}
 
 .has-tooltip {
     display: inline-block;

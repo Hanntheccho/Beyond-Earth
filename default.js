@@ -28,6 +28,25 @@ document.querySelectorAll('.top-btns [data-panel]').forEach(function(button) {
     });
 });
 
+document.querySelectorAll('#MIT-panel [data-chart-panel]').forEach(function(button) {
+    button.addEventListener('click', function() {
+        const chartId = button.dataset.chartPanel;
+        const chartPanel = document.getElementById(chartId);
+        if (!chartPanel) return;
+
+        document.querySelectorAll('#MIT-panel .scenario-chart-plot').forEach(function(chart) {
+            const panel = chart.closest('.div-desc-win');
+            const isActive = panel === chartPanel;
+            panel.hidden = !isActive;
+            panel.setAttribute('aria-hidden', String(!isActive));
+        });
+
+        document.querySelectorAll('#MIT-panel [data-chart-panel]').forEach(function(candidate) {
+            candidate.setAttribute('aria-pressed', String(candidate === button));
+        });
+    });
+});
+
 function positionTooltips() {
     document.querySelectorAll('.has-tooltip').forEach(function(element) {
         const bounds = element.getBoundingClientRect();

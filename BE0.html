@@ -62,44 +62,44 @@
                     <div class="div-desc has-background" style="--desc-bg: url('gfx/text_icons/mit.svg')"><span class="MIT-desc"></span></div>
                 </div>
                 <div class="div-desc-win grid">
-                    <a href="#wrldtemp"><button class="poi" type="button"><span class="wrldtemp"></span></button></a>
-                    <a href="#wrldpops"><button class="poi" type="button"><span class="wrldpops"></span></button></a>
-                    <a href="#wrldslvl"><button class="poi" type="button"><span class="wrldslvl"></span></button></a>
-                    <a href="#wrldcrop"><button class="poi" type="button"><span class="wrldcrop"></span></button></a>
-                    <a href="#wrldbiod"><button class="poi" type="button"><span class="wrldbiod"></span></button></a>
-                    <a href="#wrldfrsh"><button class="poi" type="button"><span class="wrldfrsh"></span></button></a>
-                    <a href="#wrldco2e"><button class="poi" type="button"><span class="wrldco2e"></span></button></a>
-                    <a href="#wrldpopx"><button class="poi" type="button"><span class="wrldpopx"></span></button></a>
+                    <a href="#wrldtemp"><button class="poi" type="button" data-chart-panel="wrldtemp" aria-pressed="true"><span class="wrldtemp"></span></button></a>
+                    <a href="#wrldpops"><button class="poi" type="button" data-chart-panel="wrldpops"><span class="wrldpops"></span></button></a>
+                    <a href="#wrldslvl"><button class="poi" type="button" data-chart-panel="wrldslvl"><span class="wrldslvl"></span></button></a>
+                    <a href="#wrldcrop"><button class="poi" type="button" data-chart-panel="wrldcrop"><span class="wrldcrop"></span></button></a>
+                    <a href="#wrldbiod"><button class="poi" type="button" data-chart-panel="wrldbiod"><span class="wrldbiod"></span></button></a>
+                    <a href="#wrldfrsh"><button class="poi" type="button" data-chart-panel="wrldfrsh"><span class="wrldfrsh"></span></button></a>
+                    <a href="#wrldco2e"><button class="poi" type="button" data-chart-panel="wrldco2e"><span class="wrldco2e"></span></button></a>
+                    <a href="#wrldpopx"><button class="poi" type="button" data-chart-panel="wrldpopx"><span class="wrldpopx"></span></button></a>
                 </div>
-                <div class="div-desc-win" id="wrldtemp">
+                <div class="div-desc-win" id="wrldtemp" aria-hidden="false">
                     <h2><span class="wrldtemp"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="temperature" data-unit="°C" data-color="#d9a441" role="img"></div>
                 </div>
-                <div class="div-desc-win" id="wrldpops">
+                <div class="div-desc-win" id="wrldpops" hidden aria-hidden="true">
                     <h2><span class="wrldpops"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="population" data-unit="B" data-color="#7aa6c2" role="img"></div>
                 </div>
-                <div class="div-desc-win" id="wrldslvl">
+                <div class="div-desc-win" id="wrldslvl" hidden aria-hidden="true">
                     <h2><span class="wrldslvl"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="seaLevel" data-unit="M" data-color="#55b9c9" role="img"></div>
                 </div>
-                <div class="div-desc-win" id="wrldcrop">
+                <div class="div-desc-win" id="wrldcrop" hidden aria-hidden="true">
                     <h2><span class="wrldcrop"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="cropYield" data-unit="index" data-color="#91b86c" role="img"></div>
                 </div>
-                <div class="div-desc-win" id="wrldbiod">
+                <div class="div-desc-win" id="wrldbiod" hidden aria-hidden="true">
                     <h2><span class="wrldbiod"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="biodiversity" data-unit="index" data-color="#70ad78" role="img"></div>
                 </div>
-                <div class="div-desc-win" id="wrldfrsh">
+                <div class="div-desc-win" id="wrldfrsh" hidden aria-hidden="true">
                     <h2><span class="wrldfrsh"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="freshwater" data-unit="m³" data-color="#62a9dd" role="img"></div>
                 </div>
-                <div class="div-desc-win" id="wrldco2e">
+                <div class="div-desc-win" id="wrldco2e" hidden aria-hidden="true">
                     <h2><span class="wrldco2e"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="co2" data-unit="ppm" data-color="#c58bc9" role="img"></div>
                 </div>
-                <div class="div-desc-win" id="wrldpopx">
+                <div class="div-desc-win" id="wrldpopx" hidden aria-hidden="true">
                     <h2><span class="wrldpopx"></span><img src="be_icon_b_h2.svg" class="h2-text-icon"></h2>
                     <div class="scenario-chart-plot" data-series="displaced" data-unit="B" data-color="#d98c5f" role="img"></div>
                 </div>
