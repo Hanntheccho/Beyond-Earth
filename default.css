@@ -156,7 +156,7 @@ body::after {
     font-size: 20px;
     letter-spacing: 6px;
     font-weight: normal;
-    font-family: "Consolas";
+    font-family: "Consolas", monospace;
 }
 .scenario-chart-plot {
     --chart-accent: #d94141;
@@ -209,6 +209,24 @@ body::after {
 }
 .scenario-chart-plot svg {
     min-width: 600px;
+}
+
+.market-chart {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+.market-chart svg {
+    display: block;
+    width: 90%;
+    height: auto;
+    min-width: 600px;
+    margin: 0 auto 36px;
+}
+.market-chart text.market-tag {
+    fill: #fff;
+    font-family: "Consolas", monospace;
+    pointer-events: none;
 }
 
 .btn20 {
@@ -348,7 +366,7 @@ h2 {
     color: var(--clrtxt);
     background-color: var(--clrbgt);;
     z-index: 1000;
-    font-family: "Consolas";
+    font-family: "Consolas", monospace;
     padding: 0 20px 0 20px;
 }
 
