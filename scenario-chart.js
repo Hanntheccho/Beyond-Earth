@@ -8,6 +8,7 @@
         Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
         if (text !== undefined) element.textContent = text;
         svg.append(element);
+        return element;
     }
 
     function render(plot) {
@@ -32,6 +33,19 @@
         const x = year => margin.left + ((year - sorted[0].year) / ((sorted.at(-1).year - sorted[0].year) || 1)) * innerWidth;
         const y = value => margin.top + ((max - value) / (max - min)) * innerHeight;
         const color = plot.dataset.color || '#d9a441';
+
+        const meta = document.createElement('div');
+        meta.className = 'scenario-chart-meta';
+        meta.style.setProperty('--chart-accent', color);
+        const metric = document.createElement('span');
+        metric.className = 'scenario-chart-kpi';
+        const yearLabel = document.createElement('span');
+        yearLabel.textContent = `${sorted[sorted.length - 1].year} outlook`;
+        const valueLabel = document.createElement('strong');
+        valueLabel.textContent = `${Number(sorted[sorted.length - 1].value.toPrecision(4))} ${plot.dataset.unit || ''}`;
+        metric.append(yearLabel, valueLabel);
+        meta.append(metric);
+        plot.before(meta);
 
         const svg = document.createElementNS(svgNS, 'svg');
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -59,14 +73,28 @@
             label.textContent = String(year);
             svg.append(label);
         });
-        const line = sorted.map((point, index) => `${index ? 'L' : 'M'} ${x(point.year)} ${y(point.value)}`).join(' ');
-        add(svg, 'path', { d: line, fill: 'none', stroke: color, 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+        const eventYear = 2070;
+        if (eventYear >= firstYear && eventYear <= lastYear) {
+            const eventX = x(eventYear);
+            add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top, y2: height - margin.bottom, stroke: '#ff3333', 'stroke-width': 1.5, 'stroke-dasharray': '4 4' });
+            const tagWidth = 132, tagHeight = 18;
+            const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
+            add(svg, 'rect', { x: tagX, y: margin.top + -7, width: tagWidth, height: tagHeight, rx: 3, fill: '#2a1111', stroke: '#ff3333', 'stroke-width': 0.8 });
+            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top + 6, 'text-anchor': 'middle', class: 'chart-event-label' }, '2070 · GREAT MISTAKE');
+        }
+        for (let index = 1; index < sorted.length; index++) {
+            const previous = sorted[index - 1], current = sorted[index];
+            add(svg, 'path', {
+                d: `M ${x(previous.year)} ${y(previous.value)} L ${x(current.year)} ${y(current.value)}`,
+                fill: 'none', stroke: color, 'stroke-width': 2.5,
+                'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+            });
+        }
         sorted.forEach(point => {
             const px = x(point.year), py = y(point.value);
-            add(svg, 'circle', { cx: px, cy: py, r: 5, fill: color });
+            const dot = add(svg, 'circle', { cx: px, cy: py, r: 4, fill: color, stroke: '#17191c', 'stroke-width': 1.5 });
+            add(dot, 'title', {}, `${point.year}: ${point.value} ${plot.dataset.unit || ''}`);
         });
-        const seriesLabel = series.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
-        add(svg, 'text', { x: margin.left, y: 17, fill: '#fff' }, `${seriesLabel} (${plot.dataset.unit || ''})`);
         plot.replaceChildren(svg);
     }
 

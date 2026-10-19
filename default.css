@@ -116,6 +116,30 @@ body::after {
     flex-wrap: wrap;
 }
 
+.scenario-chart-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin: 0 3% 4px;
+    color: #aab0b8;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+.scenario-chart-kpi {
+    white-space: nowrap;
+}
+.scenario-chart-kpi strong {
+    margin-left: 7px;
+    color: var(--chart-accent, #d94141);
+    font-size: 16px;
+    letter-spacing: 6px;
+    font-weight: normal;
+}
+.scenario-chart-plot {
+    --chart-accent: #d94141;
+}
 .scenario-chart-plot {
     box-sizing: border-box;
     margin: 20px auto;
@@ -135,6 +159,19 @@ body::after {
 }
 .scenario-chart-plot text.year-label {
     font-size: 10px;
+}
+.scenario-chart-plot text.chart-event-label {
+    fill: #f0b8b8;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+}
+.scenario-chart-plot circle {
+    cursor: help;
+    transition: r 120ms ease, filter 120ms ease;
+}
+.scenario-chart-plot circle:hover {
+    r: 6px;
+    filter: drop-shadow(0 0 4px #ffffff88);
 }
 .scenario-chart-plot svg {
     min-width: 500px;
