@@ -133,21 +133,33 @@ body::after {
 .scenario-chart-kpi strong {
     margin-left: 7px;
     color: var(--chart-accent, #d94141);
-    font-size: 16px;
+    font-size: 20px;
     letter-spacing: 6px;
     font-weight: normal;
+    font-family: "Consolas";
 }
 .scenario-chart-plot {
     --chart-accent: #d94141;
 }
 .scenario-chart-plot {
-    box-sizing: border-box;
-    margin: 20px auto;
-    margin-top: -10px;
-    width: 95%;
-    min-height: 260px;
-    overflow-x: auto;
-    background: #00000000;
+    position: relative;
+    isolation: isolate;
+}
+.scenario-chart-plot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('gfx/text_icons/mit.svg');
+    background-position: center;
+    background-size: auto 60%;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+}
+.scenario-chart-plot svg {
+    position: relative;
+    z-index: 1;
 }
 .scenario-chart-plot svg {
     display: block;
@@ -156,15 +168,16 @@ body::after {
 }
 .scenario-chart-plot text {
     fill: #c6c6c6;
-    font: 12px Helvetica, Arial, sans-serif;
+    font: 12px "Consolas";
 }
 .scenario-chart-plot text.year-label {
-    font-size: 10px;
+    font-size: 12px;
 }
 .scenario-chart-plot text.chart-event-label {
     fill: #f0b8b8;
     font-size: 9px;
-    letter-spacing: 0.5px;
+    font-family: Helvetica, Arial, sans-serif;
+    letter-spacing: 1px;
 }
 .scenario-chart-plot circle {
     cursor: help;

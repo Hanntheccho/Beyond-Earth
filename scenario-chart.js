@@ -79,8 +79,8 @@
             add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top, y2: height - margin.bottom, stroke: '#ff3333', 'stroke-width': 1.5, 'stroke-dasharray': '4 4' });
             const tagWidth = 132, tagHeight = 19;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
-            add(svg, 'rect', { x: tagX, y: margin.top + -7, width: tagWidth, height: tagHeight, rx: 3, fill: '#2a1111', stroke: '#ff3333', 'stroke-width': 0.8 });
-            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top + 6, 'text-anchor': 'middle', class: 'chart-event-label' }, '2070 · GREAT MISTAKE');
+            add(svg, 'rect', { x: tagX, y: margin.top, width: tagWidth, height: tagHeight, rx: 3, fill: '#2a1111', stroke: '#ff3333', 'stroke-width': 0.8 });
+            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top + 13, 'text-anchor': 'middle', class: 'chart-event-label' }, '2070 · GREAT MISTAKE');
         }
         for (let index = 1; index < sorted.length; index++) {
             const previous = sorted[index - 1], current = sorted[index];
