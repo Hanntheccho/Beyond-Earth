@@ -54,7 +54,6 @@ document.querySelectorAll('.div-desc').forEach(function(description, index) {
         }
 
         toggle.setAttribute('aria-expanded', String(expanded));
-        toggle.setAttribute('aria-label', expanded ? 'Ocultar descripción' : 'Mostrar descripción completa');
         toggle.textContent = expanded ? '−' : '+';
     }
 
@@ -71,7 +70,6 @@ document.querySelectorAll('.div-desc').forEach(function(description, index) {
     const initiallyExpanded = description.dataset.collapsed !== 'true';
     description.classList.toggle('is-collapsed', !initiallyExpanded);
     toggle.setAttribute('aria-expanded', String(initiallyExpanded));
-    toggle.setAttribute('aria-label', initiallyExpanded ? 'Ocultar descripción' : 'Mostrar descripción completa');
     toggle.textContent = initiallyExpanded ? '−' : '+';
 });
 
