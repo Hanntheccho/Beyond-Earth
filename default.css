@@ -15,6 +15,7 @@
     --brdlft: 12px;
     --brdpxs: 2px;
     --animms: 160ms;
+    --alpico: 0.1;
 }
 
 button {
@@ -59,7 +60,7 @@ p b {
     width: 1px;
     height: auto;
     transform: scale(180);
-    opacity: 0.1;
+    opacity: var(--alpico);
 }
 
 h1 {
@@ -269,7 +270,7 @@ body::after {
     background-position: center;
     background-size: auto 90%;
     background-repeat: no-repeat;
-    opacity: 0.1;
+    opacity: var(--alpico);
 }
 
 .be-info {
@@ -432,7 +433,7 @@ body::after {
     background-position: center;
     background-size: auto 60%;
     background-repeat: no-repeat;
-    opacity: 0.1;
+    opacity: var(--alpico);
 }
 .scenario-chart-plot svg {
     position: relative;
