@@ -8,13 +8,13 @@
  * zooming out "rolls" the map onto a sphere. The fragment shader decodes a
  * 16-bit elevation heightmap packed into the R/G channels of a PNG, applies
  * hypsometric tints relative to the current sea level, and draws
- * screen-space anti-aliased contour lines, coastline, hillshade, and a
- * reference line marking today's coastline.
+ * screen-space anti-aliased contour lines, coastline, and hillshade.
  */
 
 'use strict';
 
 const DEG_R = 57.29577951308232; // 180/pi: globe radius = scale(px/deg) * DEG_R
+const SEA_LEVEL = 50;
 
 // UI labels and status messages.
 const UI_TEXT = {
@@ -62,9 +62,6 @@ uniform vec2 uTexSize;
 uniform float uSeaLevel;
 uniform float uInterval;
 uniform float uAlpha;
-uniform float uHillshade;
-uniform float uGraticule;
-uniform float uRefCoast;
 uniform float uMetersPerPx;
 out vec4 fragColor;
 
@@ -105,13 +102,11 @@ void main() {
     col = texture(uLUT, vec2(sqrt(clamp(rel / 19850.0, 0.0, 1.0)), 0.75)).rgb;
   }
 
-  if (uHillshade > 0.5) {
-    vec2 g = vec2(dFdx(e), dFdy(e)) / max(uMetersPerPx, 1.0);
-    vec3 n = normalize(vec3(-g.x, -g.y, 1.8));
-    float lit = clamp(dot(n, normalize(vec3(-0.55, 0.62, 0.72))), 0.0, 1.0);
-    float amt = water ? 0.20 : 0.52;
-    col *= (1.0 - amt) + amt * (0.35 + 1.15 * lit);
-  }
+  vec2 g = vec2(dFdx(e), dFdy(e)) / max(uMetersPerPx, 1.0);
+  vec3 n = normalize(vec3(-g.x, -g.y, 1.8));
+  float lit = clamp(dot(n, normalize(vec3(-0.55, 0.62, 0.72))), 0.0, 1.0);
+  float amt = water ? 0.20 : 0.52;
+  col *= (1.0 - amt) + amt * (0.35 + 1.15 * lit);
 
   // contour lines relative to the current sea level: isolines above the new
   // shoreline, isobaths (shallow to deep) below it — including flooded land
@@ -125,20 +120,6 @@ void main() {
   // coastline at the current sea level
   float coast = 1.0 - smoothstep(0.0, 1.5, abs(rel) / max(fwidth(rel), 1e-7));
   col = mix(col, vec3(0.05, 0.23, 0.42), coast * 0.75);
-
-  // reference line marking today's (0 m) coastline while sea level != 0, so
-  // the flooded or reclaimed band between old and new coasts is obvious
-  if (uRefCoast > 0.5) {
-    float refc = 1.0 - smoothstep(0.0, 1.25, abs(e) / max(fwidth(e), 1e-7));
-    col = mix(col, vec3(0.80, 0.22, 0.14), refc * 0.78);
-  }
-
-  if (uGraticule > 0.5) {
-    vec2 gf = vLonLat / 15.0;
-    vec2 gg = abs(fract(gf + 0.5) - 0.5) / max(fwidth(gf), vec2(1e-7));
-    float grat = 1.0 - smoothstep(0.6, 1.6, min(gg.x, gg.y));
-    col = mix(col, vec3(0.15, 0.3, 0.45), grat * 0.30);
-  }
 
   fragColor = vec4(col, uAlpha);
 }`;
@@ -387,7 +368,6 @@ function main() {
     lon: num('lon', 105),
     lat: num('lat', 25),
     s: num('z', 0), // px per degree; 0 -> globe fit, resolved on first resize
-    sea: num('sea', 50),
   };
   let interacted = params.has('lon') || params.has('z') || num('spin', 1) === 0;
   let dirty = true;
@@ -466,11 +446,8 @@ function main() {
     gl.uniform1f(mesh.u.uScale, view.s);
     gl.uniform1f(mesh.u.uMorph, t);
     gl.uniform2f(mesh.u.uViewport, vw, vh);
-    gl.uniform1f(mesh.u.uSeaLevel, view.sea);
+    gl.uniform1f(mesh.u.uSeaLevel, SEA_LEVEL);
     gl.uniform1f(mesh.u.uInterval, autoInterval(view.s));
-    gl.uniform1f(mesh.u.uHillshade, 1.0);
-    gl.uniform1f(mesh.u.uGraticule, 0.0);
-    gl.uniform1f(mesh.u.uRefCoast, Math.abs(view.sea) > 0.01 ? 1.0 : 0.0);
     gl.uniform1f(mesh.u.uMetersPerPx, 111320 / (view.s * dpr));
 
     const halfW = vw / 2 / view.s;
@@ -486,7 +463,6 @@ function main() {
 
   // ---------------------------------------------------------- animation
 
-  let seaAnim = null; // { dir: 1 } ping-pong between -120 and +70
   let zoomAnim = null; // { s0, s1, lon0, lon1, lat0, lat1, t0, dur }
 
   function frame(now) {
@@ -494,12 +470,6 @@ function main() {
     if (!interacted && morphT(view.s) === 1 && data && !dataError) {
       view.lon = wrapLon(view.lon + 0.06);
       dirty = true;
-    }
-    if (seaAnim) {
-      let v = view.sea + seaAnim.dir * 0.28 * (view.s > 30 ? 0.35 : 1);
-      if (v > 70) { v = 70; seaAnim.dir = -1; }
-      if (v < -120) { v = -120; seaAnim.dir = 1; }
-      setSea(v, false);
     }
     if (zoomAnim) {
       const a = Math.min(1, (now - zoomAnim.t0) / zoomAnim.dur);
@@ -654,11 +624,11 @@ function main() {
     const e = Math.round(elevCPU(ll[0], ll[1]));
     const latS = `${Math.abs(ll[1]).toFixed(2)}°${ll[1] >= 0 ? 'N' : 'S'}`;
     const lonS = `${Math.abs(ll[0]).toFixed(2)}°${ll[0] >= 0 ? 'E' : 'W'}`;
-    const rel = e - view.sea;
+    const rel = e - SEA_LEVEL;
     const s = UI_TEXT;
     const status = rel < 0
       ? ` · <b>${Math.round(-rel)} m</b> ${s.underWater}`
-      : (view.sea !== 0 ? ` · <b>${Math.round(rel)} m</b> ${s.aboveSea}` : '');
+      : ` · <b>${Math.round(rel)} m</b> ${s.aboveSea}`;
     readoutEl.innerHTML = `${latS} ${lonS} · <b>${e} m</b>${status}`;
     readoutEl.hidden = false;
   }
@@ -666,97 +636,12 @@ function main() {
   // ----------------------------------------------------------------- UI
 
   const $ = (id) => document.getElementById(id);
-  const seaSlider = $('sea-slider'), seaNum = $('sea-num'), seaValue = $('sea-value');
-
-  // Exponential slider: full planetary range, fine-grained near 0.
-  // slider x in [-1, 1]  ->  sea = sign(x) * (e^(k|x|) - 1)/(e^k - 1) * side,
-  // where side is the Challenger Deep (-11000 m) or Everest (+8848 m).
-  const SEA_MIN = -11000, SEA_MAX = 8848, SEA_K = 6;
-  const SEA_E = Math.exp(SEA_K) - 1;
-
-  function seaFromSlider(x) {
-    const side = x < 0 ? -SEA_MIN : SEA_MAX;
-    const v = Math.sign(x) * ((Math.exp(SEA_K * Math.abs(x)) - 1) / SEA_E) * side;
-    // magnetic detents: snap to the preset values when within ~one slider
-    // notch, so -120/0/+70 are reachable by dragging even where the
-    // exponential scale is coarser than the friendly rounding below
-    const notch = ((SEA_K * Math.exp(SEA_K * Math.abs(x))) / SEA_E) * side * 0.002;
-    for (const p of [-120, 0, 70]) {
-      if (Math.abs(v - p) < Math.max(0.5, 0.6 * notch)) return p;
-    }
-    const a = Math.abs(v);
-    const step = a >= 3000 ? 50 : a >= 1000 ? 10 : a >= 200 ? 5 : a >= 50 ? 1 : 0.5;
-    return Math.round(v / step) * step;
-  }
-
-  function sliderFromSea(v) {
-    const side = v < 0 ? -SEA_MIN : SEA_MAX;
-    const m = Math.min(1, Math.abs(v) / side);
-    return (Math.sign(v) * Math.log(1 + m * SEA_E)) / SEA_K;
-  }
-
-  function setSea(v, stopAnim = true, fromSlider = false) {
-    v = Math.min(SEA_MAX, Math.max(SEA_MIN, v));
-    view.sea = v;
-    if (stopAnim && seaAnim) { seaAnim = null; $('sea-play').textContent = '▶'; }
-    // never write the thumb position back while the slider itself is the
-    // source — the rounding would undo small keyboard steps and wedge it
-    if (!fromSlider) seaSlider.value = String(sliderFromSea(v));
-    const label = `${v > 0 ? '+' : ''}${Math.round(v * 10) / 10} m`;
-    seaSlider.setAttribute('aria-valuetext', label);
-    seaNum.value = String(Math.round(v * 10) / 10);
-    seaValue.textContent = label;
-    document.querySelectorAll('.preset').forEach((b) => {
-      b.classList.toggle('active', Math.abs(+b.dataset.sea - v) < 0.25);
-    });
-    dirty = true;
-  }
-
-  // tick marks at exponential positions along the slider scale
-  {
-    const scale = $('sea-scale');
-    for (const v of [-10000, -3000, -1000, -300, -100, 0, 100, 300, 1000, 3000, 8000]) {
-      const t = document.createElement('span');
-      t.className = 'tick' + (v === 0 ? ' zero' : '');
-      const p = (sliderFromSea(v) + 1) / 2;
-      t.style.left = `calc(8.5px + (100% - 17px) * ${p.toFixed(4)})`;
-      t.title = `${v > 0 ? '+' : ''}${v} m`;
-      scale.appendChild(t);
-    }
-    const lo = document.createElement('b');
-    lo.textContent = `${SEA_MIN}`;
-    const hi = document.createElement('b');
-    hi.textContent = `+${SEA_MAX}`;
-    hi.style.right = '0';
-    scale.append(lo, hi);
-  }
-
-  seaSlider.addEventListener('input', () => setSea(seaFromSlider(+seaSlider.value), true, true));
-  seaNum.addEventListener('change', () => setSea(+seaNum.value || 0));
-  document.querySelectorAll('.preset').forEach((b) => {
-    b.addEventListener('click', () => setSea(+b.dataset.sea));
-  });
-
-  $('sea-play').addEventListener('click', () => {
-    if (seaAnim) {
-      seaAnim = null;
-      $('sea-play').textContent = '▶';
-    } else {
-      seaAnim = { dir: view.sea >= 70 ? -1 : 1 };
-      $('sea-play').textContent = '⏸';
-    }
-  });
-
-  // initial control state from URL
-  setSea(view.sea, false);
-
   // shareable URL
   let urlTimer = 0;
   function scheduleUrlUpdate() {
     clearTimeout(urlTimer);
     urlTimer = setTimeout(() => {
       const p = new URLSearchParams();
-      if (Math.abs(view.sea) > 0.01) p.set('sea', String(Math.round(view.sea * 10) / 10));
       p.set('lon', view.lon.toFixed(2));
       p.set('lat', view.lat.toFixed(2));
       p.set('z', view.s.toFixed(2));

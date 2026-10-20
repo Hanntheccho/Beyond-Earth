@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Earth · Sea Level +50 m</title>
+  <title>Beyond Earth HTML</title>
   <link rel="preload" href="data/elev-1080.png" as="fetch" type="image/png" crossorigin>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,7 +12,7 @@
 
   <div id="loader" role="status">
     <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
-      <g fill="none" stroke="#7fd4ff" stroke-width="1.6" opacity="0.9">
+      <g fill="none" stroke="#fafafa" stroke-width="1.6" opacity="0.9">
         <ellipse cx="32" cy="32" rx="26" ry="26" opacity="0.35"/>
         <path d="M14 40 Q 24 30 32 38 T 50 36"/>
         <path d="M12 32 Q 26 20 36 30 T 52 28" opacity="0.7"/>
@@ -22,34 +22,6 @@
     <div id="loader-text">Loading terrain…</div>
     <div id="loader-bar"><div id="loader-fill"></div></div>
   </div>
-
-  <section id="panel" class="glass" aria-label="Sea level controls">
-    <div id="panel-body">
-      <section class="ctl">
-        <div class="ctl-row">
-          <label for="sea-slider">Sea level</label>
-          <span id="sea-value" class="mono">+50 m</span>
-        </div>
-        <div class="ctl-row">
-          <button id="sea-play" class="icon-btn" title="Animate sea level" aria-label="Animate sea level">▶</button>
-          <input id="sea-slider" type="range" min="-1" max="1" step="0.002" value="0.265"
-                 aria-label="Sea level offset in meters">
-          <input id="sea-num" type="number" min="-11000" max="8848" step="1" value="50"
-                 aria-label="Sea level offset in meters">
-        </div>
-        <div class="ctl-row" id="sea-scale-row" aria-hidden="true">
-          <span class="scale-spacer-l"></span>
-          <div id="sea-scale"></div>
-          <span class="scale-spacer-r"></span>
-        </div>
-        <div class="presets">
-          <button class="preset" data-sea="-120"><b>−120 m</b><span>Ice Age</span></button>
-          <button class="preset" data-sea="0"><b>0 m</b><span>Today</span></button>
-          <button class="preset" data-sea="70"><b>+70 m</b><span>All ice melted</span></button>
-        </div>
-      </section>
-    </div>
-  </section>
 
   <div id="readout" class="glass mono" hidden></div>
 
