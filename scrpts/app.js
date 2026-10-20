@@ -284,7 +284,7 @@ function main() {
 
   // --------------------------------------------------------- view state
 
-  const params = new URLSearchParams(location.search);
+  const params = new URLSearchParams(canvas.dataset.view || location.search);
   const num = (k, d) => (params.has(k) && isFinite(+params.get(k)) ? +params.get(k) : d);
 
   let vw = 0, vh = 0, dpr = 1;
@@ -327,6 +327,9 @@ function main() {
     dirty = true;
   }
   window.addEventListener('resize', resize);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(resize).observe(canvas);
+  }
   resize();
 
   // ------------------------------------------------------------- render
@@ -526,6 +529,7 @@ function main() {
   // shareable URL
   let urlTimer = 0;
   function scheduleUrlUpdate() {
+    if (canvas.dataset.updateUrl === 'false') return;
     clearTimeout(urlTimer);
     urlTimer = setTimeout(() => {
       const p = new URLSearchParams();

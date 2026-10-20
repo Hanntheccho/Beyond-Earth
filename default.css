@@ -483,19 +483,36 @@ body::after {
 }
 
 .sea-globe-preview {
+    position: relative;
+    isolation: isolate;
     width: min(94%, 1100px);
+    height: clamp(420px, 70vw, 700px);
     margin: 12px auto 30px;
     overflow: hidden;
     border: 1px solid #ffffff24;
     background: transparent;
 }
-.sea-globe-preview-frame {
-    display: block;
-    width: 100%;
-    height: clamp(420px, 70vw, 700px);
-    border: 0;
-    background: transparent;
+.sea-globe-preview::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: url("be_icon_w.svg") center / 60% no-repeat;
+    opacity: 0.1;
+    pointer-events: none;
 }
+.sea-globe-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+    cursor: grab;
+    touch-action: none;
+}
+.sea-globe-canvas.dragging { cursor: grabbing; }
 
 .affinity-map {
     position: relative;

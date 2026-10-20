@@ -35,11 +35,13 @@
                 <div class="div-desc-win sea-globe-preview-card">
                     <div class="div-desc-top"><span class="BE0"></span></div>
                     <div class="sea-globe-preview">
-                        <iframe
-                            class="sea-globe-preview-frame"
-                            src="globe/index.html?lon=-30&amp;lat=15"
-                            title="Interactive Earth globe at 50 meters above current sea level">
-                        </iframe>
+                        <canvas
+                            id="map"
+                            class="sea-globe-canvas"
+                            data-view="lon=-30&amp;lat=15"
+                            data-update-url="false"
+                            aria-label="Interactive Earth globe at 50 meters above current sea level">
+                        </canvas>
                     </div>
                 </div>
             </div>
@@ -171,6 +173,7 @@
     <script src="loc/loc.js"></script>
 
     <!-- Scripts -->
+    <script type="module" src="scrpts/app.js"></script>
     <script src="scrpts/affinity-graph.js"></script>
     <script src="default.js"></script>
     <script src="scrpts/scenario-data.js"></script>
