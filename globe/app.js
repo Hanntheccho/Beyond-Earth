@@ -64,9 +64,9 @@ uniform float uAlpha;
 uniform float uMetersPerPx;
 out vec4 fragColor;
 
-const vec3 OCEAN_COLOR = vec3(0.06);
-const vec3 LAND_COLOR = vec3(0.20);
-const vec3 CONTOUR_COLOR = vec3(0.30);
+const vec3 OCEAN_COLOR = vec3(0.1);
+const vec3 LAND_COLOR = vec3(0.4);
+const vec3 CONTOUR_COLOR = vec3(1.0);
 
 float decode(vec4 c) { return c.r * 65280.0 + c.g * 255.0 - 11000.0; }
 
@@ -116,10 +116,14 @@ void main() {
 
   // coastline at the current sea level
   float coast = 1.0 - smoothstep(0.0, 1.5, abs(rel) / max(fwidth(rel), 1e-7));
-  col = mix(col, vec3(1.0), coast * 0.9);
-
-  float surfaceAlpha = water ? 0.1 : 0.6;
-  fragColor = vec4(col, surfaceAlpha * uAlpha);
+  float surfaceAlpha = water ? 0.0 : 0.1;
+  float coastCoverage = coast * 0.9;
+  vec3 coastColor = vec3(0.9);
+  float finalAlpha = coastCoverage + surfaceAlpha * (1.0 - coastCoverage);
+  vec3 finalColor = (
+    coastColor * coastCoverage + col * surfaceAlpha * (1.0 - coastCoverage)
+  ) / max(finalAlpha, 1e-6);
+  fragColor = vec4(finalColor, finalAlpha * uAlpha);
 }`;
 
 const BG_VS = `#version 300 es
@@ -140,8 +144,8 @@ void main() {
   if (d > 0.0 && uMorph > 0.01) {
     glow = (exp(-d / (uR * 0.05)) * 0.5 + exp(-d / (uR * 0.18)) * 0.13) * uMorph;
   }
-  float alpha = clamp(glow, 0.0, 1.0);
-  fragColor = vec4(vec3(0.06) * alpha, alpha);
+  float alpha = clamp(glow, 0.0, 0.0);
+  fragColor = vec4(vec3(0.1) * alpha, alpha);
 }`;
 
 // ----------------------------------------------------------- GL utilities
@@ -589,16 +593,12 @@ function main() {
 
   (async () => {
     try {
-      const lowBlob = await fetchWithProgress('data/elev-1080.png', (p) => {
+      const lowBlob = await fetchWithProgress('elev-1080.png', (p) => {
         loaderFill.style.width = `${Math.round(p * 100)}%`;
       });
       uploadElevation(await decodeElevation(lowBlob));
       loader.classList.add('done');
       window.__clReady = true;
-      // high-res upgrade in the background
-      const hiBlob = await fetchWithProgress('data/elev-4320.png', null);
-      uploadElevation(await decodeElevation(hiBlob));
-      window.__clHires = true;
     } catch (err) {
       console.error(err);
       dataError = true;
