@@ -10,12 +10,12 @@
     svg.setAttribute('aria-hidden', 'true');
 
     const affinities = [
-        { id: 'purity', name: 'Purity', icon: 'purity.svg', description: 'affPRT-desc', color: '#ff0000', x: 300, y: 42 },
-        { id: 'divinity', name: 'Divinity', icon: 'divinity.svg', description: 'affDVN-desc', color: '#a200ff', x: 490, y: 152 },
-        { id: 'harmony', name: 'Harmony', icon: 'harmony.svg', description: 'affHRM-desc', color: '#00e1ff', x: 490, y: 368 },
-        { id: 'synergy', name: 'Synergy', icon: 'synergy.svg', description: 'affSYN-desc', color: '#09ff00', x: 300, y: 478 },
-        { id: 'supremacy', name: 'Supremacy', icon: 'supremacy.svg', description: 'affSPR-desc', color: '#fbff00', x: 110, y: 368 },
-        { id: 'mastery', name: 'Mastery', icon: 'mastery.svg', description: 'affMST-desc', color: '#ffa600', x: 110, y: 152 },
+        { id: 'purity', name: 'Purity', icon: 'gfx/aff/purity.svg', description: 'affPRT-desc', color: '#ff0000', x: 300, y: 42 },
+        { id: 'divinity', name: 'Divinity', icon: 'gfx/aff/divinity.svg', description: 'affDVN-desc', color: '#a200ff', x: 490, y: 152 },
+        { id: 'harmony', name: 'Harmony', icon: 'gfx/aff/harmony.svg', description: 'affHRM-desc', color: '#00e1ff', x: 490, y: 368 },
+        { id: 'synergy', name: 'Synergy', icon: 'gfx/aff/synergy.svg', description: 'affSYN-desc', color: '#09ff00', x: 300, y: 478 },
+        { id: 'supremacy', name: 'Supremacy', icon: 'gfx/aff/supremacy.svg', description: 'affSPR-desc', color: '#fbff00', x: 110, y: 368 },
+        { id: 'mastery', name: 'Mastery', icon: 'gfx/aff/mastery.svg', description: 'affMST-desc', color: '#ffa600', x: 110, y: 152 },
         { id: 'neutral', name: 'Neutral', symbol: '◉', description: 'affNTR-desc', color: '#ffffff', x: 300, y: 260 }
     ];
 
