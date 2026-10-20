@@ -128,6 +128,11 @@ async function loadLocalization() {
             });
         });
 
+        // The commodity ticker is generated from simulated market quotes.
+        if (window.resourceMarket && typeof window.resourceMarket.renderTicker === 'function') {
+            window.resourceMarket.renderTicker();
+        }
+
         // Show one archived quote in the main description on every page load.
         const loadingTips = Object.entries(data)
             .filter(([key, value]) => key.startsWith('LOADING_TIP_') && typeof value === 'string' && value.length > 0)

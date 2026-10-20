@@ -40,6 +40,18 @@
         listeners.forEach(listener => listener(current));
     }
 
+    function renderTicker(current = snapshot()) {
+        const ticker = document.querySelector('.market-text-txt');
+        if (!ticker) return;
+        const items = definitions.map(item => {
+            const quote = current[item.id];
+            const direction = quote.change > 0 ? 'positive' : (quote.change < 0 ? 'negative' : 'neutral');
+            const sign = quote.changePercent > 0 ? '+' : '';
+            return `<span class="${direction}">${sign}${quote.changePercent.toFixed(1)}</span> ${item.name}`;
+        });
+        ticker.innerHTML = `MondayMarket ||| ${items.join(' | ')}`;
+    }
+
     function tick() {
         marketMood = Math.max(-0.025, Math.min(0.025, marketMood * 0.86 + (Math.random() - 0.5) * 0.008));
         const now = Date.now();
@@ -116,7 +128,10 @@
             change.classList.toggle('is-down', quote.change < 0);
             row.dataset.direction = quote.change >= 0 ? 'up' : 'down';
         });
+        renderTicker(current);
         if (status) status.textContent = `SIMULATED MARKET · updated ${new Date().toLocaleTimeString()}`;
     });
+    api.renderTicker = renderTicker;
+    renderTicker();
     api.start();
 })();

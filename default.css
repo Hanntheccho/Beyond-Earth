@@ -293,7 +293,7 @@ body::after {
     padding: 0 20px 0 20px;
 }
 
-.bg-text {
+.market-text {
     position: fixed;
     top: auto;
     bottom: 0;
@@ -307,17 +307,17 @@ body::after {
     text-transform: uppercase;
     font-size: 12px;
     letter-spacing: 0.6em;
-    color: var(--clrtxt);
+    color: var(--clrit);
     background-color: var(--clrbgt);;
     z-index: 1000;
 }
-.bg-text-line {
+.market-text-line {
     flex: none;
     animation: scroll-left 120s linear infinite;
 }
-.positive { color: #7ee787ab; }
-.negative { color: #ff7b72ab; }
-.neutral { color: #ffe572ab; }
+.positive { color: #00ff6a; }
+.negative { color: #ff0000; }
+.neutral { color: #ffee00; }
 @keyframes scroll-left {
     from { transform: translateX(100vw); }
     to   { transform: translateX(-100%); }
@@ -608,8 +608,8 @@ body::after {
 .resource-market-unit { color: #ffffff70; font-size: 11px; }
 .resource-market-price { text-align: right; white-space: nowrap; }
 .resource-market-change { text-align: right; font-size: 11px; }
-.resource-market-change.is-up { color: #71e5a2; }
-.resource-market-change.is-down { color: #ff7777; }
+.resource-market-change.is-up { color: #00ff6a; }
+.resource-market-change.is-down { color: #ff0000; }
 /* #endregion */
 
 .legacy-list_div {
