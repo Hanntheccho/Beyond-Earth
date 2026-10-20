@@ -20,8 +20,9 @@ const SEA_LEVEL = 50;
 const UI_TEXT = {
   loading: 'Loading terrain…',
   loadFail: 'Failed to load terrain data.',
-  underWater: 'under water',
-  aboveSea: 'above sea',
+  underWater: 'below 2200 sea level',
+  aboveSea: 'above 2200 sea level',
+  atSea: 'at 2200 sea level',
 };
 
 // ---------------------------------------------------------------- shaders
@@ -369,7 +370,7 @@ function main() {
     lat: num('lat', 25),
     s: num('z', 0), // px per degree; 0 -> globe fit, resolved on first resize
   };
-  let interacted = params.has('lon') || params.has('z') || num('spin', 1) === 0;
+  let interacted = num('spin', 1) === 0;
   let dirty = true;
   let dataError = false;
 
@@ -621,15 +622,17 @@ function main() {
   function updateReadout(px, py) {
     const ll = screenToLonLat(px, py);
     if (!ll || !data) { readoutEl.hidden = true; return; }
-    const e = Math.round(elevCPU(ll[0], ll[1]));
+    const e = elevCPU(ll[0], ll[1]);
     const latS = `${Math.abs(ll[1]).toFixed(2)}°${ll[1] >= 0 ? 'N' : 'S'}`;
     const lonS = `${Math.abs(ll[0]).toFixed(2)}°${ll[0] >= 0 ? 'E' : 'W'}`;
-    const rel = e - SEA_LEVEL;
+    const rel = Math.round(e - SEA_LEVEL);
     const s = UI_TEXT;
     const status = rel < 0
-      ? ` · <b>${Math.round(-rel)} m</b> ${s.underWater}`
-      : ` · <b>${Math.round(rel)} m</b> ${s.aboveSea}`;
-    readoutEl.innerHTML = `${latS} ${lonS} · <b>${e} m</b>${status}`;
+      ? `<b>${-rel} m</b> ${s.underWater}`
+      : rel > 0
+        ? `<b>${rel} m</b> ${s.aboveSea}`
+        : s.atSea;
+    readoutEl.innerHTML = `${latS} ${lonS} · ${status}`;
     readoutEl.hidden = false;
   }
 
