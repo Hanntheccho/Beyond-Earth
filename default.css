@@ -228,24 +228,20 @@ body::after {
     width: var(--affinity-node-size, 84px);
     height: var(--affinity-node-size, 84px);
     padding: 4px;
-    border: 1px solid color-mix(in srgb, var(--affinity-color), transparent 30%);
+    border: 2px solid color-mix(in srgb, var(--affinity-color), transparent 30%);
     border-radius: 50%;
     color: var(--affinity-color);
-    background: #1b1b1bed;
+    background: #161616;
     box-shadow: 0 0 18px color-mix(in srgb, var(--affinity-color), transparent 82%), inset 0 0 16px color-mix(in srgb, var(--affinity-color), transparent 92%);
-    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    transition: border 160ms ease, box-shadow 160ms ease;
     z-index: 2;
 }
-.affinity-node:hover, .affinity-node:focus-visible { transform: scale(1.09); background: #222222ed; box-shadow: 0 0 24px color-mix(in srgb, var(--affinity-color), transparent 58%); outline: none; }
+.affinity-node:hover, .affinity-node:focus-visible { border: 4px solid color-mix(in srgb, var(--affinity-color), transparent 10%); box-shadow: 0 0 24px color-mix(in srgb, var(--affinity-color), transparent 58%); outline: none; }
 .affinity-node > span { font-size: clamp(22px, 4vw, 34px); line-height: 1; }
 .affinity-node--neutral { border-style: dashed; }
-@media (max-width: 520px) {
-    .affinity-map { width: calc(100% - 12px); }
-    .affinity-link { stroke-width: 2; }
-    .affinity-link--strong { stroke-width: 3.5; }
-}
 
 .market-chart {
+    --market-tile-fill: #1b1b1b5e;
     position: relative;
     isolation: isolate;
     overflow: hidden;
@@ -255,21 +251,25 @@ body::after {
     width: 90%;
     height: auto;
     margin: 14px auto 32px;
+    overflow: visible;
 }
 .market-chart text.market-tag {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: 'Consolas', monospace;
     font-weight: bold;
     pointer-events: none;
-    opacity: 0.2;
+    fill: var(--market-color, #1b1b1bed);
 }
+.market-chart .market-tile { color: var(--market-color, #1b1b1bed); }
 .market-chart .market-tile .market-tile-surface {
+    fill: var(--market-tile-fill);
+    stroke: var(--market-color, #1b1b1bed);
+    stroke-width: 1px;
     filter: drop-shadow(0 0 8px color-mix(in srgb, currentColor, transparent 82%));
-    transition: filter 140ms ease, stroke-width 140ms ease, stroke-opacity 140ms ease;
+    transition:  filter 160ms ease, stroke-width 160ms ease, stroke-opacity 160ms ease, ;
 }
 .market-chart .market-tile:hover .market-tile-surface {
     filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor, transparent 58%));
-    stroke-width: 2.5;
-    stroke-opacity: 1;
+    stroke-width: 2;
 }
 
 .btn20 {

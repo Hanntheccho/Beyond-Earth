@@ -1,6 +1,6 @@
 // Fictional market capitalizations in billions of eurodollars (€$).
 window.marketData = [
-    { name: "ARC International", tag: "ARC", value: 10223, color: "#002fff" },
+    { name: "ARC International", tag: "ARC", value: 10223, color: "#006eff" },
     { name: "PLENFOR Armor & Steel", tag: "PLEN", value: 620, color: "#ff2200" },
     { name: "Edwin & Goodman International", tag: "EGI", value: 3260, color: "#ff4000" },
     { name: "Sub-Orbital Contractors", tag: "SOC", value: 2910, color: "#ff8000" },
