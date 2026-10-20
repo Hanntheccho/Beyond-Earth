@@ -584,6 +584,32 @@ body::after {
     filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor, transparent 58%));
     stroke-width: 2;
 }
+.resource-market-status {
+    margin: 0 20px 10px;
+    color: #ffffff70;
+    font: 11px 'Consolas', monospace;
+    letter-spacing: .12em;
+}
+.resource-market {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0 18px;
+    margin: 0 20px 24px;
+    font: 13px 'Consolas', monospace;
+}
+.resource-market-row {
+    display: grid;
+    grid-template-columns: minmax(90px, 1fr) auto minmax(88px, auto) 68px;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    border-bottom: 1px solid #ffffff18;
+}
+.resource-market-unit { color: #ffffff70; font-size: 11px; }
+.resource-market-price { text-align: right; white-space: nowrap; }
+.resource-market-change { text-align: right; font-size: 11px; }
+.resource-market-change.is-up { color: #71e5a2; }
+.resource-market-change.is-down { color: #ff7777; }
 /* #endregion */
 
 .legacy-list_div {
