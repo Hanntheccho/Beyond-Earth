@@ -170,23 +170,26 @@ function makeProgram(gl, vs, fs) {
 
 // ------------------------------------------------------------- data load
 
-async function fetchBlob(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return res.blob();
-}
-
-async function decodeElevation(blob) {
+async function decodeElevation(url) {
+  // Load through an image element so the globe also works when the site is
+  // opened directly from disk, where fetch() cannot read file:// URLs.
+  const img = new Image();
+  img.src = new URL(url, import.meta.url);
+  try {
+    await img.decode();
+  } catch (err) {
+    throw new Error(`Could not decode elevation image ${img.src}: ${err.message}`);
+  }
   let bmp;
   try {
-    bmp = await createImageBitmap(blob, {
+    bmp = await createImageBitmap(img, {
       premultiplyAlpha: 'none',
       colorSpaceConversion: 'none',
     });
   } catch (_) {
     // older Safari rejects the options bag; the PNG is fully opaque, so
     // premultiplication is a no-op and a plain decode is still lossless
-    bmp = await createImageBitmap(blob);
+    bmp = await createImageBitmap(img);
   }
   const W = bmp.width, H = bmp.height;
   const cnv = typeof OffscreenCanvas !== 'undefined'
@@ -218,7 +221,7 @@ function main() {
   const bg = makeProgram(gl, BG_VS, BG_FS);
 
   // lon/lat grid mesh
-  const SEG_X = 192, SEG_Y = 96;
+  const SEG_X = 24, SEG_Y = 12;
   let meshVao;
   {
     const verts = new Float32Array((SEG_X + 1) * (SEG_Y + 1) * 2);
@@ -527,8 +530,7 @@ function main() {
   // ------------------------------------------------------------ terrain load
   (async () => {
     try {
-      const lowBlob = await fetchBlob('elev-1080.png');
-      uploadElevation(await decodeElevation(lowBlob));
+      uploadElevation(await decodeElevation('elev-1080.png'));
     } catch (err) {
       console.error('Failed to load globe elevation data.', err);
       dataError = true;
