@@ -390,7 +390,7 @@ function main() {
 
   function frame(now) {
     requestAnimationFrame(frame);
-    if (!interacted && morphT(view.s) === 1 && data && !dataError) {
+    if (morphT(view.s) === 1 && data && !dataError) {
       view.lon = wrapLon(view.lon + 0.06);
       dirty = true;
     }
