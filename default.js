@@ -11,31 +11,26 @@ $(document).ready(function() {
     });
 });
 
-function setupPanelSwitcher(buttonSelector, panelSelector, targetAttribute) {
-    const buttons = document.querySelectorAll(buttonSelector);
-    const panels = document.querySelectorAll(panelSelector);
+document.addEventListener('click', function(event) {
+    const button = event.target.closest && event.target.closest('[data-panel-target][data-panel-group]');
+    if (!button) return;
 
-    buttons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const targetId = button.getAttribute(targetAttribute);
-            const activePanel = document.getElementById(targetId);
-            if (!activePanel) return;
+    const group = button.getAttribute('data-panel-group');
+    const targetId = button.getAttribute('data-panel-target');
+    const activePanel = document.getElementById(targetId);
+    if (!activePanel || activePanel.getAttribute('data-panel-group') !== group) return;
 
-            panels.forEach(function(panel) {
-                const isActive = panel === activePanel;
-                panel.hidden = !isActive;
-                panel.setAttribute('aria-hidden', String(!isActive));
-            });
-
-            buttons.forEach(function(candidate) {
-                candidate.setAttribute('aria-pressed', String(candidate === button));
-            });
-        });
+    document.querySelectorAll('[data-panel-target][data-panel-group]').forEach(function(candidate) {
+        if (candidate.getAttribute('data-panel-group') !== group) return;
+        candidate.setAttribute('aria-pressed', String(candidate === button));
     });
-}
-
-setupPanelSwitcher('.div-btn20 [data-panel]', '.div-submain .content-panel', 'data-panel');
-setupPanelSwitcher('#MIT-panel [data-chart-panel]', '#MIT-panel .div-desc-win[id^="wrld"]', 'data-chart-panel');
+    document.querySelectorAll('[data-panel-group]:not([data-panel-target])').forEach(function(panel) {
+        if (panel.getAttribute('data-panel-group') !== group) return;
+        const isActive = panel === activePanel;
+        panel.hidden = !isActive;
+        panel.setAttribute('aria-hidden', String(!isActive));
+    });
+});
 
 function positionTooltips() {
     document.querySelectorAll('.has-tooltip').forEach(function(element) {
