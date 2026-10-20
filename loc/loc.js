@@ -1,56 +1,46 @@
 /**
- * Gets the HTML file name without extension.
- */
-function getHtmlFileName() {
-    return window.location.pathname.split('/').pop().split('.').shift();
-}
-
-/**
  * Gets the localization data.
  *
- * First tries:
- *     loc/{htmlFileName}/{language}.json
- *
- * If that doesn't exist, falls back to:
- *     loc/default.json
+ * Loads every localization JSON listed in loc/{language}/manifest.json.
+ * Missing translations fall back to the corresponding English values.
  */
 async function fetchLocalization(language) {
-    const htmlFileName = getHtmlFileName();
-    const defaultPath = 'loc/default.json';
-    let defaultData;
-    try {
-        const response = await fetch(defaultPath);
-        if (!response.ok) {
-            throw new Error(`Failed to load ${defaultPath}`);
-        }
-        defaultData = await response.json();
-    } catch (error) {
-        console.error('Failed to load default localization:', error);
-        throw error;
-    }
-
-    // Use the page's requested language when available, otherwise its English
-    // file. Any keys absent from that file retain their default.json values.
-    const pageLanguages = language === 'en' ? ['en'] : [language, 'en'];
-    let pageData = {};
-
-    for (const pageLanguage of pageLanguages) {
-        const pageLocPath = `loc/${htmlFileName}/${pageLanguage}.json`;
+    const requestedLanguage = language || 'en';
+    const englishData = await fetchLanguageLocalization('en');
+    let localization = englishData;
+    if (requestedLanguage !== 'en') {
         try {
-            const response = await fetch(pageLocPath);
-            if (response.ok) {
-                pageData = await response.json();
-                break;
-            }
+            localization = { ...englishData, ...await fetchLanguageLocalization(requestedLanguage) };
         } catch (error) {
-            console.warn(`Could not load ${pageLocPath}`, error);
+            console.warn(`Could not load localization for ${requestedLanguage}; using English:`, error);
         }
     }
-
-    const localization = { ...defaultData, ...pageData };
     const keywords = await fetchKeywords();
 
     return applyKeywordFormatting(localization, keywords);
+}
+
+/** Load and merge all localization files listed for a language. */
+async function fetchLanguageLocalization(language) {
+    const manifestPath = `loc/${language}/manifest.json`;
+    const manifestResponse = await fetch(manifestPath);
+    if (!manifestResponse.ok) {
+        throw new Error(`Failed to load localization manifest ${manifestPath}`);
+    }
+
+    const files = await manifestResponse.json();
+    if (!Array.isArray(files) || files.some(file => typeof file !== 'string' || !file.endsWith('.json'))) {
+        throw new Error(`Invalid localization manifest ${manifestPath}`);
+    }
+
+    const entries = await Promise.all(files.map(async file => {
+        const path = `loc/${language}/${file}`;
+        const response = await fetch(path);
+        if (!response.ok) throw new Error(`Failed to load localization file ${path}`);
+        return response.json();
+    }));
+
+    return Object.assign({}, ...entries);
 }
 
 let keywordPromise;
@@ -165,18 +155,16 @@ const localizationCache = {};
  * @returns {Promise<Object>} The parsed localization data.
  */
 async function getLocalization(language) {
-    const htmlFileName = getHtmlFileName();
-    const pageLocPath = `loc/${htmlFileName}/${language}.json`;
+    const cacheKey = language || 'en';
 
-    // Check page-specific localization cache
-    if (localizationCache[pageLocPath]) {
-        return localizationCache[pageLocPath];
+    if (localizationCache[cacheKey]) {
+        return localizationCache[cacheKey];
     }
 
     const data = await fetchLocalization(language);
 
     // Cache using the requested page/language combination
-    localizationCache[pageLocPath] = data;
+    localizationCache[cacheKey] = data;
 
     return data;
 }
