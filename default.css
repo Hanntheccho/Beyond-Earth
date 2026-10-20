@@ -35,7 +35,7 @@ b {
 p {
     text-overflow: ellipsis;
     font-size: 14px;
-    letter-spacing: 2px;
+    letter-spacing: 0.2em;
     text-align: justify;
     line-height: 1.5;
     color: var(--clrpt);
@@ -43,8 +43,10 @@ p {
 p b {
     font-weight: normal;
     text-transform: uppercase;
-    letter-spacing: 4px;
+    letter-spacing: 0.4em;
     color: var(--clrbt);
+    font-size: 16px;
+    line-height: 0;
 }
 .p-text-icon {
     position: relative;
@@ -143,7 +145,7 @@ body::after {
     margin: 0 3% 4px;
     color: #aab0b8;
     font-size: 12px;
-    letter-spacing: 4px;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
 }
 .scenario-chart-kpi {
@@ -153,7 +155,7 @@ body::after {
     margin-left: 7px;
     color: var(--chart-accent, #d94141);
     font-size: 20px;
-    letter-spacing: 6px;
+    letter-spacing: 0.6em;
     font-weight: normal;
     font-family: 'Consolas', monospace;
 }
@@ -196,15 +198,14 @@ body::after {
     fill: #f0b8b8;
     font-size: 9px;
     font-family: Helvetica, Arial, sans-serif;
-    letter-spacing: 1px;
+    letter-spacing: 0.1em;
 }
 .scenario-chart-plot circle {
     cursor: help;
     transition: r 120ms ease, filter 120ms ease;
 }
 .scenario-chart-plot circle:hover {
-    r: 6px;
-    filter: drop-shadow(0 0 4px #ffffff88);
+    r: 12px;
 }
 
 .affinity-map {
@@ -265,7 +266,8 @@ body::after {
     stroke: var(--market-color, #1b1b1bed);
     stroke-width: 1px;
     filter: drop-shadow(0 0 8px color-mix(in srgb, currentColor, transparent 82%));
-    transition:  filter 160ms ease, stroke-width 160ms ease, stroke-opacity 160ms ease, ;
+    transition:  filter 160ms ease, stroke-width 160ms ease, ;
+    cursor: help;
 }
 .market-chart .market-tile:hover .market-tile-surface {
     filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor, transparent 58%));
@@ -277,7 +279,8 @@ body::after {
     margin-right: 2px;
     padding: 6px 20px 6px 20px;
     font-size: 14px;
-    letter-spacing: 4px;
+    letter-spacing: 0.4em;
+    text-indent: 0.4em;
     background-color: var(--clrbs);
     color: inherit;
     font-family: inherit;
@@ -315,7 +318,7 @@ h1 {
     display: flex;
     font-size: 30px;
     text-transform: uppercase;
-    letter-spacing: 28px;
+    letter-spacing: 1em;
     padding-left: 10px;
     background-image:
         linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
@@ -339,7 +342,7 @@ h1 {
 }
 .h1-version {
     font-size: 14px;
-    letter-spacing: 12px;
+    letter-spacing: 1em;
     text-transform: none;
 }
 
@@ -351,7 +354,7 @@ h2 {
     display: flex;
     font-size: 18px;
     text-transform: uppercase;
-    letter-spacing: 12px;
+    letter-spacing: 1em;
     padding-left: 18px;
     line-height: 40px;
     color: var(--clrh2loc);
@@ -405,7 +408,7 @@ h2 {
     white-space: nowrap;
     text-transform: uppercase;
     font-size: 12px;
-    letter-spacing: 6px;
+    letter-spacing: 0.6em;
     color: var(--clrtxt);
     background-color: var(--clrbgt);;
     z-index: 1000;
@@ -426,7 +429,7 @@ h2 {
     white-space: nowrap;
     text-transform: uppercase;
     font-size: 12px;
-    letter-spacing: 6px;
+    letter-spacing: 0.6em;
     color: var(--clrtxt);
     background-color: var(--clrbgt);;
     z-index: 1000;
@@ -449,7 +452,8 @@ h2 {
     padding: 4px 8px 4px 8px;
     font-size: 12px;
     color: var(--clr01);
-    letter-spacing: 4px;
+    letter-spacing: 0.4em;
+    text-indent: 0.4em;
     border: 2px solid;
     border-image: linear-gradient(to bottom, var(--clr01), var(--clr02)) 1;
     transition: transform 180ms ease, background-color 180ms ease, filter 180ms ease;
