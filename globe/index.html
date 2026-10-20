@@ -10,18 +10,6 @@
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#0a0f1e">
   <link rel="canonical" href="https://linad3d.github.io/contourlines/">
-  <link rel="alternate" hreflang="x-default" href="https://linad3d.github.io/contourlines/">
-  <link rel="alternate" hreflang="en" href="https://linad3d.github.io/contourlines/?lang=en">
-  <link rel="alternate" hreflang="zh-Hans" href="https://linad3d.github.io/contourlines/?lang=zh">
-  <link rel="alternate" hreflang="zh-Hant" href="https://linad3d.github.io/contourlines/?lang=zh-Hant">
-  <link rel="alternate" hreflang="ja" href="https://linad3d.github.io/contourlines/?lang=ja">
-  <link rel="alternate" hreflang="ko" href="https://linad3d.github.io/contourlines/?lang=ko">
-  <link rel="alternate" hreflang="es" href="https://linad3d.github.io/contourlines/?lang=es">
-  <link rel="alternate" hreflang="fr" href="https://linad3d.github.io/contourlines/?lang=fr">
-  <link rel="alternate" hreflang="de" href="https://linad3d.github.io/contourlines/?lang=de">
-  <link rel="alternate" hreflang="pt" href="https://linad3d.github.io/contourlines/?lang=pt">
-  <link rel="alternate" hreflang="ru" href="https://linad3d.github.io/contourlines/?lang=ru">
-  <link rel="alternate" hreflang="ar" href="https://linad3d.github.io/contourlines/?lang=ar">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="manifest" href="manifest.webmanifest">
 
@@ -57,7 +45,6 @@
     "operatingSystem": "Any",
     "browserRequirements": "Requires WebGL2",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "inLanguage": ["en", "zh-Hans", "zh-Hant", "ja", "ko", "es", "fr", "de", "pt", "ru", "ar"],
     "screenshot": "https://linad3d.github.io/contourlines/assets/og-image.png",
     "author": { "@type": "Person", "name": "linad3d", "url": "https://github.com/linad3d" },
     "license": "https://github.com/linad3d/contourlines/blob/main/LICENSE",
@@ -103,7 +90,7 @@
   }
   </script>
 </head>
-<body data-lang="en">
+<body>
   <noscript>
     <section class="noscript">
       <h1>Contourlines — Interactive World Contour Map &amp; Sea Level Rise Simulator</h1>
@@ -144,7 +131,7 @@
       </svg>
       <div>
         <h1>Contourlines</h1>
-        <p id="tagline" data-i18n="tagline">Drag the sea level, redraw the world</p>
+        <p id="tagline">Drag the sea level, redraw the world</p>
       </div>
       <button id="collapse" class="icon-btn" title="Collapse panel" aria-label="Collapse panel">▾</button>
     </div>
@@ -152,7 +139,7 @@
     <div id="panel-body">
       <section class="ctl">
         <div class="ctl-row">
-          <label for="sea-slider" data-i18n="seaLevel">Sea level</label>
+          <label for="sea-slider">Sea level</label>
           <span id="sea-value" class="mono">0 m</span>
         </div>
         <div class="ctl-row">
@@ -168,17 +155,17 @@
           <span class="scale-spacer-r"></span>
         </div>
         <div class="presets">
-          <button class="preset" data-sea="-120"><b>−120 m</b><span data-i18n="iceAge">Ice Age</span></button>
-          <button class="preset" data-sea="0"><b>0 m</b><span data-i18n="today">Today</span></button>
-          <button class="preset" data-sea="70"><b>+70 m</b><span data-i18n="allMelt">Ice melted</span></button>
+          <button class="preset" data-sea="-120"><b>−120 m</b><span>Ice Age</span></button>
+          <button class="preset" data-sea="0"><b>0 m</b><span>Today</span></button>
+          <button class="preset" data-sea="70"><b>+70 m</b><span>Ice melted</span></button>
         </div>
       </section>
 
       <section class="ctl">
         <div class="ctl-row">
-          <label for="interval" data-i18n="contourInterval">Contour interval</label>
+          <label for="interval">Contour interval</label>
           <select id="interval" aria-label="Contour interval">
-            <option value="0" selected data-i18n="auto">Auto</option>
+            <option value="0" selected>Auto</option>
             <option value="50">50 m</option>
             <option value="100">100 m</option>
             <option value="200">200 m</option>
@@ -188,17 +175,16 @@
         </div>
         <div class="toggles">
           <label class="toggle"><input type="checkbox" id="highlight" checked>
-            <span data-i18n="highlight">Today's coastline</span></label>
+            <span>Today's coastline</span></label>
           <label class="toggle"><input type="checkbox" id="hillshade" checked>
-            <span data-i18n="hillshade">Hillshade</span></label>
+            <span>Hillshade</span></label>
           <label class="toggle"><input type="checkbox" id="graticule">
-            <span data-i18n="graticule">Grid lines</span></label>
+            <span>Grid lines</span></label>
         </div>
       </section>
 
       <footer id="panel-foot">
-        <select id="lang" title="Language" aria-label="Language"></select>
-        <button id="about-btn" class="chip" data-i18n="about">About</button>
+        <button id="about-btn" class="chip">About</button>
         <a class="chip" href="https://github.com/linad3d/contourlines" target="_blank" rel="noopener">GitHub ↗</a>
       </footer>
     </div>
@@ -216,7 +202,7 @@
     <div id="about-card" class="glass">
       <button id="about-close" class="icon-btn" aria-label="Close">✕</button>
 
-      <article data-lang="en">
+      <article>
         <h2>About Contourlines</h2>
         <p><strong>Contourlines</strong> is a free, open-source <em>interactive contour map of
         Earth</em> and <em>sea level rise simulator</em>. It renders real NOAA elevation and ocean
@@ -261,54 +247,12 @@
         <a href="https://github.com/linad3d/contourlines" target="_blank" rel="noopener">MIT-licensed
         on GitHub</a>.</p>
       </article>
-
-      <article data-lang="zh" hidden>
-        <h2>关于 Contourlines</h2>
-        <p><strong>Contourlines</strong> 是一个免费开源的<em>交互式世界等高线地图</em>和<em>海平面升降模拟器</em>。
-        它把 NOAA 真实的陆地高程与海底深度数据渲染成经典的地形图 —— 等高线、分层设色、山体阴影 ——
-        地图可以东西方向无缝循环拖动，缩到最小时会变成一个三维地球。</p>
-
-        <h3>使用方法</h3>
-        <ul>
-          <li><strong>拖拽</strong>平移地图 —— 东西方向无限循环。</li>
-          <li><strong>滚轮或双指捏合</strong>缩放。缩到最小时，地图变形为地球。</li>
-          <li><strong>拖动海平面滑杆</strong>升高或降低海面 —— 滑杆采用指数刻度，覆盖整个星球：
-          从马里亚纳海沟（−11000 米，海洋完全排干）到珠穆朗玛峰（+8848 米，全部淹没），越往两端
-          拖动变化越快。海岸线、等高线和分层设色全部以新水面为零点即时重算；一条红色参考线始终
-          标注今日海岸线的原位置，新旧海岸线之间就是被淹没（或新生）的土地。</li>
-          <li>试试预设：<strong>−120 m</strong> 重现冰河时期的海岸线（白令陆桥、多格兰）；
-          <strong>+70 m</strong> 展示所有冰盖融化后的世界。</li>
-        </ul>
-
-        <h3>常见问题</h3>
-        <dl>
-          <dt>如果地球上的冰全部融化会怎样？</dt>
-          <dd>海平面会上升约 70 米。把滑杆拉到 +70 m，就能看到荷兰、孟加拉、尼罗河三角洲、上海、
-          佛罗里达南部等低地被新海岸线淹没。</dd>
-          <dt>冰河时期的海平面是多少？</dt>
-          <dd>比今天低约 120 米。在 −120 m 时，西伯利亚与阿拉斯加之间的白令陆桥、英国与欧洲大陆之间的
-          多格兰都会浮出海面。</dd>
-          <dt>模拟有多精确？</dt>
-          <dd>高程数据来自 NOAA ETOPO1 全球地形模型，分辨率 5 弧分（约 9 公里/格）。这是一个用于科普的
-          静态"浴缸"模型，不考虑潮汐、风暴潮、地壳均衡回弹和海堤。</dd>
-          <dt>会跟踪我或需要服务器吗？</dt>
-          <dd>不会。一切都在浏览器本地通过 WebGL2 运行，没有 Cookie、没有统计、没有账号。</dd>
-        </dl>
-
-        <h3>数据与致谢</h3>
-        <p>高程与水深数据：<a href="https://www.ncei.noaa.gov/products/etopo-global-relief-model"
-        target="_blank" rel="noopener">NOAA ETOPO1 全球地形模型</a>（公共领域）。
-        源代码：<a href="https://github.com/linad3d/contourlines" target="_blank"
-        rel="noopener">GitHub（MIT 协议）</a>。</p>
-      </article>
-
-      <article id="about-dyn" hidden></article>
     </div>
   </div>
 
   <div id="webgl-error" class="glass" hidden>
-    <h2 data-i18n="webglTitle">WebGL2 required</h2>
-    <p data-i18n="webglBody">Contourlines needs WebGL2 to render the map. Please use a recent
+    <h2>WebGL2 required</h2>
+    <p>Contourlines needs WebGL2 to render the map. Please use a recent
     version of Chrome, Edge, Firefox, or Safari, and make sure hardware acceleration is
     enabled.</p>
   </div>
