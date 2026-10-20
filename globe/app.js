@@ -108,7 +108,7 @@ void main() {
   // coastline at the current sea level
   float coast = 1.0 - smoothstep(0.0, 1.5, abs(rel) / max(fwidth(rel), 1e-7));
   float surfaceAlpha = water ? 0.0 : 0.1;
-  float coastCoverage = coast * 0.9;
+  float coastCoverage = coast * 1.0;
   vec3 coastColor = vec3(0.9);
   float finalAlpha = coastCoverage + surfaceAlpha * (1.0 - coastCoverage);
   vec3 finalColor = (
