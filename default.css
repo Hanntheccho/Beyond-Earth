@@ -360,6 +360,17 @@ body::after {
     overscroll-behavior: contain;
     scrollbar-color: var(--clr02) var(--clrbs);
     scrollbar-width: thin;
+    animation: tooltip-show-up var(--animms) ease-out both;
+}
+@keyframes tooltip-show-up {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .tooltip-popup p {
     margin: 0 0 0.75em;
