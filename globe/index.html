@@ -9,27 +9,6 @@
 </head>
 <body>
   <canvas id="map" aria-label="Interactive Earth globe"></canvas>
-
-  <div id="loader" role="status">
-    <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
-      <g fill="none" stroke="#fafafa" stroke-width="1.6" opacity="0.9">
-        <ellipse cx="32" cy="32" rx="26" ry="26" opacity="0.35"/>
-        <path d="M14 40 Q 24 30 32 38 T 50 36"/>
-        <path d="M12 32 Q 26 20 36 30 T 52 28" opacity="0.7"/>
-        <path d="M18 24 Q 30 14 40 22 T 50 20" opacity="0.5"/>
-      </g>
-    </svg>
-    <div id="loader-text">Loading terrain…</div>
-    <div id="loader-bar"><div id="loader-fill"></div></div>
-  </div>
-
-  <div id="readout" class="glass mono" hidden></div>
-
-  <div id="webgl-error" class="glass" hidden>
-    <h2>WebGL2 required</h2>
-    <p>This globe requires WebGL2. Please use a recent browser and make sure hardware acceleration is enabled.</p>
-  </div>
-
   <script type="module" src="app.js"></script>
 </body>
 </html>

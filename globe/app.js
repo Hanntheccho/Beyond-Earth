@@ -15,15 +15,6 @@
 const DEG_R = 57.29577951308232; // 180/pi: globe radius = scale(px/deg) * DEG_R
 const SEA_LEVEL = 50;
 
-// UI labels and status messages.
-const UI_TEXT = {
-  loading: 'Loading terrain…',
-  loadFail: 'Failed to load terrain data.',
-  underWater: 'below 2200 sea level',
-  aboveSea: 'above 2200 sea level',
-  atSea: 'at 2200 sea level',
-};
-
 // ---------------------------------------------------------------- shaders
 
 const MESH_VS = `#version 300 es
@@ -179,22 +170,10 @@ function makeProgram(gl, vs, fs) {
 
 // ------------------------------------------------------------- data load
 
-async function fetchWithProgress(url, onProgress) {
+async function fetchBlob(url) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  const total = Number(res.headers.get('content-length')) || 0;
-  if (!res.body || !total) return new Blob([await res.arrayBuffer()]);
-  const reader = res.body.getReader();
-  const chunks = [];
-  let got = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    got += value.length;
-    if (onProgress) onProgress(got / total);
-  }
-  return new Blob(chunks);
+  return res.blob();
 }
 
 async function decodeElevation(blob) {
@@ -217,9 +196,7 @@ async function decodeElevation(blob) {
   ctx.drawImage(bmp, 0, 0);
   bmp.close();
   const px = ctx.getImageData(0, 0, W, H).data;
-  const elev = new Int16Array(W * H);
-  for (let i = 0; i < W * H; i++) elev[i] = ((px[i * 4] << 8) | px[i * 4 + 1]) - 11000;
-  return { W, H, px, elev };
+  return { W, H, px };
 }
 
 // ------------------------------------------------------------------ main
@@ -233,8 +210,7 @@ function main() {
     powerPreference: 'high-performance',
   });
   if (!gl) {
-    document.getElementById('webgl-error').hidden = false;
-    document.getElementById('loader').classList.add('done');
+    console.error('WebGL2 is not available; the globe cannot render.');
     return;
   }
 
@@ -278,7 +254,7 @@ function main() {
 
   // elevation texture
   const elevTex = gl.createTexture();
-  let data = null; // { W, H, px, elev }
+  let data = null; // { W, H, px }
   function uploadElevation(d) {
     data = d;
     gl.activeTexture(gl.TEXTURE0);
@@ -476,7 +452,6 @@ function main() {
   });
 
   canvas.addEventListener('pointermove', (ev) => {
-    updateReadout(ev.clientX, ev.clientY);
     if (!pointers.has(ev.pointerId)) return;
     const prev = pointers.get(ev.pointerId);
     pointers.set(ev.pointerId, [ev.clientX, ev.clientY]);
@@ -534,45 +509,8 @@ function main() {
     }
   });
 
-  // ------------------------------------------------------------ readout
-
-  const readoutEl = document.getElementById('readout');
-
-  function elevCPU(lon, lat) {
-    if (!data) return null;
-    const { W, H, elev } = data;
-    let fx = ((lon + 180) / 360) * W;
-    let fy = ((90 - lat) / 180) * H;
-    fx -= W * Math.floor(fx / W);
-    fy = Math.min(H - 1.0001, Math.max(0, fy));
-    const x0 = Math.floor(fx), y0 = Math.floor(fy);
-    const x1 = (x0 + 1) % W, y1 = Math.min(y0 + 1, H - 1);
-    const gx = fx - x0, gy = fy - y0;
-    const e00 = elev[y0 * W + x0], e10 = elev[y0 * W + x1];
-    const e01 = elev[y1 * W + x0], e11 = elev[y1 * W + x1];
-    return (e00 * (1 - gx) + e10 * gx) * (1 - gy) + (e01 * (1 - gx) + e11 * gx) * gy;
-  }
-
-  function updateReadout(px, py) {
-    const ll = screenToLonLat(px, py);
-    if (!ll || !data) { readoutEl.hidden = true; return; }
-    const e = elevCPU(ll[0], ll[1]);
-    const latS = `${Math.abs(ll[1]).toFixed(2)}°${ll[1] >= 0 ? 'N' : 'S'}`;
-    const lonS = `${Math.abs(ll[0]).toFixed(2)}°${ll[0] >= 0 ? 'E' : 'W'}`;
-    const rel = Math.round(e - SEA_LEVEL);
-    const s = UI_TEXT;
-    const status = rel < 0
-      ? `<b>${-rel} m</b> ${s.underWater}`
-      : rel > 0
-        ? `<b>${rel} m</b> ${s.aboveSea}`
-        : s.atSea;
-    readoutEl.innerHTML = `${latS} ${lonS} · ${status}`;
-    readoutEl.hidden = false;
-  }
-
   // ----------------------------------------------------------------- UI
 
-  const $ = (id) => document.getElementById(id);
   // shareable URL
   let urlTimer = 0;
   function scheduleUrlUpdate() {
@@ -586,26 +524,14 @@ function main() {
     }, 500);
   }
 
-  // ------------------------------------------------------------ loading
-
-  const loader = $('loader'), loaderText = $('loader-text'), loaderFill = $('loader-fill');
-  loaderText.textContent = UI_TEXT.loading;
-
+  // ------------------------------------------------------------ terrain load
   (async () => {
     try {
-      const lowBlob = await fetchWithProgress('elev-1080.png', (p) => {
-        loaderFill.style.width = `${Math.round(p * 100)}%`;
-      });
+      const lowBlob = await fetchBlob('elev-1080.png');
       uploadElevation(await decodeElevation(lowBlob));
-      loader.classList.add('done');
-      window.__clReady = true;
     } catch (err) {
-      console.error(err);
+      console.error('Failed to load globe elevation data.', err);
       dataError = true;
-      if (!data) {
-        loaderText.textContent = UI_TEXT.loadFail + ' ' + err.message;
-        loaderFill.style.width = '0%';
-      }
     }
   })();
 
