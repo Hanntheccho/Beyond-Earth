@@ -1,11 +1,12 @@
 $(document).ready(function() {
     var bgm = document.getElementById("music");
-    bgm.volume = 0.0;
+    bgm.volume = 1.0;
 
     var hso = document.getElementById("audio");
-    hso.volume = 0.4;
+    hso.volume = 1.0;
 
-    $(".poi").mouseenter(function() {
+    $("button").on("mouseenter click", function() {
+        hso.currentTime = 0;
         hso.play();
     });
 });
@@ -33,7 +34,7 @@ function setupPanelSwitcher(buttonSelector, panelSelector, targetAttribute) {
     });
 }
 
-setupPanelSwitcher('.top-btns [data-panel]', '.div-h2 .content-panel', 'data-panel');
+setupPanelSwitcher('.div-btn20 [data-panel]', '.div-submain .content-panel', 'data-panel');
 setupPanelSwitcher('#MIT-panel [data-chart-panel]', '#MIT-panel .div-desc-win[id^="wrld"]', 'data-chart-panel');
 
 function positionTooltips() {

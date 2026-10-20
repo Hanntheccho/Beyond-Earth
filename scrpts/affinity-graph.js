@@ -10,12 +10,12 @@
     svg.setAttribute('aria-hidden', 'true');
 
     const affinities = [
-        { id: 'purity', name: 'Purity', symbol: '⬡', description: 'affPRT-desc', color: '#ff0000', x: 300, y: 42 },
-        { id: 'divinity', name: 'Divinity', symbol: '✦', description: 'affDVN-desc', color: '#a200ff', x: 490, y: 152 },
-        { id: 'harmony', name: 'Harmony', symbol: '❋', description: 'affHRM-desc', color: '#00e1ff', x: 490, y: 368 },
-        { id: 'synergy', name: 'Synergy', symbol: '⟳', description: 'affSYN-desc', color: '#09ff00', x: 300, y: 478 },
-        { id: 'supremacy', name: 'Supremacy', symbol: '⌘', description: 'affSPR-desc', color: '#fbff00', x: 110, y: 368 },
-        { id: 'mastery', name: 'Mastery', symbol: '◈', description: 'affMST-desc', color: '#ffa600', x: 110, y: 152 },
+        { id: 'purity', name: 'Purity', icon: 'purity.svg', description: 'affPRT-desc', color: '#ff0000', x: 300, y: 42 },
+        { id: 'divinity', name: 'Divinity', icon: 'divinity.svg', description: 'affDVN-desc', color: '#a200ff', x: 490, y: 152 },
+        { id: 'harmony', name: 'Harmony', icon: 'harmony.svg', description: 'affHRM-desc', color: '#00e1ff', x: 490, y: 368 },
+        { id: 'synergy', name: 'Synergy', icon: 'synergy.svg', description: 'affSYN-desc', color: '#09ff00', x: 300, y: 478 },
+        { id: 'supremacy', name: 'Supremacy', icon: 'supremacy.svg', description: 'affSPR-desc', color: '#fbff00', x: 110, y: 368 },
+        { id: 'mastery', name: 'Mastery', icon: 'mastery.svg', description: 'affMST-desc', color: '#ffa600', x: 110, y: 152 },
         { id: 'neutral', name: 'Neutral', symbol: '◉', description: 'affNTR-desc', color: '#ffffff', x: 300, y: 260 }
     ];
 
@@ -84,10 +84,18 @@
         button.style.setProperty('--affinity-color', affinity.color);
         button.style.setProperty('--affinity-node-size', `${buttonSize}px`);
 
-        const symbol = document.createElement('span');
-        symbol.setAttribute('aria-hidden', 'true');
-        symbol.textContent = affinity.symbol;
-        button.append(symbol);
+        if (affinity.icon) {
+            const icon = document.createElement('span');
+            icon.className = 'affinity-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.style.setProperty('--affinity-icon', `url("${affinity.icon}")`);
+            button.append(icon);
+        } else {
+            const symbol = document.createElement('span');
+            symbol.setAttribute('aria-hidden', 'true');
+            symbol.textContent = affinity.symbol || '';
+            button.append(symbol);
+        }
         frame.append(button);
         node.append(frame);
         svg.append(node);
