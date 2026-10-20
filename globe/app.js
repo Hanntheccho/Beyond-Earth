@@ -6,9 +6,8 @@
  * flat map (drawn in wrapping copies for seamless horizontal panning) or as
  * an orthographic globe; the vertex shader blends the two by uMorph, so
  * zooming out "rolls" the map onto a sphere. The fragment shader decodes a
- * 16-bit elevation heightmap packed into the R/G channels of a PNG, applies
- * hypsometric tints relative to the current sea level, and draws
- * screen-space anti-aliased contour lines, coastline, and hillshade.
+ * 16-bit elevation heightmap packed into the R/G channels of a PNG, colors
+ * ocean and land, and draws screen-space contour lines, coastline, and hillshade.
  */
 
 'use strict';
@@ -58,13 +57,16 @@ const MESH_FS = `#version 300 es
 precision highp float;
 in vec2 vLonLat;
 uniform sampler2D uTex;
-uniform sampler2D uLUT;
 uniform vec2 uTexSize;
 uniform float uSeaLevel;
 uniform float uInterval;
 uniform float uAlpha;
 uniform float uMetersPerPx;
 out vec4 fragColor;
+
+const vec3 OCEAN_COLOR = vec3(0.06);
+const vec3 LAND_COLOR = vec3(0.20);
+const vec3 CONTOUR_COLOR = vec3(0.30);
 
 float decode(vec4 c) { return c.r * 65280.0 + c.g * 255.0 - 11000.0; }
 
@@ -96,33 +98,28 @@ void main() {
   float rel = e - uSeaLevel;
   bool water = rel < 0.0;
 
-  vec3 col;
-  if (water) {
-    col = texture(uLUT, vec2(sqrt(clamp(-rel / 11000.0, 0.0, 1.0)), 0.25)).rgb;
-  } else {
-    col = texture(uLUT, vec2(sqrt(clamp(rel / 19850.0, 0.0, 1.0)), 0.75)).rgb;
+  vec3 col = water ? OCEAN_COLOR : LAND_COLOR;
+
+  if (!water) {
+    vec2 g = vec2(dFdx(e), dFdy(e)) / max(uMetersPerPx, 1.0);
+    vec3 n = normalize(vec3(-g.x, -g.y, 1.8));
+    float lit = clamp(dot(n, normalize(vec3(-0.55, 0.62, 0.72))), 0.0, 1.0);
+    col *= 0.68 + 0.32 * (0.35 + 1.15 * lit);
+
+    // Draw white elevation isolines on land only.
+    float f = rel / uInterval;
+    float fadeMinor = 1.0 - smoothstep(0.30, 0.65, fwidth(f));
+    float fadeMajor = 1.0 - smoothstep(0.30, 0.65, fwidth(f) / 5.0);
+    col = mix(col, CONTOUR_COLOR, lineAA(f, 1.0) * 0.78 * fadeMinor);
+    col = mix(col, CONTOUR_COLOR, lineAA(f / 5.0, 1.25) * 0.95 * fadeMajor);
   }
-
-  vec2 g = vec2(dFdx(e), dFdy(e)) / max(uMetersPerPx, 1.0);
-  vec3 n = normalize(vec3(-g.x, -g.y, 1.8));
-  float lit = clamp(dot(n, normalize(vec3(-0.55, 0.62, 0.72))), 0.0, 1.0);
-  float amt = water ? 0.20 : 0.52;
-  col *= (1.0 - amt) + amt * (0.35 + 1.15 * lit);
-
-  // contour lines relative to the current sea level: isolines above the new
-  // shoreline, isobaths (shallow to deep) below it — including flooded land
-  float f = rel / uInterval;
-  float fadeMinor = 1.0 - smoothstep(0.30, 0.65, fwidth(f));
-  float fadeMajor = 1.0 - smoothstep(0.30, 0.65, fwidth(f) / 5.0);
-  vec3 lineCol = water ? vec3(0.16, 0.32, 0.50) : vec3(0.35, 0.27, 0.17);
-  col = mix(col, lineCol, lineAA(f, 1.0) * (water ? 0.24 : 0.26) * fadeMinor);
-  col = mix(col, lineCol, lineAA(f / 5.0, 1.25) * (water ? 0.40 : 0.45) * fadeMajor);
 
   // coastline at the current sea level
   float coast = 1.0 - smoothstep(0.0, 1.5, abs(rel) / max(fwidth(rel), 1e-7));
-  col = mix(col, vec3(0.05, 0.23, 0.42), coast * 0.75);
+  col = mix(col, vec3(1.0), coast * 0.9);
 
-  fragColor = vec4(col, uAlpha);
+  float surfaceAlpha = water ? 0.1 : 0.6;
+  fragColor = vec4(col, surfaceAlpha * uAlpha);
 }`;
 
 const BG_VS = `#version 300 es
@@ -144,7 +141,7 @@ void main() {
     glow = (exp(-d / (uR * 0.05)) * 0.5 + exp(-d / (uR * 0.18)) * 0.13) * uMorph;
   }
   float alpha = clamp(glow, 0.0, 1.0);
-  fragColor = vec4(vec3(0.35, 0.6, 1.0) * alpha, alpha);
+  fragColor = vec4(vec3(0.06) * alpha, alpha);
 }`;
 
 // ----------------------------------------------------------- GL utilities
@@ -174,64 +171,6 @@ function makeProgram(gl, vs, fs) {
     uniforms[name] = gl.getUniformLocation(p, name);
   }
   return { prog: p, u: uniforms };
-}
-
-// -------------------------------------------------------------- palettes
-
-function evalStops(stops, v) {
-  if (v <= stops[0][0]) return stops[0][1];
-  for (let i = 1; i < stops.length; i++) {
-    if (v <= stops[i][0]) {
-      const [v0, c0] = stops[i - 1], [v1, c1] = stops[i];
-      const t = (v - v0) / (v1 - v0);
-      return [0, 1, 2].map((k) => c0[k] + (c1[k] - c0[k]) * t);
-    }
-  }
-  return stops[stops.length - 1][1];
-}
-
-const OCEAN_STOPS = [
-  [0, [216, 242, 250]], [50, [198, 236, 255]], [200, [185, 227, 255]],
-  [1000, [172, 219, 251]], [2000, [161, 210, 247]], [3000, [150, 201, 240]],
-  [4000, [141, 193, 234]], [5000, [132, 185, 227]], [6000, [121, 178, 222]],
-  [8000, [104, 163, 210]], [11000, [86, 146, 197]],
-];
-// Land palette spans the full possible height above the waterline: with the
-// ocean drained to -11000 m, old seafloor can sit ~19850 m above the new sea,
-// so the ramp keeps stepping (brown -> red-brown -> rose grey -> warm grey)
-// instead of jumping to white after the yellows.
-const LAND_MAX = 19850;
-const LAND_STOPS = [
-  [0, [172, 208, 165]], [50, [148, 191, 139]], [200, [168, 198, 143]],
-  [500, [189, 204, 150]], [1000, [209, 215, 171]], [1500, [225, 228, 181]],
-  [2000, [239, 235, 192]], [2500, [232, 225, 182]], [3000, [222, 214, 163]],
-  [3500, [211, 202, 157]], [4000, [202, 185, 130]], [4500, [195, 167, 107]],
-  [5000, [185, 152, 90]], [5500, [170, 135, 83]], [6500, [158, 118, 76]],
-  [7500, [148, 103, 68]], [8500, [143, 94, 72]], [9500, [149, 100, 90]],
-  [11000, [161, 120, 110]], [12500, [173, 141, 130]], [14000, [186, 161, 150]],
-  [15500, [201, 181, 170]], [17000, [221, 206, 196]], [18500, [239, 233, 227]],
-  [19850, [250, 249, 247]],
-];
-
-function buildLUT(gl) {
-  const W = 1024;
-  const data = new Uint8Array(W * 2 * 4);
-  for (let i = 0; i < W; i++) {
-    const t = i / (W - 1);
-    const oc = evalStops(OCEAN_STOPS, t * t * 11000);
-    const lc = evalStops(LAND_STOPS, t * t * LAND_MAX);
-    data.set([oc[0], oc[1], oc[2], 255], i * 4);
-    data.set([lc[0], lc[1], lc[2], 255], (W + i) * 4);
-  }
-  const tex = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE1);
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  return tex;
 }
 
 // ------------------------------------------------------------- data load
@@ -297,7 +236,6 @@ function main() {
 
   const mesh = makeProgram(gl, MESH_VS, MESH_FS);
   const bg = makeProgram(gl, BG_VS, BG_FS);
-  buildLUT(gl);
 
   // lon/lat grid mesh
   const SEG_X = 192, SEG_Y = 96;
@@ -434,7 +372,6 @@ function main() {
     gl.useProgram(mesh.prog);
     gl.bindVertexArray(meshVao);
     gl.uniform1i(mesh.u.uTex, 0);
-    gl.uniform1i(mesh.u.uLUT, 1);
     gl.uniform2f(mesh.u.uTexSize, data.W, data.H);
     gl.uniform2f(mesh.u.uCenter, view.lon, view.lat);
     gl.uniform1f(mesh.u.uScale, view.s);
