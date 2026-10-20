@@ -486,14 +486,14 @@ body::after {
     margin: 12px auto 30px;
     overflow: hidden;
     border: 1px solid #ffffff24;
-    background: #141414;
+    background: transparent;
 }
 .sea-globe-preview-frame {
     display: block;
     width: 100%;
     height: clamp(420px, 70vw, 700px);
     border: 0;
-    background: #1a1a1a;
+    background: transparent;
 }
 
 .affinity-map {

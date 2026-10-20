@@ -137,21 +137,14 @@ uniform vec2 uViewport;
 uniform float uR;
 uniform float uMorph;
 out vec4 fragColor;
-float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 void main() {
-  vec2 px = gl_FragCoord.xy;
-  vec3 col = mix(vec3(0.014, 0.02, 0.045), vec3(0.035, 0.055, 0.11), px.y / uViewport.y);
-  vec2 cell = floor(px / 2.0);
-  float h = hash(cell);
-  if (h > 0.9974) col += vec3(0.85, 0.9, 1.0) * ((h - 0.9974) / 0.0026) * 0.45 * (0.4 + 0.6 * hash(cell + 7.0));
-  if (uMorph > 0.01) {
-    float d = length(px - uViewport * 0.5) - uR;
-    if (d > 0.0) {
-      float glow = exp(-d / (uR * 0.05)) * 0.5 + exp(-d / (uR * 0.18)) * 0.13;
-      col += vec3(0.35, 0.6, 1.0) * glow * uMorph;
-    }
+  float d = length(gl_FragCoord.xy - uViewport * 0.5) - uR;
+  float glow = 0.0;
+  if (d > 0.0 && uMorph > 0.01) {
+    glow = (exp(-d / (uR * 0.05)) * 0.5 + exp(-d / (uR * 0.18)) * 0.13) * uMorph;
   }
-  fragColor = vec4(col, 1.0);
+  float alpha = clamp(glow, 0.0, 1.0);
+  fragColor = vec4(vec3(0.35, 0.6, 1.0) * alpha, alpha);
 }`;
 
 // ----------------------------------------------------------- GL utilities
@@ -293,7 +286,7 @@ function main() {
   const gl = canvas.getContext('webgl2', {
     antialias: true,
     depth: true,
-    alpha: false,
+    alpha: true,
     powerPreference: 'high-performance',
   });
   if (!gl) {
@@ -436,7 +429,7 @@ function main() {
     gl.clearDepth(1);
     gl.clear(gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
     gl.useProgram(mesh.prog);
     gl.bindVertexArray(meshVao);

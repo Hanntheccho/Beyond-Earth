@@ -16,7 +16,7 @@ html, body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   font: 14px "Segoe UI", system-ui, sans-serif;
   overscroll-behavior: none;
@@ -50,7 +50,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  background: var(--bg);
+  background: transparent;
   transition: opacity 0.5s ease;
 }
 #loader.done { opacity: 0; pointer-events: none; }
