@@ -97,7 +97,6 @@ void main() {
     float lit = clamp(dot(n, normalize(vec3(-0.55, 0.62, 0.72))), 0.0, 1.0);
     col *= 0.68 + 0.32 * (0.35 + 1.15 * lit);
 
-    // Draw white elevation isolines on land only.
     float f = rel / uInterval;
     float fadeMinor = 1.0 - smoothstep(0.30, 0.65, fwidth(f));
     float fadeMajor = 1.0 - smoothstep(0.30, 0.65, fwidth(f) / 5.0);
@@ -105,14 +104,24 @@ void main() {
     col = mix(col, CONTOUR_COLOR, lineAA(f / 5.0, 1.25) * 0.95 * fadeMajor);
   }
 
-  // coastline at the current sea level
-  float coast = 1.0 - smoothstep(0.0, 1.5, abs(rel) / max(fwidth(rel), 1e-7));
+  float coast = 1.0 - smoothstep(0.0, 1.0, abs(rel) / max(fwidth(rel), 1e-7));
+
+  vec2 gf = vLonLat / 15.0;
+  vec2 gg = abs(fract(gf + 0.5) - 0.5) / max(fwidth(gf), vec2(1e-7));
+  float grat = 1.0 - smoothstep(0.0, 1.0, min(gg.x, gg.y));
+  float gridAlpha = grat * 1.0;
+  vec3 gridColor = vec3(0.2);
+
   float surfaceAlpha = water ? 0.0 : 0.1;
+  float baseAlpha = gridAlpha + surfaceAlpha * (1.0 - gridAlpha);
+  vec3 baseColor = (
+    gridColor * gridAlpha + col * surfaceAlpha * (1.0 - gridAlpha)
+  ) / max(baseAlpha, 1e-6);
   float coastCoverage = coast * 1.0;
   vec3 coastColor = vec3(0.9);
-  float finalAlpha = coastCoverage + surfaceAlpha * (1.0 - coastCoverage);
+  float finalAlpha = coastCoverage + baseAlpha * (1.0 - coastCoverage);
   vec3 finalColor = (
-    coastColor * coastCoverage + col * surfaceAlpha * (1.0 - coastCoverage)
+    coastColor * coastCoverage + baseColor * baseAlpha * (1.0 - coastCoverage)
   ) / max(finalAlpha, 1e-6);
   fragColor = vec4(finalColor, finalAlpha * uAlpha);
 }`;
