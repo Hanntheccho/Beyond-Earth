@@ -247,6 +247,18 @@ function bindTooltip(trigger) {
 
 document.querySelectorAll('.has-tooltip').forEach(bindTooltip);
 
+const tooltipObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType !== Node.ELEMENT_NODE) return;
+            if (node.matches('.has-tooltip')) bindTooltip(node);
+            node.querySelectorAll('.has-tooltip').forEach(bindTooltip);
+        });
+    });
+});
+
+tooltipObserver.observe(document.body, { childList: true, subtree: true });
+
 function repositionOpenTooltips() {
     tooltipEntries.forEach(entry => positionTooltip(entry.popup, entry.trigger));
 }
@@ -275,4 +287,23 @@ if (!prefersReducedMotion) {
             scrollUpdatePending = false;
         });
     }, { passive: true });
+}
+
+const legacyFiles = {
+  be_legacy_vic: "be_legacy_vic.txt",
+  be_legacy_str: "be_legacy_str.txt",
+  be_legacy_sta: "be_legacy_sta.txt",
+  be_legacy_par: "be_legacy_par.txt"
+};
+
+for (const [elementId, fileName] of Object.entries(legacyFiles)) {
+  fetch(fileName)
+    .then(response => {
+      if (!response.ok) throw new Error(`Could not load ${fileName}`);
+      return response.text();
+    })
+    .then(text => {
+      document.getElementById(elementId).textContent = text;
+    })
+    .catch(error => console.error(error));
 }

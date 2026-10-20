@@ -1,28 +1,18 @@
 /**
  * Gets the localization data.
  *
- * Loads every localization JSON listed in loc/{language}/manifest.json.
- * Missing translations fall back to the corresponding English values.
+ * Loads every localization JSON listed in loc/manifest.json.
  */
-async function fetchLocalization(language) {
-    const requestedLanguage = language || 'en';
-    const englishData = await fetchLanguageLocalization('en');
-    let localization = englishData;
-    if (requestedLanguage !== 'en') {
-        try {
-            localization = { ...englishData, ...await fetchLanguageLocalization(requestedLanguage) };
-        } catch (error) {
-            console.warn(`Could not load localization for ${requestedLanguage}; using English:`, error);
-        }
-    }
+async function fetchLocalization() {
+    const localization = await fetchLocalizationFiles();
     const keywords = await fetchKeywords();
 
     return applyKeywordFormatting(localization, keywords);
 }
 
-/** Load and merge all localization files listed for a language. */
-async function fetchLanguageLocalization(language) {
-    const manifestPath = `loc/${language}/manifest.json`;
+/** Load and merge all localization files listed in the root localization manifest. */
+async function fetchLocalizationFiles() {
+    const manifestPath = 'loc/manifest.json';
     const manifestResponse = await fetch(manifestPath);
     if (!manifestResponse.ok) {
         throw new Error(`Failed to load localization manifest ${manifestPath}`);
@@ -34,7 +24,7 @@ async function fetchLanguageLocalization(language) {
     }
 
     const entries = await Promise.all(files.map(async file => {
-        const path = `loc/${language}/${file}`;
+        const path = `loc/${file}`;
         const response = await fetch(path);
         if (!response.ok) throw new Error(`Failed to load localization file ${path}`);
         return response.json();
@@ -45,7 +35,7 @@ async function fetchLanguageLocalization(language) {
 
 let keywordPromise;
 
-/** Load the shared list once; it applies to default and page-specific locales. */
+/** Load the shared keyword list once; it stays separate from localization JSONs. */
 function fetchKeywords() {
     if (!keywordPromise) {
         keywordPromise = fetch('loc/keywords.json').then(response => {
@@ -114,11 +104,10 @@ function applyKeywordFormatting(localization, keywords) {
 /**
  * Loads localization data and updates the page.
  *
- * @param {string} language - The language code (e.g. 'en', 'fr', etc.).
  */
-async function loadLocalization(language) {
+async function loadLocalization() {
     try {
-        const data = await fetchLocalization(language);
+        const data = await fetchLocalization();
         window.localizationData = data;
 
         Object.entries(data).forEach(([key, value]) => {
@@ -138,8 +127,17 @@ async function loadLocalization(language) {
                 element.dataset.tooltip = value;
             });
         });
+
+        // Show one archived quote in the main description on every page load.
+        const loadingTips = Object.entries(data)
+            .filter(([key, value]) => key.startsWith('LOADING_TIP_') && typeof value === 'string' && value.length > 0)
+            .map(([, value]) => value);
+        const description = document.querySelector('.BE0-desc');
+        if (description && loadingTips.length > 0) {
+            description.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+        }
     } catch (error) {
-        console.error(`Error loading localization for ${language}:`, error);
+        console.error('Error loading localization:', error);
     }
 }
 
@@ -149,29 +147,22 @@ const localizationCache = {};
 
 
 /**
- * Retrieves localization data for a given language.
+ * Retrieves the localization data.
  *
- * @param {string} language - The language code.
  * @returns {Promise<Object>} The parsed localization data.
  */
-async function getLocalization(language) {
-    const cacheKey = language || 'en';
-
-    if (localizationCache[cacheKey]) {
-        return localizationCache[cacheKey];
+async function getLocalization() {
+    if (localizationCache.data) {
+        return localizationCache.data;
     }
 
-    const data = await fetchLocalization(language);
+    const data = await fetchLocalization();
 
-    // Cache using the requested page/language combination
-    localizationCache[cacheKey] = data;
+    localizationCache.data = data;
 
     return data;
 }
 
 
-// Auto-detect the user's language preference from the browser
-const userLang = navigator.language || 'en';
-
 // Load localization
-loadLocalization(userLang.split('-')[0]);
+loadLocalization();

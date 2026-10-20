@@ -23,7 +23,7 @@
             <button class="btn20" type="button" data-panel-group="main" data-panel-target="LYS-panel"><span class="LYS"></span></button>
         </div>
         <div class="div-submain">
-            <div class="content-panel" id="BE0-panel" data-panel-group="main" aria-hidden="false">
+            <div id="BE0-panel" data-panel-group="main" aria-hidden="false">
                 <div class="div-desc-win">
                     <div class="div-desc-top"><span class="BE0"></span></div>
                     <div class="div-desc"><span class="BE0-desc"></span></div>
@@ -33,7 +33,7 @@
                     <div class="affinity-map"></div>
                 </div>
             </div>
-            <div class="content-panel" id="MMA-panel" data-panel-group="main" hidden aria-hidden="true">
+            <div id="MMA-panel" data-panel-group="main" hidden aria-hidden="true">
                 <div class="div-desc-win">
                     <div class="div-desc-top"><span class="MMA"></span></div>
                     <div class="div-desc"><span class="MMA-desc"></span></div>
@@ -43,7 +43,7 @@
                     <div class="market-chart" role="img"></div>
                 </div>
             </div>
-            <div class="content-panel" id="MIT-panel" data-panel-group="main" hidden aria-hidden="true">
+            <div id="MIT-panel" data-panel-group="main" hidden aria-hidden="true">
                 <div class="div-desc-win">
                     <div class="div-desc-top"><span class="MIT"></span></div>
                     <div class="div-desc has-background" style="--desc-bg: url('gfx/text_icons/mit.svg')"><span class="MIT-desc"></span></div>
@@ -91,7 +91,7 @@
                     <div class="scenario-chart-plot" data-series="displaced" data-unit="B" data-color="#d98c5f" role="img"></div>
                 </div>
             </div>
-            <div class="content-panel" id="LYS-panel" data-panel-group="main" hidden aria-hidden="true">
+            <div id="LYS-panel" data-panel-group="main" hidden aria-hidden="true">
                 <div class="div-desc-win">
                     <div class="div-desc-top"><span class="LYS"></span></div>
                     <div class="div-desc has-background" style="--desc-bg: url('gfx/FRA/coa_w_stars.svg')"><span class="LYS-desc"></span></div>
@@ -115,6 +115,9 @@
                     <button class="poi" type="button" data-panel-group="lys-pois" data-panel-target="poiARC"><span class="poiARC"></span></button>
                     <button class="poi" type="button" data-panel-group="lys-pois" data-panel-target="poiPLY"><span class="poiPLY"></span></button>
                     <button class="poi" type="button" data-panel-group="lys-pois" data-panel-target="poiKIL"><span class="poiKIL"></span></button>
+                    <button class="poi" type="button" data-panel-group="lys-pois" data-panel-target="poiEGY"><span class="poiEGY"></span></button>
+                    <button class="poi" type="button" data-panel-group="lys-pois" data-panel-target="poiMOR"><span class="poiMOR"></span></button>
+                    <button class="poi" type="button" data-panel-group="lys-pois" data-panel-target="poiBAC"><span class="poiBAC"></span></button>
                 </div>
                 <div class="div-desc-win" id="poiBE0" data-panel-group="lys-pois" aria-hidden="false"><div class="div-desc-top"><span class="poiBE0"></span></div><div class="div-desc"><span class="poiBE0-desc"></span></div></div>
                 <div class="div-desc-win" id="poi001" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc-top"><span class="poi001"></span></div><div class="div-desc"><span class="poi001-desc"></span></div></div>
@@ -134,6 +137,13 @@
                 <div class="div-desc-win" id="poiARC" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc-top"><span class="poiARC"></span></div><div class="div-desc"><span class="poiARC-desc"></span></div></div>
                 <div class="div-desc-win" id="poiPLY" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc-top"><span class="poiPLY"></span></div><div class="div-desc"><span class="poiPLY-desc"></span></div></div>
                 <div class="div-desc-win" id="poiKIL" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc-top"><span class="poiKIL"></span></div><div class="div-desc"><span class="poiKIL-desc"></span></div></div>
+                <div class="div-desc-win" id="poiEGY" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc-top"><span class="poiEGY"></span></div><div class="div-desc"><span class="poiEGY-desc"></span></div></div>
+                <div class="div-desc-win" id="poiMOR" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc-top"><span class="poiMOR"></span></div><div class="div-desc"><span class="poiMOR-desc"></span></div></div>
+                <div class="div-desc-win" id="poiBAC" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc-top"><span class="poiBAC"></span></div><div class="div-desc"><span class="poiBAC-desc"></span></div></div>
+                <pre id="be_legacy_vic" class="legacy-list"></pre>
+                <pre id="be_legacy_str" class="legacy-list"></pre>
+                <pre id="be_legacy_sta" class="legacy-list"></pre>
+                <pre id="be_legacy_par" class="legacy-list"></pre>
             </div>
         </div>
     </div>
