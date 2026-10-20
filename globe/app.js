@@ -1,6 +1,6 @@
 /*
- * Contourlines — interactive world contour map & sea level simulator.
- * Vanilla JS + WebGL2, no dependencies. MIT license.
+ * Interactive Earth sea-level globe renderer.
+ * Adapted from MIT-licensed source; see LICENSE for the required notice.
  *
  * Rendering: a lon/lat grid mesh is projected either as an equirectangular
  * flat map (drawn in wrapping copies for seamless horizontal panning) or as
@@ -8,8 +8,8 @@
  * zooming out "rolls" the map onto a sphere. The fragment shader decodes a
  * 16-bit elevation heightmap packed into the R/G channels of a PNG, applies
  * hypsometric tints relative to the current sea level, and draws
- * screen-space anti-aliased contour lines, coastline, hillshade,
- * a reference line marking today's coastline, and an optional graticule.
+ * screen-space anti-aliased contour lines, coastline, hillshade, and a
+ * reference line marking today's coastline.
  */
 
 'use strict';
@@ -387,11 +387,7 @@ function main() {
     lon: num('lon', 105),
     lat: num('lat', 25),
     s: num('z', 0), // px per degree; 0 -> globe fit, resolved on first resize
-    sea: num('sea', 0),
-    interval: num('int', 0),
-    highlight: num('hl', 1) > 0,
-    hillshade: num('hs', 1) > 0,
-    graticule: num('gr', 0) > 0,
+    sea: num('sea', 50),
   };
   let interacted = params.has('lon') || params.has('z') || num('spin', 1) === 0;
   let dirty = true;
@@ -471,10 +467,10 @@ function main() {
     gl.uniform1f(mesh.u.uMorph, t);
     gl.uniform2f(mesh.u.uViewport, vw, vh);
     gl.uniform1f(mesh.u.uSeaLevel, view.sea);
-    gl.uniform1f(mesh.u.uInterval, view.interval || autoInterval(view.s));
-    gl.uniform1f(mesh.u.uHillshade, view.hillshade ? 1 : 0);
-    gl.uniform1f(mesh.u.uGraticule, view.graticule ? 1 : 0);
-    gl.uniform1f(mesh.u.uRefCoast, view.highlight && Math.abs(view.sea) > 0.01 ? 1 : 0);
+    gl.uniform1f(mesh.u.uInterval, autoInterval(view.s));
+    gl.uniform1f(mesh.u.uHillshade, 1.0);
+    gl.uniform1f(mesh.u.uGraticule, 0.0);
+    gl.uniform1f(mesh.u.uRefCoast, Math.abs(view.sea) > 0.01 ? 1.0 : 0.0);
     gl.uniform1f(mesh.u.uMetersPerPx, 111320 / (view.s * dpr));
 
     const halfW = vw / 2 / view.s;
@@ -624,7 +620,6 @@ function main() {
     else if (ev.key === 'ArrowUp') view.lat += pan;
     else if (ev.key === 'ArrowDown') view.lat -= pan;
     else if (ev.key === 'Home') animateZoomTo(sMin());
-    else if (ev.key === 'Escape') aboutEl.hidden = true;
     else handled = false;
     if (handled) {
       interacted = true;
@@ -672,7 +667,6 @@ function main() {
 
   const $ = (id) => document.getElementById(id);
   const seaSlider = $('sea-slider'), seaNum = $('sea-num'), seaValue = $('sea-value');
-  const aboutEl = $('about');
 
   // Exponential slider: full planetary range, fine-grained near 0.
   // slider x in [-1, 1]  ->  sea = sign(x) * (e^(k|x|) - 1)/(e^k - 1) * side,
@@ -753,29 +747,8 @@ function main() {
     }
   });
 
-  $('interval').addEventListener('change', (ev) => {
-    view.interval = +ev.target.value;
-    dirty = true;
-  });
-  $('highlight').addEventListener('change', (ev) => { view.highlight = ev.target.checked; dirty = true; });
-  $('hillshade').addEventListener('change', (ev) => { view.hillshade = ev.target.checked; dirty = true; });
-  $('graticule').addEventListener('change', (ev) => { view.graticule = ev.target.checked; dirty = true; });
-
-  $('zoom-in').addEventListener('click', () => { interacted = true; animateZoomTo(Math.min(sMax, view.s * 1.6)); });
-  $('zoom-out').addEventListener('click', () => { interacted = true; animateZoomTo(Math.max(sMin(), view.s / 1.6)); });
-  $('zoom-globe').addEventListener('click', () => { interacted = true; animateZoomTo(sMin(), view.lon, 20, 700); });
-
-  $('collapse').addEventListener('click', () => $('panel').classList.toggle('collapsed'));
-  $('about-btn').addEventListener('click', () => { aboutEl.hidden = false; });
-  $('about-close').addEventListener('click', () => { aboutEl.hidden = true; });
-  aboutEl.addEventListener('click', (ev) => { if (ev.target === aboutEl) aboutEl.hidden = true; });
-
   // initial control state from URL
   setSea(view.sea, false);
-  $('interval').value = String(view.interval);
-  $('highlight').checked = view.highlight;
-  $('hillshade').checked = view.hillshade;
-  $('graticule').checked = view.graticule;
 
   // shareable URL
   let urlTimer = 0;
@@ -787,10 +760,6 @@ function main() {
       p.set('lon', view.lon.toFixed(2));
       p.set('lat', view.lat.toFixed(2));
       p.set('z', view.s.toFixed(2));
-      if (!view.highlight) p.set('hl', '0');
-      if (!view.hillshade) p.set('hs', '0');
-      if (view.graticule) p.set('gr', '1');
-      if (view.interval) p.set('int', String(view.interval));
       history.replaceState(null, '', '?' + p.toString());
     }, 500);
   }
