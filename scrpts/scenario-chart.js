@@ -33,6 +33,8 @@
         const x = year => margin.left + ((year - sorted[0].year) / ((sorted.at(-1).year - sorted[0].year) || 1)) * innerWidth;
         const y = value => margin.top + ((max - value) / (max - min)) * innerHeight;
         const color = plot.dataset.color || '#d94141';
+        plot.style.setProperty('--chart-accent', color);
+        plot.style.setProperty('--chart-accent', color);
 
         const meta = document.createElement('div');
         meta.className = 'scenario-chart-meta';
@@ -54,7 +56,7 @@
         for (let tick = 0; tick <= 4; tick++) {
             const value = max - (max - min) * tick / 4;
             const yy = y(value);
-            add(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, stroke: '#383838', 'stroke-width': 1 });
+            add(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, class: 'chart-grid-line' });
             add(svg, 'text', { x: margin.left - 10, y: yy + 4, 'text-anchor': 'end' }, Number(value.toPrecision(3)).toString());
         }
         const firstYear = sorted[0].year;
@@ -64,7 +66,7 @@
         if (yearTicks[yearTicks.length - 1] !== lastYear) yearTicks.push(lastYear);
         yearTicks.forEach(year => {
             const xx = x(year);
-            add(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, stroke: '#888', 'stroke-width': 1 });
+            add(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, class: 'chart-year-tick' });
             const label = document.createElementNS(svgNS, 'text');
             label.setAttribute('x', xx);
             label.setAttribute('y', height - 15);
@@ -76,23 +78,22 @@
         const eventYear = 2070;
         if (eventYear >= firstYear && eventYear <= lastYear) {
             const eventX = x(eventYear);
-            add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top, y2: height - margin.bottom, stroke: '#ff3333', 'stroke-width': 1.5, 'stroke-dasharray': '4 4' });
+            add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top, y2: height - margin.bottom, class: 'chart-event-line' });
             const tagWidth = 132, tagHeight = 19;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
-            add(svg, 'rect', { x: tagX, y: margin.top, width: tagWidth, height: tagHeight, rx: 3, fill: '#2a1111', stroke: '#ff3333', 'stroke-width': 0.8 });
+            add(svg, 'rect', { x: tagX, y: margin.top, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
             add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top + 13, 'text-anchor': 'middle', class: 'chart-event-label' }, '2070 · GREAT MISTAKE');
         }
         for (let index = 1; index < sorted.length; index++) {
             const previous = sorted[index - 1], current = sorted[index];
             add(svg, 'path', {
                 d: `M ${x(previous.year)} ${y(previous.value)} L ${x(current.year)} ${y(current.value)}`,
-                fill: 'none', stroke: color, 'stroke-width': 2.5,
-                'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+                class: 'chart-series-line'
             });
         }
         sorted.forEach(point => {
             const px = x(point.year), py = y(point.value);
-            const dot = add(svg, 'circle', { cx: px, cy: py, r: 4, fill: color, stroke: '#17191c', 'stroke-width': 1.5 });
+            const dot = add(svg, 'circle', { cx: px, cy: py, class: 'chart-series-point' });
             add(dot, 'title', {}, `${point.year}: ${point.value} ${plot.dataset.unit || ''}`);
         });
         plot.replaceChildren(svg);

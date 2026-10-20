@@ -191,6 +191,23 @@ body::after {
     fill: #c6c6c6;
     font: 12px 'Consolas';
 }
+.scenario-chart-plot .chart-grid-line { stroke: #383838; stroke-width: 1; }
+.scenario-chart-plot .chart-year-tick { stroke: #888; stroke-width: 1; }
+.scenario-chart-plot .chart-event-line { stroke: #ff3333; stroke-width: 1.5; stroke-dasharray: 4 4; }
+.scenario-chart-plot .chart-event-tag { fill: #2a1111; stroke: #ff3333; stroke-width: 0.8; }
+.scenario-chart-plot .chart-series-line {
+    fill: none;
+    stroke: var(--chart-accent, #d94141);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.scenario-chart-plot .chart-series-point {
+    r: 4px;
+    fill: var(--chart-accent, #d94141);
+    stroke: #17191c;
+    stroke-width: 1.5;
+}
 .scenario-chart-plot text.year-label {
     font-size: 12px;
 }
@@ -352,12 +369,12 @@ h2 {
     white-space: normal;
     overflow-wrap: anywhere;
     display: flex;
-    font-size: 18px;
+    font-size: 20px;
     text-transform: uppercase;
     letter-spacing: 1em;
     padding-left: 18px;
     line-height: 40px;
-    color: var(--clrh2loc);
+    color: var(--clrbs);
     border-bottom: 4px solid var(--clrbs);
     font-weight: normal;
     align-items: flex-end;
