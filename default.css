@@ -481,6 +481,38 @@ body::after {
     r: 12px;
 }
 
+.sea-globe-preview {
+    width: min(94%, 1100px);
+    margin: 12px auto 30px;
+    overflow: hidden;
+    border: 1px solid #ffffff24;
+    background: #0a0f1e;
+}
+.sea-globe-preview-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 14px;
+    color: #d7e2e9;
+    font: 14px 'Consolas', monospace;
+}
+.sea-globe-preview-head a { color: #82c8d6; }
+.sea-globe-preview-frame {
+    display: block;
+    width: 100%;
+    height: clamp(420px, 70vw, 700px);
+    border: 0;
+    background: #0a0f1e;
+}
+.sea-globe-preview-credit {
+    margin: 0;
+    padding: 9px 14px 11px;
+    color: #aab0b8;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 .affinity-map {
     position: relative;
     width: min(calc(100% - 40px), 660px);
