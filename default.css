@@ -121,6 +121,8 @@ body::after {
 }
 
 .div-main {
+    position: relative;
+    z-index: 1;
     padding-bottom: 40px;
     max-width: var(--max-width);
     margin: 0 auto;
@@ -155,6 +157,7 @@ body::after {
     padding-left: 12px;
     white-space: normal;
     overflow-wrap: anywhere;
+    cursor: pointer;
 }
 .title-loc {
     display: flex;
@@ -430,7 +433,7 @@ body::after {
     z-index: 0;
     pointer-events: none;
     background-image: url('gfx/text_icons/mit.svg');
-    background-position: center;
+    background-position: center 30%;
     background-size: auto 60%;
     background-repeat: no-repeat;
     opacity: var(--alpico);
@@ -452,6 +455,11 @@ body::after {
 .scenario-chart-plot .chart-year-tick { stroke: #888; stroke-width: 1; }
 .scenario-chart-plot .chart-event-line { stroke: #ff3333; stroke-width: 1.5; stroke-dasharray: 4 4; }
 .scenario-chart-plot .chart-event-tag { fill: #2a1111; stroke: #ff3333; stroke-width: 0.8; }
+.scenario-chart-plot .chart-series-area {
+    fill: var(--chart-accent, #d94141);
+    fill-opacity: 0.18;
+    stroke: none;
+}
 .scenario-chart-plot .chart-series-line {
     fill: none;
     stroke: var(--chart-accent, #d94141);
@@ -462,11 +470,9 @@ body::after {
 .scenario-chart-plot .chart-series-point {
     r: 4px;
     fill: var(--chart-accent, #d94141);
-    stroke: #17191c;
-    stroke-width: 1.5;
 }
 .scenario-chart-plot text.year-label {
-    font-size: 12px;
+    font-size: 10px;
 }
 .scenario-chart-plot text.chart-event-label {
     fill: #f0b8b8;
@@ -476,30 +482,19 @@ body::after {
 }
 .scenario-chart-plot circle {
     cursor: help;
-    transition: r var(--animms) ease, filter var(--animms) ease;
-}
-.scenario-chart-plot circle:hover {
-    r: 12px;
 }
 
 .sea-globe-preview {
-    position: relative;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     isolation: isolate;
-    width: min(94%, 1100px);
-    height: clamp(420px, 70vw, 700px);
-    margin: 12px auto 30px;
+    width: min(660px, 88vmin);
+    height: min(660px, 88vmin);
+    margin: 0;
     overflow: hidden;
-    border: 1px solid #ffffff24;
-    background: transparent;
-}
-.sea-globe-preview::before {
-    content: "";
-    position: absolute;
-    inset: 0;
     z-index: 0;
-    background: url("be_icon_w.svg") center / 60% no-repeat;
-    opacity: 0.1;
-    pointer-events: none;
 }
 .sea-globe-canvas {
     position: absolute;
@@ -511,6 +506,8 @@ body::after {
     border: 0;
     cursor: grab;
     touch-action: none;
+    opacity: 0.2;
+    pointer-events: none;
 }
 .sea-globe-canvas.dragging { cursor: grabbing; }
 

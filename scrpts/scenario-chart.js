@@ -84,6 +84,14 @@
             add(svg, 'rect', { x: tagX, y: margin.top, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
             add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top + 13, 'text-anchor': 'middle', class: 'chart-event-label' }, '2070 · GREAT MISTAKE');
         }
+        const baseline = height - margin.bottom;
+        const areaPath = [
+            `M ${x(sorted[0].year)} ${baseline}`,
+            ...sorted.map(point => `L ${x(point.year)} ${y(point.value)}`),
+            `L ${x(sorted[sorted.length - 1].year)} ${baseline}`,
+            'Z'
+        ].join(' ');
+        add(svg, 'path', { d: areaPath, class: 'chart-series-area' });
         for (let index = 1; index < sorted.length; index++) {
             const previous = sorted[index - 1], current = sorted[index];
             add(svg, 'path', {
