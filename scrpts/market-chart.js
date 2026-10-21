@@ -46,12 +46,20 @@
                 });
                 add(rect, 'title', {}, `${company.name}: €$${company.value.toLocaleString()} billion`);
                 {
-                    const label = add(tile, 'text', {
+                    const availableWidth = Math.max(0, (w - gap) * 0.7);
+                    const availableHeight = Math.max(0, (h - gap) * 0.7);
+                    // Leave room for font metrics and tile edges to prevent clipping.
+                    const fontSize = Math.floor(Math.min(
+                        availableHeight * 0.68,
+                        availableWidth / (company.tag.length * 0.72)
+                    ));
+                    add(tile, 'text', {
                         x: x + (w - gap) / 2,
                         y: y + (h - gap) / 2,
                         'text-anchor': 'middle', 'dominant-baseline': 'central',
                         'alignment-baseline': 'central',
                         class: 'market-tag', 'clip-path': `url(#${clipId})`,
+                        'font-size': `${fontSize}px`
                     }, company.tag);
                 }
                 return;
