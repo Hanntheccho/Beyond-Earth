@@ -239,20 +239,20 @@ body::after {
     white-space: normal;
     overflow-wrap: anywhere;
     display: flex;
-    font-size: 26px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.8em;
-    line-height: 40px;
     color: var(--clrbs);
     align-items: flex-end;
     justify-content: flex-start;
     line-height: 1;
-    font-family: Arial, sans-serif;
-    font-weight: 900;
+    font-family: 'Consolas', monospace;
+    position: absolute;
+    pointer-events: none;
 }
 
 .div-desc {
-    margin: 20px 60px 40px 60px;
+    margin: 40px 60px 40px 60px;
     padding: 0px 20px 0px 20px;
     border-left: var(--brdlft) solid var(--clrbs);
     border-right: var(--brdpxs) solid var(--clrbs);
@@ -297,7 +297,7 @@ body::after {
 .poi {
     margin: 4px;
     margin-right: 2px;
-    padding: 4px 8px 4px 8px;
+    padding: 4px 8px;
     font-size: 12px;
     color: var(--clr01);
     letter-spacing: 0.4em;
@@ -373,7 +373,7 @@ body::after {
     align-items: center;
     justify-content: flex-end;
     gap: 16px;
-    margin: 0 3% 4px;
+    margin: 10px;
     color: #aab0b8;
     font-size: 12px;
     letter-spacing: 0.4em;
@@ -383,7 +383,7 @@ body::after {
     white-space: nowrap;
 }
 .scenario-chart-kpi strong {
-    margin-left: 7px;
+    margin-left: 8px;
     color: var(--chart-accent, #d94141);
     font-size: 20px;
     letter-spacing: 0.4em;
@@ -404,7 +404,7 @@ body::after {
     z-index: 0;
     pointer-events: none;
     background-image: url('gfx/text_icons/mit.svg');
-    background-position: center 30%;
+    background-position: calc(50% + 2px) 30%;
     background-size: auto 60%;
     background-repeat: no-repeat;
     opacity: var(--alpico);
@@ -447,8 +447,8 @@ body::after {
 }
 .scenario-chart-plot text.chart-event-label {
     fill: #f0b8b8;
-    font-size: 9px;
-    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    font-family: 'Consolas', monospace;
     letter-spacing: 0.1em;
 }
 .scenario-chart-plot circle {
@@ -486,7 +486,7 @@ body::after {
     position: relative;
     width: min(calc(100% - 40px), 660px);
     aspect-ratio: 600 / 520;
-    margin: 12px auto 28px;
+    margin: 28px auto;
     background: radial-gradient(ellipse at center, #ffffff18, transparent 68%);
 }
 .affinity-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -556,10 +556,11 @@ body::after {
     stroke-width: 2;
 }
 .resource-market-status {
-    margin: 0 20px 10px;
+    margin: 10px 20px;
     color: #ffffff70;
     font: 11px 'Consolas', monospace;
     letter-spacing: .12em;
+    text-align: right;
 }
 .resource-market {
     display: grid;

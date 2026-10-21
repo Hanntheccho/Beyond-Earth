@@ -47,8 +47,8 @@
                     ? `rgb(0 ${shade} 70)`
                     : (movement < 0 ? `rgb(${shade} 35 35)` : '#626b70');
                 const outlineColor = movement > 0
-                    ? `rgb(90 255 150)`
-                    : (movement < 0 ? `rgb(255 105 105)` : '#aeb5ba');
+                    ? `rgb(0 255 106)`
+                    : (movement < 0 ? `rgb(255 0 0)` : '#aeb5ba');
                 tile.style.setProperty('--market-color', color);
                 tile.style.setProperty('--market-outline', outlineColor);
                 tile.style.setProperty('--market-tile-fill', `color-mix(in srgb, ${color} 22%, transparent)`);
