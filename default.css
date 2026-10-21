@@ -16,6 +16,7 @@
     --brdpxs: 2px;
     --animms: 160ms;
     --alpico: 0.1;
+    --boxshw: 0 0 16px #00000080;
 }
 
 button {
@@ -233,24 +234,6 @@ body::after {
     border-color: #ffffff70;
 }
 
-.div-desc-top {
-    margin: 10px;
-    margin-left: 16px;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    display: flex;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.8em;
-    color: var(--clrbs);
-    align-items: flex-end;
-    justify-content: flex-start;
-    line-height: 1;
-    font-family: 'Consolas', monospace;
-    position: absolute;
-    pointer-events: none;
-}
-
 .div-desc {
     margin: 40px 60px 40px 60px;
     padding: 0px 20px 0px 20px;
@@ -331,7 +314,7 @@ body::after {
     background: var(--clrbgt);
     white-space: normal;
     overflow-wrap: anywhere;
-    box-shadow: 0 4px 16px #00000080;
+    box-shadow: var(--boxshw);
     overscroll-behavior: contain;
     scrollbar-color: var(--clr02) var(--clrbs);
     scrollbar-width: thin;
@@ -367,7 +350,8 @@ body::after {
     );
 }
 
-/* #region GRAPHS */
+/* #region GFXS */
+/* #region mitk */
 .scenario-chart-meta {
     display: flex;
     align-items: center;
@@ -404,7 +388,7 @@ body::after {
     z-index: 0;
     pointer-events: none;
     background-image: url('gfx/text_icons/mit.svg');
-    background-position: calc(50% + 2px) 30%;
+    background-position: center 32%;
     background-size: auto 60%;
     background-repeat: no-repeat;
     opacity: var(--alpico);
@@ -454,7 +438,8 @@ body::after {
 .scenario-chart-plot circle {
     cursor: help;
 }
-
+/* #endregion */
+/* #region glob */
 .sea-globe-preview {
     position: fixed;
     top: 50%;
@@ -481,7 +466,54 @@ body::after {
     pointer-events: none;
 }
 .sea-globe-canvas.dragging { cursor: grabbing; }
-
+/* #endregion */
+/* #region clim */
+.climate-card {
+    position: fixed;
+    z-index: 1001;
+    top: 16px;
+    right: 16px;
+    width: 238px;
+    box-sizing: border-box;
+    padding: 14px 16px 12px;
+    border: var(--brdpxs) solid var(--clrbs);
+    border-left: var(--brdlft) solid var(--clrbs);
+    background: var(--clrbgt);
+    box-shadow: var(--boxshw);
+    color: #e8f2f7;
+    font-family: 'Consolas', monospace;
+    cursor: pointer;
+}
+.climate-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: url('gfx/text_icons/mit.svg');
+    background-position: center;
+    background-size: auto 60%;
+    background-repeat: no-repeat;
+    opacity: var(--alpico);
+}
+.climate-card-heading { display: flex; align-items: center; justify-content: space-between; color: #ffffffa8; font-size: 10px; letter-spacing: .18em; }
+.climate-live { display: inline-flex; align-items: center; gap: 5px; color: #89e6b5; font-size: 9px; }
+.climate-live i { width: 6px; height: 6px; border-radius: 50%; background: #55e798; box-shadow: 0 0 8px #55e798; }
+.climate-date { display: block; margin-top: 8px; color: #ffffff70; font-size: 10px; letter-spacing: .04em; }
+.climate-current { display: flex; align-items: center; gap: 9px; margin-top: 2px; }
+.climate-icon { color: #a8dcff; font-size: 28px; line-height: 1; }
+.climate-temp { color: #fff; font-size: 30px; letter-spacing: 0.6em; }
+.climate-condition { min-height: 16px; margin-top: 1px; color: #d4e2ea; font-size: 11px; }
+.climate-details { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 8px; margin-top: 13px; padding-top: 11px; border-top: 1px solid #ffffff20; }
+.climate-details div { display: flex; flex-direction: column; gap: 3px; }
+.climate-details span { color: #ffffff65; font-size: 8px; letter-spacing: .12em; }
+.climate-details b { color: #f3f8fa; font-size: 11px; font-weight: 400; letter-spacing: .03em; }
+.climate-updated { min-height: 11px; margin-top: 11px; color: #ffffff52; font-size: 8px; letter-spacing: .04em; }
+.climate-card.is-stale .climate-live { color: #f4c779; }
+.climate-card.is-stale .climate-live i { background: #f4c779; box-shadow: 0 0 8px #f4c779; }
+.climate-card.is-error .climate-live { color: #ffad99; }
+.climate-card.is-error .climate-live i { background: #ffad99; box-shadow: 0 0 8px #ffad99; }
+/* #endregion */
+/* #region affy */
 .affinity-map {
     position: relative;
     width: min(calc(100% - 40px), 660px);
@@ -522,7 +554,8 @@ body::after {
     mask: var(--affinity-icon) center / contain no-repeat;
 }
 .affinity-node--neutral { border-style: dashed; }
-
+/* #endregion */
+/* #region mrkt */
 .market-chart {
     --market-tile-fill: #1b1b1b5e;
     position: relative;
@@ -582,7 +615,6 @@ body::after {
 .resource-market-change { text-align: right; font-size: 11px; }
 .resource-market-change.is-up { color: #00ff6a; }
 .resource-market-change.is-down { color: #ff0000; }
-
 .market-text {
     position: fixed;
     top: auto;
@@ -600,6 +632,8 @@ body::after {
     color: var(--clrit);
     font-family: 'Consolas', monospace;
     background-color: var(--clrbgt);;
+    box-shadow: var(--boxshw);
+    border-top: var(--brdpxs) solid var(--clrbs);
     z-index: 1000;
     cursor: pointer;
 }
@@ -614,6 +648,7 @@ body::after {
     from { transform: translateX(100vw); }
     to   { transform: translateX(-100%); }
 }
+/* #endregion */
 /* #endregion */
 
 .legacy-list_div {
