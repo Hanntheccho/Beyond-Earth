@@ -14,43 +14,43 @@
     <div class="be-info">
         <div></div>
     </div>
-    <div class="market-text"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
+    <div class="market-text" data-panel-group="main" data-panel-target="MMA-panel"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
     <div class="div-main">
-        <div class="title-div" data-panel-group="main" data-panel-target="BE0-panel"><div class="title-loc"><span class="title-txt"></span><span class="title-ver"></span></div><img src="be_icon_b.svg" class="title-ico"></div>
+        <div class="title-div" data-panel-group="main" data-panel-target="BE0-panel"><div class="title-loc"><span class="title-txt">Beyond Earth</span><span class="title-ver">HTML v0.0.1</span></div><img src="be_icon_b.svg" class="title-ico"></div>
         <div class="div-btn20">
-            <button class="btn20" type="button" data-panel-group="main" data-panel-target="MMA-panel"><span class="MMA"></span></button>
-            <button class="btn20" type="button" data-panel-group="main" data-panel-target="MIT-panel"><span class="MIT"></span></button>
-            <button class="btn20" type="button" data-panel-group="main" data-panel-target="LYS-panel"><span class="LYS"></span></button>
+            <button class="btn20" type="button" data-panel-group="main" data-panel-target="MIT-panel">Müninstek</button>
+            <button class="btn20" type="button" data-panel-group="main" data-panel-target="LYS-panel">Lyscore</button>
         </div>
         <div class="div-submain">
             <div id="BE0-panel" data-panel-group="main" aria-hidden="false">
                 <div class="div-desc-win">
-                    <div class="div-desc-top"><span class="BE0"></span></div>
+                    <div class="div-desc-top">BeyondEarth</div>
                     <div class="div-desc"><span class="BE0-desc"></span></div>
                 </div>
                 <div class="div-desc-win">
-                    <div class="div-desc-top"><span class="BE1"></span></div>
+                    <div class="div-desc-top">Affinities</div>
                     <div class="affinity-map"></div>
                 </div>
             </div>
             <div id="MMA-panel" data-panel-group="main" hidden aria-hidden="true">
                 <div class="div-desc-win">
-                    <div class="div-desc-top"><span class="MMA"></span></div>
-                    <div class="div-desc"><span class="MMA-desc"></span></div>
-                </div>
-                <div class="div-desc-win">
-                    <div class="div-desc-top"><span class="wrldmrkt"></span></div>
+                    <div class="div-desc-top">MondayMarket</div>
                     <div class="market-chart" role="img"></div>
                 </div>
                 <div class="div-desc-win">
-                    <div class="div-desc-top"><span class="resource-market-title"></span></div>
+                    <div class="div-desc-top">Wrld Mrkt</div>
+                    <p class="resource-market-status" data-company-market-status aria-live="polite"></p>
+                    <div class="resource-market company-market" data-company-market></div>
+                </div>
+                <div class="div-desc-win">
+                    <div class="div-desc-top">Wrld Indx</div>
                     <p class="resource-market-status" data-market-status aria-live="polite"></p>
                     <div class="resource-market" data-resource-market></div>
                 </div>
             </div>
             <div id="MIT-panel" data-panel-group="main" hidden aria-hidden="true">
                 <div class="div-desc-win">
-                    <div class="div-desc-top"><span class="MIT"></span></div>
+                    <div class="div-desc-top">Müninstek</div>
                     <div class="div-desc has-background" style="--desc-bg: url('gfx/text_icons/mit.svg')"><span class="MIT-desc"></span></div>
                 </div>
                 <div class="div-desc-win grid">
@@ -98,7 +98,7 @@
             </div>
             <div id="LYS-panel" data-panel-group="main" hidden aria-hidden="true">
                 <div class="div-desc-win">
-                    <div class="div-desc-top"><span class="LYS"></span></div>
+                    <div class="div-desc-top">Lyscore</div>
                     <div class="div-desc has-background" style="--desc-bg: url('gfx/FRA/coa_w_stars.svg')"><span class="LYS-desc"></span></div>
                 </div>
                 <div class="div-desc-win grid">

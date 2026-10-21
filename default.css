@@ -168,6 +168,7 @@ body::after {
 }
 .title-ver {
     font-size: 14px;
+    letter-spacing: 1em;
 }
 .title-ico {
     margin-left: auto;
@@ -291,36 +292,6 @@ body::after {
     z-index: 1000;
     font-family: 'Consolas', monospace;
     padding: 0 20px 0 20px;
-}
-
-.market-text {
-    position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.6em;
-    color: var(--clrit);
-    background-color: var(--clrbgt);;
-    z-index: 1000;
-}
-.market-text-line {
-    flex: none;
-    animation: scroll-left 120s linear infinite;
-}
-.positive { color: #00ff6a; }
-.negative { color: #ff0000; }
-.neutral { color: #ffee00; }
-@keyframes scroll-left {
-    from { transform: translateX(100vw); }
-    to   { transform: translateX(-100%); }
 }
 
 .poi {
@@ -560,21 +531,21 @@ body::after {
 }
 .market-chart svg {
     display: block;
-    width: 90%;
+    width: 96%;
     height: auto;
-    margin: 14px auto 32px;
+    margin: 10px auto;
     overflow: visible;
 }
 .market-chart text.market-tag {
-    font-family: 'Consolas', monospace;
-    font-weight: bold;
+    font-family: Arial, monospace;
+    font-weight: 900;
     pointer-events: none;
-    fill: var(--market-color, #1b1b1bed);
+    fill: color-mix(in srgb, var(--market-color), white 50%);
 }
 .market-chart .market-tile { color: var(--market-color, #1b1b1bed); }
 .market-chart .market-tile .market-tile-surface {
-    fill: var(--market-tile-fill);
-    stroke: var(--market-color, #1b1b1bed);
+    fill: var(--market-tile-fill, #1b1b1b5e);
+    stroke: var(--market-outline, var(--market-color, #1b1b1bed));
     stroke-width: 1px;
     filter: drop-shadow(0 0 8px color-mix(in srgb, currentColor, transparent 82%));
     transition:  filter var(--animms) ease, stroke-width var(--animms) ease;
@@ -610,6 +581,37 @@ body::after {
 .resource-market-change { text-align: right; font-size: 11px; }
 .resource-market-change.is-up { color: #00ff6a; }
 .resource-market-change.is-down { color: #ff0000; }
+
+.market-text {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.6em;
+    color: var(--clrit);
+    background-color: var(--clrbgt);;
+    z-index: 1000;
+    cursor: pointer;
+}
+.market-text-line {
+    flex: none;
+    animation: scroll-left 120s linear infinite;
+}
+.positive { color: #00ff6a; }
+.negative { color: #ff0000; }
+.neutral { color: #ffee00; }
+@keyframes scroll-left {
+    from { transform: translateX(100vw); }
+    to   { transform: translateX(-100%); }
+}
 /* #endregion */
 
 .legacy-list_div {

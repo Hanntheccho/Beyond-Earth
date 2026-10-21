@@ -129,7 +129,7 @@
             row.dataset.direction = quote.change >= 0 ? 'up' : 'down';
         });
         renderTicker(current);
-        if (status) status.textContent = `SIMULATED MARKET · updated ${new Date().toLocaleTimeString()}`;
+        if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
     });
     api.renderTicker = renderTicker;
     renderTicker();
