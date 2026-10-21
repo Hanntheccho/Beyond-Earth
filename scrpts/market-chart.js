@@ -11,24 +11,6 @@
         return element;
     }
 
-    function labelSize(value) {
-        if (value > 10000) return 100;
-        if (value > 9000) return 90;
-        if (value > 8000) return 80;
-        if (value > 7000) return 70;
-        if (value > 6000) return 60;
-        if (value > 5000) return 50;
-        if (value > 4000) return 40;
-        if (value > 3000) return 30;
-        if (value > 2000) return 20;
-        if (value > 1000) return 10;
-        if (value > 500) return 5;
-        if (value > 400) return 4;
-        if (value > 300) return 3;
-        if (value > 200) return 2;
-        return 1;
-    }
-
     function render(plot, companies) {
         const svg = document.createElementNS(svgNS, 'svg');
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -64,14 +46,12 @@
                 });
                 add(rect, 'title', {}, `${company.name}: €$${company.value.toLocaleString()} billion`);
                 {
-                    const fontSize = labelSize(company.value);
                     const label = add(tile, 'text', {
                         x: x + (w - gap) / 2,
                         y: y + (h - gap) / 2,
                         'text-anchor': 'middle', 'dominant-baseline': 'central',
                         'alignment-baseline': 'central',
                         class: 'market-tag', 'clip-path': `url(#${clipId})`,
-                        'font-size': `${fontSize}px`
                     }, company.tag);
                 }
                 return;

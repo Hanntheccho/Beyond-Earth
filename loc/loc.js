@@ -7,7 +7,28 @@ async function fetchLocalization() {
     const localization = await fetchLocalizationFiles();
     const keywords = await fetchKeywords();
 
-    return applyKeywordFormatting(localization, keywords);
+    return applyKeywordFormatting(applyDescriptionTitles(localization), keywords);
+}
+
+/** Replace {{title}} in each description with its matching localization title. */
+function applyDescriptionTitles(localization) {
+    for (const [key, description] of Object.entries(localization)) {
+        if (!key.endsWith('-desc') || typeof description !== 'string') continue;
+
+        const title = localization[key.slice(0, -5)];
+        if (typeof title !== 'string') continue;
+
+        const escapedTitle = title.replace(/[&<>"']/g, character => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[character]);
+        localization[key] = description.replaceAll('{{title}}', escapedTitle);
+    }
+
+    return localization;
 }
 
 /** Load and merge all localization files listed in the root localization manifest. */

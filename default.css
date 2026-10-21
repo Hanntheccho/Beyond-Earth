@@ -6,8 +6,9 @@
     --clrh2loc: #ffffff;
     --clrb1: #0f0f0f;
     --clrbs: #8b8b8b31;
+    --clrh2: #ffffff;
+    --clrbt: #ffffffe5;
     --clrpt: #ffffffc7;
-    --clrbt: #ffffff;
     --clrit: #ffffff9c;
     --clrtxt: #ffffff5e;
     --clrbgt: #181818ef;
@@ -19,72 +20,9 @@
     --boxshw: 0 0 16px #00000080;
 }
 
-button {
-    cursor: pointer;
-    text-transform: uppercase;
-    text-align: center;
-    box-shadow: none;
-    background: none;
-    font-family: inherit;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-i {
-    color: var(--clrit);
-}
-
-b {
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-p {
-    text-overflow: ellipsis;
-    font-size: 14px;
-    letter-spacing: 0.2em;
-    text-align: justify;
-    line-height: 1.5;
-    color: var(--clrpt);
-}
-p b {
-    font-weight: normal;
-    text-transform: uppercase;
-    color: var(--clrbt);
-    line-height: 0;
-}
-.p-text-icon {
-    position: relative;
-    width: 1px;
-    height: auto;
-    transform: scale(180);
-    opacity: var(--alpico);
-}
-
-h1 {
-    font-family: Arial, sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 1em;
-    text-transform: uppercase;
-    line-height: 1;
-}
-
-h2 {
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    font-weight: 900;
-    letter-spacing: 1em;
-    text-transform: uppercase;
-    line-height: 1;
-}
-
 body {
     margin: 0;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: Arial, sans-serif;
     color: var(--clrbd);
     background-color: var(--clrb1);
     position: relative;
@@ -121,6 +59,68 @@ body::after {
     to { background-position: calc(50% - 45px) calc(50% - 35px); }
 }
 
+button {
+    cursor: pointer;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow: none;
+    background: none;
+    font-family: inherit;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+i {
+    color: var(--clrit);
+}
+
+b {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+p {
+    text-overflow: ellipsis;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-align: justify;
+    line-height: 1.5;
+    color: var(--clrpt);
+}
+p b {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--clrbt);
+    line-height: 0;
+}
+.p-text-icon {
+    position: relative;
+    width: 1px;
+    height: auto;
+    transform: scale(180);
+    opacity: var(--alpico);
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--clrh2);
+}
+
 .div-main {
     position: relative;
     z-index: 1;
@@ -151,7 +151,6 @@ body::after {
     text-transform: uppercase;
     letter-spacing: 1.8em;
     color: var(--clrh1loc);
-    font-family: Arial, sans-serif;
     font-weight: 900;
     line-height: 1;
     margin-top: 1px;
@@ -192,7 +191,6 @@ body::after {
     text-indent: 0.4em;
     background-color: var(--clrbs);
     color: inherit;
-    font-family: inherit;
     border: 0;
     transition: background-color var(--animms) ease, filter var(--animms) ease;
 }
@@ -570,7 +568,6 @@ body::after {
     overflow: visible;
 }
 .market-chart text.market-tag {
-    font-family: Arial, monospace;
     font-weight: 900;
     pointer-events: none;
     fill: color-mix(in srgb, var(--market-color), white 50%);
