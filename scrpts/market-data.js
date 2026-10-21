@@ -2,7 +2,7 @@
 window.marketData = [
     { name: "ARC International", tag: "ARC", value: 12223 },
     { name: "PLENFOR Armor & Steel", tag: "PLEN", value: 620 },
-    { name: "Edwin & Goodman International", tag: "EGI", value: 260 },
+    { name: "Lithiumaniac", tag: "LITH", value: 260 },
     { name: "Sub-Orbital Contractors", tag: "SOC", value: 910 },
     { name: "NADL Industries", tag: "NADL", value: 470 },
     { name: "INCOM International", tag: "INCOM", value: 180 },

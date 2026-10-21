@@ -597,6 +597,7 @@ body::after {
     font-size: 12px;
     letter-spacing: 0.6em;
     color: var(--clrit);
+    font-family: 'Consolas', monospace;
     background-color: var(--clrbgt);;
     z-index: 1000;
     cursor: pointer;

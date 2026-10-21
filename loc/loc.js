@@ -133,13 +133,29 @@ async function loadLocalization() {
             window.resourceMarket.renderTicker();
         }
 
-        // Show one archived quote in the main description on every page load.
+        // Let the title cycle the main description through archived quotes.
         const loadingTips = Object.entries(data)
             .filter(([key, value]) => key.startsWith('LOADING_TIP_') && typeof value === 'string' && value.length > 0)
             .map(([, value]) => value);
         const description = document.querySelector('.BE0-desc');
-        if (description && loadingTips.length > 0) {
-            description.innerHTML = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+        const title = document.querySelector('.title-div');
+        if (description && title && loadingTips.length > 0 && !title.dataset.loadingTipsBound) {
+            const initialIndex = Math.floor(Math.random() * loadingTips.length);
+            description.dataset.loadingTipIndex = '' + initialIndex;
+            description.innerHTML = loadingTips[initialIndex];
+
+            title.dataset.loadingTipsBound = 'true';
+            title.addEventListener('click', () => {
+                let nextIndex = Math.floor(Math.random() * loadingTips.length);
+                if (loadingTips.length > 1 && description.dataset.loadingTipIndex === '' + nextIndex) {
+                    // Keep the tip changing on each click, including consecutive clicks.
+                    while ('' + nextIndex === description.dataset.loadingTipIndex) {
+                        nextIndex = Math.floor(Math.random() * loadingTips.length);
+                    }
+                }
+                description.dataset.loadingTipIndex = '' + nextIndex;
+                description.innerHTML = loadingTips[nextIndex];
+            });
         }
     } catch (error) {
         console.error('Error loading localization:', error);
