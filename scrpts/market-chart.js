@@ -1,11 +1,5 @@
 // Treemap renderer for the fictional corporate market.
 (function () {
-    const companies = (window.marketData || []).filter(company =>
-        company && typeof company.name === 'string' && typeof company.tag === 'string' &&
-        Number.isFinite(company.value) && company.value > 0
-    ).sort((a, b) => b.value - a.value);
-    if (!companies.length) return;
-
     const svgNS = 'http://www.w3.org/2000/svg';
     const width = 600, height = 600, gap = 4;
 
@@ -35,7 +29,7 @@
         return 1;
     }
 
-    function render(plot) {
+    function render(plot, companies) {
         const svg = document.createElementNS(svgNS, 'svg');
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.setAttribute('role', 'presentation');
@@ -106,8 +100,14 @@
         plot.replaceChildren(svg);
     }
 
-    function renderAll() {
-        document.querySelectorAll('.market-chart').forEach(render);
+    function renderAll(snapshot) {
+        const source = snapshot || (window.companyMarket ? window.companyMarket.getSnapshot() : window.marketData) || [];
+        const companies = source.filter(company =>
+            company && typeof company.name === 'string' && typeof company.tag === 'string' &&
+            Number.isFinite(company.value) && company.value > 0
+        ).sort((a, b) => b.value - a.value);
+        if (!companies.length) return;
+        document.querySelectorAll('.market-chart').forEach(plot => render(plot, companies));
     }
 
     renderAll();
