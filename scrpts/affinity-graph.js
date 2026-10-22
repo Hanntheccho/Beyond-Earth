@@ -10,18 +10,18 @@
     svg.setAttribute('aria-hidden', 'true');
 
     const affinities = [
-        { id: 'purity', name: 'Purity', icon: 'gfx/aff/purity.svg', description: 'affPRT-desc', color: '#ff0000', x: 300, y: 42 },
-        { id: 'divinity', name: 'Divinity', icon: 'gfx/aff/divinity.svg', description: 'affDVN-desc', color: '#a200ff', x: 490, y: 152 },
-        { id: 'harmony', name: 'Harmony', icon: 'gfx/aff/harmony.svg', description: 'affHRM-desc', color: '#00e1ff', x: 490, y: 368 },
+        { id: 'purity', name: 'Purity', icon: 'gfx/aff/purity.svg', description: 'affPUR-desc', color: '#ff0000', x: 300, y: 42 },
+        { id: 'divinity', name: 'Divinity', icon: 'gfx/aff/divinity.svg', description: 'affDIV-desc', color: '#a200ff', x: 490, y: 152 },
+        { id: 'harmony', name: 'Harmony', icon: 'gfx/aff/harmony.svg', description: 'affHAR-desc', color: '#00e1ff', x: 490, y: 368 },
         { id: 'synergy', name: 'Synergy', icon: 'gfx/aff/synergy.svg', description: 'affSYN-desc', color: '#09ff00', x: 300, y: 478 },
-        { id: 'supremacy', name: 'Supremacy', icon: 'gfx/aff/supremacy.svg', description: 'affSPR-desc', color: '#fbff00', x: 110, y: 368 },
-        { id: 'mastery', name: 'Mastery', icon: 'gfx/aff/mastery.svg', description: 'affMST-desc', color: '#ffa600', x: 110, y: 152 },
-        { id: 'neutral', name: 'Neutral', symbol: '◉', description: 'affNTR-desc', color: '#ffffff', x: 300, y: 260 }
+        { id: 'supremacy', name: 'Supremacy', icon: 'gfx/aff/supremacy.svg', description: 'affSUP-desc', color: '#fbff00', x: 110, y: 368 },
+        { id: 'mastery', name: 'Mastery', icon: 'gfx/aff/mastery.svg', description: 'affMAS-desc', color: '#ffa600', x: 110, y: 152 },
+        { id: 'neutrality', name: 'Neutral', symbol: '◉', description: 'affNEU-desc', color: '#ffffff', x: 300, y: 260 }
     ];
 
-    // Emphasized perimeter links join neighbors; faint blended links meet at Neutral.
+    // Emphasized perimeter links join neighbors; faint blended links meet at Neutrality.
     const ideologicalNodes = affinities.slice(0, 6);
-    const neutral = affinities[6];
+    const neutrality = affinities[6];
     const definitions = document.createElementNS(svgNS, 'defs');
 
     function addGradient(id, from, to) {
@@ -56,18 +56,18 @@
 
     ideologicalNodes.forEach(affinity => {
         const line = document.createElementNS(svgNS, 'line');
-        line.setAttribute('x1', neutral.x);
-        line.setAttribute('y1', neutral.y);
+        line.setAttribute('x1', neutrality.x);
+        line.setAttribute('y1', neutrality.y);
         line.setAttribute('x2', affinity.x);
         line.setAttribute('y2', affinity.y);
         line.setAttribute('class', 'affinity-link affinity-link--soft');
-        line.setAttribute('stroke', addGradient(`affinity-neutral-${affinity.id}`, neutral, affinity));
+        line.setAttribute('stroke', addGradient(`affinity-neutrality-${affinity.id}`, neutrality, affinity));
         svg.append(line);
     });
     svg.insertBefore(definitions, svg.firstChild);
     affinities.forEach(affinity => {
         const size = 144;
-        const buttonSize = affinity.id === 'neutral' ? 76 : 84;
+        const buttonSize = affinity.id === 'neutrality' ? 76 : 84;
         const node = document.createElementNS(svgNS, 'foreignObject');
         node.setAttribute('x', affinity.x - size / 2);
         node.setAttribute('y', affinity.y - size / 2);

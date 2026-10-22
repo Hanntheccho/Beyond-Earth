@@ -10,19 +10,6 @@
 </head>
 <body>
     <div class="sea-globe-preview" aria-hidden="true"><canvas id="map" class="sea-globe-canvas" data-view="lon=-30&amp;lat=15" data-update-url="false"></canvas></div>
-    <div class="climate-card" data-panel-group="main" data-panel-target="MIT-panel">
-        <div class="climate-card-heading"><span>MÜNINSTEK · 2200</span><span class="climate-live"><i></i> LIVE</span></div>
-        <div class="climate-details">
-            <div><span>WRLD TEM</span><b>18.1°C</b></div>
-            <div><span>WRLD POP</span><b>9.236 billion</b></div>
-            <div><span>WRLD SEA</span><b>+50 m</b></div>
-            <div><span>WRLD CO₂</span><b>640 ppm</b></div>
-            <div><span>WRLD RAD</span><b>3.0 mSv</b></div>
-            <div><span>WRLD BIO</span><b>45 index</b></div>
-            <div><span>WRLD WPP</span><b>3000 m³</b></div>
-            <div><span>WRLD AIR</span><b>15 µg/m³</b></div>
-        </div>
-    </div>
     <!-- Main -->
     <div class="be-info">
         <div></div>
@@ -86,21 +73,17 @@
                 <div class="div-desc-win" id="poiEGY" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc"><span class="poiEGY-desc"></span></div></div>
                 <div class="div-desc-win" id="poiMOR" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc"><span class="poiMOR-desc"></span></div></div>
                 <div class="div-desc-win" id="poiBAC" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc"><span class="poiBAC-desc"></span></div></div>
-            </div>
-            <div id="MMA-panel" data-panel-group="main" hidden aria-hidden="true">
-                <div class="div-desc-win">
-                    <div class="market-chart" role="img"></div>
-                </div>
-                <div class="div-desc-win">
-                    <p class="resource-market-status" data-company-market-status aria-live="polite"></p>
-                    <div class="resource-market company-market" data-company-market></div>
-                </div>
-                <div class="div-desc-win">
-                    <p class="resource-market-status" data-market-status aria-live="polite"></p>
-                    <div class="resource-market" data-resource-market></div>
-                </div>
-            </div>
-            <div id="MIT-panel" data-panel-group="main" hidden aria-hidden="true">
+                <div class="div-desc-win"><div class="climate-card">
+                    <div class="climate-card-heading"><span>MÜNINSTEK</span><span class="climate-live"><i></i> LIVE</span></div>
+                    <div class="climate-details">
+                        <div><span>WRLD ECO</span><b>56 index</b></div>
+                        <div><span>WRLD POP</span><b>9.236 billion</b></div>
+                        <div><span>WRLD TEM</span><b>18.1°C</b></div>
+                        <div><span>WRLD CO₂</span><b>640 ppm</b></div>
+                        <div><span>WRLD RAD</span><b>3.0 mSv</b></div>
+                        <div><span>WRLD AIR</span><b>15 µg/m³</b></div>
+                    </div>
+                </div></div>
                 <div class="div-desc-win grid">
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldecob" aria-pressed="true"><span class="wrldecob"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldtemp"><span class="wrldtemp"></span></button>
@@ -115,7 +98,7 @@
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldairq"><span class="wrldairq"></span></button>
                 </div>
                 <div class="div-desc-win" id="wrldecob" data-panel-group="mit-charts" aria-hidden="false">
-                    <div class="scenario-chart-plot" data-series="ecobalance" data-unit="index / 100" data-color="#a0d878" data-min="0" data-max="100" role="img"></div>
+                    <div class="scenario-chart-plot" data-series="ecobalance" data-unit="index / 100" data-color="#00ffb3" data-min="0" data-max="100" role="img"></div>
                 </div>
                 <div class="div-desc-win" id="wrldtemp" data-panel-group="mit-charts" hidden aria-hidden="true">
                     <div class="scenario-chart-plot" data-series="temperature" data-unit="°C" data-color="#ffa600" role="img"></div>
@@ -146,6 +129,19 @@
                 </div>
                 <div class="div-desc-win" id="wrldairq" data-panel-group="mit-charts" hidden aria-hidden="true">
                     <div class="scenario-chart-plot" data-series="airQuality" data-unit="µg/m³ PM2.5" data-color="#7700ff" data-min="0" role="img"></div>
+                </div>
+            </div>
+            <div id="MMA-panel" data-panel-group="main" hidden aria-hidden="true">
+                <div class="div-desc-win">
+                    <div class="market-chart" role="img"></div>
+                </div>
+                <div class="div-desc-win">
+                    <p class="resource-market-status" data-company-market-status aria-live="polite"></p>
+                    <div class="resource-market company-market" data-company-market></div>
+                </div>
+                <div class="div-desc-win">
+                    <p class="resource-market-status" data-market-status aria-live="polite"></p>
+                    <div class="resource-market" data-resource-market></div>
                 </div>
             </div>
         </div>
