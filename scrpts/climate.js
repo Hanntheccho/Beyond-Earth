@@ -4,7 +4,6 @@
 
     const fields = {
         date: card.querySelector('[data-climate-date]'),
-        icon: card.querySelector('[data-climate-icon]'),
         temp: card.querySelector('[data-climate-temp]'),
         condition: card.querySelector('[data-climate-condition]'),
         feels: card.querySelector('[data-climate-feels]'),
@@ -22,17 +21,17 @@
         }).format(new Date());
     }
 
-    function conditionFor(code, isDay) {
-        if (code === 0) return [isDay ? '☀' : '☾', 'Clear sky'];
-        if (code === 1) return [isDay ? '🌤' : '☾', 'Mainly clear'];
-        if (code === 2) return ['🌤', 'Partly cloudy'];
-        if (code === 3) return ['☁', 'Overcast'];
-        if ([45, 48].includes(code)) return ['≋', 'Fog'];
-        if ([51, 53, 55, 56, 57].includes(code)) return ['☂', 'Drizzle'];
-        if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return ['☂', 'Rain'];
-        if ([71, 73, 75, 77, 85, 86].includes(code)) return ['❄', 'Snow'];
-        if ([95, 96, 99].includes(code)) return ['ϟ', 'Thunderstorm'];
-        return ['◌', 'Conditions unavailable'];
+    function conditionFor(code) {
+        if (code === 0) return 'Clear sky';
+        if (code === 1) return 'Mainly clear';
+        if (code === 2) return 'Partly cloudy';
+        if (code === 3) return 'Overcast';
+        if ([45, 48].includes(code)) return 'Fog';
+        if ([51, 53, 55, 56, 57].includes(code)) return 'Drizzle';
+        if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return 'Rain';
+        if ([71, 73, 75, 77, 85, 86].includes(code)) return 'Snow';
+        if ([95, 96, 99].includes(code)) return 'Thunderstorm';
+        return 'Conditions unavailable';
     }
 
     async function refreshWeather() {
@@ -43,10 +42,9 @@
             const current = payload.current;
             if (!current || typeof current.temperature_2m !== 'number') throw new Error('Weather data is incomplete');
 
-            const condition = conditionFor(current.weather_code, current.is_day !== 0);
-            fields.icon.textContent = condition[0];
+            const condition = conditionFor(current.weather_code);
             fields.temp.textContent = Math.round(current.temperature_2m) + '°';
-            fields.condition.textContent = condition[1];
+            fields.condition.textContent = condition;
             fields.feels.textContent = Math.round(current.apparent_temperature) + '°C';
             fields.humidity.textContent = Math.round(current.relative_humidity_2m) + '%';
             fields.wind.textContent = Math.round(current.wind_speed_10m) + ' km/h';
@@ -57,8 +55,8 @@
             card.classList.remove('is-stale', 'is-error');
         } catch (error) {
             card.classList.add('is-stale', 'is-error');
-            fields.updated.textContent = 'Weather feed unavailable · retrying';
-            if (fields.temp.textContent === '--°') fields.condition.textContent = 'Current weather unavailable';
+            fields.updated.textContent = 'Weather feed unavailable';
+            if (fields.temp.textContent === '--°') fields.condition.textContent = 'Weather unavailable';
         }
     }
 

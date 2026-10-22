@@ -496,9 +496,8 @@ h2 {
 .climate-card-heading { display: flex; align-items: center; justify-content: space-between; color: #ffffffa8; font-size: 11px; letter-spacing: .18em; }
 .climate-live { display: inline-flex; align-items: center; gap: 5px; color: #89e6b5; font-size: 11px; }
 .climate-live i { width: 8px; height: 8px; border-radius: 50%; background: #55e798; box-shadow: 0 0 8px #55e798; }
-.climate-date { display: block; margin-top: 8px; color: #ffffff70; font-size: 12px; letter-spacing: .04em; }
+.climate-date { display: block; margin-top: 8px; color: #ffffff70; font-size: 11px; letter-spacing: .04em; }
 .climate-current { display: flex; align-items: center; gap: 9px; margin-top: 2px; }
-.climate-icon { color: #adadad; font-size: 20px; line-height: 1; }
 .climate-temp { color: #fff; font-size: 42px; font-family: Arial, sans-serif; font-weight: 900; }
 .climate-condition { min-height: 16px; margin-top: 1px; color: #d4e2ea; font-size: 14px; }
 .climate-details { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 8px; margin-top: 13px; padding-top: 11px; border-top: 1px solid #ffffff20; }
