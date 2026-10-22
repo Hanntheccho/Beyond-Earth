@@ -237,23 +237,6 @@ h2 {
     opacity: var(--alpico);
 }
 
-.be-info {
-    position: fixed;
-    top: auto;
-    width: fit-content;
-    height: fit-content;
-    overflow: hidden;
-    white-space: nowrap;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.6em;
-    color: var(--clrtxt);
-    background-color: var(--clrbgt);;
-    z-index: 1000;
-    font-family: 'Consolas', monospace;
-    padding: 0 20px 0 20px;
-}
-
 .poi {
     margin: 4px;
     margin-right: 2px;
@@ -329,6 +312,24 @@ h2 {
 }
 
 /* #region GFXS */
+/* #region gdp€ */
+.gdp-panel { padding: 20px; font-family: 'Consolas', monospace; }
+.gdp-breadcrumbs { color: var(--clr02); font-size: 13px; }
+.gdp-crumb {
+    border: 1px solid var(--clrbs); padding: 6px 16px;
+    color: var(--clrbd); font-size: 14px; cursor: pointer;
+}
+.gdp-crumb:hover { background: var(--clrbs); }
+.gdp-status { margin: 8px 0 12px; color: var(--clr02); font-size: 13px; }
+.gdp-treemap { width: 100%; overflow: hidden; }
+.gdp-treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
+.gdp-tile-bg { stroke: black; stroke-width: 2; transition: filter 120ms ease; }
+.gdp-tile.has-children { cursor: pointer; }
+.gdp-tile:hover .gdp-tile-bg, .gdp-tile:focus .gdp-tile-bg { filter: brightness(1.35); }
+.gdp-tile:focus { outline: none; }
+.gdp-tile-name { fill: #fff; font-size: 14px; text-transform: uppercase; pointer-events: none; }
+.gdp-tile-value { fill: #ffffffce; font-size: 11px; pointer-events: none; }
+/* #endregion */
 /* #region mitk */
 .scenario-chart-meta {
     display: flex;
