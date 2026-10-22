@@ -1,67 +1,64 @@
 (function() {
-    const card = document.querySelector('[data-climate-card]');
+    const card = document.querySelector('.climate-card');
     if (!card) return;
 
     const fields = {
         date: card.querySelector('[data-climate-date]'),
         temp: card.querySelector('[data-climate-temp]'),
         condition: card.querySelector('[data-climate-condition]'),
-        feels: card.querySelector('[data-climate-feels]'),
-        humidity: card.querySelector('[data-climate-humidity]'),
-        wind: card.querySelector('[data-climate-wind]'),
-        rain: card.querySelector('[data-climate-rain]'),
-        updated: card.querySelector('[data-climate-updated]')
+        pressure: card.querySelector('[data-climate-pressure]'),
+        radiation: card.querySelector('[data-climate-radiation]'),
+        particulates: card.querySelector('[data-climate-particulates]'),
+        wind: card.querySelector('[data-climate-wind]')
     };
-    const apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=48.1372&longitude=11.5756&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,is_day&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=Europe%2FBerlin';
+    const timeZone = 'Europe/Berlin';
+    const windDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
-    function updateClock() {
-        fields.date.textContent = new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'Europe/Berlin', weekday: 'short', day: '2-digit', month: 'short',
-            hour: '2-digit', minute: '2-digit', hour12: false
-        }).format(new Date());
+    function updateScenarioReadout() {
+        const now = new Date();
+        const parts = new Intl.DateTimeFormat('en-GB', {
+            timeZone,
+            day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hourCycle: 'h23', timeZoneName: 'short'
+        }).formatToParts(now).reduce(function(result, part) {
+            result[part.type] = part.value;
+            return result;
+        }, {});
+        const month = Number(new Intl.DateTimeFormat('en-US', { timeZone, month: 'numeric' }).format(now));
+        const day = Number(parts.day);
+        const hour = Number(parts.hour);
+        const minute = Number(parts.minute);
+        const second = Number(parts.second);
+        const scenarioDate = new Date(Date.UTC(2200, month - 1, day));
+        const dayOfYear = Math.floor((scenarioDate - Date.UTC(2200, 0, 1)) / 86400000) + 1;
+        const seasonalPhase = 2 * Math.PI * (dayOfYear - 200) / 365;
+        const dailyPhase = 2 * Math.PI * (hour + minute / 60 + second / 3600 - 14) / 24;
+
+        // Fictional local Müninstek readings follow Munich's real date and time,
+        // while the displayed scenario year stays fixed at 2200.
+        const surfaceTemp = -1.2 + 8.4 * Math.cos(seasonalPhase) + 2.3 * Math.cos(dailyPhase);
+        const pressure = 990 + 5 * Math.sin(seasonalPhase + 0.8) + 2 * Math.cos(dailyPhase - 0.5);
+        const radiation = 0.18 + 0.08 * (0.5 + 0.5 * Math.sin(seasonalPhase * 1.7 + dailyPhase * 0.3));
+        const particulates = 68 + 74 * (0.5 + 0.5 * Math.sin(seasonalPhase * 1.3 + dailyPhase * 0.7));
+        const windSpeed = 10 + 14 * (0.5 + 0.5 * Math.sin(seasonalPhase + dailyPhase * 0.6));
+        const direction = windDirections[Math.floor((hour + dayOfYear / 7) / 3) % windDirections.length];
+
+        fields.date.textContent = parts.day + ' ' + parts.month.toUpperCase() + ' 2200 · ' +
+            parts.hour + ':' + parts.minute + ':' + parts.second;
+        fields.temp.textContent = (surfaceTemp < 0 ? '−' : '+') + Math.abs(surfaceTemp).toFixed(1) + '°';
+        fields.condition.textContent = surfaceTemp < -8
+            ? 'Deep cold · Ash haze'
+            : surfaceTemp < -2
+                ? 'Sub-zero · Unstable air'
+                : surfaceTemp > 5
+                    ? 'Warm season · Particulate haze'
+                    : 'Cold temperate · Ash haze';
+        fields.pressure.textContent = Math.round(pressure) + ' hPa';
+        fields.radiation.textContent = radiation.toFixed(2) + ' µSv/h';
+        fields.particulates.textContent = Math.round(particulates) + ' µg/m³';
+        fields.wind.textContent = direction + ' ' + Math.round(windSpeed) + ' km/h';
     }
 
-    function conditionFor(code) {
-        if (code === 0) return 'Clear sky';
-        if (code === 1) return 'Mainly clear';
-        if (code === 2) return 'Partly cloudy';
-        if (code === 3) return 'Overcast';
-        if ([45, 48].includes(code)) return 'Fog';
-        if ([51, 53, 55, 56, 57].includes(code)) return 'Drizzle';
-        if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return 'Rain';
-        if ([71, 73, 75, 77, 85, 86].includes(code)) return 'Snow';
-        if ([95, 96, 99].includes(code)) return 'Thunderstorm';
-        return 'Conditions unavailable';
-    }
-
-    async function refreshWeather() {
-        try {
-            const response = await fetch(apiUrl, { cache: 'no-store' });
-            if (!response.ok) throw new Error('Weather service returned ' + response.status);
-            const payload = await response.json();
-            const current = payload.current;
-            if (!current || typeof current.temperature_2m !== 'number') throw new Error('Weather data is incomplete');
-
-            const condition = conditionFor(current.weather_code);
-            fields.temp.textContent = Math.round(current.temperature_2m) + '°';
-            fields.condition.textContent = condition;
-            fields.feels.textContent = Math.round(current.apparent_temperature) + '°C';
-            fields.humidity.textContent = Math.round(current.relative_humidity_2m) + '%';
-            fields.wind.textContent = Math.round(current.wind_speed_10m) + ' km/h';
-            fields.rain.textContent = Number(current.precipitation).toFixed(1) + ' mm';
-            fields.updated.textContent = 'Updated ' + new Intl.DateTimeFormat('en-GB', {
-                timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', hour12: false
-            }).format(new Date(current.time));
-            card.classList.remove('is-stale', 'is-error');
-        } catch (error) {
-            card.classList.add('is-stale', 'is-error');
-            fields.updated.textContent = 'Weather feed unavailable';
-            if (fields.temp.textContent === '--°') fields.condition.textContent = 'Weather unavailable';
-        }
-    }
-
-    updateClock();
-    refreshWeather();
-    window.setInterval(updateClock, 60 * 1000);
-    window.setInterval(refreshWeather, 10 * 60 * 1000);
+    updateScenarioReadout();
+    window.setInterval(updateScenarioReadout, 1000);
 })();
