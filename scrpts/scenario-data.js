@@ -9,6 +9,8 @@
 // approximate 3.0 mSv/year natural-background baseline; the post-2070 fallout
 // pulse is a fictional global average, not a model of local exposure. Air
 // quality is represented by fictional annual mean PM2.5 concentration in µg/m³.
+// Ecobalance is an invented 0–100 index: 100 is near-optimal balance and 0 is
+// ecological collapse, adapting Müninstek's local LED concept to a global scale.
 window.scenarioChartData = {
     temperature: [
         { year: 1950, value: 13.9 },
@@ -213,5 +215,27 @@ window.scenarioChartData = {
         { year: 2150, value: 18 },
         { year: 2180, value: 16 },
         { year: 2200, value: 15 }
+    ],
+    ecobalance: [
+        { year: 1950, value: 86 },
+        { year: 1970, value: 82 },
+        { year: 1990, value: 74 },
+        { year: 2000, value: 68 },
+        { year: 2010, value: 62 },
+        { year: 2020, value: 57 },
+        { year: 2030, value: 51 },
+        { year: 2050, value: 41 },
+        { year: 2060, value: 35 },
+        { year: 2070, value: 30 },
+        { year: 2071, value: 20 },
+        { year: 2072, value: 12 },
+        { year: 2075, value: 8 },
+        { year: 2080, value: 7 },
+        { year: 2090, value: 9 },
+        { year: 2100, value: 14 },
+        { year: 2120, value: 23 },
+        { year: 2150, value: 35 },
+        { year: 2180, value: 47 },
+        { year: 2200, value: 56 }
     ]
 };

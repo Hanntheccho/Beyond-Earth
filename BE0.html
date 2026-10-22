@@ -102,7 +102,8 @@
             </div>
             <div id="MIT-panel" data-panel-group="main" hidden aria-hidden="true">
                 <div class="div-desc-win grid">
-                    <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldtemp" aria-pressed="true"><span class="wrldtemp"></span></button>
+                    <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldecob" aria-pressed="true"><span class="wrldecob"></span></button>
+                    <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldtemp"><span class="wrldtemp"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldpops"><span class="wrldpops"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldslvl"><span class="wrldslvl"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldcrop"><span class="wrldcrop"></span></button>
@@ -113,7 +114,10 @@
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldradi"><span class="wrldradi"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldairq"><span class="wrldairq"></span></button>
                 </div>
-                <div class="div-desc-win" id="wrldtemp" data-panel-group="mit-charts" aria-hidden="false">
+                <div class="div-desc-win" id="wrldecob" data-panel-group="mit-charts" aria-hidden="false">
+                    <div class="scenario-chart-plot" data-series="ecobalance" data-unit="index / 100" data-color="#a0d878" data-min="0" data-max="100" role="img"></div>
+                </div>
+                <div class="div-desc-win" id="wrldtemp" data-panel-group="mit-charts" hidden aria-hidden="true">
                     <div class="scenario-chart-plot" data-series="temperature" data-unit="°C" data-color="#ffa600" role="img"></div>
                 </div>
                 <div class="div-desc-win" id="wrldpops" data-panel-group="mit-charts" hidden aria-hidden="true">

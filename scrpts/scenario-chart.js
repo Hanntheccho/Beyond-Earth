@@ -28,8 +28,12 @@
         let max = Math.max(...sorted.map(point => point.value));
         if (min === max) { min -= 1; max += 1; }
         const padding = (max - min) * 0.12;
-        min -= padding;
-        max += padding;
+        const fixedMin = Number(plot.dataset.min);
+        const fixedMax = Number(plot.dataset.max);
+        if (Number.isFinite(fixedMin)) min = fixedMin;
+        else min -= padding;
+        if (Number.isFinite(fixedMax)) max = fixedMax;
+        else max += padding;
         const x = year => margin.left + ((year - sorted[0].year) / ((sorted.at(-1).year - sorted[0].year) || 1)) * innerWidth;
         const y = value => margin.top + ((max - value) / (max - min)) * innerHeight;
         const color = plot.dataset.color || '#d94141';
