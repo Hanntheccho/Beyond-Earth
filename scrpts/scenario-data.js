@@ -7,7 +7,8 @@
 // renewable freshwater availability per person. The 50 m sea-level endpoint
 // and later trajectories are intentional extreme fiction. Radiation uses an
 // approximate 3.0 mSv/year natural-background baseline; the post-2070 fallout
-// pulse is a fictional global average, not a model of local exposure.
+// pulse is a fictional global average, not a model of local exposure. Air
+// quality is represented by fictional annual mean PM2.5 concentration in µg/m³.
 window.scenarioChartData = {
     temperature: [
         { year: 1950, value: 13.9 },
@@ -190,5 +191,27 @@ window.scenarioChartData = {
         { year: 2150, value: 3.0 },
         { year: 2180, value: 3.0 },
         { year: 2200, value: 3.0 }
+    ],
+    airQuality: [
+        { year: 1950, value: 18 },
+        { year: 1970, value: 23 },
+        { year: 1990, value: 28 },
+        { year: 2000, value: 30 },
+        { year: 2010, value: 29 },
+        { year: 2020, value: 25 },
+        { year: 2030, value: 23 },
+        { year: 2050, value: 21 },
+        { year: 2065, value: 20 },
+        { year: 2070, value: 20 },
+        { year: 2071, value: 95 },
+        { year: 2072, value: 140 },
+        { year: 2075, value: 105 },
+        { year: 2080, value: 62 },
+        { year: 2090, value: 38 },
+        { year: 2100, value: 27 },
+        { year: 2120, value: 21 },
+        { year: 2150, value: 18 },
+        { year: 2180, value: 16 },
+        { year: 2200, value: 15 }
     ]
 };

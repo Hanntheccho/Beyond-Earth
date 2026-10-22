@@ -12,14 +12,15 @@
     <div class="sea-globe-preview" aria-hidden="true"><canvas id="map" class="sea-globe-canvas" data-view="lon=-30&amp;lat=15" data-update-url="false"></canvas></div>
     <div class="climate-card" data-panel-group="main" data-panel-target="MIT-panel">
         <div class="climate-card-heading"><span>MÜNINSTEK · 2200</span><span class="climate-live"><i></i> LIVE</span></div>
-        <div class="climate-temp">18.1°C</div>
         <div class="climate-details">
+            <div><span>WRLD TEM</span><b>18.1°C</b></div>
             <div><span>WRLD POP</span><b>9.236 billion</b></div>
             <div><span>WRLD SEA</span><b>+50 m</b></div>
             <div><span>WRLD CO₂</span><b>640 ppm</b></div>
             <div><span>WRLD RAD</span><b>3.0 mSv</b></div>
             <div><span>WRLD BIO</span><b>45 index</b></div>
             <div><span>WRLD WPP</span><b>3000 m³</b></div>
+            <div><span>WRLD AIR</span><b>15 µg/m³</b></div>
         </div>
     </div>
     <!-- Main -->
@@ -110,6 +111,7 @@
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldco2e"><span class="wrldco2e"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldpopx"><span class="wrldpopx"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldradi"><span class="wrldradi"></span></button>
+                    <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldairq"><span class="wrldairq"></span></button>
                 </div>
                 <div class="div-desc-win" id="wrldtemp" data-panel-group="mit-charts" aria-hidden="false">
                     <div class="scenario-chart-plot" data-series="temperature" data-unit="°C" data-color="#ffa600" role="img"></div>
@@ -137,6 +139,9 @@
                 </div>
                 <div class="div-desc-win" id="wrldradi" data-panel-group="mit-charts" hidden aria-hidden="true">
                     <div class="scenario-chart-plot" data-series="radiation" data-unit="mSv" data-color="#ff0015" role="img"></div>
+                </div>
+                <div class="div-desc-win" id="wrldairq" data-panel-group="mit-charts" hidden aria-hidden="true">
+                    <div class="scenario-chart-plot" data-series="airQuality" data-unit="µg/m³ PM2.5" data-color="#7700ff" role="img"></div>
                 </div>
             </div>
         </div>

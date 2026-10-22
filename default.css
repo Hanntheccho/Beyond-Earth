@@ -18,6 +18,7 @@
     --animms: 160ms;
     --alpico: 0.1;
     --boxshw: 0 0 16px #00000080;
+    --mrkfds: drop-shadow(0 0 0.6em color-mix(in srgb, currentColor 60%, transparent));
 }
 
 body {
@@ -370,6 +371,7 @@ h2 {
     font-size: 20px;
     font-weight: normal;
     font-family: 'Consolas', monospace;
+    text-shadow: 0 0 0.8em color-mix(in srgb, currentColor, transparent 70%);
 }
 .scenario-chart-plot {
     --chart-accent: #d94141;
@@ -409,15 +411,17 @@ h2 {
 .scenario-chart-plot .chart-event-tag { fill: #2a1111; stroke: #ff3333; stroke-width: 0.8; }
 .scenario-chart-plot .chart-series-area {
     fill: var(--chart-accent, #d94141);
-    fill-opacity: 0.18;
+    fill-opacity: 0.1;
     stroke: none;
+    filter: drop-shadow(0 0 1em currentColor);
 }
 .scenario-chart-plot .chart-series-line {
     fill: none;
     stroke: var(--chart-accent, #d94141);
-    stroke-width: 2.5;
+    stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+    filter: drop-shadow(0 0 0.4em color-mix(in srgb, currentColor, transparent 80%));
 }
 .scenario-chart-plot .chart-series-point {
     r: 4px;
@@ -495,8 +499,7 @@ h2 {
 .climate-live { display: inline-flex; align-items: center; gap: 5px; color: #89e6b5; font-size: 11px; letter-spacing: .12em; }
 .climate-live i { width: 8px; height: 8px; border-radius: 50%; background: #55e798; box-shadow: 0 0 8px #55e798; animation: climate-pulse 1.8s ease-in-out infinite; }
 @keyframes climate-pulse { 50% { opacity: .45; box-shadow: 0 0 2px #55e798; } }
-.climate-temp { color: #fff; font-size: 42px; font-family: Arial, sans-serif; font-weight: 900; letter-spacing: 0.2em; }
-.climate-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 6px; padding-top: 11px; border-top: 1px solid #ffffff20; }
+.climate-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 6px; padding-top: 5px; border-top: 1px solid #ffffff20; }
 .climate-details div { display: flex; flex-direction: column; gap: 3px; }
 .climate-details span { color: #ffffff65; font-size: 11px; letter-spacing: .12em; }
 .climate-details b { color: #f3f8fa; font-size: 14px; font-weight: 400; letter-spacing: .03em; text-transform: none; }
@@ -510,8 +513,8 @@ h2 {
     background: radial-gradient(ellipse at center, #ffffff18, transparent 68%);
 }
 .affinity-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.affinity-link { fill: none; stroke-width: 3; opacity: .78; filter: drop-shadow(0 0 5px #ffffff20); }
-.affinity-link--strong { stroke-width: 5; opacity: .9; }
+.affinity-link { fill: none; stroke-width: 2; opacity: .8; }
+.affinity-link--strong { stroke-width: 2; opacity: .9; }
 .affinity-link--soft { stroke-dasharray: 5 9; stroke-width: 2; opacity: .26; }
 .affinity-node-frame { width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
 .affinity-node {
@@ -523,20 +526,28 @@ h2 {
     width: var(--affinity-node-size, 84px);
     height: var(--affinity-node-size, 84px);
     padding: 4px;
-    border: 2px solid color-mix(in srgb, var(--affinity-color), transparent 30%);
+    border: 2px solid var(--affinity-color);
     border-radius: 50%;
     color: var(--affinity-color);
     background: #161616;
-    box-shadow: 0 0 18px color-mix(in srgb, var(--affinity-color), transparent 82%), inset 0 0 16px color-mix(in srgb, var(--affinity-color), transparent 92%);
-    transition: border var(--animms) ease, box-shadow var(--animms) ease;
+    box-shadow: 0 0 1em color-mix(in srgb, var(--affinity-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affinity-color), transparent 90%);
+    transition: border var(--animms) ease;
     z-index: 2;
 }
-.affinity-node:hover, .affinity-node:focus-visible { border: 4px solid color-mix(in srgb, var(--affinity-color), transparent 10%); box-shadow: 0 0 24px color-mix(in srgb, var(--affinity-color), transparent 58%); outline: none; }
-.affinity-node > span { font-size: 34px; line-height: 1; }
+.affinity-node:hover, .affinity-node:focus-visible { border: 8px solid var(--affinity-color); }
+.affinity-node > span { font-size: 34px; line-height: 1; text-shadow: 0 0 0.4em color-mix(in srgb, var(--affinity-color), transparent 60%); }
 .affinity-node > .affinity-icon {
     display: block;
+    position: relative;
     width: 40px;
     height: 40px;
+    filter: drop-shadow(0 0 0.4em color-mix(in srgb, var(--affinity-color), transparent 60%));
+    transition: filter var(--animms) ease;
+}
+.affinity-node > .affinity-icon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
     background-color: var(--affinity-color);
     -webkit-mask: var(--affinity-icon) center / contain no-repeat;
     mask: var(--affinity-icon) center / contain no-repeat;
@@ -567,7 +578,7 @@ h2 {
     fill: var(--market-tile-fill, #1b1b1b5e);
     stroke: var(--market-outline, var(--market-color, #1b1b1bed));
     stroke-width: 1px;
-    filter: drop-shadow(0 0 18px color-mix(in srgb, currentColor, transparent 58%));
+    filter: drop-shadow(0 0 1em currentColor);
     transition: filter var(--animms) ease;
     cursor: help;
 }
@@ -599,8 +610,8 @@ h2 {
 .resource-market-unit { color: #ffffff70; font-size: 11px; }
 .resource-market-price { text-align: right; white-space: nowrap; }
 .resource-market-change { text-align: right; font-size: 11px; }
-.resource-market-change.is-up { color: #00ff6a; }
-.resource-market-change.is-down { color: #ff0000; }
+.resource-market-change.is-up { color: #00ff6a; filter: var(--mrkfds); }
+.resource-market-change.is-down { color: #ff0000; filter: var(--mrkfds); }
 .market-text {
     position: fixed;
     top: auto;
@@ -627,9 +638,9 @@ h2 {
     flex: none;
     animation: scroll-left 120s linear infinite;
 }
-.positive { color: #00ff6a; }
-.negative { color: #ff0000; }
-.neutral { color: #ffee00; }
+.positive { color: #00ff6a; filter: var(--mrkfds); }
+.negative { color: #ff0000; filter: var(--mrkfds); }
+.neutrale { color: #ffee00; filter: var(--mrkfds); }
 @keyframes scroll-left {
     from { transform: translateX(100vw); }
     to   { transform: translateX(-100%); }
