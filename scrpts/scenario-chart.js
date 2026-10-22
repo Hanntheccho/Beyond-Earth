@@ -53,18 +53,27 @@
         meta.append(metric);
         plot.before(meta);
 
+        const firstYear = sorted[0].year;
+        const lastYear = sorted[sorted.length - 1].year;
         const svg = document.createElementNS(svgNS, 'svg');
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.setAttribute('role', 'presentation');
         svg.setAttribute('aria-hidden', 'true');
+        const era = { start: 2070, end: 2100, label: 'DARK AGE' };
+        if (era.start < lastYear && era.end > firstYear) {
+            const eraStart = Math.max(era.start, firstYear);
+            const eraEnd = Math.min(era.end, lastYear);
+            add(svg, 'rect', {
+                x: x(eraStart), y: margin.top, width: x(eraEnd) - x(eraStart),
+                height: innerHeight, class: 'chart-era-band'
+            });
+        }
         for (let tick = 0; tick <= 4; tick++) {
             const value = max - (max - min) * tick / 4;
             const yy = y(value);
             add(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, class: 'chart-grid-line' });
             add(svg, 'text', { x: margin.left - 10, y: yy + 4, 'text-anchor': 'end' }, Number(value.toPrecision(3)).toString());
         }
-        const firstYear = sorted[0].year;
-        const lastYear = sorted[sorted.length - 1].year;
         const yearTicks = [];
         for (let year = firstYear; year <= lastYear; year += 25) yearTicks.push(year);
         if (yearTicks[yearTicks.length - 1] !== lastYear) yearTicks.push(lastYear);
@@ -82,11 +91,21 @@
         const eventYear = 2070;
         if (eventYear >= firstYear && eventYear <= lastYear) {
             const eventX = x(eventYear);
-            add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top - 4, y2: height - margin.bottom, class: 'chart-event-line' });
+            add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top - 12, y2: height - margin.bottom, class: 'chart-event-line' });
             const tagWidth = 100, tagHeight = 18;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
-            add(svg, 'rect', { x: tagX, y: margin.top - 9, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
-            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top + 3, 'text-anchor': 'middle', class: 'chart-event-label' }, 'GREAT MISTAKE');
+            add(svg, 'rect', { x: tagX, y: margin.top - 18, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
+            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top - 5, 'text-anchor': 'middle', class: 'chart-event-label' }, 'GREAT MISTAKE');
+        }
+        if (era.start >= firstYear && era.end <= lastYear) {
+            const eraX = (x(era.start) + x(era.end)) / 2;
+            add(svg, 'text', {
+                x: eraX, y: margin.top + 16, 'text-anchor': 'middle', class: 'chart-era-label'
+            }, era.label);
+            add(svg, 'line', {
+                x1: x(era.end), x2: x(era.end), y1: margin.top, y2: height - margin.bottom,
+                class: 'chart-era-boundary'
+            });
         }
         const baseline = height - margin.bottom;
         const areaPath = [
