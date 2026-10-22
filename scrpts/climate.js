@@ -13,13 +13,13 @@
         rain: card.querySelector('[data-climate-rain]'),
         updated: card.querySelector('[data-climate-updated]')
     };
-    const apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,is_day&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=Europe%2FParis';
+    const apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=48.1372&longitude=11.5756&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,is_day&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=Europe%2FBerlin';
 
     function updateClock() {
         fields.date.textContent = new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'Europe/Paris', weekday: 'short', day: '2-digit', month: 'short',
+            timeZone: 'Europe/Berlin', weekday: 'short', day: '2-digit', month: 'short',
             hour: '2-digit', minute: '2-digit', hour12: false
-        }).format(new Date()) + ' · PARIS LOCAL';
+        }).format(new Date());
     }
 
     function conditionFor(code, isDay) {
@@ -52,8 +52,8 @@
             fields.wind.textContent = Math.round(current.wind_speed_10m) + ' km/h';
             fields.rain.textContent = Number(current.precipitation).toFixed(1) + ' mm';
             fields.updated.textContent = 'Updated ' + new Intl.DateTimeFormat('en-GB', {
-                timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false
-            }).format(new Date(current.time)) + ' · 10 MIN REFRESH';
+                timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', hour12: false
+            }).format(new Date(current.time));
             card.classList.remove('is-stale', 'is-error');
         } catch (error) {
             card.classList.add('is-stale', 'is-error');
