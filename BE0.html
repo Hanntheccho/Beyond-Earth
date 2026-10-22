@@ -14,10 +14,10 @@
         <div class="climate-card-heading"><span>MÜNINSTEK · 2200</span><span class="climate-live"><i></i> LIVE</span></div>
         <div class="climate-temp">18.1°C</div>
         <div class="climate-details">
-            <div><span>WRLD POP</span><b>9.236 B</b></div>
+            <div><span>WRLD POP</span><b>9.236 billion</b></div>
             <div><span>WRLD SEA</span><b>+50 m</b></div>
             <div><span>WRLD CO₂</span><b>640 ppm</b></div>
-            <div><span>WRLD RAD</span><b>0.30 µSv/h</b></div>
+            <div><span>WRLD RAD</span><b>3.0 mSv</b></div>
             <div><span>WRLD BIO</span><b>45 index</b></div>
             <div><span>WRLD WPP</span><b>3000 m³</b></div>
         </div>
@@ -109,15 +109,16 @@
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldfrsh"><span class="wrldfrsh"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldco2e"><span class="wrldco2e"></span></button>
                     <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldpopx"><span class="wrldpopx"></span></button>
+                    <button class="poi" type="button" data-panel-group="mit-charts" data-panel-target="wrldradi"><span class="wrldradi"></span></button>
                 </div>
                 <div class="div-desc-win" id="wrldtemp" data-panel-group="mit-charts" aria-hidden="false">
                     <div class="scenario-chart-plot" data-series="temperature" data-unit="°C" data-color="#ffa600" role="img"></div>
                 </div>
                 <div class="div-desc-win" id="wrldpops" data-panel-group="mit-charts" hidden aria-hidden="true">
-                    <div class="scenario-chart-plot" data-series="population" data-unit="B" data-color="#009dff" role="img"></div>
+                    <div class="scenario-chart-plot" data-series="population" data-unit="billion" data-color="#009dff" role="img"></div>
                 </div>
                 <div class="div-desc-win" id="wrldslvl" data-panel-group="mit-charts" hidden aria-hidden="true">
-                    <div class="scenario-chart-plot" data-series="seaLevel" data-unit="M" data-color="#00ddff" role="img"></div>
+                    <div class="scenario-chart-plot" data-series="seaLevel" data-unit="meters" data-color="#00ddff" role="img"></div>
                 </div>
                 <div class="div-desc-win" id="wrldcrop" data-panel-group="mit-charts" hidden aria-hidden="true">
                     <div class="scenario-chart-plot" data-series="cropYield" data-unit="index" data-color="#7bff00" role="img"></div>
@@ -132,7 +133,10 @@
                     <div class="scenario-chart-plot" data-series="co2" data-unit="ppm" data-color="#ee00ff" role="img"></div>
                 </div>
                 <div class="div-desc-win" id="wrldpopx" data-panel-group="mit-charts" hidden aria-hidden="true">
-                    <div class="scenario-chart-plot" data-series="displaced" data-unit="B" data-color="#ff5e00" role="img"></div>
+                    <div class="scenario-chart-plot" data-series="displaced" data-unit="billion" data-color="#ff5e00" role="img"></div>
+                </div>
+                <div class="div-desc-win" id="wrldradi" data-panel-group="mit-charts" hidden aria-hidden="true">
+                    <div class="scenario-chart-plot" data-series="radiation" data-unit="mSv" data-color="#ff0015" role="img"></div>
                 </div>
             </div>
         </div>

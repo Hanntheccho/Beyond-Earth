@@ -368,7 +368,6 @@ h2 {
     margin-left: 8px;
     color: var(--chart-accent, #d94141);
     font-size: 20px;
-    letter-spacing: 0.4em;
     font-weight: normal;
     font-family: 'Consolas', monospace;
 }
@@ -568,13 +567,12 @@ h2 {
     fill: var(--market-tile-fill, #1b1b1b5e);
     stroke: var(--market-outline, var(--market-color, #1b1b1bed));
     stroke-width: 1px;
-    filter: drop-shadow(0 0 8px color-mix(in srgb, currentColor, transparent 82%));
-    transition:  filter var(--animms) ease, stroke-width var(--animms) ease;
+    filter: drop-shadow(0 0 18px color-mix(in srgb, currentColor, transparent 58%));
+    transition: filter var(--animms) ease;
     cursor: help;
 }
 .market-chart .market-tile:hover .market-tile-surface {
-    filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor, transparent 58%));
-    stroke-width: 2;
+    filter: brightness(2.0);
 }
 .resource-market-status {
     margin: 10px 20px;

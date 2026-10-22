@@ -1,7 +1,7 @@
 // Treemap renderer for the fictional corporate market.
 (function () {
     const svgNS = 'http://www.w3.org/2000/svg';
-    const width = 600, height = 600, gap = 4;
+    const width = 600, height = 600, gap = 2;
 
     function add(parent, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
