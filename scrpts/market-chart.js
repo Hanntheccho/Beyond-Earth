@@ -1,6 +1,12 @@
 // Treemap renderer for the fictional corporate market.
 (function () {
     const svgNS = 'http://www.w3.org/2000/svg';
+    const formatter = new Intl.NumberFormat('en-US');
+    const changeFormatter = new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        signDisplay: 'always'
+    });
     const width = 600, height = 600, gap = 2;
 
     function add(parent, tag, attrs, text) {
@@ -34,7 +40,8 @@
                     x, y, width: Math.max(0, w - gap), height: Math.max(0, h - gap),
                     rx: 0, class: 'market-tile-surface'
                 });
-                add(rect, 'title', {}, `${company.name}: €$${company.value.toLocaleString()} billion`);
+                const changeText = `${changeFormatter.format(Number(company.changePercent) || 0)}%`;
+                add(rect, 'title', {}, `${company.name} — €$${formatter.format(company.value)} billion (${changeText})`);
                 {
                     const availableWidth = Math.max(0, (w - gap) * 0.7);
                     const availableHeight = Math.max(0, (h - gap) * 0.7);
