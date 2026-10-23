@@ -335,7 +335,7 @@ h2 {
     filter: drop-shadow(var(--mrkfds));
     transition: filter var(--animms) ease;
 }
-.gdp-tile:hover .gdp-tile-surface, .gdp-tile:focus .gdp-tile-surface { filter: brightness(1.2); }
+.gdp-tile:hover .gdp-tile-surface, .gdp-tile:focus .gdp-tile-surface { filter: brightness(0.6); }
 .gdp-tile:focus { outline: none; }
 .gdp-tile-name { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 900; text-transform: uppercase; pointer-events: none; }
 .gdp-tile-value { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 700; pointer-events: none; }
@@ -579,7 +579,7 @@ h2 {
     cursor: help;
 }
 .market-chart .market-tile:hover .market-tile-surface {
-    filter: brightness(1.2);
+    filter: brightness(0.6);
 }
 .resource-market-status {
     margin: 10px 20px;
