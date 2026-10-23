@@ -25,7 +25,7 @@
                 <div class="div-desc-win treemap-panel">
                     <nav class="treemap-breadcrumbs" aria-label="GDP treemap location"></nav>
                     <p class="treemap-status" role="status" aria-live="polite">Loading GDP data…</p>
-                    <div class="treemap" data-treemap="gdp" role="group" aria-label="GDP treemap"></div>
+                    <div class="treemap" data-treemap="gdp" data-source="scrpts/gdp-data.json" data-use-tags="false" role="group" aria-label="GDP treemap"></div>
                 </div>
                 <div class="div-desc-win">
                     <div class="affinity-map"></div>
@@ -136,7 +136,7 @@
                 <div class="div-desc-win treemap-panel">
                     <nav class="treemap-breadcrumbs" aria-label="Market treemap location"></nav>
                     <p class="treemap-status" role="status" aria-live="polite">Loading market data…</p>
-                    <div class="treemap" data-treemap="market" role="group" aria-label="Market treemap"></div>
+                    <div class="treemap" data-treemap="market" data-source="scrpts/market-data.json" data-use-tags="true" role="group" aria-label="Market treemap"></div>
                 </div>
                 <div class="div-desc-win">
                     <p class="resource-market-status" data-company-market-status aria-live="polite"></p>
@@ -171,11 +171,9 @@
     <script type="module" src="scrpts/globe.js"></script>
     <script src="scrpts/affinity-graph.js"></script>
     <script src="scrpts/default-treemap.js"></script>
-    <script src="scrpts/gdp-data.js"></script>
     <script src="default.js"></script>
     <script src="scrpts/scenario-data.js"></script>
     <script src="scrpts/scenario-chart.js"></script>
-    <script src="scrpts/market-data.js"></script>
     <script src="scrpts/resource-market.js"></script>
     <div class="cursor-glow" aria-hidden="true"></div>
 </body>

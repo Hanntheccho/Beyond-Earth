@@ -111,7 +111,7 @@
                 const changeText = `${percentFormat.format(Number(item.changePercent) || 0)}%`;
                 const group = add(svg, 'g', { class: `treemap-tile${canDrill ? ' has-children' : ''}`, 'data-direction': direction, tabindex: canDrill ? '0' : null, role: canDrill ? 'button' : null, 'aria-label': `${getName(item)}: ${valueText}${canDrill ? ', open details' : ''}` });
                 add(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), class: 'treemap-surface' });
-                const fit = fitLabel(name, valueText, changeText, w * 0.7, h * 0.7);
+                const fit = fitLabel(name, valueText, changeText, w * 0.9, h * 0.9);
                 const centerX = x + w / 2;
                 const topY = y + (h - fit.requiredHeight) / 2 + fit.size;
                 if (fit.size >= 2) {
@@ -151,5 +151,158 @@
         return { update: render };
     }
 
+    const sources = [];
+    const marketListeners = new Set();
+    let marketRoot = null;
+    let timer = null;
+    let marketMood = 0;
+
+    function normalizeNode(source, useTags, inherited = {}) {
+        const node = { ...source };
+        node.name = String(source.name || source.tag || 'Unnamed');
+        node.label = useTags && source.tag ? String(source.tag) : node.name;
+        node.currency = source.currency || inherited.currency || '€$';
+        node.unit = source.unit !== undefined ? source.unit : (inherited.unit || '');
+        node.value = Number(source.value) || 0;
+        node.children = Array.isArray(source.children) ? source.children.map(child => normalizeNode(child, useTags, node)) : [];
+        node.change = 0;
+        node.changePercent = 0;
+        node.baseValue = node.value;
+        node.volatility = node.children.length ? 0 : Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(Math.max(node.value, 1) / 100)));
+        return node;
+    }
+
+    function walk(node, callback) {
+        callback(node);
+        node.children.forEach(child => walk(child, callback));
+    }
+
+    function advanceValues() {
+        const previous = new Map();
+        sources.forEach(source => walk(source.root, node => previous.set(node, node.value)));
+        marketMood = Math.max(-0.02, Math.min(0.02, marketMood * 0.86 + (Math.random() - 0.5) * 0.006));
+
+        function update(node) {
+            if (node.children.length) {
+                node.children.forEach(update);
+                node.value = node.children.reduce((sum, child) => sum + child.value, 0);
+            } else {
+                const drift = (Math.random() - 0.5) * 0.0012;
+                const shock = (Math.random() * 2 - 1) * node.volatility;
+                node.value = Math.max(node.baseValue * 0.25, node.value * (1 + marketMood * 0.2 + drift + shock));
+            }
+            const oldValue = previous.get(node) || 0;
+            node.change = node.value - oldValue;
+            node.changePercent = oldValue ? node.change / oldValue * 100 : 0;
+        }
+
+        sources.forEach(source => {
+            update(source.root);
+            source.chart.update();
+        });
+        publishCompanies();
+    }
+
+    function snapshotCompanies() {
+        return marketRoot ? marketRoot.children.map(company => ({ ...company })) : [];
+    }
+
+    function publishCompanies() {
+        if (!marketRoot) return;
+        const current = snapshotCompanies();
+        marketListeners.forEach(listener => listener(current));
+    }
+
+    const companyMarket = {
+        currency: '€$', unit: 'billions', isFictional: true,
+        getSnapshot: snapshotCompanies,
+        getQuote(tag) {
+            const company = marketRoot && marketRoot.children.find(item => item.tag === tag);
+            return company ? { ...company } : null;
+        },
+        subscribe(listener, options = {}) {
+            if (typeof listener !== 'function') throw new TypeError('Market subscriber must be a function');
+            marketListeners.add(listener);
+            if (options.immediate !== false) listener(snapshotCompanies());
+            return () => marketListeners.delete(listener);
+        },
+        tick: advanceValues,
+        start(options = {}) {
+            if (timer) clearInterval(timer);
+            timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 2000));
+            return companyMarket;
+        },
+        stop() {
+            if (timer) clearInterval(timer);
+            timer = null;
+            return companyMarket;
+        }
+    };
+    window.companyMarket = companyMarket;
+
+    function renderCompanyRows() {
+        if (!marketRoot) return;
+        const host = document.querySelector('[data-company-market]');
+        if (!host) return;
+        const status = document.querySelector('[data-company-market-status]');
+        const rows = new Map();
+        const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
+        const percentFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
+        host.replaceChildren();
+        marketRoot.children.forEach(company => {
+            const row = document.createElement('div');
+            row.className = 'resource-market-row';
+            row.dataset.companyTag = company.tag;
+            row.innerHTML = '<span class="resource-market-name"></span><span class="resource-market-unit">market cap</span><span class="resource-market-price"></span><span class="resource-market-change"></span>';
+            row.querySelector('.resource-market-name').textContent = company.name;
+            host.appendChild(row);
+            rows.set(company.tag, row);
+        });
+        companyMarket.subscribe(current => {
+            current.forEach(company => {
+                const row = rows.get(company.tag);
+                if (!row) return;
+                row.querySelector('.resource-market-price').textContent = `${company.currency}${formatter.format(company.value)}${company.unit}`;
+                const change = row.querySelector('.resource-market-change');
+                change.textContent = `${percentFormatter.format(company.changePercent)}%`;
+                change.classList.toggle('is-up', company.change >= 0);
+                change.classList.toggle('is-down', company.change < 0);
+                row.dataset.direction = company.change >= 0 ? 'up' : 'down';
+            });
+            if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
+        });
+    }
+
+    async function loadSource(host) {
+        const panel = host.closest('.treemap-panel');
+        const status = panel && panel.querySelector('.treemap-status');
+        try {
+            const response = await fetch(host.dataset.source);
+            if (!response.ok) throw new Error('Treemap data could not be loaded.');
+            const rawRoot = await response.json();
+            const useTags = host.dataset.useTags === 'true';
+            const root = normalizeNode(rawRoot, useTags);
+            const chart = mount(host, {
+                root,
+                rootLabel: root.name,
+                breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
+                status,
+                accessible: true
+            });
+            const source = { host, root, chart };
+            sources.push(source);
+            if (host.dataset.treemap === 'market') {
+                marketRoot = root;
+                window.marketData = root.children;
+                renderCompanyRows();
+            }
+        } catch (error) {
+            if (status) status.textContent = `${host.dataset.treemap || 'Treemap'} data could not be loaded. Check ${host.dataset.source}.`;
+        }
+    }
+
     window.defaultTreemap = { mount };
+    Promise.all(Array.from(document.querySelectorAll('.treemap[data-source]'), loadSource)).then(() => {
+        if (sources.length) companyMarket.start();
+    });
 })();

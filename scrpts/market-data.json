@@ -1,0 +1,312 @@
+{
+  "name": "Market",
+  "value": 44521,
+  "currency": "€$",
+  "unit": "B",
+  "children": [
+    {
+      "name": "ARC International",
+      "tag": "ARC",
+      "value": 12223,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "PLENFOR Armor & Steel",
+      "tag": "PLEN",
+      "value": 620,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Lithiumaniac",
+      "tag": "LITH",
+      "value": 260,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Sub-Orbital Contractors",
+      "tag": "SOC",
+      "value": 910,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "NADL Industries",
+      "tag": "NADL",
+      "value": 470,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "INCOM International",
+      "tag": "INCOM",
+      "value": 180,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Pavlov Energy",
+      "tag": "PAVL",
+      "value": 940,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "AutoFarm International",
+      "tag": "AFI",
+      "value": 1090,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "BioTechnica",
+      "tag": "BIOT",
+      "value": 450,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "INTRCD",
+      "tag": "INTR",
+      "value": 290,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Trauma Medical",
+      "tag": "TMED",
+      "value": 1120,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "LOW Artillery Foundries",
+      "tag": "LOW",
+      "value": 980,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Global Concord",
+      "tag": "GLBL",
+      "value": 1920,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "CivMil",
+      "tag": "CVML",
+      "value": 2040,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Compact Corporation",
+      "tag": "COM",
+      "value": 1240,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "ChemMax",
+      "tag": "MAX",
+      "value": 2040,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Ark Initiative",
+      "tag": "ARK",
+      "value": 460,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Meridian Continental",
+      "tag": "MECON",
+      "value": 480,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Vostok Heavy Industries",
+      "tag": "VHI",
+      "value": 780,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Aegis Security Group",
+      "tag": "AEG",
+      "value": 310,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Verdant Covenant",
+      "tag": "VERCO",
+      "value": 50,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Arakawa-Sun",
+      "tag": "ARAK",
+      "value": 830,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Militarch",
+      "tag": "MILI",
+      "value": 580,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Vanguard Terraform",
+      "tag": "VAN",
+      "value": 270,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Pioneer Habitat Works",
+      "tag": "PHW",
+      "value": 180,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Antarctica Trust",
+      "tag": "ANTT",
+      "value": 2840,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Atlas Medical Network",
+      "tag": "AMN",
+      "value": 930,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Apex Executive Trust",
+      "tag": "AET",
+      "value": 810,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "New Dawn Robotics",
+      "tag": "NDR",
+      "value": 690,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Petrochem",
+      "tag": "PCHEM",
+      "value": 560,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Ternion Materials",
+      "tag": "TRN",
+      "value": 470,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Parasol Biomedical",
+      "tag": "PABIO",
+      "value": 390,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Aurora Biotech",
+      "tag": "AUR",
+      "value": 315,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Cooperativa Minera de Lima",
+      "tag": "COOP",
+      "value": 6380,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Lumen Education",
+      "tag": "LUM",
+      "value": 175,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Tundra Ridge Industrial",
+      "tag": "TUN",
+      "value": 120,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Obsidian Plateau",
+      "tag": "OBS",
+      "value": 82,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    },
+    {
+      "name": "Netwarden",
+      "tag": "NETW",
+      "value": 46,
+      "currency": "€$",
+      "unit": "B",
+      "children": []
+    }
+  ]
+}
