@@ -23,17 +23,7 @@
                 const company = items[0];
                 const tile = add(svg, 'g', { class: 'market-tile' });
                 const movement = company.change || 0;
-                const intensity = Math.min(1, Math.abs(company.changePercent || 0) / 3);
-                const shade = Math.round(90 + intensity * 85);
-                const color = movement > 0
-                    ? `rgb(0 ${shade} 70)`
-                    : (movement < 0 ? `rgb(${shade} 35 35)` : '#626b70');
-                const outlineColor = movement > 0
-                    ? `rgb(0 255 106)`
-                    : (movement < 0 ? `rgb(255 0 0)` : '#aeb5ba');
-                tile.style.setProperty('--market-color', color);
-                tile.style.setProperty('--market-outline', outlineColor);
-                tile.style.setProperty('--market-tile-fill', `color-mix(in srgb, ${color} 22%, transparent)`);
+                tile.dataset.direction = movement > 0 ? 'up' : (movement < 0 ? 'down' : 'neutral');
                 const clipId = `market-clip-${companies.indexOf(company)}`;
                 const defs = svg.querySelector('defs') || add(svg, 'defs', {});
                 const clip = add(defs, 'clipPath', { id: clipId, clipPathUnits: 'userSpaceOnUse' });

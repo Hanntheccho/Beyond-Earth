@@ -548,6 +548,21 @@ h2 {
     fill: color-mix(in srgb, var(--market-color), white 50%);
 }
 .market-chart .market-tile { color: var(--market-color, #1b1b1bed); }
+.market-chart .market-tile[data-direction="up"] {
+    --market-color: var(--clrpos);
+    --market-outline: var(--clrpos);
+    --market-tile-fill: color-mix(in srgb, var(--market-color) 6%, transparent);
+}
+.market-chart .market-tile[data-direction="down"] {
+    --market-color: var(--clrneg);
+    --market-outline: var(--clrneg);
+    --market-tile-fill: color-mix(in srgb, var(--market-color) 6%, transparent);
+}
+.market-chart .market-tile[data-direction="neutral"] {
+    --market-color: var(--clrneu);
+    --market-outline: var(--clrneu);
+    --market-tile-fill: color-mix(in srgb, var(--market-color) 6%, transparent);
+}
 .market-chart .market-tile .market-tile-surface {
     fill: var(--market-tile-fill, #1b1b1b5e);
     stroke: var(--market-outline, var(--market-color, #1b1b1bed));
