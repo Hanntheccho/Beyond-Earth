@@ -95,7 +95,7 @@
         if (eventYear >= firstYear && eventYear <= lastYear) {
             const eventX = x(eventYear);
             add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top - 12, y2: height - margin.bottom, class: 'chart-event-line' });
-            const tagWidth = 100, tagHeight = 18;
+            const tagWidth = 112, tagHeight = 18;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
             add(svg, 'rect', { x: tagX, y: margin.top - 18, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
             add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top - 5, 'text-anchor': 'middle', class: 'chart-event-label' }, 'GREAT MISTAKE');
@@ -127,9 +127,17 @@
                 class: `chart-series-line ${trendClass}`
             });
         }
-        sorted.forEach(point => {
+        sorted.forEach((point, index) => {
             const px = x(point.year), py = y(point.value);
-            const dot = add(svg, 'circle', { cx: px, cy: py, class: 'chart-series-point' });
+            const segmentIndex = index === 0 ? 1 : index;
+            const previous = sorted[segmentIndex - 1];
+            const current = sorted[segmentIndex];
+            const pointTrendClass = previous && current
+                ? trendClassForChange(current.value - previous.value)
+                : 'chart-trend-flat';
+            const dot = add(svg, 'circle', {
+                cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
+            });
             add(dot, 'title', {}, `${point.year}: ${point.value} ${plot.dataset.unit || ''}`);
         });
         plot.replaceChildren(svg);

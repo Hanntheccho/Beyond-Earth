@@ -14,7 +14,7 @@
     --clrbgt: #181818ef;
     --clrpos: #00ff6a;
     --clrneg: #ff0000;
-    --clrneu: #ffee00;
+    --clrneu: #a0a0a0;
     --max-width: 800px;
     --brdlft: 12px;
     --brdpxs: 2px;
@@ -341,7 +341,7 @@ h2 {
     gap: 16px;
     margin: 10px;
     color: #b9b9b9;
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
 }
@@ -386,7 +386,7 @@ h2 {
 }
 .scenario-chart-plot text {
     fill: #c6c6c6;
-    font: 12px 'Source Code Pro';
+    font: 11px 'Source Code Pro';
 }
 .scenario-chart-plot .chart-grid-line { stroke: #383838; stroke-width: 1; }
 .scenario-chart-plot .chart-year-tick { stroke: #888; stroke-width: 1; }
@@ -394,7 +394,7 @@ h2 {
 .scenario-chart-plot .chart-event-tag { fill: #2a1111; stroke: #ff3333; stroke-width: 0.8; }
 .scenario-chart-plot .chart-era-band { fill: #d84a4a; fill-opacity: 0.09; }
 .scenario-chart-plot .chart-era-boundary { stroke: #ba7777; stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.75; }
-.scenario-chart-plot text.chart-era-label { fill: #f0c1c162; font-size: 10px; letter-spacing: 0.1em; }
+.scenario-chart-plot text.chart-era-label { fill: #f0c1c162; letter-spacing: 0.1em; }
 .scenario-chart-plot .chart-series-area {
     fill: #c5c5c5;
     fill-opacity: 0.1;
@@ -407,7 +407,7 @@ h2 {
 .scenario-chart-plot .chart-series-line {
     fill: none;
     stroke: #c9c9c9;
-    stroke-width: 2;
+    stroke-width: 1.5px;
     stroke-linecap: round;
     stroke-linejoin: round;
     filter: drop-shadow(0 0 0.4em color-mix(in srgb, currentColor, transparent 60%));
@@ -416,15 +416,16 @@ h2 {
 .scenario-chart-plot .chart-series-line.chart-trend-bad { stroke: var(--clrneg); }
 .scenario-chart-plot .chart-series-line.chart-trend-flat { stroke: var(--clrneu); }
 .scenario-chart-plot .chart-series-point {
-    r: 4px;
-    fill: #e0e0e0;
+    r: 3.5px;
+    fill: #000;
+    stroke: var(--clrneu);
+    stroke-width: 1.5px;
 }
-.scenario-chart-plot text.year-label {
-    font-size: 10px;
-}
+.scenario-chart-plot .chart-series-point.chart-trend-good { stroke: var(--clrpos); }
+.scenario-chart-plot .chart-series-point.chart-trend-bad { stroke: var(--clrneg); }
+.scenario-chart-plot .chart-series-point.chart-trend-flat { stroke: var(--clrneu); }
 .scenario-chart-plot text.chart-event-label {
     fill: #f0b8b8;
-    font-size: 10px;
     font-family: 'Source Code Pro', monospace;
     letter-spacing: 0.1em;
 }
