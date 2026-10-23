@@ -21,7 +21,7 @@
     --animms: 160ms;
     --alpico: 0.1;
     --boxshw: 0 0 16px #00000080;
-    --mrkfds: drop-shadow(0 0 0.6em color-mix(in srgb, currentColor 60%, transparent));
+    --mrkfds: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
 }
 
 body {
@@ -354,7 +354,7 @@ h2 {
     font-size: 20px;
     font-weight: normal;
     font-family: 'Source Code Pro', monospace;
-    text-shadow: 0 0 0.4em color-mix(in srgb, currentColor, transparent 80%);
+    text-shadow: var(--mrkfds);
 }
 .scenario-chart-kpi strong.chart-trend-good { color: var(--clrpos); }
 .scenario-chart-kpi strong.chart-trend-bad { color: var(--clrneg); }
@@ -399,7 +399,7 @@ h2 {
     fill: #c5c5c5;
     fill-opacity: 0.1;
     stroke: none;
-    filter: drop-shadow(0 0 1em currentColor);
+    filter: drop-shadow(var(--mrkfds));
 }
 .scenario-chart-plot .chart-series-area.chart-trend-good { fill: var(--clrpos); fill-opacity: 0.04; }
 .scenario-chart-plot .chart-series-area.chart-trend-bad { fill: var(--clrneg); fill-opacity: 0.04; }
@@ -410,7 +410,7 @@ h2 {
     stroke-width: 1.5px;
     stroke-linecap: round;
     stroke-linejoin: round;
-    filter: drop-shadow(0 0 0.4em color-mix(in srgb, currentColor, transparent 60%));
+    filter: drop-shadow(var(--mrkfds));
 }
 .scenario-chart-plot .chart-series-line.chart-trend-good { stroke: var(--clrpos); }
 .scenario-chart-plot .chart-series-line.chart-trend-bad { stroke: var(--clrneg); }
@@ -552,7 +552,7 @@ h2 {
     fill: var(--market-tile-fill, #1b1b1b5e);
     stroke: var(--market-outline, var(--market-color, #1b1b1bed));
     stroke-width: 1px;
-    filter: drop-shadow(0 0 1em currentColor);
+    filter: drop-shadow(var(--mrkfds));
     transition: filter var(--animms) ease;
     cursor: help;
 }
@@ -584,8 +584,8 @@ h2 {
 .resource-market-unit { color: #ffffff70; font-size: 11px; }
 .resource-market-price { text-align: right; white-space: nowrap; }
 .resource-market-change { text-align: right; font-size: 11px; }
-.resource-market-change.is-up { color: var(--clrpos); filter: var(--mrkfds); }
-.resource-market-change.is-down { color: var(--clrneg); filter: var(--mrkfds); }
+.resource-market-change.is-up { color: var(--clrpos); filter: drop-shadow(var(--mrkfds)); }
+.resource-market-change.is-down { color: var(--clrneg); filter: drop-shadow(var(--mrkfds)); }
 .market-text {
     position: fixed;
     top: auto;
@@ -612,9 +612,9 @@ h2 {
     flex: none;
     animation: scroll-left 120s linear infinite;
 }
-.positive { color: var(--clrpos); filter: var(--mrkfds); }
-.negative { color: var(--clrneg); filter: var(--mrkfds); }
-.neutrale { color: var(--clrneu); filter: var(--mrkfds); }
+.positive { color: var(--clrpos); filter: drop-shadow(var(--mrkfds)); }
+.negative { color: var(--clrneg); filter: drop-shadow(var(--mrkfds)); }
+.neutrale { color: var(--clrneu); filter: drop-shadow(var(--mrkfds)); }
 @keyframes scroll-left {
     from { transform: translateX(100vw); }
     to   { transform: translateX(-100%); }
