@@ -411,9 +411,9 @@ h2 {
     stroke: none;
     filter: drop-shadow(var(--mrkfds));
 }
-.scenario-chart-plot .chart-series-area.chart-trend-good { fill: var(--clrpos); fill-opacity: 0.04; }
-.scenario-chart-plot .chart-series-area.chart-trend-bad { fill: var(--clrneg); fill-opacity: 0.04; }
-.scenario-chart-plot .chart-series-area.chart-trend-flat { fill: var(--clrneu); fill-opacity: 0.04; }
+.scenario-chart-plot .chart-series-area.chart-trend-good { fill: var(--clrpos); fill-opacity: 0.06; }
+.scenario-chart-plot .chart-series-area.chart-trend-bad { fill: var(--clrneg); fill-opacity: 0.06; }
+.scenario-chart-plot .chart-series-area.chart-trend-flat { fill: var(--clrneu); fill-opacity: 0.01; }
 .scenario-chart-plot .chart-series-line {
     fill: none;
     stroke: #c9c9c9;
@@ -424,7 +424,7 @@ h2 {
 }
 .scenario-chart-plot .chart-series-line.chart-trend-good { stroke: var(--clrpos); }
 .scenario-chart-plot .chart-series-line.chart-trend-bad { stroke: var(--clrneg); }
-.scenario-chart-plot .chart-series-line.chart-trend-flat { stroke: var(--clrneu); }
+.scenario-chart-plot .chart-series-line.chart-trend-flat { stroke: color-mix(in srgb, var(--clrneu) 10%, transparent); }
 .scenario-chart-plot .chart-series-point {
     r: 3.5px;
     fill: #000;
@@ -433,7 +433,7 @@ h2 {
 }
 .scenario-chart-plot .chart-series-point.chart-trend-good { stroke: var(--clrpos); }
 .scenario-chart-plot .chart-series-point.chart-trend-bad { stroke: var(--clrneg); }
-.scenario-chart-plot .chart-series-point.chart-trend-flat { stroke: var(--clrneu); }
+.scenario-chart-plot .chart-series-point.chart-trend-flat { stroke: color-mix(in srgb, var(--clrneu) 80%, transparent); }
 .scenario-chart-plot text.chart-event-label {
     fill: #f0b8b8;
     font-family: 'Source Code Pro', monospace;
