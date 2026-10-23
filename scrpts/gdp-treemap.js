@@ -36,6 +36,40 @@
         return element;
     }
 
+    function wrapName(name, maxChars) {
+        const words = name.split(/\s+/);
+        const lines = [];
+        let line = '';
+        words.forEach(word => {
+            while (word.length > maxChars) {
+                if (line) { lines.push(line); line = ''; }
+                lines.push(word.slice(0, maxChars));
+                word = word.slice(maxChars);
+            }
+            if (line && `${line} ${word}`.length > maxChars) { lines.push(line); line = word; }
+            else line = line ? `${line} ${word}` : word;
+        });
+        if (line) lines.push(line);
+        return lines;
+    }
+
+    function fitLabel(name, value, w, h) {
+        const availableWidth = Math.max(1, w - 8);
+        const availableHeight = Math.max(1, h - 6);
+        for (let fontSize = Math.min(16, availableWidth * 0.13, availableHeight * 0.2); fontSize >= 1.5; fontSize -= 0.25) {
+            const maxChars = Math.max(1, Math.floor(availableWidth / (fontSize * 0.65)));
+            const lines = wrapName(name, maxChars);
+            const valueLabel = `€$${formatter.format(value)}`;
+            const valueSize = Math.min(fontSize * 0.78, availableWidth / Math.max(1, valueLabel.length * 0.68));
+            const lineHeight = fontSize * 1.08;
+            const requiredHeight = lines.length * lineHeight + valueSize * 1.25 + 2;
+            if (requiredHeight <= availableHeight) return { lines, fontSize, valueSize, lineHeight, requiredHeight };
+        }
+        const fontSize = 1.5;
+        const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (fontSize * 0.65))));
+        return { lines, fontSize, valueSize: 1, lineHeight: fontSize, requiredHeight: h };
+    }
+
     function worst(row, side) {
         if (!row.length) return Infinity;
         const sum = row.reduce((total, item) => total + item.area, 0);
@@ -99,10 +133,12 @@
             const group = addSvg(svg, 'g', { class: `gdp-tile${node.children.length ? ' has-children' : ''}`, tabindex: '0', role: node.children.length ? 'button' : 'img', 'aria-label': `${node.name}: €$${formatter.format(node.value)}${node.children.length ? ', open details' : ''}` });
             const hue = (node.name.split('').reduce((n, c) => n + c.charCodeAt(0), 0) * 17 + (current.depth + 1) * 37) % 360;
             addSvg(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), rx: 3, fill: `hsl(${hue} 54% ${node.children.length ? 31 : 25}%)`, class: 'gdp-tile-bg' });
-            const label = addSvg(group, 'text', { x: x + 12, y: y + 24, class: 'gdp-tile-name' }, node.name);
-            const valueText = addSvg(group, 'text', { x: x + 12, y: y + 44, class: 'gdp-tile-value' }, `€$${formatter.format(node.value)}`);
-            if (w < 100 || h < 43) { label.setAttribute('display', 'none'); valueText.setAttribute('display', 'none'); }
-            else if (h < 64) valueText.setAttribute('display', 'none');
+            const fit = fitLabel(node.name, node.value, w - 4, h - 4);
+            const centerX = x + w / 2;
+            const topY = y + (h - fit.requiredHeight) / 2 + fit.fontSize;
+            const label = addSvg(group, 'text', { x: centerX, y: topY, class: 'gdp-tile-name', style: `font-size:${fit.fontSize}px`, 'text-anchor': 'middle' });
+            fit.lines.forEach((line, index) => addSvg(label, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
+            addSvg(group, 'text', { x: centerX, y: topY + fit.lines.length * fit.lineHeight + fit.valueSize, class: 'gdp-tile-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, `€$${formatter.format(node.value)}`);
             addSvg(group, 'title', {}, `${node.name} — €$${formatter.format(node.value)}${node.children.length ? ' · Click to explore' : ''}`);
             if (node.children.length) {
                 group.addEventListener('click', () => { path.push({ node, depth: current.depth + 1 }); render(); });
@@ -120,7 +156,7 @@
             const crumb = document.createElement('button'); crumb.type = 'button'; crumb.className = 'gdp-crumb'; crumb.textContent = entry.node.name;
             crumb.addEventListener('click', () => { path = path.slice(0, index + 1); render(); }); crumbs.appendChild(crumb);
         });
-        status.textContent = `${current.node.name} · €$${formatter.format(sum)} total · ${items.length} ${items.length === 1 ? 'tile' : 'tiles'}${items.some(item => item.children.length) ? ' · Select a tile to explore' : ''}`;
+        status.textContent = `${current.node.name} · €$${formatter.format(sum)} total · ${items.length} ${items.length === 1 ? 'tile' : 'tiles'}`;
     }
 
     fetch('scrpts/country-gdp.txt').then(response => {
