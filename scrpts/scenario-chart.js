@@ -36,18 +36,21 @@
         else max += padding;
         const x = year => margin.left + ((year - sorted[0].year) / ((sorted.at(-1).year - sorted[0].year) || 1)) * innerWidth;
         const y = value => margin.top + ((max - value) / (max - min)) * innerHeight;
-        const color = plot.dataset.color || '#d94141';
-        plot.style.setProperty('--chart-accent', color);
-        plot.style.setProperty('--chart-accent', color);
-
+        const negativeTrend = plot.dataset.trend === 'negative';
+        const trendClassForChange = change => {
+            const direction = negativeTrend ? -change : change;
+            return direction > 0 ? 'chart-trend-good' : direction < 0 ? 'chart-trend-bad' : 'chart-trend-flat';
+        };
+        const latestChange = sorted.length > 1 ? sorted.at(-1).value - sorted.at(-2).value : 0;
+        const latestTrendClass = trendClassForChange(latestChange);
         const meta = document.createElement('div');
         meta.className = 'scenario-chart-meta';
-        meta.style.setProperty('--chart-accent', color);
         const metric = document.createElement('span');
         metric.className = 'scenario-chart-kpi';
         const yearLabel = document.createElement('span');
         yearLabel.textContent = `${sorted[sorted.length - 1].year} outlook`;
         const valueLabel = document.createElement('strong');
+        valueLabel.classList.add(latestTrendClass);
         valueLabel.textContent = `${Number(sorted[sorted.length - 1].value.toPrecision(4))} ${plot.dataset.unit || ''}`;
         metric.append(yearLabel, valueLabel);
         meta.append(metric);
@@ -108,18 +111,20 @@
             });
         }
         const baseline = height - margin.bottom;
-        const areaPath = [
-            `M ${x(sorted[0].year)} ${baseline}`,
-            ...sorted.map(point => `L ${x(point.year)} ${y(point.value)}`),
-            `L ${x(sorted[sorted.length - 1].year)} ${baseline}`,
-            'Z'
-        ].join(' ');
-        add(svg, 'path', { d: areaPath, class: 'chart-series-area' });
         for (let index = 1; index < sorted.length; index++) {
             const previous = sorted[index - 1], current = sorted[index];
+            const trendClass = trendClassForChange(current.value - previous.value);
+            const segmentArea = [
+                `M ${x(previous.year)} ${y(previous.value)}`,
+                `L ${x(current.year)} ${y(current.value)}`,
+                `L ${x(current.year)} ${baseline}`,
+                `L ${x(previous.year)} ${baseline}`,
+                'Z'
+            ].join(' ');
+            add(svg, 'path', { d: segmentArea, class: `chart-series-area ${trendClass}` });
             add(svg, 'path', {
                 d: `M ${x(previous.year)} ${y(previous.value)} L ${x(current.year)} ${y(current.value)}`,
-                class: 'chart-series-line'
+                class: `chart-series-line ${trendClass}`
             });
         }
         sorted.forEach(point => {

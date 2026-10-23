@@ -127,7 +127,7 @@
         const items = current.node.children.length ? current.node.children : [current.node];
         const sum = items.reduce((total, item) => total + item.value, 0);
         host.replaceChildren();
-        const svg = addSvg(host, 'svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': `${current.node.name} GDP treemap` });
+        const svg = addSvg(host, 'svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
         const rects = squarify(items, 0, 0, width, height);
         rects.forEach(({ node, x, y, w, h }) => {
             const group = addSvg(svg, 'g', { class: `gdp-tile${node.children.length ? ' has-children' : ''}`, tabindex: '0', role: node.children.length ? 'button' : 'img', 'aria-label': `${node.name}: €$${formatter.format(node.value)}${node.children.length ? ', open details' : ''}` });
