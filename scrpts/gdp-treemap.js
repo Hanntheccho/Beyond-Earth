@@ -6,10 +6,12 @@
     const crumbs = document.querySelector('.gdp-breadcrumbs');
     const svgNS = 'http://www.w3.org/2000/svg';
     const formatter = new Intl.NumberFormat('en-US');
+    const changeFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
     const width = 800;
     const height = 800;
     let root;
     let path = [];
+    let marketMood = 0;
 
     function parse(text) {
         const roots = [];
@@ -34,6 +36,44 @@
         if (text !== undefined) element.textContent = text;
         parent.appendChild(element);
         return element;
+    }
+
+    function walk(node, callback) {
+        callback(node);
+        node.children.forEach(child => walk(child, callback));
+    }
+
+    function prepareDynamics(node) {
+        node.baseValue = node.value;
+        node.change = 0;
+        node.changePercent = 0;
+        node.volatility = node.children.length ? 0 : Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(node.value / 100)));
+        node.children.forEach(prepareDynamics);
+    }
+
+    function tick() {
+        const previous = new Map();
+        walk(root, node => { previous.set(node, node.value); });
+        marketMood = Math.max(-0.02, Math.min(0.02, marketMood * 0.86 + (Math.random() - 0.5) * 0.006));
+
+        function update(node) {
+            if (node.children.length) {
+                node.children.forEach(update);
+                node.value = node.children.reduce((sum, child) => sum + child.value, 0);
+            } else {
+                const sectorDrift = (Math.random() - 0.5) * 0.0012;
+                const shock = (Math.random() * 2 - 1) * node.volatility;
+                node.value = Math.max(node.baseValue * 0.25, node.value * (1 + marketMood * 0.2 + sectorDrift + shock));
+            }
+            node.change = node.value - previous.get(node);
+            node.changePercent = previous.get(node) ? node.change / previous.get(node) * 100 : 0;
+        }
+
+        root.children.forEach(update);
+        root.value = root.children.reduce((sum, child) => sum + child.value, 0);
+        root.change = root.value - previous.get(root);
+        root.changePercent = previous.get(root) ? root.change / previous.get(root) * 100 : 0;
+        render();
     }
 
     function wrapName(name, maxChars) {
@@ -143,7 +183,8 @@
                 fit.lines.forEach((line, index) => addSvg(label, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
                 addSvg(group, 'text', { x: centerX, y: topY + fit.lines.length * fit.lineHeight + fit.valueSize * 0.45, class: 'gdp-tile-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, `€$${formatter.format(node.value)}`);
             }
-            addSvg(group, 'title', {}, `${node.name} — €$${formatter.format(node.value)}${node.children.length ? ' · Click to explore' : ''}`);
+            const changeText = `${changeFormatter.format(node.changePercent)}%`;
+            addSvg(group, 'title', {}, `${node.name} — €$${formatter.format(node.value)} (${changeText})${node.children.length ? ' · Click to explore' : ''}`);
             if (node.children.length) {
                 group.addEventListener('click', () => { path.push({ node, depth: current.depth + 1 }); render(); });
                 group.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); path.push({ node, depth: current.depth + 1 }); render(); } });
@@ -169,6 +210,9 @@
     }).then(text => {
         root = { name: 'World', value: 0, children: parse(text) };
         if (!root.children.length) throw new Error('No GDP entries were found in the data file.');
+        prepareDynamics(root);
+        root.value = root.children.reduce((sum, child) => sum + child.value, 0);
         render();
+        window.setInterval(tick, 2000);
     }).catch(() => { status.textContent = 'GDP data could not be loaded. Open this page through a local web server and check scrpts/country-gdp.txt.'; });
 })();
