@@ -130,14 +130,19 @@
         const svg = addSvg(host, 'svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
         const rects = squarify(items, 0, 0, width, height);
         rects.forEach(({ node, x, y, w, h }) => {
-            const group = addSvg(svg, 'g', { class: `gdp-tile${node.children.length ? ' has-children' : ''}`, style: `--gdp-tile-color:hsl(${(node.name.split('').reduce((n, c) => n + c.charCodeAt(0), 0) * 17 + (current.depth + 1) * 37) % 360} 64% 58%)`, tabindex: '0', role: node.children.length ? 'button' : 'img', 'aria-label': `${node.name}: €$${formatter.format(node.value)}${node.children.length ? ', open details' : ''}` });
+            const change = Number(node.change);
+            const direction = Number.isFinite(change) ? (change > 0 ? 'up' : (change < 0 ? 'down' : 'neutral')) : 'neutral';
+            const group = addSvg(svg, 'g', { class: `gdp-tile${node.children.length ? ' has-children' : ''}`, 'data-direction': direction, tabindex: '0', role: node.children.length ? 'button' : 'img', 'aria-label': `${node.name}: €$${formatter.format(node.value)}${node.children.length ? ', open details' : ''}` });
             addSvg(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), class: 'gdp-tile-surface' });
-            const fit = fitLabel(node.name, node.value, w - 24, h - 24);
+            // Reserve a proportional inset on every side, matching the market chart's 70% label area.
+            const fit = fitLabel(node.name, node.value, w * 0.7, h * 0.7);
             const centerX = x + w / 2;
             const topY = y + (h - fit.requiredHeight) / 2 + fit.fontSize;
-            const label = addSvg(group, 'text', { x: centerX, y: topY, class: 'gdp-tile-name', style: `font-size:${fit.fontSize}px`, 'text-anchor': 'middle' });
-            fit.lines.forEach((line, index) => addSvg(label, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
-            addSvg(group, 'text', { x: centerX, y: topY + fit.lines.length * fit.lineHeight + fit.valueSize, class: 'gdp-tile-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, `€$${formatter.format(node.value)}`);
+            if (fit.fontSize >= 2) {
+                const label = addSvg(group, 'text', { x: centerX, y: topY, class: 'gdp-tile-name', style: `font-size:${fit.fontSize}px`, 'text-anchor': 'middle' });
+                fit.lines.forEach((line, index) => addSvg(label, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
+                addSvg(group, 'text', { x: centerX, y: topY + fit.lines.length * fit.lineHeight + fit.valueSize * 0.45, class: 'gdp-tile-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, `€$${formatter.format(node.value)}`);
+            }
             addSvg(group, 'title', {}, `${node.name} — €$${formatter.format(node.value)}${node.children.length ? ' · Click to explore' : ''}`);
             if (node.children.length) {
                 group.addEventListener('click', () => { path.push({ node, depth: current.depth + 1 }); render(); });

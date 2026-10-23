@@ -327,6 +327,9 @@ h2 {
 .gdp-treemap { width: 100%; overflow: hidden; }
 .gdp-treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
 .gdp-tile { color: var(--gdp-tile-color, var(--clrneu)); }
+.gdp-tile[data-direction="up"] { --gdp-tile-color: var(--clrpos); }
+.gdp-tile[data-direction="down"] { --gdp-tile-color: var(--clrneg); }
+.gdp-tile[data-direction="neutral"] { --gdp-tile-color: var(--clrneu); }
 .gdp-tile.has-children { cursor: pointer; }
 .gdp-tile-surface {
     fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)) 6%, transparent);

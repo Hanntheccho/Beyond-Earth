@@ -43,14 +43,16 @@
                         availableHeight * 0.68,
                         availableWidth / (company.tag.length * 0.72)
                     ));
-                    add(tile, 'text', {
-                        x: x + (w - gap) / 2,
-                        y: y + (h - gap) / 2,
-                        'text-anchor': 'middle', 'dominant-baseline': 'central',
-                        'alignment-baseline': 'central',
-                        class: 'market-tag', 'clip-path': `url(#${clipId})`,
-                        'font-size': `${fontSize}px`
-                    }, company.tag);
+                    if (fontSize >= 2) {
+                        add(tile, 'text', {
+                            x: x + (w - gap) / 2,
+                            y: y + (h - gap) / 2,
+                            'text-anchor': 'middle', 'dominant-baseline': 'central',
+                            'alignment-baseline': 'central',
+                            class: 'market-tag', 'clip-path': `url(#${clipId})`,
+                            'font-size': `${fontSize}px`
+                        }, company.tag);
+                    }
                 }
                 return;
             }
