@@ -342,6 +342,7 @@ h2 {
 .gdp-tile:focus { outline: none; }
 .gdp-tile-name { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 900; text-transform: uppercase; pointer-events: none; }
 .gdp-tile-value { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 700; pointer-events: none; }
+.gdp-tile-change { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 600; pointer-events: none; }
 /* #endregion */
 /* #region mitk */
 .scenario-chart-meta {
@@ -554,6 +555,16 @@ h2 {
 }
 .market-chart text.market-tag {
     font-weight: 900;
+    pointer-events: none;
+    fill: color-mix(in srgb, var(--market-color), white 50%);
+}
+.market-chart text.market-value {
+    font-weight: 700;
+    pointer-events: none;
+    fill: color-mix(in srgb, var(--market-color), white 50%);
+}
+.market-chart text.market-change {
+    font-weight: 600;
     pointer-events: none;
     fill: color-mix(in srgb, var(--market-color), white 50%);
 }

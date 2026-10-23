@@ -93,21 +93,23 @@
         return lines;
     }
 
-    function fitLabel(name, value, w, h) {
+    function fitLabel(name, value, changePercent, w, h) {
         const availableWidth = Math.max(1, w - 8);
         const availableHeight = Math.max(1, h - 6);
-        for (let fontSize = Math.min(16, availableWidth * 0.13, availableHeight * 0.2); fontSize >= 1.5; fontSize -= 0.25) {
+        const valueLabel = `€$${formatter.format(value)}`;
+        const changeLabel = `${changeFormatter.format(changePercent)}%`;
+        for (let fontSize = Math.min(16, availableWidth * 0.13, availableHeight * 0.16); fontSize >= 1.5; fontSize -= 0.25) {
             const maxChars = Math.max(1, Math.floor(availableWidth / (fontSize * 0.65)));
             const lines = wrapName(name, maxChars);
-            const valueLabel = `€$${formatter.format(value)}`;
             const valueSize = Math.min(fontSize * 0.78, availableWidth / Math.max(1, valueLabel.length * 0.68));
-            const lineHeight = fontSize * 1.08;
-            const requiredHeight = lines.length * lineHeight + valueSize * 1.25 + 2;
-            if (requiredHeight <= availableHeight) return { lines, fontSize, valueSize, lineHeight, requiredHeight };
+            const changeSize = Math.min(fontSize * 0.68, availableWidth / Math.max(1, changeLabel.length * 0.68));
+            const lineHeight = fontSize * 0.8;
+            const requiredHeight = (lines.length - 1) * lineHeight + fontSize * 2.8 + 2;
+            if (requiredHeight <= availableHeight) return { lines, fontSize, valueSize, changeSize, lineHeight, requiredHeight };
         }
         const fontSize = 1.5;
         const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (fontSize * 0.65))));
-        return { lines, fontSize, valueSize: 1, lineHeight: fontSize, requiredHeight: h };
+        return { lines, fontSize, valueSize: 1, changeSize: 1, lineHeight: fontSize, requiredHeight: h };
     }
 
     function worst(row, side) {
@@ -175,13 +177,15 @@
             const group = addSvg(svg, 'g', { class: `gdp-tile${node.children.length ? ' has-children' : ''}`, 'data-direction': direction, tabindex: '0', role: node.children.length ? 'button' : 'img', 'aria-label': `${node.name}: €$${formatter.format(node.value)}${node.children.length ? ', open details' : ''}` });
             addSvg(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), class: 'gdp-tile-surface' });
             // Reserve a proportional inset on every side, matching the market chart's 70% label area.
-            const fit = fitLabel(node.name, node.value, w * 0.7, h * 0.7);
+            const fit = fitLabel(node.name, node.value, node.changePercent, w * 0.7, h * 0.7);
             const centerX = x + w / 2;
             const topY = y + (h - fit.requiredHeight) / 2 + fit.fontSize;
             if (fit.fontSize >= 2) {
                 const label = addSvg(group, 'text', { x: centerX, y: topY, class: 'gdp-tile-name', style: `font-size:${fit.fontSize}px`, 'text-anchor': 'middle' });
                 fit.lines.forEach((line, index) => addSvg(label, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
-                addSvg(group, 'text', { x: centerX, y: topY + fit.lines.length * fit.lineHeight + fit.valueSize * 0.45, class: 'gdp-tile-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, `€$${formatter.format(node.value)}`);
+                const valueY = topY + (fit.lines.length - 1) * fit.lineHeight + fit.fontSize * 0.8;
+                addSvg(group, 'text', { x: centerX, y: valueY, class: 'gdp-tile-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, `€$${formatter.format(node.value)}`);
+                addSvg(group, 'text', { x: centerX, y: valueY + fit.fontSize * 0.6, class: 'gdp-tile-change', style: `font-size:${fit.changeSize}px`, 'text-anchor': 'middle' }, `${changeFormatter.format(node.changePercent)}%`);
             }
             const changeText = `${changeFormatter.format(node.changePercent)}%`;
             addSvg(group, 'title', {}, `${node.name} — €$${formatter.format(node.value)} (${changeText})${node.children.length ? ' · Click to explore' : ''}`);

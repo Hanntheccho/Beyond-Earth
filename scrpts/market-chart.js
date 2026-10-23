@@ -45,20 +45,42 @@
                 {
                     const availableWidth = Math.max(0, (w - gap) * 0.7);
                     const availableHeight = Math.max(0, (h - gap) * 0.7);
+                    const valueLabel = `€$${formatter.format(company.value)}B`;
+                    const valueScale = 0.68;
+                    const changeText = `${changeFormatter.format(Number(company.changePercent) || 0)}%`;
+                    const changeScale = 0.56;
                     // Leave room for font metrics and tile edges to prevent clipping.
                     const fontSize = Math.floor(Math.min(
-                        availableHeight * 0.68,
-                        availableWidth / (company.tag.length * 0.72)
+                        availableHeight * 0.3,
+                        availableWidth / (Math.max(company.tag.length, valueLabel.length * valueScale, changeText.length * changeScale) * 0.72)
                     ));
-                    if (fontSize >= 2) {
+                    const valueFontSize = fontSize * valueScale;
+                    const changeFontSize = fontSize * changeScale;
+                    if (fontSize >= 2 && valueFontSize >= 2 && changeFontSize >= 2) {
                         add(tile, 'text', {
                             x: x + (w - gap) / 2,
-                            y: y + (h - gap) / 2,
+                            y: y + (h - gap) / 2 - fontSize * 0.68,
                             'text-anchor': 'middle', 'dominant-baseline': 'central',
                             'alignment-baseline': 'central',
                             class: 'market-tag', 'clip-path': `url(#${clipId})`,
                             'font-size': `${fontSize}px`
                         }, company.tag);
+                        add(tile, 'text', {
+                            x: x + (w - gap) / 2,
+                            y: y + (h - gap) / 2 + fontSize * 0.12,
+                            'text-anchor': 'middle', 'dominant-baseline': 'central',
+                            'alignment-baseline': 'central',
+                            class: 'market-value', 'clip-path': `url(#${clipId})`,
+                            'font-size': `${valueFontSize}px`
+                        }, valueLabel);
+                        add(tile, 'text', {
+                            x: x + (w - gap) / 2,
+                            y: y + (h - gap) / 2 + fontSize * 0.72,
+                            'text-anchor': 'middle', 'dominant-baseline': 'central',
+                            'alignment-baseline': 'central',
+                            class: 'market-change', 'clip-path': `url(#${clipId})`,
+                            'font-size': `${changeFontSize}px`
+                        }, changeText);
                     }
                 }
                 return;
