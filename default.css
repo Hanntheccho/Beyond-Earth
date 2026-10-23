@@ -340,7 +340,7 @@ h2 {
 }
 .treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
 .treemap-tile:focus { outline: none; }
-.treemap-label { fill: color-mix(in srgb, var(--treemap-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; pointer-events: none; }
+.treemap-label { fill: color-mix(in srgb, var(--treemap-color, var(--clrneu)), white 50%); pointer-events: none; }
 .treemap-label-name { font-weight: 900; text-transform: uppercase; }
 .treemap-label-value { font-weight: 700; }
 .treemap-label-change { font-weight: 600; }

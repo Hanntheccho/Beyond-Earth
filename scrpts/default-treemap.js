@@ -17,13 +17,7 @@
     function wrapName(name, maxChars) {
         const lines = [];
         let line = '';
-        String(name).split(/\s+/).forEach(rawWord => {
-            let word = rawWord;
-            while (word.length > maxChars) {
-                if (line) { lines.push(line); line = ''; }
-                lines.push(word.slice(0, maxChars));
-                word = word.slice(maxChars);
-            }
+        String(name).trim().split(/\s+/).forEach(word => {
             if (line && `${line} ${word}`.length > maxChars) { lines.push(line); line = word; }
             else line = line ? `${line} ${word}` : word;
         });
@@ -70,7 +64,9 @@
     function fitLabel(name, valueText, changeText, w, h) {
         const availableWidth = Math.max(1, w - 8);
         const availableHeight = Math.max(1, h - 6);
-        for (let size = Math.min(16, availableWidth * 0.13, availableHeight * 0.16); size >= 1.5; size -= 0.25) {
+        const longestWordLength = String(name).trim().split(/\s+/).reduce((longest, word) => Math.max(longest, word.length), 1);
+        const maxSizeByWordWidth = availableWidth / (longestWordLength * 0.65);
+        for (let size = Math.min(availableWidth * 0.13, availableHeight * 0.16, maxSizeByWordWidth); size >= 1.5; size -= 0.25) {
             const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (size * 0.65))));
             const valueSize = Math.min(size * 0.78, availableWidth / Math.max(1, valueText.length * 0.68));
             const changeSize = Math.min(size * 0.68, availableWidth / Math.max(1, changeText.length * 0.68));
