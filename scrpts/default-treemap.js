@@ -85,12 +85,11 @@
 
     function mount(host, options) {
         let path = [];
-        const getChildren = options.getChildren || (node => node.children || []);
-        const getValue = options.getValue || (node => node.value);
-        const getName = options.getName || (node => node.name);
-        const getChange = options.getChange || (node => node.change);
-        const getChangePercent = options.getChangePercent || (node => node.changePercent || 0);
-        const formatValue = options.formatValue || (node => `€$${numberFormat.format(getValue(node))}`);
+        const getChildren = node => Array.isArray(node.children) ? node.children : [];
+        const getValue = node => Number(node.value) || 0;
+        const getName = node => node.name || node.label || '';
+        const getLabel = node => node.label || getName(node);
+        const formatValue = node => `${node.currency || '€$'}${numberFormat.format(getValue(node))}${node.unit || ''}`;
         const breadcrumbs = options.breadcrumbs || null;
         const status = options.status || null;
 
@@ -103,14 +102,14 @@
             const svg = add(host, 'svg', { viewBox: `0 0 ${width} ${height}`, role: options.accessible ? 'img' : 'presentation', 'aria-hidden': options.accessible ? 'false' : 'true', 'aria-label': options.accessible ? `${getName(current.node)} treemap` : null });
 
             squarify(items, 0, 0, width, height, getValue).forEach(({ item, x, y, w, h }) => {
-                const change = Number(getChange(item));
+                const change = Number(item.change);
                 const direction = Number.isFinite(change) ? (change > 0 ? 'up' : (change < 0 ? 'down' : 'neutral')) : 'neutral';
                 const nested = getChildren(item);
                 const canDrill = nested.length > 0;
-                const name = getName(item);
+                const name = getLabel(item);
                 const valueText = formatValue(item);
-                const changeText = `${percentFormat.format(getChangePercent(item))}%`;
-                const group = add(svg, 'g', { class: `treemap-tile${canDrill ? ' has-children' : ''}`, 'data-direction': direction, tabindex: canDrill ? '0' : null, role: canDrill ? 'button' : null, 'aria-label': `${name}: ${valueText}${canDrill ? ', open details' : ''}` });
+                const changeText = `${percentFormat.format(Number(item.changePercent) || 0)}%`;
+                const group = add(svg, 'g', { class: `treemap-tile${canDrill ? ' has-children' : ''}`, 'data-direction': direction, tabindex: canDrill ? '0' : null, role: canDrill ? 'button' : null, 'aria-label': `${getName(item)}: ${valueText}${canDrill ? ', open details' : ''}` });
                 add(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), class: 'treemap-surface' });
                 const fit = fitLabel(name, valueText, changeText, w * 0.7, h * 0.7);
                 const centerX = x + w / 2;
@@ -122,7 +121,7 @@
                     add(group, 'text', { x: centerX, y: valueY, class: 'treemap-label treemap-label-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, valueText);
                     add(group, 'text', { x: centerX, y: valueY + fit.size * 0.6, class: 'treemap-label treemap-label-change', style: `font-size:${fit.changeSize}px`, 'text-anchor': 'middle' }, changeText);
                 }
-                add(group, 'title', {}, `${options.getTitleName ? options.getTitleName(item) : name} — ${valueText} (${changeText})${canDrill ? ' · Click to explore' : ''}`);
+                add(group, 'title', {}, `${getName(item)} — ${valueText} (${changeText})${canDrill ? ' · Click to explore' : ''}`);
                 if (canDrill) {
                     const drill = () => { path.push({ node: item, depth: current.depth + 1 }); render(); };
                     group.addEventListener('click', drill);
@@ -144,7 +143,7 @@
                 });
             }
             if (status) {
-                const totalText = options.formatTotal ? options.formatTotal(total) : `€$${numberFormat.format(total)}`;
+                const totalText = `${current.node.currency || '€$'}${numberFormat.format(total)}${current.node.unit || ''}`;
                 status.textContent = `${getName(current.node)} · ${totalText} total · ${items.length} ${items.length === 1 ? 'tile' : 'tiles'}`;
             }
         }

@@ -48,6 +48,10 @@ window.marketData = [
     let timer = null;
 
     companies.forEach(company => {
+        company.label = company.tag;
+        company.currency = '€$';
+        company.unit = 'B';
+        company.children = [];
         company.baseValue = company.value;
         // Larger firms tend to move less than smaller, more speculative firms.
         company.volatility = Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(company.value / 100)));
@@ -55,6 +59,11 @@ window.marketData = [
         company.changePercent = 0;
         company.updatedAt = Date.now();
     });
+
+    const marketRoot = {
+        name: 'Market', label: 'Market', value: companies.reduce((sum, company) => sum + company.value, 0),
+        change: 0, changePercent: 0, currency: '€$', unit: 'B', children: companies
+    };
 
     function snapshot() {
         return companies.map(company => ({ ...company }));
@@ -68,6 +77,7 @@ window.marketData = [
     function tick() {
         marketMood = Math.max(-0.02, Math.min(0.02, marketMood * 0.86 + (Math.random() - 0.5) * 0.006));
         const now = Date.now();
+        const previousTotal = marketRoot.value;
         companies.forEach(company => {
             const sectorDrift = (Math.random() - 0.5) * 0.0012;
             const shock = (Math.random() * 2 - 1) * company.volatility;
@@ -78,6 +88,9 @@ window.marketData = [
             company.changePercent = (company.change / previousValue) * 100;
             company.updatedAt = now;
         });
+        marketRoot.value = companies.reduce((sum, company) => sum + company.value, 0);
+        marketRoot.change = marketRoot.value - previousTotal;
+        marketRoot.changePercent = previousTotal ? marketRoot.change / previousTotal * 100 : 0;
         publish();
     }
 
@@ -116,18 +129,11 @@ window.marketData = [
     if (marketChartHost && window.defaultTreemap) {
         const marketChartPanel = marketChartHost.closest('.treemap-panel');
         const marketChart = window.defaultTreemap.mount(marketChartHost, {
-            root: { name: 'Market', children: companies },
+            root: marketRoot,
             rootLabel: 'Market',
             breadcrumbs: marketChartPanel && marketChartPanel.querySelector('.treemap-breadcrumbs'),
             status: marketChartPanel && marketChartPanel.querySelector('.treemap-status'),
-            accessible: true,
-            getName: company => company.tag,
-            getTitleName: company => company.name,
-            getValue: company => company.value,
-            getChange: company => company.change,
-            getChangePercent: company => company.changePercent,
-            formatValue: company => `€$${new Intl.NumberFormat('en-US').format(company.value)}B`,
-            formatTotal: value => `€$${new Intl.NumberFormat('en-US').format(value)}B`
+            accessible: true
         });
         api.subscribe(() => marketChart.update(), { immediate: false });
     }

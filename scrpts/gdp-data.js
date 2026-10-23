@@ -3,7 +3,6 @@
     const host = document.querySelector('[data-treemap="gdp"]');
     if (!host) return;
 
-    const formatter = new Intl.NumberFormat('en-US');
     const panel = host && host.closest('.treemap-panel');
     const status = panel && panel.querySelector('.treemap-status');
     let root;
@@ -18,7 +17,8 @@
             const indent = (line.match(/^\s*/) || [''])[0].length;
             const match = line.trim().match(/^(.*?)\s+(?:\(([-\d,]+)\)|([-\d,]+))\s*$/);
             if (!match) return;
-            const node = { name: match[1].trim(), value: Number((match[2] || match[3]).replace(/,/g, '')), children: [] };
+            const name = match[1].trim();
+            const node = { name, label: name, value: Number((match[2] || match[3]).replace(/,/g, '')), change: 0, changePercent: 0, currency: '€$', unit: '', children: [] };
             while (stack.length && stack[stack.length - 1].indent >= indent) stack.pop();
             if (stack.length) stack[stack.length - 1].node.children.push(node);
             else roots.push(node);
@@ -65,7 +65,7 @@
         if (!response.ok) throw new Error('GDP data could not be loaded.');
         return response.text();
     }).then(text => {
-        root = { name: 'World', value: 0, children: parse(text) };
+        root = { name: 'World', label: 'World', value: 0, change: 0, changePercent: 0, currency: '€$', unit: '', children: parse(text) };
         if (!root.children.length) throw new Error('No GDP entries were found in the data file.');
         prepare(root);
         root.value = root.children.reduce((sum, child) => sum + child.value, 0);
@@ -74,9 +74,7 @@
             rootLabel: 'World',
             breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
             status,
-            accessible: true,
-            getChange: node => node.change,
-            formatValue: node => `€$${formatter.format(node.value)}`
+            accessible: true
         });
         window.setInterval(tick, 2000);
     }).catch(() => { if (status) status.textContent = 'GDP data could not be loaded. Open this page through a local web server and check scrpts/country-gdp.txt.'; });
