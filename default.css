@@ -326,12 +326,19 @@ h2 {
 .gdp-status { margin: 8px 0 12px; color: var(--clr02); font-size: 13px; }
 .gdp-treemap { width: 100%; overflow: hidden; }
 .gdp-treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
-.gdp-tile-bg { stroke: var(--clrbs); stroke-width: 1; transition: filter 120ms ease; }
+.gdp-tile { color: var(--gdp-tile-color, var(--clrneu)); }
 .gdp-tile.has-children { cursor: pointer; }
-.gdp-tile:hover .gdp-tile-bg, .gdp-tile:focus .gdp-tile-bg { filter: brightness(1.35); }
+.gdp-tile-surface {
+    fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)) 6%, transparent);
+    stroke: var(--gdp-tile-color, var(--clrneu));
+    stroke-width: 1px;
+    filter: drop-shadow(var(--mrkfds));
+    transition: filter var(--animms) ease;
+}
+.gdp-tile:hover .gdp-tile-surface, .gdp-tile:focus .gdp-tile-surface { filter: brightness(1.2); }
 .gdp-tile:focus { outline: none; }
-.gdp-tile-name { fill: #fff; font-size: 14px; text-transform: uppercase; pointer-events: none; }
-.gdp-tile-value { fill: #ffffffce; font-size: 11px; pointer-events: none; }
+.gdp-tile-name { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 900; text-transform: uppercase; pointer-events: none; }
+.gdp-tile-value { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 700; pointer-events: none; }
 /* #endregion */
 /* #region mitk */
 .scenario-chart-meta {
@@ -572,7 +579,7 @@ h2 {
     cursor: help;
 }
 .market-chart .market-tile:hover .market-tile-surface {
-    filter: brightness(2.0);
+    filter: brightness(1.2);
 }
 .resource-market-status {
     margin: 10px 20px;

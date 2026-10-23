@@ -130,9 +130,8 @@
         const svg = addSvg(host, 'svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
         const rects = squarify(items, 0, 0, width, height);
         rects.forEach(({ node, x, y, w, h }) => {
-            const group = addSvg(svg, 'g', { class: `gdp-tile${node.children.length ? ' has-children' : ''}`, tabindex: '0', role: node.children.length ? 'button' : 'img', 'aria-label': `${node.name}: €$${formatter.format(node.value)}${node.children.length ? ', open details' : ''}` });
-            const hue = (node.name.split('').reduce((n, c) => n + c.charCodeAt(0), 0) * 17 + (current.depth + 1) * 37) % 360;
-            addSvg(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), rx: 3, fill: `hsl(${hue} 54% ${node.children.length ? 31 : 25}%)`, class: 'gdp-tile-bg' });
+            const group = addSvg(svg, 'g', { class: `gdp-tile${node.children.length ? ' has-children' : ''}`, style: `--gdp-tile-color:hsl(${(node.name.split('').reduce((n, c) => n + c.charCodeAt(0), 0) * 17 + (current.depth + 1) * 37) % 360} 64% 58%)`, tabindex: '0', role: node.children.length ? 'button' : 'img', 'aria-label': `${node.name}: €$${formatter.format(node.value)}${node.children.length ? ', open details' : ''}` });
+            addSvg(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), class: 'gdp-tile-surface' });
             const fit = fitLabel(node.name, node.value, w - 4, h - 4);
             const centerX = x + w / 2;
             const topY = y + (h - fit.requiredHeight) / 2 + fit.fontSize;
