@@ -112,6 +112,26 @@ window.marketData = [
 
     window.companyMarket = api;
 
+    const marketChartHost = document.querySelector('[data-treemap="market"]');
+    if (marketChartHost && window.defaultTreemap) {
+        const marketChartPanel = marketChartHost.closest('.treemap-panel');
+        const marketChart = window.defaultTreemap.mount(marketChartHost, {
+            root: { name: 'Market', children: companies },
+            rootLabel: 'Market',
+            breadcrumbs: marketChartPanel && marketChartPanel.querySelector('.treemap-breadcrumbs'),
+            status: marketChartPanel && marketChartPanel.querySelector('.treemap-status'),
+            accessible: true,
+            getName: company => company.tag,
+            getTitleName: company => company.name,
+            getValue: company => company.value,
+            getChange: company => company.change,
+            getChangePercent: company => company.changePercent,
+            formatValue: company => `€$${new Intl.NumberFormat('en-US').format(company.value)}B`,
+            formatTotal: value => `€$${new Intl.NumberFormat('en-US').format(value)}B`
+        });
+        api.subscribe(() => marketChart.update(), { immediate: false });
+    }
+
     const host = document.querySelector('[data-company-market]');
     if (host) {
         const status = document.querySelector('[data-company-market-status]');

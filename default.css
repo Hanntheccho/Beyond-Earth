@@ -315,34 +315,35 @@ h2 {
 }
 
 /* #region GFXS */
-/* #region gdp€ */
-.gdp-panel { padding: 20px; font-family: 'Source Code Pro', monospace; }
-.gdp-breadcrumbs { color: var(--clr02); font-size: 13px; }
-.gdp-crumb {
+/* #region treemap */
+.treemap-panel { padding: 20px; font-family: 'Source Code Pro', monospace; }
+.treemap-breadcrumbs { color: var(--clr02); font-size: 13px; }
+.treemap-crumb {
     border: 1px solid var(--clrbs); padding: 6px 16px;
     color: var(--clrbd); font-size: 14px; cursor: pointer;
 }
-.gdp-crumb:hover { background: var(--clrbs); }
-.gdp-status { margin: 8px 0 12px; color: var(--clr02); font-size: 13px; }
-.gdp-treemap { width: 100%; overflow: hidden; }
-.gdp-treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
-.gdp-tile { color: var(--gdp-tile-color, var(--clrneu)); }
-.gdp-tile[data-direction="up"] { --gdp-tile-color: var(--clrpos); }
-.gdp-tile[data-direction="down"] { --gdp-tile-color: var(--clrneg); }
-.gdp-tile[data-direction="neutral"] { --gdp-tile-color: var(--clrneu); }
-.gdp-tile.has-children { cursor: pointer; }
-.gdp-tile-surface {
-    fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)) 6%, transparent);
-    stroke: var(--gdp-tile-color, var(--clrneu));
+.treemap-crumb:hover { background: var(--clrbs); }
+.treemap-status { margin: 8px 0 12px; color: var(--clr02); font-size: 13px; }
+.treemap { width: 100%; overflow: hidden; }
+.treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
+.treemap-tile { color: var(--treemap-color, var(--clrneu)); }
+.treemap-tile[data-direction="up"] { --treemap-color: var(--clrpos); }
+.treemap-tile[data-direction="down"] { --treemap-color: var(--clrneg); }
+.treemap-tile[data-direction="neutral"] { --treemap-color: var(--clrneu); }
+.treemap-tile.has-children { cursor: pointer; }
+.treemap-surface {
+    fill: color-mix(in srgb, var(--treemap-color, var(--clrneu)) 6%, transparent);
+    stroke: var(--treemap-color, var(--clrneu));
     stroke-width: 1px;
     filter: drop-shadow(var(--mrkfds));
     transition: filter var(--animms) ease;
 }
-.gdp-tile:hover .gdp-tile-surface, .gdp-tile:focus .gdp-tile-surface { filter: brightness(0.6); }
-.gdp-tile:focus { outline: none; }
-.gdp-tile-name { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 900; text-transform: uppercase; pointer-events: none; }
-.gdp-tile-value { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 700; pointer-events: none; }
-.gdp-tile-change { fill: color-mix(in srgb, var(--gdp-tile-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; font-weight: 600; pointer-events: none; }
+.treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
+.treemap-tile:focus { outline: none; }
+.treemap-label { fill: color-mix(in srgb, var(--treemap-color, var(--clrneu)), white 50%); font-family: 'Archivo', sans-serif; pointer-events: none; }
+.treemap-label-name { font-weight: 900; text-transform: uppercase; }
+.treemap-label-value { font-weight: 700; }
+.treemap-label-change { font-weight: 600; }
 /* #endregion */
 /* #region mitk */
 .scenario-chart-meta {
@@ -540,61 +541,6 @@ h2 {
 .affinity-node--neutrality { border-style: dashed; }
 /* #endregion */
 /* #region mrkt */
-.market-chart {
-    --market-tile-fill: #1b1b1b5e;
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-}
-.market-chart svg {
-    display: block;
-    width: 96%;
-    height: auto;
-    margin: 10px auto;
-    overflow: visible;
-}
-.market-chart text.market-tag {
-    font-weight: 900;
-    pointer-events: none;
-    fill: color-mix(in srgb, var(--market-color), white 50%);
-}
-.market-chart text.market-value {
-    font-weight: 700;
-    pointer-events: none;
-    fill: color-mix(in srgb, var(--market-color), white 50%);
-}
-.market-chart text.market-change {
-    font-weight: 600;
-    pointer-events: none;
-    fill: color-mix(in srgb, var(--market-color), white 50%);
-}
-.market-chart .market-tile { color: var(--market-color, #1b1b1bed); }
-.market-chart .market-tile[data-direction="up"] {
-    --market-color: var(--clrpos);
-    --market-outline: var(--clrpos);
-    --market-tile-fill: color-mix(in srgb, var(--market-color) 6%, transparent);
-}
-.market-chart .market-tile[data-direction="down"] {
-    --market-color: var(--clrneg);
-    --market-outline: var(--clrneg);
-    --market-tile-fill: color-mix(in srgb, var(--market-color) 6%, transparent);
-}
-.market-chart .market-tile[data-direction="neutral"] {
-    --market-color: var(--clrneu);
-    --market-outline: var(--clrneu);
-    --market-tile-fill: color-mix(in srgb, var(--market-color) 6%, transparent);
-}
-.market-chart .market-tile .market-tile-surface {
-    fill: var(--market-tile-fill, #1b1b1b5e);
-    stroke: var(--market-outline, var(--market-color, #1b1b1bed));
-    stroke-width: 1px;
-    filter: drop-shadow(var(--mrkfds));
-    transition: filter var(--animms) ease;
-    cursor: help;
-}
-.market-chart .market-tile:hover .market-tile-surface {
-    filter: brightness(0.6);
-}
 .resource-market-status {
     margin: 10px 20px;
     color: #ffffff70;
