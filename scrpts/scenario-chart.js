@@ -20,8 +20,8 @@
             .sort((a, b) => a.year - b.year);
         if (!sorted.length) return;
 
-        const width = 800, height = 360;
-        const margin = { top: 20, right: 28, bottom: 48, left: 64 };
+        const width = 800, height = 400;
+        const margin = { top: 40, right: 40, bottom: 40, left: 40 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         let min = Math.min(...sorted.map(point => point.value));
@@ -74,7 +74,7 @@
             const value = max - (max - min) * tick / 4;
             const yy = y(value);
             add(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, class: 'chart-grid-line' });
-            add(svg, 'text', { x: margin.left - 10, y: yy + 4, 'text-anchor': 'end' }, Number(value.toPrecision(3)).toString());
+            add(svg, 'text', { x: margin.left - 10, y: yy + 4, class: 'chart-axis-label' }, Number(value.toPrecision(3)).toString());
         }
         const yearTicks = [];
         for (let year = firstYear; year <= lastYear; year += 25) yearTicks.push(year);
@@ -85,7 +85,6 @@
             const label = document.createElementNS(svgNS, 'text');
             label.setAttribute('x', xx);
             label.setAttribute('y', height - 15);
-            label.setAttribute('text-anchor', 'middle');
             label.setAttribute('class', 'year-label');
             label.textContent = String(year);
             svg.append(label);
@@ -94,15 +93,15 @@
         if (eventYear >= firstYear && eventYear <= lastYear) {
             const eventX = x(eventYear);
             add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top - 12, y2: height - margin.bottom, class: 'chart-event-line' });
-            const tagWidth = 128, tagHeight = 18;
+            const tagWidth = 122, tagHeight = 18;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
             add(svg, 'rect', { x: tagX, y: margin.top - 18, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
-            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top - 5, 'text-anchor': 'middle', class: 'chart-event-label' }, 'GREAT MISTAKE');
+            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top - 6, class: 'chart-event-label' }, 'GREAT MISTAKE');
         }
         if (era.start >= firstYear && era.end <= lastYear) {
             const eraX = (x(era.start) + x(era.end)) / 2;
             add(svg, 'text', {
-                x: eraX, y: margin.top + 16, 'text-anchor': 'middle', class: 'chart-era-label'
+                x: eraX, y: margin.top + 16, class: 'chart-era-label'
             }, era.label);
             add(svg, 'line', {
                 x1: x(era.end), x2: x(era.end), y1: margin.top, y2: height - margin.bottom,

@@ -393,6 +393,10 @@ h2 {
     fill: var(--clr-data);
     font: var(--fnt-size-data) var(--fnt-monospace);
 }
+.scenario-chart-plot .chart-axis-label { text-anchor: end; }
+.scenario-chart-plot .year-label,
+.scenario-chart-plot .chart-event-label,
+.scenario-chart-plot .chart-era-label { text-anchor: middle; }
 .scenario-chart-plot .chart-grid-line { stroke: #383838; stroke-width: 1; }
 .scenario-chart-plot .chart-year-tick { stroke: #888; stroke-width: 1; }
 .scenario-chart-plot .chart-event-line { stroke: #ff3333; stroke-width: 1.5; stroke-dasharray: 4 4; }
