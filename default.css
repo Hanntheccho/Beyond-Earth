@@ -146,7 +146,7 @@ h2 {
     display: flex;
     align-items: center;
     background-image:
-        linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
+        linear-gradient(to left, var(--clr01) 10px, transparent 20%, transparent),
         url('be-icon-b-o10.svg'),
         linear-gradient(to top, var(--clr01), var(--clr02));
     background-position: 0 0, 20px 16px, 0 0;
@@ -186,6 +186,10 @@ h2 {
     border: var(--brdpxs) solid;
     border-left: var(--brdlft) solid;
     border-color: var(--clrbs);
+    animation: panel-enter 650ms cubic-bezier(.2, .7, .2, 1) both;
+}
+.div-desc-win:target {
+    border-color: #ffffff70;
 }
 .div-desc-win.grid {
     display: flex;
@@ -194,9 +198,6 @@ h2 {
     overflow-y: auto;
     scrollbar-color: var(--clr02) var(--clrbs);
     scrollbar-width: thin;
-}
-.div-desc-win {
-    animation: panel-enter 650ms cubic-bezier(.2, .7, .2, 1) both;
 }
 .div-desc-win:nth-child(2) { animation-delay: 70ms; }
 .div-desc-win:nth-child(3) { animation-delay: 120ms; }
@@ -210,9 +211,6 @@ h2 {
         opacity: 1;
         transform: translateY(0);
     }
-}
-.div-desc-win:target {
-    border-color: #ffffff70;
 }
 
 .div-desc {
@@ -382,15 +380,13 @@ h2 {
 .scenario-chart-plot svg {
     position: relative;
     z-index: 1;
-}
-.scenario-chart-plot svg {
     display: block;
     width: 100%;
     height: auto;
 }
 .scenario-chart-plot text {
     fill: #c6c6c6;
-    font: 11px 'Source Code Pro';
+    font: 11px 'Source Code Pro', monospace;
 }
 .scenario-chart-plot .chart-grid-line { stroke: #383838; stroke-width: 1; }
 .scenario-chart-plot .chart-year-tick { stroke: #888; stroke-width: 1; }
@@ -606,7 +602,7 @@ h2 {
     column-fill: auto;
     scrollbar-color: var(--clr02) var(--clrbs);
     scrollbar-width: thin;
-    font: 11px 'Source Code Pro';
+    font: 11px 'Source Code Pro', monospace;
     color: #ffffff70;
 }
 
