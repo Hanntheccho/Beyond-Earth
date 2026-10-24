@@ -155,8 +155,6 @@
     }
 
     const sources = [];
-    const marketListeners = new Set();
-    let marketRoot = null;
     let timer = null;
     let marketMood = 0;
 
@@ -201,108 +199,92 @@
             update(source.root);
             source.chart.update();
         });
-        publishCompanies();
+        Object.values(markets).forEach(market => market.publish());
     }
 
-    function snapshotCompanies() {
-        return marketRoot ? marketRoot.children.map(company => ({ ...company })) : [];
+    // One shared timer drives every treemap and every market list.
+    function startTicker(options = {}) {
+        if (timer) clearInterval(timer);
+        timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 2000));
     }
 
-    function publishCompanies() {
-        if (!marketRoot) return;
-        const current = snapshotCompanies();
-        marketListeners.forEach(listener => listener(current));
+    function stopTicker() {
+        if (timer) clearInterval(timer);
+        timer = null;
     }
 
-    const companyMarket = {
-        getSnapshot: snapshotCompanies,
-        getQuote(tag) {
-            const company = marketRoot && marketRoot.children.find(item => item.tag === tag);
-            return company ? { ...company } : null;
-        },
-        subscribe(listener, options = {}) {
-            if (typeof listener !== 'function') throw new TypeError('Market subscriber must be a function');
-            marketListeners.add(listener);
-            if (options.immediate !== false) listener(snapshotCompanies());
-            return () => marketListeners.delete(listener);
-        },
-        tick: advanceValues,
-        start(options = {}) {
-            if (timer) clearInterval(timer);
-            timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 2000));
-            return companyMarket;
-        },
-        stop() {
-            if (timer) clearInterval(timer);
-            timer = null;
-            return companyMarket;
-        }
+    // Rows and quotes are keyed by tag, falling back to name for data sets without tags (e.g. countries).
+    const itemKey = item => item.tag || item.name;
+
+    // A "market" is the list-facing view of one treemap data set (companies, countries, ...).
+    //   key      -> names the DOM hooks: [data-<key>-market] and [data-<key>-market-status]
+    //   treemap  -> the data-treemap value of the treemap host that supplies the data
+    function createMarket(key, treemap) {
+        const market = {
+            key,
+            treemap,
+            root: null,
+            listeners: new Set(),
+            getSnapshot() {
+                return market.root ? market.root.children.map(item => ({ ...item })) : [];
+            },
+            getQuote(tag) {
+                const item = market.root && market.root.children.find(child => itemKey(child) === tag);
+                return item ? { ...item } : null;
+            },
+            subscribe(listener, options = {}) {
+                if (typeof listener !== 'function') throw new TypeError('Market subscriber must be a function');
+                market.listeners.add(listener);
+                if (options.immediate !== false) listener(market.getSnapshot());
+                return () => market.listeners.delete(listener);
+            },
+            publish() {
+                if (!market.root) return;
+                const current = market.getSnapshot();
+                market.listeners.forEach(listener => listener(current));
+            },
+            tick: advanceValues,
+            start(options) { startTicker(options); return market; },
+            stop() { stopTicker(); return market; }
+        };
+        return market;
+    }
+
+    const markets = {
+        company: createMarket('company', 'market'),
+        country: createMarket('country', 'gdp')
     };
-    window.companyMarket = companyMarket;
+    window.companyMarket = markets.company;
+    window.countryMarket = markets.country;
 
-    // Data company market list
-    function renderCompanyRows() {
-        if (!marketRoot) return;
-        const host = document.querySelector('[data-company-market]');
+    // Renders one row per top-level item of a market and keeps the rows updated.
+    function renderRows(market) {
+        if (!market.root) return;
+        const host = document.querySelector(`[data-${market.key}-market]`);
         if (!host) return;
-        const status = document.querySelector('[data-company-market-status]');
+        const status = document.querySelector(`[data-${market.key}-market-status]`);
         const rows = new Map();
-        const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
-        const percentFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
+        const valueFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
         host.replaceChildren();
-        marketRoot.children.forEach(company => {
+        market.root.children.forEach(item => {
             const row = document.createElement('div');
-            row.className = 'resource-market-row';
-            row.dataset.companyTag = company.tag;
-            row.innerHTML = '<span class="resource-market-name"></span><span class="resource-market-unit">€$B</span><span class="resource-market-price"></span><span class="resource-market-change"></span>';
-            row.querySelector('.resource-market-name').textContent = company.name;
+            row.className = 'data-grid-row';
+            row.dataset[`${market.key}Tag`] = itemKey(item);
+            row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit">€$B</span><span class="data-grid-price"></span><span class="data-grid-change"></span>';
+            row.querySelector('.data-grid-name').textContent = item.name;
             host.appendChild(row);
-            rows.set(company.tag, row);
+            rows.set(itemKey(item), row);
         });
-        companyMarket.subscribe(current => {
-            current.forEach(company => {
-                const row = rows.get(company.tag);
+        market.subscribe(current => {
+            current.forEach(item => {
+                const row = rows.get(itemKey(item));
                 if (!row) return;
-                row.querySelector('.resource-market-price').textContent = `${formatter.format(company.value)}`;
-                const change = row.querySelector('.resource-market-change');
-                change.textContent = `${percentFormatter.format(company.changePercent)}`;
-                change.classList.toggle('is-up', company.change >= 0);
-                change.classList.toggle('is-down', company.change < 0);
-                row.dataset.direction = company.change >= 0 ? 'up' : 'down';
-            });
-            if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
-        });
-    }
-
-    // Data country market list
-    function renderCountryRows() {
-        if (!marketRoot) return;
-        const host = document.querySelector('[data-country-market]');
-        if (!host) return;
-        const status = document.querySelector('[data-country-market-status]');
-        const rows = new Map();
-        const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
-        const percentFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
-        host.replaceChildren();
-        marketRoot.children.forEach(country => {
-            const row = document.createElement('div');
-            row.className = 'resource-market-row';
-            row.dataset.countryTag = country.tag;
-            row.innerHTML = '<span class="resource-market-name"></span><span class="resource-market-unit">€$B</span><span class="resource-market-price"></span><span class="resource-market-change"></span>';
-            row.querySelector('.resource-market-name').textContent = country.name;
-            host.appendChild(row);
-            rows.set(country.tag, row);
-        });
-        countryMarket.subscribe(current => {
-            current.forEach(country => {
-                const row = rows.get(country.tag);
-                if (!row) return;
-                row.querySelector('.resource-market-price').textContent = `${formatter.format(country.value)}`;
-                const change = row.querySelector('.resource-market-change');
-                change.textContent = `${percentFormatter.format(country.changePercent)}`;
-                change.classList.toggle('is-up', country.change >= 0);
-                change.classList.toggle('is-down', country.change < 0);
-                row.dataset.direction = country.change >= 0 ? 'up' : 'down';
+                row.querySelector('.data-grid-price').textContent = valueFormat.format(item.value);
+                const change = row.querySelector('.data-grid-change');
+                change.textContent = percentFormat.format(item.changePercent);
+                change.classList.toggle('is-up', item.change >= 0);
+                change.classList.toggle('is-down', item.change < 0);
+                row.dataset.direction = item.change >= 0 ? 'up' : 'down';
             });
             if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
         });
@@ -324,17 +306,13 @@
                 status,
                 accessible: true
             });
-            const source = { host, root, chart };
-            sources.push(source);
-            if (host.dataset.treemap === 'market') {
-                marketRoot = root;
-                window.marketData = root.children;
-                renderCompanyRows();
-            }
-            if (host.dataset.treemap === 'gdp') {
-                marketRoot = root;
-                window.marketData = root.children;
-                renderCountryRows();
+            sources.push({ host, root, chart });
+
+            const market = Object.values(markets).find(item => item.treemap === host.dataset.treemap);
+            if (market) {
+                market.root = root;
+                window[market.key === 'company' ? 'marketData' : 'countryData'] = root.children;
+                renderRows(market);
             }
         } catch (error) {
             if (status) status.textContent = `${host.dataset.treemap || 'Treemap'} data could not be loaded. Check ${host.dataset.source}.`;
@@ -343,6 +321,6 @@
 
     window.defaultTreemap = { mount };
     Promise.all(Array.from(document.querySelectorAll('.treemap[data-source]'), loadSource)).then(() => {
-        if (sources.length) companyMarket.start();
+        if (sources.length) startTicker();
     });
 })();

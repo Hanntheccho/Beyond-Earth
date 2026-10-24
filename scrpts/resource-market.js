@@ -106,11 +106,11 @@
 
     definitions.forEach(item => {
         const row = document.createElement('div');
-        row.className = 'resource-market-row';
+        row.className = 'data-grid-row';
         row.dataset.resourceId = item.id;
-        row.innerHTML = '<span class="resource-market-name"></span><span class="resource-market-unit"></span><span class="resource-market-price"></span><span class="resource-market-change"></span>';
-        row.querySelector('.resource-market-name').textContent = item.name;
-        row.querySelector('.resource-market-unit').textContent = `per ${item.unit}`;
+        row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit"></span><span class="data-grid-price"></span><span class="data-grid-change"></span>';
+        row.querySelector('.data-grid-name').textContent = item.name;
+        row.querySelector('.data-grid-unit').textContent = `per ${item.unit}`;
         host.append(row);
         rows.set(item.id, row);
     });
@@ -119,8 +119,8 @@
         definitions.forEach(item => {
             const quote = current[item.id];
             const row = rows.get(item.id);
-            row.querySelector('.resource-market-price').textContent = `${formatter.format(quote.price)}`;
-            const change = row.querySelector('.resource-market-change');
+            row.querySelector('.data-grid-price').textContent = `${formatter.format(quote.price)}`;
+            const change = row.querySelector('.data-grid-change');
             change.textContent = `${percentFormatter.format(quote.changePercent)}`;
             change.classList.toggle('is-up', quote.change >= 0);
             change.classList.toggle('is-down', quote.change < 0);

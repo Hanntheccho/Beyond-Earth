@@ -33,6 +33,7 @@
     --fnt-size-text: 14px;
     --fnt-size-bttn: 12px;
     --fnt-size-data: 10px;
+    --px-20: 20px;
 }
 
 body {
@@ -170,7 +171,6 @@ h2 {
 .div-submain {
     max-width: 100%;
     margin: 0 auto;
-    margin-top: -10px;
 }
 
 .title-div {
@@ -213,8 +213,8 @@ h2 {
 }
 
 .div-desc-win {
-    margin: 20px;
-    padding: 20px;
+    margin: var(--px-20);
+    padding: var(--px-20);
     border: var(--border);
     border-left-width: var(--border-left);
     animation: panel-enter 650ms cubic-bezier(.2, .7, .2, 1) both;
@@ -243,8 +243,8 @@ h2 {
 }
 
 .div-desc {
-    margin: 40px 60px 40px 60px;
-    padding: 0px 20px 0px 20px;
+    margin: var(--px-20);
+    padding: 0px var(--px-20) 0px var(--px-20);
     border: 0 solid var(--clr-border);
     border-left-width: var(--border-left);
     max-height: 32rem;
@@ -327,6 +327,7 @@ h2 {
 /* #region GFXS */
 /* #region tree */
 .treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
+.treemap-breadcrumbs button { margin-right: 4px; }
 .treemap { width: 100%; overflow: hidden; }
 .treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
 .treemap-tile { color: var(--treemap-color, var(--clr-neutrale)); }
@@ -465,26 +466,12 @@ h2 {
 }
 .sea-globe-canvas.dragging { cursor: grabbing; }
 /* #endregion */
-/* #region clim */
-.climate-card {
-    margin: 10px;
-    padding: 10px;
-    font-family: var(--fnt-monospace);
-    font-size: var(--fnt-size-data);
-}
-.climate-card-heading { letter-spacing: var(--letter-spacing-02); display: flex; align-items: center; justify-content: space-between; color: var(--clr-data); }
-@keyframes climate-pulse { 50% { opacity: .45; box-shadow: 0 0 2px var(--clr-positive); } }
-.climate-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 20px; margin-top: 6px; padding-top: 5px; border-top: var(--border); }
-.climate-details div { display: flex; flex-direction: column; gap: 3px; }
-.climate-details span { letter-spacing: var(--letter-spacing-02); color: var(--clr-data); }
-.climate-details b { color: var(--clr-b); font-weight: 400; text-transform: none; }
-/* #endregion */
 /* #region affy */
 .affinity-map {
     position: relative;
     width: calc(100% - 200px);
     aspect-ratio: 600 / 520;
-    margin: 28px auto;
+    margin: 0 auto;
     background: radial-gradient(ellipse at center, #ffffff18, transparent 68%);
 }
 .affinity-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -529,7 +516,7 @@ h2 {
 }
 .affinity-node--neutrality { border-style: dashed; }
 /* #endregion */
-/* #region mrkt */
+/* #region data */
 .data-status {
     display: grid;
     margin-top: 0;
@@ -543,26 +530,28 @@ h2 {
     align-items: center;
     min-height: 30px;
 }
-.resource-market {
+.data-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 0 20px;
     margin-top: 0;
     font: var(--fnt-size-data) var(--fnt-monospace);
 }
-.resource-market-row {
+.data-grid-row {
     display: grid;
     grid-template-columns: minmax(90px, 1fr) auto minmax(88px, auto) 68px;
     align-items: center;
-    gap: 8px;
+    gap: 1em;
     min-height: 30px;
     border-bottom: var(--border);
 }
-.resource-market-unit { color: var(--clr-data); }
-.resource-market-price { text-align: right; white-space: nowrap; }
-.resource-market-change { text-align: right; letter-spacing: var(--letter-spacing-02); filter: drop-shadow(var(--drop-shadow-60)); }
-.resource-market-change.is-up { color: var(--clr-positive); }
-.resource-market-change.is-down { color: var(--clr-negative); }
+.data-grid-unit { color: var(--clr-data); }
+.data-grid-price { text-align: right; white-space: nowrap; }
+.data-grid-change { text-align: right; letter-spacing: var(--letter-spacing-02); filter: drop-shadow(var(--drop-shadow-60)); }
+.data-grid-change.is-up { color: var(--clr-positive); }
+.data-grid-change.is-down { color: var(--clr-negative); }
+/* #endregion */
+/* #region mrkt */
 .market-text {
     position: fixed;
     top: auto;
@@ -581,7 +570,7 @@ h2 {
     font-family: var(--fnt-monospace);
     background-color: var(--clr-background);
     box-shadow: var(--box-shadow);
-    border-top: var(--border-size) solid var(--clr-border);
+    border-top: var(--border);
     z-index: 1000;
 }
 .market-text-line {
@@ -599,11 +588,12 @@ h2 {
 /* #endregion */
 
 .legacy-list_div {
-    margin: 20px;
-    padding: 20px;
+    margin: var(--px-20);
+    padding: var(--px-20);
 }
 .legacy-list {
     margin: 40px;
+    margin-top: var(--px-20);
     height: 36rem;
     overflow: auto;
     white-space: pre;

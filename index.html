@@ -69,17 +69,17 @@
                 <div class="div-desc-win" id="poiPLY" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc"><span class="poiPLY-desc"></span></div></div>
                 <div class="div-desc-win" id="poiKIL" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc"><span class="poiKIL-desc"></span></div></div>
                 <div class="div-desc-win" id="poiEGY" data-panel-group="lys-pois" hidden aria-hidden="true"><div class="div-desc"><span class="poiEGY-desc"></span></div></div>
-                <div class="div-desc-win"><div class="climate-card">
-                    <div class="climate-card-heading"><span>MÜNINSTEK</span><span>2200 OUTLOOK</span></div>
-                    <div class="climate-details">
-                        <div><span>WRLD ECO</span><b>56 index</b></div>
-                        <div><span>WRLD POP</span><b>9.236 billion</b></div>
-                        <div><span>WRLD TEM</span><b>18.1°C</b></div>
-                        <div><span>WRLD CO₂</span><b>640 ppm</b></div>
-                        <div><span>WRLD RAD</span><b>3.0 mSv</b></div>
-                        <div><span>WRLD AIR</span><b>15 µg/m³</b></div>
+                <div class="div-desc-win">
+                    <div class="data-status"><span>MÜNINSTEK DATA & MODEL OUTLOOK 2200 22.4</span></div>
+                    <div class="data-grid">
+                        <div class="data-grid-row">WRLD ECO<span class="data-grid-unit">index</span><span class="data-grid-price">56</span></div>
+                        <div class="data-grid-row">WRLD POP<span class="data-grid-unit">billion</span><span class="data-grid-price">9.236</span></div>
+                        <div class="data-grid-row">WRLD TEM<span class="data-grid-unit">°C</span><span class="data-grid-price">18.1</span></div>
+                        <div class="data-grid-row">WRLD CO₂<span class="data-grid-unit">ppm</span><span class="data-grid-price">640</span></div>
+                        <div class="data-grid-row">WRLD RAD<span class="data-grid-unit">mSv</span><span class="data-grid-price">3.0</span></div>
+                        <div class="data-grid-row">WRLD AIR<span class="data-grid-unit">µg/m³</span><span class="data-grid-price">15</span></div>
                     </div>
-                </div></div>
+                </div>
                 <div class="div-desc-win grid">
                     <button type="button" data-panel-group="mit-charts" data-panel-target="wrldecob" aria-pressed="true"><span class="wrldecob"></span></button>
                     <button type="button" data-panel-group="mit-charts" data-panel-target="wrldtemp"><span class="wrldtemp"></span></button>
@@ -133,7 +133,7 @@
                 </div>
                 <div class="div-desc-win">
                     <p class="data-status" data-country-market-status aria-live="polite"></p>
-                    <div class="resource-market country-market" data-country-market></div>
+                    <div class="data-grid" data-country-market></div>
                 </div>
                 <div class="div-desc-win" treemap-panel>
                     <p class="data-status" role="status" aria-live="polite">Loading market data…</p>
@@ -142,11 +142,11 @@
                 </div>
                 <div class="div-desc-win">
                     <p class="data-status" data-company-market-status aria-live="polite"></p>
-                    <div class="resource-market company-market" data-company-market></div>
+                    <div class="data-grid" data-company-market></div>
                 </div>
                 <div class="div-desc-win">
                     <p class="data-status" data-resource-market-status aria-live="polite"></p>
-                    <div class="resource-market" data-resource-market></div>
+                    <div class="data-grid" data-resource-market></div>
                 </div>
             </div>
         </div>
