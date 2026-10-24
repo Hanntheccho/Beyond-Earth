@@ -83,8 +83,6 @@
     }
 
     const api = {
-        currency: '€$',
-        isFictional: true,
         getSnapshot: snapshot,
         getQuote(id) { return quotes[id] ? { ...quotes[id] } : null; },
         subscribe(listener, options = {}) {
@@ -121,9 +119,9 @@
         definitions.forEach(item => {
             const quote = current[item.id];
             const row = rows.get(item.id);
-            row.querySelector('.resource-market-price').textContent = `${api.currency}${formatter.format(quote.price)}`;
+            row.querySelector('.resource-market-price').textContent = `${formatter.format(quote.price)}`;
             const change = row.querySelector('.resource-market-change');
-            change.textContent = `${percentFormatter.format(quote.changePercent)}%`;
+            change.textContent = `${percentFormatter.format(quote.changePercent)}`;
             change.classList.toggle('is-up', quote.change >= 0);
             change.classList.toggle('is-down', quote.change < 0);
             row.dataset.direction = quote.change >= 0 ? 'up' : 'down';

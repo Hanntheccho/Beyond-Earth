@@ -18,6 +18,7 @@
         const lines = [];
         let line = '';
         String(name).trim().split(/\s+/).forEach(word => {
+            // Wrap at spaces only; fitLabel accounts for long unbroken words by reducing the font size.
             if (line && `${line} ${word}`.length > maxChars) { lines.push(line); line = word; }
             else line = line ? `${line} ${word}` : word;
         });
@@ -62,14 +63,18 @@
     }
 
     function fitLabel(name, valueText, changeText, w, h) {
+        // Keep an inset inside each tile; render() also passes % of the tile dimensions.
         const availableWidth = Math.max(1, w - 8);
         const availableHeight = Math.max(1, h - 6);
         const longestWordLength = String(name).trim().split(/\s+/).reduce((longest, word) => Math.max(longest, word.length), 1);
-        const maxSizeByWordWidth = availableWidth / (longestWordLength * 0.65);
+        // These character-width factors approximate the used font; increase them for more conservative sizing.
+        const maxSizeByWordWidth = availableWidth / (longestWordLength * 0.6);
         for (let size = Math.min(availableWidth * 0.13, availableHeight * 0.16, maxSizeByWordWidth); size >= 1.5; size -= 0.25) {
             const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (size * 0.65))));
-            const valueSize = Math.min(size * 0.78, availableWidth / Math.max(1, valueText.length * 0.68));
-            const changeSize = Math.min(size * 0.68, availableWidth / Math.max(1, changeText.length * 0.68));
+            // Number text is sized against the tile width and remains at most the name's font size.
+            const valueSize = Math.min(size * 1, availableWidth / Math.max(1, valueText.length * 0.68));
+            const changeSize = Math.min(size * 1, availableWidth / Math.max(1, changeText.length * 0.68));
+            // Vertical spacing between wrapped name lines; requiredHeight reserves room for all three text rows.
             const lineHeight = size * 0.8;
             const requiredHeight = (lines.length - 1) * lineHeight + size * 2.8 + 2;
             if (requiredHeight <= availableHeight) return { lines, size, valueSize, changeSize, lineHeight, requiredHeight };
@@ -85,7 +90,7 @@
         const getValue = node => Number(node.value) || 0;
         const getName = node => node.name || node.label || '';
         const getLabel = node => node.label || getName(node);
-        const formatValue = node => `${node.currency || '€$'}${numberFormat.format(getValue(node))}${node.unit || ''}`;
+        const formatValue = node => `${numberFormat.format(getValue(node))}`;
         const breadcrumbs = options.breadcrumbs || null;
         const status = options.status || null;
 
@@ -104,18 +109,20 @@
                 const canDrill = nested.length > 0;
                 const name = getLabel(item);
                 const valueText = formatValue(item);
-                const changeText = `${percentFormat.format(Number(item.changePercent) || 0)}%`;
+                const changeText = `${percentFormat.format(Number(item.changePercent) || 0)}`;
                 const group = add(svg, 'g', { class: `treemap-tile${canDrill ? ' has-children' : ''}`, 'data-direction': direction, tabindex: canDrill ? '0' : null, role: canDrill ? 'button' : null, 'aria-label': `${getName(item)}: ${valueText}${canDrill ? ', open details' : ''}` });
                 add(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), class: 'treemap-surface' });
+                // Use % of the tile dimensions to leave a margin; label font comes from inherited CSS.
                 const fit = fitLabel(name, valueText, changeText, w * 0.9, h * 0.9);
                 const centerX = x + w / 2;
                 const topY = y + (h - fit.requiredHeight) / 2 + fit.size;
                 if (fit.size >= 2) {
                     const label = add(group, 'text', { x: centerX, y: topY, class: 'treemap-label treemap-label-name', style: `font-size:${fit.size}px`, 'text-anchor': 'middle' });
                     fit.lines.forEach((line, index) => add(label, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
-                    const valueY = topY + (fit.lines.length - 1) * fit.lineHeight + fit.size * 0.8;
+                    // These baseline offsets control the gaps from name to value and value to change.
+                    const valueY = topY + (fit.lines.length - 1) * fit.lineHeight + fit.size * 1;
                     add(group, 'text', { x: centerX, y: valueY, class: 'treemap-label treemap-label-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, valueText);
-                    add(group, 'text', { x: centerX, y: valueY + fit.size * 0.6, class: 'treemap-label treemap-label-change', style: `font-size:${fit.changeSize}px`, 'text-anchor': 'middle' }, changeText);
+                    add(group, 'text', { x: centerX, y: valueY + fit.size * 1, class: 'treemap-label treemap-label-change', style: `font-size:${fit.changeSize}px`, 'text-anchor': 'middle' }, changeText);
                 }
                 add(group, 'title', {}, `${getName(item)} — ${valueText} (${changeText})${canDrill ? ' · Click to explore' : ''}`);
                 if (canDrill) {
@@ -139,7 +146,7 @@
                 });
             }
             if (status) {
-                const totalText = `${current.node.currency || '€$'}${numberFormat.format(total)}${current.node.unit || ''}`;
+                const totalText = `€$${numberFormat.format(total)}B`;
                 status.textContent = `${getName(current.node)} · ${totalText} total · ${items.length} ${items.length === 1 ? 'tile' : 'tiles'}`;
             }
         }
@@ -157,8 +164,6 @@
         const node = { ...source };
         node.name = String(source.name || source.tag || 'Unnamed');
         node.label = useTags && source.tag ? String(source.tag) : node.name;
-        node.currency = source.currency || inherited.currency || '€$';
-        node.unit = source.unit !== undefined ? source.unit : (inherited.unit || '');
         node.value = Number(source.value) || 0;
         node.children = Array.isArray(source.children) ? source.children.map(child => normalizeNode(child, useTags, node)) : [];
         node.change = 0;
@@ -210,7 +215,6 @@
     }
 
     const companyMarket = {
-        currency: '€$', unit: 'billions', isFictional: true,
         getSnapshot: snapshotCompanies,
         getQuote(tag) {
             const company = marketRoot && marketRoot.children.find(item => item.tag === tag);
@@ -258,9 +262,9 @@
             current.forEach(company => {
                 const row = rows.get(company.tag);
                 if (!row) return;
-                row.querySelector('.resource-market-price').textContent = `${company.currency}${formatter.format(company.value)}${company.unit}`;
+                row.querySelector('.resource-market-price').textContent = `${formatter.format(company.value)}`;
                 const change = row.querySelector('.resource-market-change');
-                change.textContent = `${percentFormatter.format(company.changePercent)}%`;
+                change.textContent = `${percentFormatter.format(company.changePercent)}`;
                 change.classList.toggle('is-up', company.change >= 0);
                 change.classList.toggle('is-down', company.change < 0);
                 row.dataset.direction = company.change >= 0 ? 'up' : 'down';

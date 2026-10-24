@@ -21,7 +21,8 @@
     --animms: 160ms;
     --alpico: 0.1;
     --boxshw: 0 0 16px #00000080;
-    --mrkfds: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
+    --mrkfds60: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
+    --mrkfds20: 0 0 0.6em color-mix(in srgb, currentColor 20%, transparent);
 }
 
 body {
@@ -43,13 +44,13 @@ body::after {
     background-repeat: repeat;
 }
 body::before {
-    background: url("be_icon_w.svg") center calc(50% - 30px) / 240px repeat;
+    background: url("be-icon-w.svg") center calc(50% - 30px) / 240px repeat;
     opacity: 0.02;
     animation: background-drift-large 36s linear infinite alternate;
     transform: translate3d(0, var(--bg-scroll-large, 0px), 0);
 }
 body::after {
-    background: url("be_icon_w.svg") center calc(50% - 30px) / 160px repeat;
+    background: url("be-icon-w.svg") center calc(50% - 30px) / 160px repeat;
     opacity: 0.01;
     animation: background-drift-small 29s linear infinite alternate;
     transform: translate3d(0, var(--bg-scroll-small, 0px), 0);
@@ -146,7 +147,7 @@ h2 {
     align-items: center;
     background-image:
         linear-gradient(to left, var(--clr01) 10px, #00000000 20%, #00000000),
-        url('be_icon_b_o10.svg'),
+        url('be-icon-b-o10.svg'),
         linear-gradient(to top, var(--clr01), var(--clr02));
     background-position: 0 0, 20px 16px, 0 0;
     background-size: auto, 22px, auto;
@@ -233,7 +234,7 @@ h2 {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: var(--desc-bg, url("be_icon_w.svg"));
+    background-image: var(--desc-bg, url("be-icon-w.svg"));
     background-position: center;
     background-size: auto 90%;
     background-repeat: no-repeat;
@@ -315,7 +316,7 @@ h2 {
 }
 
 /* #region GFXS */
-/* #region treemap */
+/* #region tree */
 .treemap-panel { padding: 20px; font-family: 'Source Code Pro', monospace; }
 .treemap-breadcrumbs { color: var(--clr02); font-size: 13px; }
 .treemap-crumb {
@@ -335,15 +336,15 @@ h2 {
     fill: color-mix(in srgb, var(--treemap-color, var(--clrneu)) 6%, transparent);
     stroke: var(--treemap-color, var(--clrneu));
     stroke-width: 1px;
-    filter: drop-shadow(var(--mrkfds));
+    filter: drop-shadow(var(--mrkfds60));
     transition: filter var(--animms) ease;
 }
 .treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
 .treemap-tile:focus { outline: none; }
-.treemap-label { fill: color-mix(in srgb, var(--treemap-color, var(--clrneu)), white 50%); pointer-events: none; }
-.treemap-label-name { font-weight: 900; text-transform: uppercase; }
-.treemap-label-value { font-weight: 700; }
-.treemap-label-change { font-weight: 600; }
+.treemap-label { font-weight: 900; text-shadow: var(--mrkfds20); fill: var(--treemap-color); pointer-events: none; }
+.treemap-label-name { text-transform: uppercase; }
+.treemap-label-value { filter: brightness(0.4); }
+.treemap-label-change { filter: brightness(0.6); }
 /* #endregion */
 /* #region mitk */
 .scenario-chart-meta {
@@ -353,24 +354,15 @@ h2 {
     gap: 16px;
     margin: 10px;
     color: #b9b9b9;
-    font-size: 11px;
-    letter-spacing: 0.4em;
+    font-size: 12px;
+    letter-spacing: 0.6em;
     text-transform: uppercase;
-}
-.scenario-chart-kpi {
-    white-space: nowrap;
-}
-.scenario-chart-kpi strong {
-    margin-left: 8px;
-    color: #c6c6c6;
-    font-size: 20px;
-    font-weight: normal;
     font-family: 'Source Code Pro', monospace;
-    text-shadow: var(--mrkfds);
 }
-.scenario-chart-kpi strong.chart-trend-good { color: var(--clrpos); }
-.scenario-chart-kpi strong.chart-trend-bad { color: var(--clrneg); }
-.scenario-chart-kpi strong.chart-trend-flat { color: var(--clrneu); }
+.scenario-chart-meta span { margin-left: 20px; }
+.scenario-chart-meta span.chart-trend-good { color: var(--clrpos); text-shadow: var(--mrkfds60); }
+.scenario-chart-meta span.chart-trend-bad { color: var(--clrneg); text-shadow: var(--mrkfds60); }
+.scenario-chart-meta span.chart-trend-flat { color: var(--clrneu); text-shadow: var(--mrkfds60); }
 .scenario-chart-plot {
     position: relative;
     isolation: isolate;
@@ -411,7 +403,7 @@ h2 {
     fill: #c5c5c5;
     fill-opacity: 0.1;
     stroke: none;
-    filter: drop-shadow(var(--mrkfds));
+    filter: drop-shadow(var(--mrkfds60));
 }
 .scenario-chart-plot .chart-series-area.chart-trend-good { color: var(--clrpos); fill: var(--clrpos); fill-opacity: 0.06; }
 .scenario-chart-plot .chart-series-area.chart-trend-bad { color: var(--clrneg); fill: var(--clrneg); fill-opacity: 0.06; }
@@ -422,7 +414,7 @@ h2 {
     stroke-width: 1.5px;
     stroke-linecap: round;
     stroke-linejoin: round;
-    filter: drop-shadow(var(--mrkfds));
+    filter: drop-shadow(var(--mrkfds60));
 }
 .scenario-chart-plot .chart-series-line.chart-trend-good { color: var(--clrpos); stroke: var(--clrpos); }
 .scenario-chart-plot .chart-series-line.chart-trend-bad { color: var(--clrneg); stroke: var(--clrneg); }
@@ -479,16 +471,13 @@ h2 {
     padding: 10px;
     font-family: 'Source Code Pro', monospace;
     font-size: 11px;
-    letter-spacing: .1em;
 }
-.climate-card-heading { display: flex; align-items: center; justify-content: space-between; color: #ffffff65; }
-.climate-live { display: inline-flex; align-items: center; gap: 5px; color: #89e6b5;  }
-.climate-live i { width: 8px; height: 8px; border-radius: 50%; background: #55e798; box-shadow: 0 0 8px #55e798; animation: climate-pulse 1.8s ease-in-out infinite; }
-@keyframes climate-pulse { 50% { opacity: .45; box-shadow: 0 0 2px #55e798; } }
+.climate-card-heading { letter-spacing: .2em; display: flex; align-items: center; justify-content: space-between; color: #ffffff65; }
+@keyframes climate-pulse { 50% { opacity: .45; box-shadow: 0 0 2px var(--clrpos); } }
 .climate-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 20px; margin-top: 6px; padding-top: 5px; border-top: 1px solid #ffffff20; }
 .climate-details div { display: flex; flex-direction: column; gap: 3px; }
-.climate-details span { color: #ffffff65; }
-.climate-details b { color: #f3f8fa; font-size: 14px; font-weight: 400; text-transform: none; }
+.climate-details span { letter-spacing: .2em; color: #ffffff65; }
+.climate-details b { color: #f3f8fa; font-weight: 400; text-transform: none; }
 /* #endregion */
 /* #region affy */
 .affinity-map {
@@ -545,7 +534,7 @@ h2 {
     margin: 10px 20px;
     color: #ffffff70;
     font: 11px 'Source Code Pro', monospace;
-    letter-spacing: .12em;
+    letter-spacing: .2em;
     text-align: right;
 }
 .resource-market {
@@ -553,7 +542,7 @@ h2 {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 0 18px;
     margin: 0 20px 24px;
-    font: 13px 'Source Code Pro', monospace;
+    font: 11px 'Source Code Pro', monospace;
 }
 .resource-market-row {
     display: grid;
@@ -563,11 +552,11 @@ h2 {
     min-height: 34px;
     border-bottom: 1px solid #ffffff18;
 }
-.resource-market-unit { color: #ffffff70; font-size: 11px; }
+.resource-market-unit { color: #ffffff70; }
 .resource-market-price { text-align: right; white-space: nowrap; }
-.resource-market-change { text-align: right; font-size: 11px; }
-.resource-market-change.is-up { color: var(--clrpos); filter: drop-shadow(var(--mrkfds)); }
-.resource-market-change.is-down { color: var(--clrneg); filter: drop-shadow(var(--mrkfds)); }
+.resource-market-change { text-align: right; letter-spacing: .2em; filter: drop-shadow(var(--mrkfds60)); }
+.resource-market-change.is-up { color: var(--clrpos); }
+.resource-market-change.is-down { color: var(--clrneg); }
 .market-text {
     position: fixed;
     top: auto;
@@ -588,15 +577,14 @@ h2 {
     box-shadow: var(--boxshw);
     border-top: var(--brdpxs) solid var(--clrbs);
     z-index: 1000;
-    cursor: pointer;
 }
 .market-text-line {
     flex: none;
     animation: scroll-left 120s linear infinite;
 }
-.positive { color: var(--clrpos); filter: drop-shadow(var(--mrkfds)); }
-.negative { color: var(--clrneg); filter: drop-shadow(var(--mrkfds)); }
-.neutrale { color: var(--clrneu); filter: drop-shadow(var(--mrkfds)); }
+.positive { color: var(--clrpos); filter: drop-shadow(var(--mrkfds60)); }
+.negative { color: var(--clrneg); filter: drop-shadow(var(--mrkfds60)); }
+.neutrale { color: var(--clrneu); filter: drop-shadow(var(--mrkfds60)); }
 @keyframes scroll-left {
     from { transform: translateX(100vw); }
     to   { transform: translateX(-100%); }

@@ -46,10 +46,9 @@
         const meta = document.createElement('div');
         meta.className = 'scenario-chart-meta';
         const metric = document.createElement('span');
-        metric.className = 'scenario-chart-kpi';
         const yearLabel = document.createElement('span');
         yearLabel.textContent = `${sorted[sorted.length - 1].year} outlook`;
-        const valueLabel = document.createElement('strong');
+        const valueLabel = document.createElement('span');
         valueLabel.classList.add(latestTrendClass);
         valueLabel.textContent = `${Number(sorted[sorted.length - 1].value.toPrecision(4))} ${plot.dataset.unit || ''}`;
         metric.append(yearLabel, valueLabel);

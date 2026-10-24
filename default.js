@@ -290,11 +290,11 @@ if (!prefersReducedMotion) {
 }
 
 const legacyFiles = {
-    be_legacy_tag: "be_legacy_tag.txt",
-    be_legacy_vic: "be_legacy_vic.txt",
-    be_legacy_str: "be_legacy_str.txt",
-    be_legacy_sta: "be_legacy_sta.txt",
-    be_legacy_par: "be_legacy_par.txt"
+    beLegacy01: "be-legacy-countries.txt",
+    beLegacy02: "be-legacy-victory-points.txt",
+    beLegacy03: "be-legacy-strategic-regions.txt",
+    beLegacy04: "be-legacy-states.txt",
+    beLegacy05: "be-legacy-parties.txt"
 };
 
 for (const [elementId, fileName] of Object.entries(legacyFiles)) {
