@@ -439,7 +439,7 @@ h2 {
 }
 /* #endregion */
 /* #region glob */
-.sea-globe-preview {
+.globe-preview {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -451,7 +451,7 @@ h2 {
     overflow: hidden;
     z-index: 0;
 }
-.sea-globe-canvas {
+.globe-canvas {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -464,7 +464,7 @@ h2 {
     opacity: 0.2;
     pointer-events: none;
 }
-.sea-globe-canvas.dragging { cursor: grabbing; }
+.globe-canvas.dragging { cursor: grabbing; }
 /* #endregion */
 /* #region affy */
 .affinity-map {
