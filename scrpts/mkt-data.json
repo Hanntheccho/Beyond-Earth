@@ -6,7 +6,68 @@
       "name": "ARC International",
       "tag": "ARC",
       "value": 12223,
-      "children": []
+      "children": [
+        {
+          "name": "ARC Energy",
+          "tag": "ARCEN",
+          "value": 700,
+          "children": []
+        },
+        {
+          "name": "ARC Vita",
+          "tag": "ARCVT",
+          "value": 1900,
+          "children": []
+        },
+        {
+          "name": "ARC Terra",
+          "tag": "ARCTA",
+          "value": 1750,
+          "children": []
+        },
+        {
+          "name": "ARC Aegis",
+          "tag": "ARCAG",
+          "value": 1600,
+          "children": []
+        },
+        {
+          "name": "ARC Nexus",
+          "tag": "ARCNX",
+          "value": 1250,
+          "children": []
+        },
+        {
+          "name": "ARC Restoration",
+          "tag": "ARCRS",
+          "value": 950,
+          "children": []
+        },
+        {
+          "name": "ARC Orbis",
+          "tag": "ARCOB",
+          "value": 800,
+          "children": []
+        },
+        {
+          "name": "ARC Proxima",
+          "tag": "ARCPX",
+          "value": 2300,
+          "children": []
+        },
+        {
+          "name": "ARC Resettlement",
+          "tag": "ARCRT",
+          "value": 500,
+          "children": []
+        },
+        {
+          "name": "ARC Division 7",
+          "tag": "ARCD7",
+          "value": 473,
+          "children": []
+        }
+      ]
     },
     {
       "name": "PLENFOR Armor & Steel",

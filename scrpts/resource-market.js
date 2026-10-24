@@ -99,7 +99,7 @@
 
     const host = document.querySelector('[data-resource-market]');
     if (!host) return;
-    const status = document.querySelector('[data-market-status]');
+    const status = document.querySelector('[data-resource-market-status]');
     const rows = new Map();
     const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
     const percentFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });

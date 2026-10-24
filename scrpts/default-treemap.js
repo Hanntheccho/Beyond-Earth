@@ -124,7 +124,7 @@
                     add(group, 'text', { x: centerX, y: valueY, class: 'treemap-label treemap-label-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, valueText);
                     add(group, 'text', { x: centerX, y: valueY + fit.size * 1, class: 'treemap-label treemap-label-change', style: `font-size:${fit.changeSize}px`, 'text-anchor': 'middle' }, changeText);
                 }
-                add(group, 'title', {}, `${getName(item)} — ${valueText} (${changeText})${canDrill ? ' · Click to explore' : ''}`);
+                add(group, 'title', {}, `${getName(item)} — ${valueText} (${changeText})${canDrill ? ' · Click to expand' : ''}`);
                 if (canDrill) {
                     const drill = () => { path.push({ node: item, depth: current.depth + 1 }); render(); };
                     group.addEventListener('click', drill);
@@ -136,18 +136,18 @@
                 breadcrumbs.replaceChildren();
                 const addCrumb = (name, onClick) => {
                     const button = document.createElement('button');
-                    button.type = 'button'; button.textContent = name; button.className = 'treemap-crumb';
+                    button.type = 'button'; button.textContent = name;
                     button.addEventListener('click', onClick); breadcrumbs.appendChild(button);
                 };
                 addCrumb(options.rootLabel || 'World', () => { path = []; render(); });
                 path.forEach((entry, index) => {
-                    const separator = document.createElement('span'); separator.textContent = ' / '; separator.setAttribute('aria-hidden', 'true'); breadcrumbs.appendChild(separator);
+                    const separator = document.createElement('span'); separator.textContent = ' | '; separator.setAttribute('aria-hidden', 'true'); breadcrumbs.appendChild(separator);
                     addCrumb(getName(entry.node), () => { path = path.slice(0, index + 1); render(); });
                 });
             }
             if (status) {
                 const totalText = `€$${numberFormat.format(total)}B`;
-                status.textContent = `${getName(current.node)} · ${totalText} total · ${items.length} ${items.length === 1 ? 'tile' : 'tiles'}`;
+                status.textContent = `MONDAYMARKET · ${getName(current.node)} · ${totalText} · ${items.length} ${items.length === 1 ? 'A01' : 'A10'}`;
             }
         }
         render();
@@ -240,6 +240,7 @@
     };
     window.companyMarket = companyMarket;
 
+    // Data company market list
     function renderCompanyRows() {
         if (!marketRoot) return;
         const host = document.querySelector('[data-company-market]');
@@ -253,7 +254,7 @@
             const row = document.createElement('div');
             row.className = 'resource-market-row';
             row.dataset.companyTag = company.tag;
-            row.innerHTML = '<span class="resource-market-name"></span><span class="resource-market-unit">market cap</span><span class="resource-market-price"></span><span class="resource-market-change"></span>';
+            row.innerHTML = '<span class="resource-market-name"></span><span class="resource-market-unit">€$B</span><span class="resource-market-price"></span><span class="resource-market-change"></span>';
             row.querySelector('.resource-market-name').textContent = company.name;
             host.appendChild(row);
             rows.set(company.tag, row);
@@ -273,9 +274,43 @@
         });
     }
 
+    // Data country market list
+    function renderCountryRows() {
+        if (!marketRoot) return;
+        const host = document.querySelector('[data-country-market]');
+        if (!host) return;
+        const status = document.querySelector('[data-country-market-status]');
+        const rows = new Map();
+        const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
+        const percentFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
+        host.replaceChildren();
+        marketRoot.children.forEach(country => {
+            const row = document.createElement('div');
+            row.className = 'resource-market-row';
+            row.dataset.countryTag = country.tag;
+            row.innerHTML = '<span class="resource-market-name"></span><span class="resource-market-unit">€$B</span><span class="resource-market-price"></span><span class="resource-market-change"></span>';
+            row.querySelector('.resource-market-name').textContent = country.name;
+            host.appendChild(row);
+            rows.set(country.tag, row);
+        });
+        countryMarket.subscribe(current => {
+            current.forEach(country => {
+                const row = rows.get(country.tag);
+                if (!row) return;
+                row.querySelector('.resource-market-price').textContent = `${formatter.format(country.value)}`;
+                const change = row.querySelector('.resource-market-change');
+                change.textContent = `${percentFormatter.format(country.changePercent)}`;
+                change.classList.toggle('is-up', country.change >= 0);
+                change.classList.toggle('is-down', country.change < 0);
+                row.dataset.direction = country.change >= 0 ? 'up' : 'down';
+            });
+            if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
+        });
+    }
+
     async function loadSource(host) {
-        const panel = host.closest('.treemap-panel');
-        const status = panel && panel.querySelector('.treemap-status');
+        const panel = host.closest('[treemap-panel]');
+        const status = panel && panel.querySelector('.data-status');
         try {
             const response = await fetch(host.dataset.source);
             if (!response.ok) throw new Error('Treemap data could not be loaded.');
@@ -295,6 +330,11 @@
                 marketRoot = root;
                 window.marketData = root.children;
                 renderCompanyRows();
+            }
+            if (host.dataset.treemap === 'gdp') {
+                marketRoot = root;
+                window.marketData = root.children;
+                renderCountryRows();
             }
         } catch (error) {
             if (status) status.textContent = `${host.dataset.treemap || 'Treemap'} data could not be loaded. Check ${host.dataset.source}.`;

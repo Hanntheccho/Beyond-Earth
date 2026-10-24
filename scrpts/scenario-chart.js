@@ -94,7 +94,7 @@
         if (eventYear >= firstYear && eventYear <= lastYear) {
             const eventX = x(eventYear);
             add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top - 12, y2: height - margin.bottom, class: 'chart-event-line' });
-            const tagWidth = 112, tagHeight = 18;
+            const tagWidth = 128, tagHeight = 18;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
             add(svg, 'rect', { x: tagX, y: margin.top - 18, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
             add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top - 5, 'text-anchor': 'middle', class: 'chart-event-label' }, 'GREAT MISTAKE');

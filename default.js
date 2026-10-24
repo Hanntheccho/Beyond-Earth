@@ -268,26 +268,34 @@ window.addEventListener('scroll', repositionOpenTooltips, { passive: true });
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-if (window.matchMedia('(pointer: fine)').matches && !prefersReducedMotion) {
-    window.addEventListener('pointermove', function(event) {
-        document.documentElement.style.setProperty('--cursor-x', event.clientX + 'px');
-        document.documentElement.style.setProperty('--cursor-y', event.clientY + 'px');
-    }, { passive: true });
-}
+if (window.matchMedia('(pointer: fine)').matches) {
+    const glow = document.querySelector('.cursor-glow');
+    let x = 0, y = 0, pending = false;
 
-if (!prefersReducedMotion) {
-    let scrollUpdatePending = false;
-    window.addEventListener('scroll', function() {
-        if (scrollUpdatePending) return;
-        scrollUpdatePending = true;
-        window.requestAnimationFrame(function() {
-            const scrollY = window.scrollY;
-            document.documentElement.style.setProperty('--bg-scroll-large', (-scrollY * 0.08) + 'px');
-            document.documentElement.style.setProperty('--bg-scroll-small', (-scrollY * 0.04) + 'px');
-            scrollUpdatePending = false;
+    window.addEventListener('pointermove', function (event) {
+        x = event.clientX;
+        y = event.clientY;
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(function () {
+            glow.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+            glow.style.opacity = '1';
+            pending = false;
         });
     }, { passive: true });
 }
+
+let scrollUpdatePending = false;
+window.addEventListener('scroll', function () {
+    if (scrollUpdatePending) return;
+    scrollUpdatePending = true;
+    requestAnimationFrame(function () {
+        const scrollY = window.scrollY;
+        document.documentElement.style.setProperty('--bg-scroll-large', (-scrollY * 0.08) + 'px');
+        document.documentElement.style.setProperty('--bg-scroll-small', (-scrollY * 0.04) + 'px');
+        scrollUpdatePending = false;
+    });
+}, { passive: true });
 
 const legacyFiles = {
     beLegacy01: "be-legacy-countries.txt",
