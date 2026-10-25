@@ -88,7 +88,7 @@ button {
     font-size: var(--fnt-size-bttn);
     color: var(--clr-b);
     letter-spacing: var(--letter-spacing-02);
-    text-indent: 0.2em;
+    text-indent: var(--letter-spacing-02);
     border: 2px solid;
     border-bottom-width: 4px;
     border-image: linear-gradient(to top, var(--clr-p), var(--clr-i)) 1;
@@ -527,12 +527,12 @@ h2 {
     margin-bottom: 0;
     color: var(--clr-data);
     font: var(--fnt-size-data) var(--fnt-monospace);
-    letter-spacing: var(--letter-spacing-02);
     text-align: right;
     border-bottom: var(--border);
     border-top: var(--border);
     align-items: center;
     min-height: 30px;
+    letter-spacing: var(--letter-spacing-02);
 }
 .data-grid {
     display: grid;
@@ -551,7 +551,7 @@ h2 {
 }
 .data-grid-unit { color: var(--clr-data); }
 .data-grid-price { text-align: right; white-space: nowrap; }
-.data-grid-change { text-align: right; letter-spacing: var(--letter-spacing-02); filter: drop-shadow(var(--drop-shadow-60)); }
+.data-grid-change { text-align: right; filter: drop-shadow(var(--drop-shadow-60)); }
 .data-grid-change.is-up { color: var(--clr-positive); }
 .data-grid-change.is-down { color: var(--clr-negative); }
 /* #endregion */

@@ -3,7 +3,7 @@
     const svgNS = 'http://www.w3.org/2000/svg';
     const width = 800;
     const height = 800;
-    const numberFormat = new Intl.NumberFormat('en-US');
+    const numberFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
     function add(parent, tag, attrs, text) {
@@ -264,7 +264,7 @@
         if (!host) return;
         const status = document.querySelector(`[data-${market.key}-market-status]`);
         const rows = new Map();
-        const valueFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
+        const valueFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
         host.replaceChildren();
         market.root.children.forEach(item => {
             const row = document.createElement('div');

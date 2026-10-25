@@ -101,7 +101,7 @@
     if (!host) return;
     const status = document.querySelector('[data-resource-market-status]');
     const rows = new Map();
-    const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+    const formatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const percentFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
     definitions.forEach(item => {
