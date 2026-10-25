@@ -351,10 +351,8 @@ h2 {
 /* #endregion */
 /* #region mitk */
 .scenario-chart-meta {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 16px;
+    grid-template-columns: minmax(90px, 1fr) auto minmax(88px, auto) 68px;
+    gap: 1em;
     margin: 10px;
     color: var(--clr-data);
     font-size: var(--fnt-size-data);
@@ -362,7 +360,7 @@ h2 {
     text-transform: uppercase;
     font-family: var(--fnt-monospace);
 }
-.scenario-chart-meta span { margin-left: 20px; }
+.scenario-chart-meta span { margin-left: 0; }
 .scenario-chart-meta span.chart-trend-good { color: var(--clr-positive); text-shadow: var(--drop-shadow-60); }
 .scenario-chart-meta span.chart-trend-bad { color: var(--clr-negative); text-shadow: var(--drop-shadow-60); }
 .scenario-chart-meta span.chart-trend-flat { color: var(--clr-neutrale); text-shadow: var(--drop-shadow-60); }

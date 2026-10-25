@@ -2,6 +2,21 @@
 (function () {
     const datasets = window.scenarioChartData || {};
     const svgNS = 'http://www.w3.org/2000/svg';
+    const seriesNames = {
+        ecobalance: 'Global ecobalance',
+        temperature: 'Global temperature',
+        population: 'Global population',
+        seaLevel: 'Sea level',
+        cropYield: 'Crop yield',
+        biodiversity: 'Biodiversity',
+        freshwater: 'Freshwater availability',
+        co2: 'Atmospheric CO₂',
+        displaced: 'Displaced population',
+        radiation: 'Radiation',
+        airQuality: 'Air quality'
+    };
+    const valueFormatter = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 4 });
+    const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
 
     function add(svg, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -41,18 +56,33 @@
             const direction = negativeTrend ? -change : change;
             return direction > 0 ? 'chart-trend-good' : direction < 0 ? 'chart-trend-bad' : 'chart-trend-flat';
         };
-        const latestChange = sorted.length > 1 ? sorted.at(-1).value - sorted.at(-2).value : 0;
-        const latestTrendClass = trendClassForChange(latestChange);
         const meta = document.createElement('div');
-        meta.className = 'scenario-chart-meta';
-        const metric = document.createElement('span');
-        const yearLabel = document.createElement('span');
-        yearLabel.textContent = `${sorted[sorted.length - 1].year} outlook`;
+        meta.className = 'data-grid-row scenario-chart-meta';
+        const nameLabel = document.createElement('span');
+        nameLabel.className = 'data-grid-name';
+        nameLabel.textContent = seriesNames[series] || series;
+        const unitLabel = document.createElement('span');
+        unitLabel.className = 'data-grid-unit';
+        unitLabel.textContent = plot.dataset.unit || '';
         const valueLabel = document.createElement('span');
-        valueLabel.classList.add(latestTrendClass);
-        valueLabel.textContent = `${Number(sorted[sorted.length - 1].value.toPrecision(4))} ${plot.dataset.unit || ''}`;
-        metric.append(yearLabel, valueLabel);
-        meta.append(metric);
+        valueLabel.className = 'data-grid-price';
+        valueLabel.textContent = valueFormatter.format(sorted.at(-1).value);
+        const changeLabel = document.createElement('span');
+        changeLabel.className = 'data-grid-change';
+        const greatMistakePoint = sorted.find(point => point.year === 2070);
+        if (greatMistakePoint && greatMistakePoint.value !== 0) {
+            const changeSinceGreatMistake = sorted.at(-1).value - greatMistakePoint.value;
+            const percentageChange = changeSinceGreatMistake / Math.abs(greatMistakePoint.value) * 100;
+            const formattedChange = changeFormatter.format(percentageChange);
+            changeLabel.textContent = formattedChange;
+            changeLabel.setAttribute('aria-label', `${formattedChange} percent change since 2070`);
+            changeLabel.classList.add(trendClassForChange(changeSinceGreatMistake));
+        } else {
+            changeLabel.textContent = 'N/A';
+            changeLabel.setAttribute('aria-label', 'Change since 2070 unavailable');
+            changeLabel.classList.add('chart-trend-flat');
+        }
+        meta.append(nameLabel, unitLabel, valueLabel, changeLabel);
         plot.before(meta);
 
         const firstYear = sorted[0].year;
