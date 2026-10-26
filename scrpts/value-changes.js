@@ -22,10 +22,9 @@
         node.children.forEach(prepareValues);
     }
 
-    function createMarket(key, treemap) {
+    function createMarket(key) {
         const market = {
             key,
-            treemap,
             root: null,
             listeners: new Set(),
             getSnapshot() {
@@ -53,19 +52,24 @@
         return market;
     }
 
-    const markets = {
-        company: createMarket('company', 'market'),
-        country: createMarket('country', 'gdp')
-    };
+    const markets = new Map();
+
+    function getMarket(key) {
+        if (typeof key !== 'string' || !key.trim()) {
+            throw new TypeError('Market ID must be a non-empty string');
+        }
+        const id = key.trim();
+        if (!markets.has(id)) markets.set(id, createMarket(id));
+        return markets.get(id);
+    }
 
     function registerSource(key, root, update) {
         prepareValues(root);
         sources.push({ root, update });
 
-        const market = markets[key];
-        if (market) {
+        if (key) {
+            const market = getMarket(key);
             market.root = root;
-            window[market.key === 'company' ? 'marketData' : 'countryData'] = root.children;
             market.publish();
         }
     }
@@ -93,7 +97,7 @@
             update(source.root);
             source.update();
         });
-        Object.values(markets).forEach(market => market.publish());
+        markets.forEach(market => market.publish());
     }
 
     function startTicker(options = {}) {
@@ -106,9 +110,8 @@
         timer = null;
     }
 
-    window.companyMarket = markets.company;
-    window.countryMarket = markets.country;
     window.valueChanges = {
+        getMarket,
         registerSource,
         tick: advanceValues,
         start: startTicker,

@@ -181,8 +181,7 @@
                 status,
                 accessible: true
             });
-            const marketKey = host.dataset.treemap === 'market' ? 'company' : (host.dataset.treemap === 'gdp' ? 'country' : null);
-            window.valueChanges.registerSource(marketKey, root, chart.update);
+            window.valueChanges.registerSource(host.dataset.treemap, root, chart.update);
             loadedSources += 1;
         } catch (error) {
             if (status) status.textContent = `${host.dataset.treemap || 'Treemap'} data could not be loaded. Check ${host.dataset.source}.`;

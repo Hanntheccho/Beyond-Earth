@@ -2,10 +2,12 @@
     const valueFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
-    function renderMarketGrid(market) {
-        const host = document.querySelector(`[data-${market.key}-market]`);
-        if (!host) return;
-        const status = document.querySelector(`[data-${market.key}-market-status]`);
+    function renderMarketGrid(host) {
+        const marketId = host.dataset.marketGrid;
+        if (!marketId) return;
+        const status = Array.from(document.querySelectorAll('[data-market-status]'))
+            .find(element => element.dataset.marketStatus === marketId);
+        const market = window.valueChanges.getMarket(marketId);
         const rows = new Map();
 
         function render(current) {
@@ -20,7 +22,7 @@
                     const key = item.tag || item.name;
                     const row = document.createElement('div');
                     row.className = 'data-grid-row';
-                    row.dataset[`${market.key}Tag`] = key;
+                    row.dataset.itemKey = key;
                     row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit">€$B</span><span class="data-grid-price"></span><span class="data-grid-change"></span>';
                     row.querySelector('.data-grid-name').textContent = item.name;
                     host.appendChild(row);
@@ -43,6 +45,5 @@
         market.subscribe(render);
     }
 
-    renderMarketGrid(window.companyMarket);
-    renderMarketGrid(window.countryMarket);
+    document.querySelectorAll('[data-market-grid]').forEach(renderMarketGrid);
 })();
