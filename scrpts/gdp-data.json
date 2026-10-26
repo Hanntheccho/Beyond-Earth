@@ -1,626 +1,376 @@
 {
   "name": "World",
   "value": 71670,
-  "currency": "€$",
-  "unit": "B",
   "children": [
     {
       "name": "North American Union",
       "value": 10150,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Central",
-          "value": 2200,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 2200
         },
         {
           "name": "District 1",
-          "value": 1400,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1400
         },
         {
           "name": "District 2",
-          "value": 1100,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1100
         },
         {
           "name": "District 3",
-          "value": 1300,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1300
         },
         {
           "name": "District 4",
-          "value": 900,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 900
         },
         {
           "name": "District 5",
-          "value": 800,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 800
         },
         {
           "name": "District 6",
-          "value": 1000,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1000
         },
         {
           "name": "District 7",
-          "value": 700,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 700
         },
         {
           "name": "District 8",
-          "value": 600,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 600
         },
         {
           "name": "ARC",
-          "value": 150,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 150
         }
       ]
     },
     {
       "name": "Mexico",
-      "value": 1500,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 1500
     },
     {
       "name": "Central American Federation",
-      "value": 450,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 450
     },
     {
       "name": "Caribbean Union",
-      "value": 80,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 80
     },
     {
       "name": "Antillae Federation",
-      "value": 70,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 70
     },
     {
       "name": "Bolivaria",
-      "value": 500,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 500
     },
     {
       "name": "Guiana",
-      "value": 60,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 60
     },
     {
       "name": "Brasilia",
-      "value": 2800,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 2800
     },
     {
       "name": "Andean Compact",
       "value": 800,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Peru",
-          "value": 350,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 350
         },
         {
           "name": "Surandes",
-          "value": 450,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 450
         }
       ]
     },
     {
       "name": "Oriental League",
-      "value": 300,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 300
     },
     {
       "name": "Conosur",
       "value": 1150,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Argentina",
-          "value": 700,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 700
         },
         {
           "name": "Chile",
-          "value": 450,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 450
         }
       ]
     },
     {
       "name": "North Sea Alliance",
       "value": 2720,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "England",
-          "value": 1500,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1500
         },
         {
           "name": "Scotland",
-          "value": 350,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 350
         },
         {
           "name": "Ireland",
-          "value": 300,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 300
         },
         {
           "name": "Iceland",
-          "value": 30,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 30
         },
         {
           "name": "Greenland",
-          "value": 40,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 40
         },
         {
           "name": "Norway",
-          "value": 500,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 500
         }
       ]
     },
     {
       "name": "Sweden",
-      "value": 450,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 450
     },
     {
       "name": "Finland",
-      "value": 220,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 220
     },
     {
       "name": "Baltic Union",
       "value": 170,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Livonia",
-          "value": 90,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 90
         },
         {
           "name": "Lithuania",
-          "value": 80,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 80
         }
       ]
     },
     {
       "name": "Mediterranean Bloc",
       "value": 3900,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Franco-Iberia",
           "value": 3200,
-          "currency": "€$",
-          "unit": "B",
           "children": [
             {
               "name": "France",
-              "value": 1900,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 1900
             },
             {
               "name": "Iberia",
-              "value": 1300,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 1300
             }
           ]
         },
         {
           "name": "Padania",
-          "value": 700,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 700
         }
       ]
     },
     {
       "name": "INTEGR",
       "value": 4550,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "German Federation",
           "value": 3450,
-          "currency": "€$",
-          "unit": "B",
           "children": [
             {
               "name": "Germany",
-              "value": 2600,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 2600
             },
             {
               "name": "Austria",
-              "value": 300,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 300
             },
             {
               "name": "Switzerland",
-              "value": 550,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 550
             }
           ]
         },
         {
           "name": "Poland",
-          "value": 800,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 800
         },
         {
           "name": "Czechia",
-          "value": 300,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 300
         }
       ]
     },
     {
       "name": "Italy",
-      "value": 800,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 800
     },
     {
       "name": "Hungary",
-      "value": 200,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 200
     },
     {
       "name": "Slovakia",
-      "value": 90,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 90
     },
     {
       "name": "Romania",
-      "value": 350,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 350
     },
     {
       "name": "Bulgaria",
-      "value": 150,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 150
     },
     {
       "name": "Greece",
-      "value": 180,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 180
     },
     {
       "name": "Balkan Federation",
-      "value": 300,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 300
     },
     {
       "name": "Slavic Federation",
       "value": 4200,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Eurasian Union",
-          "value": 3000,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 3000
         },
         {
           "name": "Ukraine",
-          "value": 500,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 500
         },
         {
           "name": "Vostaslavia",
-          "value": 700,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 700
         }
       ]
     },
     {
       "name": "Union of Maghreb",
-      "value": 700,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 700
     },
     {
       "name": "Tripolitania",
-      "value": 120,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 120
     },
     {
       "name": "United Arab Alliance",
       "value": 350,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Republic of Egypt",
-          "value": 350,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 350
         }
       ]
     },
     {
       "name": "Mauritania",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "Mali Federation",
-      "value": 120,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 120
     },
     {
       "name": "Burkina Faso",
-      "value": 50,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 50
     },
     {
       "name": "Ghana",
-      "value": 220,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 220
     },
     {
       "name": "Liberia",
-      "value": 30,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 30
     },
     {
       "name": "Ivory Coast",
-      "value": 200,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 200
     },
     {
       "name": "Benin",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "Sokoto",
-      "value": 150,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 150
     },
     {
       "name": "Biafra",
-      "value": 250,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 250
     },
     {
       "name": "Adamawa",
-      "value": 80,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 80
     },
     {
       "name": "Mboumo",
-      "value": 50,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 50
     },
     {
       "name": "Ogowe",
-      "value": 60,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 60
     },
     {
       "name": "Kanem",
-      "value": 70,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 70
     },
     {
       "name": "Tsade",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "Sudan",
-      "value": 150,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 150
     },
     {
       "name": "South Sudan",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "Ethiopia",
-      "value": 500,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 500
     },
     {
       "name": "Oromia",
-      "value": 150,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 150
     },
     {
       "name": "Qafara",
-      "value": 20,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 20
     },
     {
       "name": "Somalia",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "People's African Union",
       "value": 1800,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "East African Federation",
           "value": 1800,
-          "currency": "€$",
-          "unit": "B",
           "children": [
             {
               "name": "Azanian Union",
-              "value": 1800,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 1800
             }
           ]
         }
@@ -629,511 +379,302 @@
     {
       "name": "Kimpwanza League",
       "value": 1100,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Republic of the Kongo",
-          "value": 200,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 200
         },
         {
           "name": "Angola",
-          "value": 200,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 200
         },
         {
           "name": "South Africa",
-          "value": 700,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 700
         }
       ]
     },
     {
       "name": "Zambezia",
-      "value": 150,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 150
     },
     {
       "name": "Madagascar",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "Turkiye",
-      "value": 1700,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 1700
     },
     {
       "name": "Al-Falah",
       "value": 2260,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Mashriq",
-          "value": 800,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 800
         },
         {
           "name": "Arabia",
-          "value": 900,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 900
         },
         {
           "name": "United Emirates of Oman",
-          "value": 500,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 500
         },
         {
           "name": "Yemen",
-          "value": 60,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 60
         }
       ]
     },
     {
       "name": "Iran",
-      "value": 1000,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 1000
     },
     {
       "name": "Central Asian Federation",
-      "value": 900,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 900
     },
     {
       "name": "Afghanistan",
-      "value": 60,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 60
     },
     {
       "name": "Hazaristan",
-      "value": 25,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 25
     },
     {
       "name": "Pashtunistan",
-      "value": 90,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 90
     },
     {
       "name": "Balochistan",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "Sindh",
-      "value": 120,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 120
     },
     {
       "name": "Punjab",
-      "value": 350,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 350
     },
     {
       "name": "Kashmir",
-      "value": 40,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 40
     },
     {
       "name": "Pact of Hyderabad",
       "value": 4950,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Bharat",
-          "value": 1500,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1500
         },
         {
           "name": "Kavitha",
-          "value": 500,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 500
         },
         {
           "name": "Rajasthan",
-          "value": 300,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 300
         },
         {
           "name": "Odisha",
-          "value": 200,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 200
         },
         {
           "name": "Maharashtra",
-          "value": 900,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 900
         },
         {
           "name": "Kerala",
-          "value": 250,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 250
         },
         {
           "name": "Karnataka",
-          "value": 600,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 600
         },
         {
           "name": "Tamilakam",
-          "value": 700,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 700
         }
       ]
     },
     {
       "name": "West Bengal",
-      "value": 250,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 250
     },
     {
       "name": "East Bengal",
-      "value": 150,
-      "currency": "€$",
-      "unit": "B",
-      "children": []
+      "value": 150
     },
     {
       "name": "Pan-Asian Cooperative",
       "value": 13735,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Nepal",
-          "value": 50,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 50
         },
         {
           "name": "Assam-Zogam",
-          "value": 60,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 60
         },
         {
           "name": "Myanmar",
-          "value": 200,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 200
         },
         {
           "name": "Thailand",
-          "value": 500,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 500
         },
         {
           "name": "Laos",
-          "value": 40,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 40
         },
         {
           "name": "Cambodia",
-          "value": 80,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 80
         },
         {
           "name": "Vietnam",
-          "value": 700,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 700
         },
         {
           "name": "Chinese People's Republic",
           "value": 8645,
-          "currency": "€$",
-          "unit": "B",
           "children": [
             {
               "name": "Xinjiang",
-              "value": 150,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 150
             },
             {
               "name": "Tibet",
-              "value": 40,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 40
             },
             {
               "name": "Kachin",
-              "value": 20,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 20
             },
             {
               "name": "Wa",
-              "value": 15,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 15
             },
             {
               "name": "Qinghai",
-              "value": 40,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 40
             },
             {
               "name": "Gansu",
-              "value": 120,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 120
             },
             {
               "name": "Inner Mongolia",
-              "value": 200,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 200
             },
             {
               "name": "Sichuan",
-              "value": 800,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 800
             },
             {
               "name": "Yunnan",
-              "value": 250,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 250
             },
             {
               "name": "Chongqing",
-              "value": 500,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 500
             },
             {
               "name": "Guizhou",
-              "value": 200,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 200
             },
             {
               "name": "Guangxi",
-              "value": 250,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 250
             },
             {
               "name": "Guangdong",
-              "value": 1200,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 1200
             },
             {
               "name": "Hainan",
-              "value": 60,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 60
             },
             {
               "name": "Beijing",
-              "value": 800,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 800
             },
             {
               "name": "Shandong",
-              "value": 700,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 700
             },
             {
               "name": "Yangtze",
-              "value": 1200,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 1200
             },
             {
               "name": "Zhejiang",
-              "value": 600,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 600
             },
             {
               "name": "Fujian",
-              "value": 400,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 400
             },
             {
               "name": "Taiwan",
-              "value": 300,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 300
             },
             {
               "name": "Dongbei",
-              "value": 700,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 700
             },
             {
               "name": "Chita-Nuzhen",
-              "value": 100,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 100
             }
           ]
         },
         {
           "name": "Mongolia",
-          "value": 60,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 60
         },
         {
           "name": "Korea",
-          "value": 1400,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1400
         },
         {
           "name": "Japan",
-          "value": 2000,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 2000
         }
       ]
     },
     {
       "name": "Polystralia",
       "value": 3300,
-      "currency": "€$",
-      "unit": "B",
       "children": [
         {
           "name": "Nusantaran Association",
-          "value": 1800,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 1800
         },
         {
           "name": "Australasia",
           "value": 1200,
-          "currency": "€$",
-          "unit": "B",
           "children": [
             {
               "name": "Australia",
-              "value": 1000,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 1000
             },
             {
               "name": "New Zealand",
-              "value": 200,
-              "currency": "€$",
-              "unit": "B",
-              "children": []
+              "value": 200
             }
           ]
         },
         {
           "name": "Westralia",
-          "value": 300,
-          "currency": "€$",
-          "unit": "B",
-          "children": []
+          "value": 300
         }
       ]
     }

@@ -10,286 +10,239 @@
         {
           "name": "ARC Energy",
           "tag": "ARCEN",
-          "value": 700,
-          "children": []
+          "value": 700
         },
         {
           "name": "ARC Vita",
           "tag": "ARCVT",
-          "value": 1900,
-          "children": []
+          "value": 1900
         },
         {
           "name": "ARC Terra",
           "tag": "ARCTA",
-          "value": 1750,
-          "children": []
+          "value": 1750
         },
         {
           "name": "ARC Aegis",
           "tag": "ARCAG",
-          "value": 1600,
-          "children": []
+          "value": 1600
         },
         {
           "name": "ARC Nexus",
           "tag": "ARCNX",
-          "value": 1250,
-          "children": []
+          "value": 1250
         },
         {
           "name": "ARC Restoration",
           "tag": "ARCRS",
-          "value": 950,
-          "children": []
+          "value": 950
         },
         {
           "name": "ARC Orbis",
           "tag": "ARCOB",
-          "value": 800,
-          "children": []
+          "value": 800
         },
         {
           "name": "ARC Proxima",
           "tag": "ARCPX",
-          "value": 2300,
-          "children": []
+          "value": 2300
         },
         {
           "name": "ARC Resettlement",
           "tag": "ARCRT",
-          "value": 500,
-          "children": []
+          "value": 500
         },
         {
           "name": "ARC Division 7",
           "tag": "ARCD7",
-          "value": 473,
-          "children": []
+          "value": 473
         }
       ]
     },
     {
       "name": "PLENFOR Armor & Steel",
       "tag": "PLEN",
-      "value": 620,
-      "children": []
+      "value": 620
     },
     {
       "name": "Lithiumaniac",
       "tag": "LITH",
-      "value": 260,
-      "children": []
+      "value": 260
     },
     {
       "name": "Sub-Orbital Contractors",
       "tag": "SOC",
-      "value": 910,
-      "children": []
+      "value": 910
     },
     {
       "name": "NADL Industries",
       "tag": "NADL",
-      "value": 470,
-      "children": []
+      "value": 470
     },
     {
       "name": "INCOM International",
       "tag": "INCOM",
-      "value": 180,
-      "children": []
+      "value": 180
     },
     {
       "name": "Pavlov Energy",
       "tag": "PAVL",
-      "value": 940,
-      "children": []
+      "value": 940
     },
     {
       "name": "AutoFarm International",
       "tag": "AFI",
-      "value": 1090,
-      "children": []
+      "value": 1090
     },
     {
       "name": "BioTechnica",
       "tag": "BIOT",
-      "value": 450,
-      "children": []
+      "value": 450
     },
     {
       "name": "INTRCD",
       "tag": "INTR",
-      "value": 290,
-      "children": []
+      "value": 290
     },
     {
       "name": "Trauma Medical",
       "tag": "TMED",
-      "value": 1120,
-      "children": []
+      "value": 1120
     },
     {
       "name": "LOW Artillery Foundries",
       "tag": "LOW",
-      "value": 980,
-      "children": []
+      "value": 980
     },
     {
       "name": "Global Concord",
       "tag": "GLBL",
-      "value": 1920,
-      "children": []
+      "value": 1920
     },
     {
       "name": "CivMil",
       "tag": "CVML",
-      "value": 2040,
-      "children": []
+      "value": 2040
     },
     {
       "name": "Compact Corporation",
       "tag": "COM",
-      "value": 1240,
-      "children": []
+      "value": 1240
     },
     {
       "name": "ChemMax",
       "tag": "MAX",
-      "value": 2040,
-      "children": []
+      "value": 2040
     },
     {
       "name": "Ark Initiative",
       "tag": "ARK",
-      "value": 460,
-      "children": []
+      "value": 460
     },
     {
       "name": "Meridian Continental",
       "tag": "MECON",
-      "value": 480,
-      "children": []
+      "value": 480
     },
     {
       "name": "Vostok Heavy Industries",
       "tag": "VHI",
-      "value": 780,
-      "children": []
+      "value": 780
     },
     {
       "name": "Aegis Security Group",
       "tag": "AEG",
-      "value": 310,
-      "children": []
+      "value": 310
     },
     {
       "name": "Verdant Covenant",
       "tag": "VERCO",
-      "value": 50,
-      "children": []
+      "value": 50
     },
     {
       "name": "Arakawa-Sun",
       "tag": "ARAK",
-      "value": 830,
-      "children": []
+      "value": 830
     },
     {
       "name": "Militarch",
       "tag": "MILI",
-      "value": 580,
-      "children": []
+      "value": 580
     },
     {
       "name": "Vanguard Terraform",
       "tag": "VAN",
-      "value": 270,
-      "children": []
+      "value": 270
     },
     {
       "name": "Pioneer Habitat Works",
       "tag": "PHW",
-      "value": 180,
-      "children": []
+      "value": 180
     },
     {
       "name": "Antarctica Trust",
       "tag": "ANTT",
-      "value": 2840,
-      "children": []
+      "value": 2840
     },
     {
       "name": "Atlas Medical Network",
       "tag": "AMN",
-      "value": 930,
-      "children": []
+      "value": 930
     },
     {
       "name": "Apex Executive Trust",
       "tag": "AET",
-      "value": 810,
-      "children": []
+      "value": 810
     },
     {
       "name": "New Dawn Robotics",
       "tag": "NDR",
-      "value": 690,
-      "children": []
+      "value": 690
     },
     {
       "name": "Petrochem",
       "tag": "PCHEM",
-      "value": 560,
-      "children": []
+      "value": 560
     },
     {
       "name": "Ternion Materials",
       "tag": "TRN",
-      "value": 470,
-      "children": []
+      "value": 470
     },
     {
       "name": "Parasol Biomedical",
       "tag": "PABIO",
-      "value": 390,
-      "children": []
+      "value": 390
     },
     {
       "name": "Aurora Biotech",
       "tag": "AUR",
-      "value": 315,
-      "children": []
+      "value": 315
     },
     {
       "name": "Cooperativa Minera de Lima",
       "tag": "COOP",
-      "value": 6380,
-      "children": []
+      "value": 6380
     },
     {
       "name": "Lumen Education",
       "tag": "LUM",
-      "value": 175,
-      "children": []
+      "value": 175
     },
     {
       "name": "Tundra Ridge Industrial",
       "tag": "TUN",
-      "value": 120,
-      "children": []
+      "value": 120
     },
     {
       "name": "Obsidian Plateau",
       "tag": "OBS",
-      "value": 82,
-      "children": []
+      "value": 82
     },
     {
       "name": "Netwarden",
       "tag": "NETW",
-      "value": 46,
-      "children": []
+      "value": 46
     }
   ]
 }
