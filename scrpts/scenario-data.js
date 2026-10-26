@@ -1,4 +1,4 @@
-// Fictional interpretation of the scenario's global mean surface temperature.
+// Fictional interpretation of the scenario's global indicators.
 // Pre-modern values are especially approximate. The dip after 2070 represents
 // temporary nuclear-winter cooling, followed by recovery as ash settles.
 // These are narrative estimates, not model output. Population and displacement
@@ -11,18 +11,71 @@
 // quality is represented by fictional annual mean PM2.5 concentration in µg/m³.
 // Ecobalance is an invented 0–100 index: 100 is near-optimal balance and 0 is
 // ecological collapse, adapting Müninstek's local LED concept to a global scale.
-window.scenarioSeriesNames = {
-    ecobalance: 'Global ecobalance',
-    temperature: 'Global temperature',
-    population: 'Global population',
-    seaLevel: 'Sea level',
-    cropYield: 'Crop yield',
-    biodiversity: 'Biodiversity',
-    freshwater: 'Freshwater availability',
-    co2: 'Atmospheric CO₂',
-    displaced: 'Displaced population',
-    radiation: 'Radiation',
-    airQuality: 'Air quality'
+//
+// Ice sheet volume is Greenland + Antarctica grounded ice, in million km³.
+// Real-world values (through ~2020) are almost flat, because even record
+// mass loss (~7,500 Gt since 1992, per IMBIE) is a rounding error against
+// ~29.3 million km³. From 2030 the fiction takes over and is deliberately
+// kept consistent with the sea-level series (1 m of sea level ≈ 0.39 million
+// km³ of ice, with the remainder of the rise from thermal expansion and
+// mountain glaciers).
+//
+// World GDP is in trillions of US dollars at constant 2015 prices through the
+// real-world period (World Bank-style series; pre-1960 values are rough
+// Maddison-based conversions). After 2070 the scenario crash is fictional and
+// the 2200 endpoint matches the 71,670 (€$B) total in gdp-data.json.
+//
+// ---------------------------------------------------------------------------
+// Per-series metadata. The chart renderer reads everything about a series from
+// here (label, unit, axis bounds, trend direction, annotations). HTML panels
+// only need data-series; they no longer carry data-unit/min/max/trend.
+//
+//   name   : label shown in the summary grid
+//   unit   : unit shown in tooltips and the summary grid
+//   trend  : 'positive' (higher = better, default) or 'negative' (higher = worse)
+//   min/max: optional fixed y-axis bounds
+// ---------------------------------------------------------------------------
+window.scenarioSeries = {
+    ecobalance: { name: 'Global ecobalance', unit: 'index / 100', min: 0, max: 100 },
+    temperature: { name: 'Global temperature', unit: '°C', trend: 'negative' },
+    population: { name: 'Global population', unit: 'billion', min: 0 },
+    seaLevel: { name: 'Sea level', unit: 'meters', trend: 'negative', min: 0 },
+    cropYield: { name: 'Crop yield', unit: 'index', min: 0 },
+    biodiversity: { name: 'Biodiversity', unit: 'index', min: 0 },
+    freshwater: { name: 'Freshwater availability', unit: 'm³', min: 0 },
+    co2: { name: 'Atmospheric CO₂', unit: 'ppm', trend: 'negative' },
+    displaced: { name: 'Displaced population', unit: 'billion', trend: 'negative', min: 0 },
+    radiation: { name: 'Radiation', unit: 'mSv', trend: 'negative', min: 0 },
+    airQuality: { name: 'Air quality', unit: 'µg/m³ PM2.5', trend: 'negative', min: 0 },
+    iceSheet: {
+        name: 'Ice sheet volume',
+        unit: 'million km³',
+        min: 0
+    },
+    worldGdp: {
+        name: 'World GDP',
+        unit: 'trillion US$',
+        min: 0
+    }
+};
+
+// ---------------------------------------------------------------------------
+// Annotations, drawn on every chart whose range contains them.
+// Add `series: ['seaLevel', 'iceSheet']` to an event or era to limit it to some charts.
+// Overlapping labels are staggered into two rows automatically.
+// ---------------------------------------------------------------------------
+window.scenarioConfig = {
+    baselineYear: 2070, // the summary grid shows % change since this year
+    events: [
+        { year: 2070, label: 'GREAT MISTAKE' },
+        { year: 2074, label: 'WCRB-LUA' },
+        { year: 2107, label: 'PLEBISCITE' },
+        { year: 2200, label: 'ROTER-MOND' },
+        { year: 2100, label: 'ICE COLLAPSE', series: ['iceSheet'] }
+    ],
+    eras: [
+        { start: 2070, end: 2100, label: 'DARK AGE' }
+    ]
 };
 
 window.scenarioChartData = {
@@ -251,5 +304,54 @@ window.scenarioChartData = {
         { year: 2150, value: 35 },
         { year: 2180, value: 47 },
         { year: 2200, value: 56 }
+    ],
+    iceSheet: [
+        { year: 1950, value: 29.300 },
+        { year: 1970, value: 29.300 },
+        { year: 1990, value: 29.299 },
+        { year: 2000, value: 29.298 },
+        { year: 2010, value: 29.295 },
+        { year: 2020, value: 29.289 },
+        { year: 2030, value: 29.27 },
+        { year: 2050, value: 29.2 },
+        { year: 2070, value: 29.0 },
+        { year: 2080, value: 28.4 },
+        { year: 2090, value: 27.4 },
+        { year: 2100, value: 25.8 },
+        { year: 2120, value: 22.5 },
+        { year: 2150, value: 18.2 },
+        { year: 2180, value: 14.3 },
+        { year: 2200, value: 11.7 }
+    ],
+    worldGdp: [
+        { year: 1950, value: 10 },
+        { year: 1960, value: 14 },
+        { year: 1970, value: 23 },
+        { year: 1980, value: 33 },
+        { year: 1990, value: 42 },
+        { year: 2000, value: 54 },
+        { year: 2010, value: 68 },
+        { year: 2020, value: 85 },
+        { year: 2023, value: 94 },
+        { year: 2030, value: 112 },
+        { year: 2040, value: 138 },
+        { year: 2050, value: 165 },
+        { year: 2060, value: 192 },
+        { year: 2070, value: 218 },
+        { year: 2071, value: 160 },
+        { year: 2072, value: 112 },
+        { year: 2075, value: 66 },
+        { year: 2080, value: 49 },
+        { year: 2090, value: 44 },
+        { year: 2100, value: 47 },
+        { year: 2120, value: 52 },
+        { year: 2150, value: 59 },
+        { year: 2180, value: 66 },
+        { year: 2200, value: 71.67 }
     ]
 };
+
+// Backwards compatibility for any code still reading the old name map.
+window.scenarioSeriesNames = Object.fromEntries(
+    Object.entries(window.scenarioSeries).map(([key, meta]) => [key, meta.name])
+);

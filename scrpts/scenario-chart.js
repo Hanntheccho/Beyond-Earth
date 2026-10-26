@@ -1,10 +1,19 @@
-// Shared renderer: each .scenario-chart-plot names a data series and unit.
+// Shared renderer: each .scenario-chart-plot names a data series (data-series).
+// Unit, axis bounds, trend direction and annotations all come from
+// window.scenarioSeries / window.scenarioConfig in scenario-data.js.
 (function () {
     const datasets = window.scenarioChartData || {};
-    const seriesNames = window.scenarioSeriesNames || {};
+    const seriesMeta = window.scenarioSeries || {};
+    const config = window.scenarioConfig || {};
+    const baselineYear = Number.isFinite(config.baselineYear) ? config.baselineYear : 2070;
     const svgNS = 'http://www.w3.org/2000/svg';
     const valueFormatter = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 4 });
     const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
+
+    const TAG_HEIGHT = 18;
+    const TAG_ROW_STEP = 22;
+    const TAG_MAX_ROWS = 2;
+    const TAG_GAP = 4;
 
     function add(svg, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -14,44 +23,63 @@
         return element;
     }
 
+    function metaFor(plot) {
+        const key = plot.dataset.series;
+        const meta = seriesMeta[key];
+        if (!meta) console.warn(`No scenarioSeries metadata for "${key}".`);
+        const safe = meta || {};
+        return {
+            key,
+            name: safe.name || key,
+            unit: safe.unit || '',
+            trend: safe.trend || 'positive',
+            min: Number.isFinite(safe.min) ? safe.min : undefined,
+            max: Number.isFinite(safe.max) ? safe.max : undefined
+        };
+    }
+
+    function sortedPoints(series) {
+        const points = datasets[series];
+        if (!Array.isArray(points)) return [];
+        return points.filter(point => Number.isFinite(point.year) && Number.isFinite(point.value))
+            .sort((a, b) => a.year - b.year);
+    }
+
     function renderSummary(plots) {
         const host = document.querySelector('[data-scenario-summary]');
         if (!host) return;
 
         host.replaceChildren();
         plots.forEach(plot => {
-            const series = plot.dataset.series;
-            const points = datasets[series];
-            if (!Array.isArray(points)) return;
-            const sorted = points.filter(point => Number.isFinite(point.year) && Number.isFinite(point.value))
-                .sort((a, b) => a.year - b.year);
+            const meta = metaFor(plot);
+            const sorted = sortedPoints(meta.key);
             if (!sorted.length) return;
 
             const row = document.createElement('div');
             row.className = 'data-grid-row';
             const name = document.createElement('span');
             name.className = 'data-grid-name';
-            name.textContent = seriesNames[series] || series;
+            name.textContent = meta.name;
             const unit = document.createElement('span');
             unit.className = 'data-grid-unit';
-            unit.textContent = plot.dataset.unit || '';
+            unit.textContent = meta.unit;
             const value = document.createElement('span');
             value.className = 'data-grid-price';
             value.textContent = valueFormatter.format(sorted.at(-1).value);
             const change = document.createElement('span');
             change.className = 'data-grid-change';
-            const baseline = sorted.find(point => point.year === 2070);
+            const baseline = sorted.find(point => point.year === baselineYear);
             if (baseline && baseline.value !== 0) {
                 const delta = sorted.at(-1).value - baseline.value;
                 const percentageChange = delta / Math.abs(baseline.value) * 100;
                 change.textContent = changeFormatter.format(percentageChange);
-                change.setAttribute('aria-label', `${change.textContent} percent change since 2070`);
-                const favorableChange = plot.dataset.trend === 'negative' ? -delta : delta;
+                change.setAttribute('aria-label', `${change.textContent} percent change since ${baselineYear}`);
+                const favorableChange = meta.trend === 'negative' ? -delta : delta;
                 change.classList.toggle('is-up', favorableChange >= 0);
                 change.classList.toggle('is-down', favorableChange < 0);
             } else {
                 change.textContent = 'N/A';
-                change.setAttribute('aria-label', 'Change since 2070 unavailable');
+                change.setAttribute('aria-label', `Change since ${baselineYear} unavailable`);
             }
             row.append(name, unit, value, change);
             host.append(row);
@@ -59,31 +87,25 @@
     }
 
     function render(plot) {
-        const series = plot.dataset.series;
-        const points = datasets[series];
-        if (!Array.isArray(points) || !points.length) return;
-
-        const sorted = points.filter(point => Number.isFinite(point.year) && Number.isFinite(point.value))
-            .sort((a, b) => a.year - b.year);
+        const meta = metaFor(plot);
+        const sorted = sortedPoints(meta.key);
         if (!sorted.length) return;
 
         const width = 800, height = 400;
-        const margin = { top: 40, right: 40, bottom: 40, left: 40 };
+        const margin = { top: 56, right: 40, bottom: 40, left: 40 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         let min = Math.min(...sorted.map(point => point.value));
         let max = Math.max(...sorted.map(point => point.value));
         if (min === max) { min -= 1; max += 1; }
         const padding = (max - min) * 0.12;
-        const fixedMin = Number(plot.dataset.min);
-        const fixedMax = Number(plot.dataset.max);
-        if (Number.isFinite(fixedMin)) min = fixedMin;
+        if (meta.min !== undefined) min = meta.min;
         else min -= padding;
-        if (Number.isFinite(fixedMax)) max = fixedMax;
+        if (meta.max !== undefined) max = meta.max;
         else max += padding;
         const x = year => margin.left + ((year - sorted[0].year) / ((sorted.at(-1).year - sorted[0].year) || 1)) * innerWidth;
         const y = value => margin.top + ((max - value) / (max - min)) * innerHeight;
-        const negativeTrend = plot.dataset.trend === 'negative';
+        const negativeTrend = meta.trend === 'negative';
         const trendClassForChange = change => {
             const direction = negativeTrend ? -change : change;
             return direction > 0 ? 'chart-trend-good' : direction < 0 ? 'chart-trend-bad' : 'chart-trend-flat';
@@ -94,15 +116,20 @@
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.setAttribute('role', 'presentation');
         svg.setAttribute('aria-hidden', 'true');
-        const era = { start: 2070, end: 2100, label: 'DARK AGE' };
-        if (era.start < lastYear && era.end > firstYear) {
+
+        // Eras (shaded bands) from scenarioConfig.eras, optionally limited via `series`.
+        const eras = (Array.isArray(config.eras) ? config.eras : [])
+            .filter(era => !Array.isArray(era.series) || era.series.includes(meta.key));
+        eras.forEach(era => {
+            if (!(era.start < lastYear && era.end > firstYear)) return;
             const eraStart = Math.max(era.start, firstYear);
             const eraEnd = Math.min(era.end, lastYear);
             add(svg, 'rect', {
                 x: x(eraStart), y: margin.top, width: x(eraEnd) - x(eraStart),
                 height: innerHeight, class: 'chart-era-band'
             });
-        }
+        });
+
         for (let tick = 0; tick <= 4; tick++) {
             const value = max - (max - min) * tick / 4;
             const yy = y(value);
@@ -122,25 +149,40 @@
             label.textContent = String(year);
             svg.append(label);
         });
-        const eventYear = 2070;
-        if (eventYear >= firstYear && eventYear <= lastYear) {
-            const eventX = x(eventYear);
-            add(svg, 'line', { x1: eventX, x2: eventX, y1: margin.top - 12, y2: height - margin.bottom, class: 'chart-event-line' });
-            const tagWidth = 122, tagHeight = 18;
+
+        // Events from scenarioConfig.events, optionally limited via `series`.
+        const events = (Array.isArray(config.events) ? config.events : [])
+            .filter(event => !Array.isArray(event.series) || event.series.includes(meta.key))
+            .filter(event => Number.isFinite(event.year) && event.year >= firstYear && event.year <= lastYear)
+            .sort((a, b) => a.year - b.year);
+        const rowEnds = [];
+        events.forEach(event => {
+            const label = String(event.label || '');
+            const eventX = x(event.year);
+            const tagWidth = Math.max(56, label.length * 6.6 + 18);
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
-            add(svg, 'rect', { x: tagX, y: margin.top - 18, width: tagWidth, height: tagHeight, rx: 3, class: 'chart-event-tag' });
-            add(svg, 'text', { x: tagX + tagWidth / 2, y: margin.top - 6, class: 'chart-event-label' }, 'GREAT MISTAKE');
-        }
-        if (era.start >= firstYear && era.end <= lastYear) {
-            const eraX = (x(era.start) + x(era.end)) / 2;
+            // Put the tag in the first row where it doesn't collide with an earlier tag.
+            let row = rowEnds.findIndex(end => tagX > end + TAG_GAP);
+            if (row === -1) row = rowEnds.length < TAG_MAX_ROWS ? rowEnds.length : TAG_MAX_ROWS - 1;
+            rowEnds[row] = Math.max(rowEnds[row] ?? -Infinity, tagX + tagWidth);
+            const tagY = margin.top - TAG_HEIGHT - row * TAG_ROW_STEP;
+            add(svg, 'line', { x1: eventX, x2: eventX, y1: tagY + TAG_HEIGHT, y2: height - margin.bottom, class: 'chart-event-line' });
+            add(svg, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, rx: 3, class: 'chart-event-tag' });
+            add(svg, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);
+        });
+
+        // Era labels and end boundaries (only when the whole era is in range).
+        eras.forEach(era => {
+            if (!(era.start >= firstYear && era.end <= lastYear)) return;
             add(svg, 'text', {
-                x: eraX, y: margin.top + 16, class: 'chart-era-label'
-            }, era.label);
+                x: (x(era.start) + x(era.end)) / 2, y: margin.top + 16, class: 'chart-era-label'
+            }, era.label || '');
             add(svg, 'line', {
                 x1: x(era.end), x2: x(era.end), y1: margin.top, y2: height - margin.bottom,
                 class: 'chart-era-boundary'
             });
-        }
+        });
+
         const baseline = height - margin.bottom;
         for (let index = 1; index < sorted.length; index++) {
             const previous = sorted[index - 1], current = sorted[index];
@@ -169,7 +211,7 @@
             const dot = add(svg, 'circle', {
                 cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
             });
-            add(dot, 'title', {}, `${point.year}: ${point.value} ${plot.dataset.unit || ''}`);
+            add(dot, 'title', {}, `${point.year}: ${point.value} ${meta.unit}`);
         });
         plot.replaceChildren(svg);
     }
