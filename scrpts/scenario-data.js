@@ -11,6 +11,20 @@
 // quality is represented by fictional annual mean PM2.5 concentration in µg/m³.
 // Ecobalance is an invented 0–100 index: 100 is near-optimal balance and 0 is
 // ecological collapse, adapting Müninstek's local LED concept to a global scale.
+window.scenarioSeriesNames = {
+    ecobalance: 'Global ecobalance',
+    temperature: 'Global temperature',
+    population: 'Global population',
+    seaLevel: 'Sea level',
+    cropYield: 'Crop yield',
+    biodiversity: 'Biodiversity',
+    freshwater: 'Freshwater availability',
+    co2: 'Atmospheric CO₂',
+    displaced: 'Displaced population',
+    radiation: 'Radiation',
+    airQuality: 'Air quality'
+};
+
 window.scenarioChartData = {
     temperature: [
         { year: 1950, value: 13.9 },

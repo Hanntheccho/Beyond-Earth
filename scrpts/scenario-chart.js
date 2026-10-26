@@ -1,20 +1,8 @@
 // Shared renderer: each .scenario-chart-plot names a data series and unit.
 (function () {
     const datasets = window.scenarioChartData || {};
+    const seriesNames = window.scenarioSeriesNames || {};
     const svgNS = 'http://www.w3.org/2000/svg';
-    const seriesNames = {
-        ecobalance: 'Global ecobalance',
-        temperature: 'Global temperature',
-        population: 'Global population',
-        seaLevel: 'Sea level',
-        cropYield: 'Crop yield',
-        biodiversity: 'Biodiversity',
-        freshwater: 'Freshwater availability',
-        co2: 'Atmospheric CO₂',
-        displaced: 'Displaced population',
-        radiation: 'Radiation',
-        airQuality: 'Air quality'
-    };
     const valueFormatter = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 4 });
     const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
 
@@ -24,6 +12,50 @@
         if (text !== undefined) element.textContent = text;
         svg.append(element);
         return element;
+    }
+
+    function renderSummary(plots) {
+        const host = document.querySelector('[data-scenario-summary]');
+        if (!host) return;
+
+        host.replaceChildren();
+        plots.forEach(plot => {
+            const series = plot.dataset.series;
+            const points = datasets[series];
+            if (!Array.isArray(points)) return;
+            const sorted = points.filter(point => Number.isFinite(point.year) && Number.isFinite(point.value))
+                .sort((a, b) => a.year - b.year);
+            if (!sorted.length) return;
+
+            const row = document.createElement('div');
+            row.className = 'data-grid-row';
+            const name = document.createElement('span');
+            name.className = 'data-grid-name';
+            name.textContent = seriesNames[series] || series;
+            const unit = document.createElement('span');
+            unit.className = 'data-grid-unit';
+            unit.textContent = plot.dataset.unit || '';
+            const value = document.createElement('span');
+            value.className = 'data-grid-price';
+            value.textContent = valueFormatter.format(sorted.at(-1).value);
+            const change = document.createElement('span');
+            change.className = 'data-grid-change';
+            const baseline = sorted.find(point => point.year === 2070);
+            if (baseline && baseline.value !== 0) {
+                const delta = sorted.at(-1).value - baseline.value;
+                const percentageChange = delta / Math.abs(baseline.value) * 100;
+                change.textContent = changeFormatter.format(percentageChange);
+                change.setAttribute('aria-label', `${change.textContent} percent change since 2070`);
+                const favorableChange = plot.dataset.trend === 'negative' ? -delta : delta;
+                change.classList.toggle('is-up', favorableChange >= 0);
+                change.classList.toggle('is-down', favorableChange < 0);
+            } else {
+                change.textContent = 'N/A';
+                change.setAttribute('aria-label', 'Change since 2070 unavailable');
+            }
+            row.append(name, unit, value, change);
+            host.append(row);
+        });
     }
 
     function render(plot) {
@@ -56,35 +88,6 @@
             const direction = negativeTrend ? -change : change;
             return direction > 0 ? 'chart-trend-good' : direction < 0 ? 'chart-trend-bad' : 'chart-trend-flat';
         };
-        const meta = document.createElement('div');
-        meta.className = 'data-grid-row scenario-chart-meta';
-        const nameLabel = document.createElement('span');
-        nameLabel.className = 'data-grid-name';
-        nameLabel.textContent = seriesNames[series] || series;
-        const unitLabel = document.createElement('span');
-        unitLabel.className = 'data-grid-unit';
-        unitLabel.textContent = plot.dataset.unit || '';
-        const valueLabel = document.createElement('span');
-        valueLabel.className = 'data-grid-price';
-        valueLabel.textContent = valueFormatter.format(sorted.at(-1).value);
-        const changeLabel = document.createElement('span');
-        changeLabel.className = 'data-grid-change';
-        const greatMistakePoint = sorted.find(point => point.year === 2070);
-        if (greatMistakePoint && greatMistakePoint.value !== 0) {
-            const changeSinceGreatMistake = sorted.at(-1).value - greatMistakePoint.value;
-            const percentageChange = changeSinceGreatMistake / Math.abs(greatMistakePoint.value) * 100;
-            const formattedChange = changeFormatter.format(percentageChange);
-            changeLabel.textContent = formattedChange;
-            changeLabel.setAttribute('aria-label', `${formattedChange} percent change since 2070`);
-            changeLabel.classList.add(trendClassForChange(changeSinceGreatMistake));
-        } else {
-            changeLabel.textContent = 'N/A';
-            changeLabel.setAttribute('aria-label', 'Change since 2070 unavailable');
-            changeLabel.classList.add('chart-trend-flat');
-        }
-        meta.append(nameLabel, unitLabel, valueLabel, changeLabel);
-        plot.before(meta);
-
         const firstYear = sorted[0].year;
         const lastYear = sorted[sorted.length - 1].year;
         const svg = document.createElementNS(svgNS, 'svg');
@@ -171,5 +174,7 @@
         plot.replaceChildren(svg);
     }
 
-    document.querySelectorAll('.scenario-chart-plot[data-series]').forEach(render);
+    const plots = [...document.querySelectorAll('.scenario-chart-plot[data-series]')];
+    plots.forEach(render);
+    renderSummary(plots);
 })();

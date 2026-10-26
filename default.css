@@ -350,20 +350,6 @@ h2 {
 .treemap-label-change { filter: brightness(0.6); }
 /* #endregion */
 /* #region mitk */
-.scenario-chart-meta {
-    grid-template-columns: minmax(90px, 1fr) auto minmax(88px, auto) 68px;
-    gap: 1em;
-    margin: 10px;
-    color: var(--clr-data);
-    font-size: var(--fnt-size-data);
-    letter-spacing: var(--letter-spacing-02);
-    text-transform: uppercase;
-    font-family: var(--fnt-monospace);
-}
-.scenario-chart-meta span { margin-left: 0; }
-.scenario-chart-meta span.chart-trend-good { color: var(--clr-positive); text-shadow: var(--drop-shadow-60); }
-.scenario-chart-meta span.chart-trend-bad { color: var(--clr-negative); text-shadow: var(--drop-shadow-60); }
-.scenario-chart-meta span.chart-trend-flat { color: var(--clr-neutrale); text-shadow: var(--drop-shadow-60); }
 .scenario-chart-plot {
     position: relative;
     isolation: isolate;
@@ -375,7 +361,7 @@ h2 {
     z-index: 0;
     pointer-events: none;
     background-image: url('gfx/text_icons/mit.svg');
-    background-position: center 32%;
+    background-position: center;
     background-size: auto 60%;
     background-repeat: no-repeat;
     opacity: var(--opacity-10);
@@ -524,7 +510,7 @@ h2 {
     margin-top: 0;
     margin-bottom: 0;
     color: var(--clr-data);
-    font: var(--fnt-size-data) var(--fnt-monospace);
+    font: var(--fnt-size-bttn) var(--fnt-monospace);
     text-align: right;
     border-bottom: var(--border);
     border-top: var(--border);
