@@ -11,9 +11,6 @@
     const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
 
     const TAG_HEIGHT = 18;
-    const TAG_ROW_STEP = 22;
-    const TAG_MAX_ROWS = 2;
-    const TAG_GAP = 4;
 
     function add(svg, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -92,7 +89,7 @@
         if (!sorted.length) return;
 
         const width = 800, height = 400;
-        const margin = { top: 56, right: 40, bottom: 40, left: 40 };
+        const margin = { top: 40, right: 40, bottom: 40, left: 40 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         let min = Math.min(...sorted.map(point => point.value));
@@ -155,17 +152,13 @@
             .filter(event => !Array.isArray(event.series) || event.series.includes(meta.key))
             .filter(event => Number.isFinite(event.year) && event.year >= firstYear && event.year <= lastYear)
             .sort((a, b) => a.year - b.year);
-        const rowEnds = [];
         events.forEach(event => {
             const label = String(event.label || '');
             const eventX = x(event.year);
-            const tagWidth = Math.max(56, label.length * 6.6 + 18);
+            const tagWidth = Math.max(56, label.length * 6.6 + 16);
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
-            // Put the tag in the first row where it doesn't collide with an earlier tag.
-            let row = rowEnds.findIndex(end => tagX > end + TAG_GAP);
-            if (row === -1) row = rowEnds.length < TAG_MAX_ROWS ? rowEnds.length : TAG_MAX_ROWS - 1;
-            rowEnds[row] = Math.max(rowEnds[row] ?? -Infinity, tagX + tagWidth);
-            const tagY = margin.top - TAG_HEIGHT - row * TAG_ROW_STEP;
+            // Default tag sits just above the plot; `y` shifts it down (positive) or up (negative).
+            const tagY = margin.top - TAG_HEIGHT + (Number.isFinite(event.y) ? event.y : 0);
             add(svg, 'line', { x1: eventX, x2: eventX, y1: tagY + TAG_HEIGHT, y2: height - margin.bottom, class: 'chart-event-line' });
             add(svg, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, rx: 3, class: 'chart-event-tag' });
             add(svg, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);

@@ -27,7 +27,7 @@
 //
 // ---------------------------------------------------------------------------
 // Per-series metadata. The chart renderer reads everything about a series from
-// here (label, unit, axis bounds, trend direction, annotations). HTML panels
+// here (label, unit, axis bounds, trend direction). HTML panels
 // only need data-series; they no longer carry data-unit/min/max/trend.
 //
 //   name   : label shown in the summary grid
@@ -42,39 +42,28 @@ window.scenarioSeries = {
     seaLevel: { name: 'Sea level', unit: 'meters', trend: 'negative', min: 0 },
     cropYield: { name: 'Crop yield', unit: 'index', min: 0 },
     biodiversity: { name: 'Biodiversity', unit: 'index', min: 0 },
-    freshwater: { name: 'Freshwater availability', unit: 'm³', min: 0 },
     co2: { name: 'Atmospheric CO₂', unit: 'ppm', trend: 'negative' },
     displaced: { name: 'Displaced population', unit: 'billion', trend: 'negative', min: 0 },
     radiation: { name: 'Radiation', unit: 'mSv', trend: 'negative', min: 0 },
     airQuality: { name: 'Air quality', unit: 'µg/m³ PM2.5', trend: 'negative', min: 0 },
-    iceSheet: {
-        name: 'Ice sheet volume',
-        unit: 'million km³',
-        min: 0
-    },
-    worldGdp: {
-        name: 'World GDP',
-        unit: 'trillion US$',
-        min: 0
-    }
+    iceSheet: { name: 'Ice sheet volume', unit: 'million km³', min: 0 },
+    worldGdp: { name: 'World GDP', unit: 'trillion €$', min: 0 },
+    arableLand: { name: 'Global arable land', unit: 'million hectares', min: 0 },
+    lifeExpectancy: { name: 'Global life expectancy', unit: 'years', min: 0 }
 };
 
 // ---------------------------------------------------------------------------
-// Annotations, drawn on every chart whose range contains them.
 // Add `series: ['seaLevel', 'iceSheet']` to an event or era to limit it to some charts.
-// Overlapping labels are staggered into two rows automatically.
+// Events also take an optional `y` (chart pixels): positive moves the tag down,
+// negative moves it up; 0 or omitted keeps it just above the plot.
 // ---------------------------------------------------------------------------
 window.scenarioConfig = {
     baselineYear: 2070, // the summary grid shows % change since this year
     events: [
-        { year: 2070, label: 'GREAT MISTAKE' },
-        { year: 2074, label: 'WCRB-LUA' },
-        { year: 2107, label: 'PLEBISCITE' },
-        { year: 2200, label: 'ROTER-MOND' },
-        { year: 2100, label: 'ICE COLLAPSE', series: ['iceSheet'] }
+        { year: 2070, label: 'Great Mistake' }
     ],
     eras: [
-        { start: 2070, end: 2100, label: 'DARK AGE' }
+        { start: 2070, end: 2100, label: 'Dark Age' }
     ]
 };
 
@@ -220,25 +209,6 @@ window.scenarioChartData = {
         { year: 2180, value: 39 },
         { year: 2200, value: 45 }
     ],
-    freshwater: [
-        { year: 1950, value: 14000 },
-        { year: 1970, value: 11500 },
-        { year: 1990, value: 9000 },
-        { year: 2000, value: 7500 },
-        { year: 2010, value: 6500 },
-        { year: 2020, value: 5800 },
-        { year: 2030, value: 5100 },
-        { year: 2050, value: 4200 },
-        { year: 2070, value: 3500 },
-        { year: 2075, value: 2500 },
-        { year: 2080, value: 2100 },
-        { year: 2090, value: 1700 },
-        { year: 2100, value: 1500 },
-        { year: 2120, value: 1600 },
-        { year: 2150, value: 1900 },
-        { year: 2180, value: 2400 },
-        { year: 2200, value: 3000 }
-    ],
     radiation: [
         { year: 1950, value: 3.0 },
         { year: 1970, value: 3.0 },
@@ -344,10 +314,78 @@ window.scenarioChartData = {
         { year: 2080, value: 49 },
         { year: 2090, value: 44 },
         { year: 2100, value: 47 },
-        { year: 2120, value: 52 },
-        { year: 2150, value: 59 },
-        { year: 2180, value: 66 },
-        { year: 2200, value: 71.67 }
+        { year: 2120, value: 66 },
+        { year: 2150, value: 94 },
+        { year: 2180, value: 122 },
+        { year: 2200, value: 140.67 }
+    ],
+    arableLand: [
+        { year: 1950, value: 1350 },
+        { year: 1960, value: 1360 },
+        { year: 1970, value: 1380 },
+        { year: 1980, value: 1390 },
+        { year: 1990, value: 1380 },
+        { year: 2000, value: 1380 },
+        { year: 2010, value: 1390 },
+        { year: 2020, value: 1400 },
+        { year: 2030, value: 1390 },
+        { year: 2040, value: 1370 },
+        { year: 2050, value: 1340 },
+        { year: 2060, value: 1300 },
+        { year: 2065, value: 1270 },
+        { year: 2070, value: 1240 },
+        { year: 2071, value: 1100 },
+        { year: 2072, value: 1000 },
+        { year: 2073, value: 940 },
+        { year: 2075, value: 850 },
+        { year: 2080, value: 780 },
+        { year: 2085, value: 750 },
+        { year: 2090, value: 740 },
+        { year: 2100, value: 750 },
+        { year: 2110, value: 770 },
+        { year: 2120, value: 790 },
+        { year: 2130, value: 810 },
+        { year: 2140, value: 830 },
+        { year: 2150, value: 850 },
+        { year: 2160, value: 870 },
+        { year: 2170, value: 890 },
+        { year: 2180, value: 910 },
+        { year: 2190, value: 930 },
+        { year: 2200, value: 950 }
+    ],
+    lifeExpectancy: [
+        { year: 1950, value: 46 },
+        { year: 1960, value: 50.9 },
+        { year: 1970, value: 58.0 },
+        { year: 1980, value: 62.7 },
+        { year: 1990, value: 64.6 },
+        { year: 2000, value: 66.4 },
+        { year: 2010, value: 70.3 },
+        { year: 2020, value: 72.2 },
+        { year: 2030, value: 74 },
+        { year: 2040, value: 76 },
+        { year: 2050, value: 78 },
+        { year: 2060, value: 80 },
+        { year: 2065, value: 81 },
+        { year: 2070, value: 82 },
+        { year: 2071, value: 66 },
+        { year: 2072, value: 53 },
+        { year: 2073, value: 46 },
+        { year: 2075, value: 40 },
+        { year: 2080, value: 37 },
+        { year: 2085, value: 36 },
+        { year: 2090, value: 37 },
+        { year: 2100, value: 40 },
+        { year: 2110, value: 43 },
+        { year: 2120, value: 46 },
+        { year: 2130, value: 49 },
+        { year: 2140, value: 52 },
+        { year: 2150, value: 55 },
+        { year: 2160, value: 58 },
+        { year: 2170, value: 61 },
+        { year: 2180, value: 64 },
+        { year: 2190, value: 67 },
+        { year: 2200, value: 70 }
     ]
 };
 
