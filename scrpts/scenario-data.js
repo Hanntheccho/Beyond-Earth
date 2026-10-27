@@ -36,20 +36,19 @@
 //   min/max: optional fixed y-axis bounds
 // ---------------------------------------------------------------------------
 window.scenarioSeries = {
-    ecobalance: { name: 'Global ecobalance', unit: 'index / 100', min: 0, max: 100 },
-    temperature: { name: 'Global temperature', unit: '°C', trend: 'negative' },
-    population: { name: 'Global population', unit: 'billion', min: 0 },
-    seaLevel: { name: 'Sea level', unit: 'meters', trend: 'negative', min: 0 },
-    cropYield: { name: 'Crop yield', unit: 'index', min: 0 },
+    ecobalance: { name: 'Ecobalance', unit: 'index / 100', min: 0, max: 100 },
+    temperature: { name: 'Surface Temperature', unit: '°C', trend: 'negative' },
+    population: { name: 'Population', unit: 'billion', min: 0 },
+    seaLevel: { name: 'Sea Level', unit: 'meters', trend: 'negative', min: 0 },
+    cropYield: { name: 'Crop Yield', unit: 'index', min: 0 },
     biodiversity: { name: 'Biodiversity', unit: 'index', min: 0 },
     co2: { name: 'Atmospheric CO₂', unit: 'ppm', trend: 'negative' },
-    displaced: { name: 'Displaced population', unit: 'billion', trend: 'negative', min: 0 },
-    radiation: { name: 'Radiation', unit: 'mSv', trend: 'negative', min: 0 },
-    airQuality: { name: 'Air quality', unit: 'µg/m³ PM2.5', trend: 'negative', min: 0 },
-    iceSheet: { name: 'Ice sheet volume', unit: 'million km³', min: 0 },
-    worldGdp: { name: 'World GDP', unit: 'trillion €$', min: 0 },
-    arableLand: { name: 'Global arable land', unit: 'million hectares', min: 0 },
-    lifeExpectancy: { name: 'Global life expectancy', unit: 'years', min: 0 }
+    displaced: { name: 'Displaced Population', unit: 'billion', trend: 'negative', min: 0 },
+    radiation: { name: 'Background Radiation', unit: 'mSv', trend: 'negative', min: 0 },
+    airQuality: { name: 'Particulate PM2.5', unit: 'µg/m³', trend: 'negative', min: 0 },
+    iceSheet: { name: 'Ice Sheet', unit: 'million km³', min: 0 },
+    arableLand: { name: 'Arable Land', unit: 'million hectares', min: 0 },
+    lifeExpectancy: { name: 'Life Expectancy', unit: 'years', min: 0 }
 };
 
 // ---------------------------------------------------------------------------
@@ -292,32 +291,6 @@ window.scenarioChartData = {
         { year: 2150, value: 18.2 },
         { year: 2180, value: 14.3 },
         { year: 2200, value: 11.7 }
-    ],
-    worldGdp: [
-        { year: 1950, value: 10 },
-        { year: 1960, value: 14 },
-        { year: 1970, value: 23 },
-        { year: 1980, value: 33 },
-        { year: 1990, value: 42 },
-        { year: 2000, value: 54 },
-        { year: 2010, value: 68 },
-        { year: 2020, value: 85 },
-        { year: 2023, value: 94 },
-        { year: 2030, value: 112 },
-        { year: 2040, value: 138 },
-        { year: 2050, value: 165 },
-        { year: 2060, value: 192 },
-        { year: 2070, value: 218 },
-        { year: 2071, value: 160 },
-        { year: 2072, value: 112 },
-        { year: 2075, value: 66 },
-        { year: 2080, value: 49 },
-        { year: 2090, value: 44 },
-        { year: 2100, value: 47 },
-        { year: 2120, value: 66 },
-        { year: 2150, value: 94 },
-        { year: 2180, value: 122 },
-        { year: 2200, value: 140.67 }
     ],
     arableLand: [
         { year: 1950, value: 1350 },
