@@ -1,6 +1,9 @@
-// Shared renderer: each .scenario-chart-plot names a data series (data-series).
-// Unit, axis bounds, trend direction and annotations all come from
+// Shared renderer. The chart buttons and panels are generated from
+// window.scenarioSeries (one per series that has data), and everything about
+// a chart (name, unit, axis bounds, trend direction) comes from
 // window.scenarioSeries / window.scenarioConfig in scenario-data.js.
+// index.html only needs an empty <div class="div-desc-win grid" data-scenario-buttons></div>;
+// the panels are inserted right after it.
 (function () {
     const datasets = window.scenarioChartData || {};
     const seriesMeta = window.scenarioSeries || {};
@@ -11,6 +14,7 @@
     const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
 
     const TAG_HEIGHT = 18;
+    const PANEL_GROUP = 'mit-charts';
 
     function add(svg, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -209,6 +213,44 @@
         plot.replaceChildren(svg);
     }
 
+    // Build the button row and chart panels from scenarioSeries, in key order.
+    function buildChartUi() {
+        const buttonHost = document.querySelector('[data-scenario-buttons]');
+        if (!buttonHost) return;
+
+        const keys = Object.keys(seriesMeta).filter(key => sortedPoints(key).length);
+        const buttons = [];
+        const panels = [];
+        keys.forEach((key, index) => {
+            const id = `chart-${key}`;
+            const active = index === 0;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.dataset.panelGroup = PANEL_GROUP;
+            button.dataset.panelTarget = id;
+            button.setAttribute('aria-pressed', String(active));
+            button.textContent = seriesMeta[key].name || key;
+            buttons.push(button);
+
+            const panel = document.createElement('div');
+            panel.className = 'div-desc-win';
+            panel.id = id;
+            panel.dataset.panelGroup = PANEL_GROUP;
+            panel.hidden = !active;
+            panel.setAttribute('aria-hidden', String(!active));
+            const plot = document.createElement('div');
+            plot.className = 'scenario-chart-plot';
+            plot.dataset.series = key;
+            plot.setAttribute('role', 'img');
+            panel.append(plot);
+            panels.push(panel);
+        });
+        buttonHost.replaceChildren(...buttons);
+        buttonHost.after(...panels);
+    }
+
+    buildChartUi();
     const plots = [...document.querySelectorAll('.scenario-chart-plot[data-series]')];
     plots.forEach(render);
     renderSummary(plots);
