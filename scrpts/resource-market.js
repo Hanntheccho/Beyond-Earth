@@ -116,9 +116,12 @@
     });
 
     api.subscribe(current => {
-        definitions.forEach(item => {
-            const quote = current[item.id];
-            const row = rows.get(item.id);
+        const sortedQuotes = Object.values(current).sort((a, b) => b.price - a.price);
+        sortedQuotes.forEach((quote, index) => {
+            const row = rows.get(quote.id);
+            if (host.children[index] !== row) {
+                host.insertBefore(row, host.children[index] || null);
+            }
             row.querySelector('.data-grid-price').textContent = `${formatter.format(quote.price)}`;
             const change = row.querySelector('.data-grid-change');
             change.textContent = `${percentFormatter.format(quote.changePercent)}`;
