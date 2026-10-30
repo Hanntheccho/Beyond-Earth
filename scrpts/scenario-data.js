@@ -1,29 +1,7 @@
 // Fictional interpretation of the scenario's global indicators.
 // Pre-modern values are especially approximate. The dip after 2070 represents
 // temporary nuclear-winter cooling, followed by recovery as ash settles.
-// These are narrative estimates, not model output. Population and displacement
-// use billions of people; crop yield is an index (2020 = 100); sea level is
-// relative to 1900. Biodiversity is an index (1950 = 100), and freshwater is
-// renewable freshwater availability per person. The 50 m sea-level endpoint
-// and later trajectories are intentional extreme fiction. Radiation uses an
-// approximate 3.0 mSv/year natural-background baseline; the post-2070 fallout
-// pulse is a fictional global average, not a model of local exposure. Air
-// quality is represented by fictional annual mean PM2.5 concentration in µg/m³.
-// Ecobalance is an invented 0–100 index: 100 is near-optimal balance and 0 is
-// ecological collapse, adapting Müninstek's local LED concept to a global scale.
-//
-// Ice sheet volume is Greenland + Antarctica grounded ice, in million km³.
-// Real-world values (through ~2020) are almost flat, because even record
-// mass loss (~7,500 Gt since 1992, per IMBIE) is a rounding error against
-// ~29.3 million km³. From 2030 the fiction takes over and is deliberately
-// kept consistent with the sea-level series (1 m of sea level ≈ 0.39 million
-// km³ of ice, with the remainder of the rise from thermal expansion and
-// mountain glaciers).
-//
-// World GDP is in trillions of US dollars at constant 2015 prices through the
-// real-world period (World Bank-style series; pre-1960 values are rough
-// Maddison-based conversions). After 2070 the scenario crash is fictional and
-// the 2200 endpoint matches the 71,670 (€$B) total in gdp-data.json.
+// These are narrative estimates, not model output.
 //
 // ---------------------------------------------------------------------------
 // Per-series metadata. The chart renderer reads everything about a series from
@@ -36,20 +14,18 @@
 //   min/max: optional fixed y-axis bounds
 // ---------------------------------------------------------------------------
 window.scenarioSeries = {
-    ecobalance: { name: 'Ecobalance', unit: 'index / 100', min: 0, max: 100 },
+    ecobalance: { name: 'Global Ecobalance', unit: 'index100', min: 0, max: 100 },
     temperature: { name: 'Surface Temperature', unit: '°C', trend: 'negative' },
-    population: { name: 'Population', unit: 'billion', min: 0 },
-    seaLevel: { name: 'Sea Level', unit: 'meters', trend: 'negative', min: 0 },
+    population: { name: 'World Population', unit: 'billion', min: 0 },
+    seaLevel: { name: 'Mean Sea Level', unit: 'meters', trend: 'negative', min: 0 },
     cropYield: { name: 'Crop Yield', unit: 'index', min: 0 },
-    biodiversity: { name: 'Biodiversity', unit: 'index', min: 0 },
     co2: { name: 'Atmospheric CO₂', unit: 'ppm', trend: 'negative' },
     displaced: { name: 'Displaced Population', unit: 'billion', trend: 'negative', min: 0 },
     radiation: { name: 'Background Radiation', unit: 'mSv', trend: 'negative', min: 0 },
     airQuality: { name: 'Particulate PM2.5', unit: 'µg/m³', trend: 'negative', min: 0 },
-    iceSheet: { name: 'Ice Sheet', unit: 'million km³', min: 0 },
-    arableLand: { name: 'Arable Land', unit: 'million km²', min: 0 },
+    iceSheet: { name: 'Total Ice Sheet', unit: 'Mkm³', min: 0 },
+    arableLand: { name: 'Arable Land', unit: 'Mkm²', min: 0 },
     lifeExpectancy: { name: 'Life Expectancy', unit: 'years', min: 0 },
-    internetAvailability: { name: 'Internet Availability', unit: '% of population', min: 0, max: 100 }
 };
 
 // ---------------------------------------------------------------------------
@@ -189,25 +165,6 @@ window.scenarioChartData = {
         { year: 2150, value: 0.9 },
         { year: 2180, value: 0.7 },
         { year: 2200, value: 0.5 }
-    ],
-    biodiversity: [
-        { year: 1950, value: 100 },
-        { year: 1970, value: 94 },
-        { year: 1990, value: 86 },
-        { year: 2000, value: 80 },
-        { year: 2010, value: 74 },
-        { year: 2020, value: 68 },
-        { year: 2030, value: 63 },
-        { year: 2050, value: 54 },
-        { year: 2070, value: 45 },
-        { year: 2075, value: 32 },
-        { year: 2080, value: 28 },
-        { year: 2090, value: 26 },
-        { year: 2100, value: 27 },
-        { year: 2120, value: 30 },
-        { year: 2150, value: 34 },
-        { year: 2180, value: 39 },
-        { year: 2200, value: 45 }
     ],
     radiation: [
         { year: 1950, value: 3.0 },
@@ -360,40 +317,6 @@ window.scenarioChartData = {
         { year: 2180, value: 64 },
         { year: 2190, value: 67 },
         { year: 2200, value: 70 }
-    ],
-    internetAvailability: [
-        { year: 1950, value: 0 },
-        { year: 1960, value: 0 },
-        { year: 1970, value: 0 },
-        { year: 1980, value: 0 },
-        { year: 1990, value: 0.05 },
-        { year: 2000, value: 6.7 },
-        { year: 2010, value: 29 },
-        { year: 2020, value: 59 },
-        { year: 2030, value: 78 },
-        { year: 2040, value: 88 },
-        { year: 2050, value: 94 },
-        { year: 2060, value: 97 },
-        { year: 2065, value: 98 },
-        { year: 2070, value: 99 },
-        { year: 2071, value: 65 },
-        { year: 2072, value: 42 },
-        { year: 2073, value: 30 },
-        { year: 2075, value: 20 },
-        { year: 2080, value: 17 },
-        { year: 2085, value: 18 },
-        { year: 2090, value: 20 },
-        { year: 2100, value: 25 },
-        { year: 2110, value: 31 },
-        { year: 2120, value: 38 },
-        { year: 2130, value: 46 },
-        { year: 2140, value: 54 },
-        { year: 2150, value: 62 },
-        { year: 2160, value: 69 },
-        { year: 2170, value: 75 },
-        { year: 2180, value: 81 },
-        { year: 2190, value: 86 },
-        { year: 2200, value: 90 }
     ]
 };
 
