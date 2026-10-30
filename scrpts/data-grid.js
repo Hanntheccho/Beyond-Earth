@@ -12,13 +12,13 @@
 
         function render(current) {
             if (!current.length) return;
-            const keys = current.map(item => item.tag || item.name);
-            const existingKeys = Array.from(rows.keys());
-            const rowsChanged = keys.length !== rows.size || keys.some((key, index) => existingKeys[index] !== key);
+            const sorted = current.slice().sort((a, b) => b.value - a.value);
+            const keys = sorted.map(item => item.tag || item.name);
+            const rowsChanged = keys.length !== rows.size || keys.some(key => !rows.has(key));
             if (rowsChanged) {
                 host.replaceChildren();
                 rows.clear();
-                current.forEach(item => {
+                sorted.forEach(item => {
                     const key = item.tag || item.name;
                     const row = document.createElement('div');
                     row.className = 'data-grid-row';
@@ -30,8 +30,11 @@
                 });
             }
 
-            current.forEach(item => {
+            sorted.forEach((item, index) => {
                 const row = rows.get(item.tag || item.name);
+                if (host.children[index] !== row) {
+                    host.insertBefore(row, host.children[index] || null);
+                }
                 row.querySelector('.data-grid-price').textContent = valueFormat.format(item.value);
                 const change = row.querySelector('.data-grid-change');
                 change.textContent = percentFormat.format(item.changePercent);
