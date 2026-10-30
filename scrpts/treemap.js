@@ -163,6 +163,16 @@
         return node;
     }
 
+    function findParentValues(node, path = []) {
+        const name = String(node.name || node.tag || 'Unnamed');
+        const currentPath = path.concat(name);
+        const children = Array.isArray(node.children) ? node.children : [];
+        const warnings = children.length && Object.prototype.hasOwnProperty.call(node, 'value')
+            ? [currentPath.join(' > ')]
+            : [];
+        return warnings.concat(children.flatMap(child => findParentValues(child, currentPath)));
+    }
+
     let loadedSources = 0;
 
     async function loadSource(host) {
@@ -172,16 +182,24 @@
             const response = await fetch(host.dataset.source);
             if (!response.ok) throw new Error('Treemap data could not be loaded.');
             const rawRoot = await response.json();
+            const parentValues = findParentValues(rawRoot);
+            if (parentValues.length) {
+                const message = `Explicit values on parent nodes are ignored; parent values are calculated from their children. Found in ${host.dataset.source}: ${parentValues.join(', ')}.`;
+                console.error(`[Treemap] ${message}`);
+            }
             const useTags = host.dataset.useTags === 'true';
             const root = normalizeNode(rawRoot, useTags);
-            const chart = mount(host, {
+            let chart;
+            window.valueChanges.registerSource(host.dataset.treemap, root, () => {
+                if (chart) chart.update();
+            });
+            chart = mount(host, {
                 root,
                 rootLabel: root.name,
                 breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
                 status,
                 accessible: true
             });
-            window.valueChanges.registerSource(host.dataset.treemap, root, chart.update);
             loadedSources += 1;
         } catch (error) {
             if (status) status.textContent = `${host.dataset.treemap || 'Treemap'} data could not be loaded. Check ${host.dataset.source}.`;

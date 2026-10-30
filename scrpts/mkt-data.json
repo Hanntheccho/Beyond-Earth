@@ -1,11 +1,9 @@
 {
   "name": "Market",
-  "value": 44521,
   "children": [
     {
       "name": "ARC International",
       "tag": "ARC",
-      "value": 12223,
       "children": [
         {
           "name": "ARC Energy",

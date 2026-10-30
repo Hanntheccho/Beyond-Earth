@@ -13,13 +13,16 @@
     }
 
     function prepareValues(node) {
+        node.children.forEach(prepareValues);
+        if (node.children.length) {
+            node.value = node.children.reduce((sum, child) => sum + child.value, 0);
+        }
         node.change = 0;
         node.changePercent = 0;
         node.baseValue = node.value;
         node.volatility = node.children.length
             ? 0
             : Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(Math.max(node.value, 1) / 100)));
-        node.children.forEach(prepareValues);
     }
 
     function createMarket(key) {
