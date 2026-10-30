@@ -30,11 +30,14 @@ window.scenarioSeries = {
 window.scenarioConfig = {
     baselineYear: 2070, // the summary grid shows % change since this year
     events: [
-        { year: 2070, label: 'Great Mistake' }
+        { year: 2070, label: 'The Great Mistake' },
+        { year: 2033, label: 'Nuclear Fusion', y: 100, series: ['worldGDP'] },
+        { year: 2000, label: '2000 Miracle', y: 140, series: ['worldGDP'] },
+        { year: 2075, label: 'Nuclear Ashfall', y: 260, series: ['temperature'] }
     ],
     eras: [
         { start: 2070, end: 2100, label: 'Dark Age' },
-        { start: 2000, end: 2070, label: 'Age of Plenty' }
+        { start: 2000, end: 2070, label: 'Age of Plenty', series: ['worldGDP'] }
     ]
 };
 
@@ -157,13 +160,13 @@ window.scenarioChartData = {
         { year: 1950, value: 5.5 },
         { year: 1970, value: 3.8 },
         { year: 1990, value: 2.8 },
-        { year: 2000, value: 3.0 },
-        { year: 2010, value: 3.5 },
-        { year: 2020, value: 4 },
-        { year: 2030, value: 4.2 },
-        { year: 2050, value: 4.3 },
-        { year: 2060, value: 4.5 },
-        { year: 2069, value: 4.8 },
+        { year: 2000, value: 2.6 },
+        { year: 2010, value: 3.8 },
+        { year: 2020, value: 4.6 },
+        { year: 2030, value: 5.2 },
+        { year: 2050, value: 8.4 },
+        { year: 2060, value: 9.2 },
+        { year: 2069, value: 9.4 },
         { year: 2070, value: -35.0 },
         { year: 2080, value: -10.0 },
         { year: 2090, value: -1.0 },

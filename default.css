@@ -386,7 +386,7 @@ h2 {
 .scenario-chart-plot .chart-event-line { stroke: #ff3333; stroke-width: 1.5; stroke-dasharray: 4 4; }
 .scenario-chart-plot .chart-event-tag { fill: #2a1111; stroke: #ff3333; stroke-width: 0.8; }
 .scenario-chart-plot .chart-era-band { fill: #d84a4a; fill-opacity: 0.09; }
-.scenario-chart-plot .chart-era-boundary { stroke: #ba7777; stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.75; }
+.scenario-chart-plot .chart-era-boundary { stroke: #ba7777; stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.75; }
 .scenario-chart-plot text.chart-era-label {
     fill: #f0c1c162;
     text-transform: uppercase;

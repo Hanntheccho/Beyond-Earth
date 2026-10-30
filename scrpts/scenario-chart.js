@@ -156,27 +156,18 @@
             .filter(event => !Array.isArray(event.series) || event.series.includes(meta.key))
             .filter(event => Number.isFinite(event.year) && event.year >= firstYear && event.year <= lastYear)
             .sort((a, b) => a.year - b.year);
-        events.forEach(event => {
-            const label = String(event.label || '');
-            const eventX = x(event.year);
-            const tagWidth = Math.max(56, label.length * 6.6 + 16);
-            const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
-            // Default tag sits just above the plot; `y` shifts it down (positive) or up (negative).
-            const tagY = margin.top - TAG_HEIGHT + (Number.isFinite(event.y) ? event.y : 0);
-            add(svg, 'line', { x1: eventX, x2: eventX, y1: tagY + TAG_HEIGHT, y2: height - margin.bottom, class: 'chart-event-line' });
-            add(svg, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, rx: 3, class: 'chart-event-tag' });
-            add(svg, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);
-        });
 
-        // Era labels and end boundaries (only when the whole era is in range).
+        // Era labels and boundaries (only when the whole era is in range).
         eras.forEach(era => {
             if (!(era.start >= firstYear && era.end <= lastYear)) return;
             add(svg, 'text', {
                 x: (x(era.start) + x(era.end)) / 2, y: margin.top + 16, class: 'chart-era-label'
             }, era.label || '');
-            add(svg, 'line', {
-                x1: x(era.end), x2: x(era.end), y1: margin.top, y2: height - margin.bottom,
-                class: 'chart-era-boundary'
+            [era.start, era.end].forEach(year => {
+                add(svg, 'line', {
+                    x1: x(year), x2: x(year), y1: margin.top, y2: height - margin.bottom,
+                    class: 'chart-era-boundary'
+                });
             });
         });
 
@@ -209,6 +200,26 @@
                 cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
             });
             add(dot, 'title', {}, `${point.year}: ${point.value} ${meta.unit}`);
+        });
+        events.forEach(event => {
+            const label = String(event.label || '');
+            const eventX = x(event.year);
+            const tagWidth = Math.max(56, label.length * 6.6 + 16);
+            const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
+            // Default tag sits just above the plot; `y` shifts it down (positive) or up (negative).
+            const tagY = margin.top - TAG_HEIGHT + (Number.isFinite(event.y) ? event.y : 0);
+            const rightIndex = sorted.findIndex(point => point.year >= event.year);
+            const right = sorted[rightIndex];
+            const left = right.year === event.year ? right : sorted[rightIndex - 1];
+            const eventValue = right.year === event.year
+                ? right.value
+                : left.value + (event.year - left.year) / (right.year - left.year) * (right.value - left.value);
+            add(svg, 'line', {
+                x1: eventX, x2: eventX, y1: tagY + TAG_HEIGHT, y2: y(eventValue),
+                class: 'chart-event-line'
+            });
+            add(svg, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, rx: 3, class: 'chart-event-tag' });
+            add(svg, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);
         });
         plot.replaceChildren(svg);
     }
