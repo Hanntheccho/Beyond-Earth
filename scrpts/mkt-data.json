@@ -180,7 +180,58 @@
     {
       "name": "Antarctica Trust",
       "tag": "ANTT",
-      "value": 2840
+      "children": [
+        {
+          "name": "Western Antarctica",
+          "tag": "ANTWE",
+          "value": 340
+        },
+        {
+          "name": "Great Ice Fields",
+          "tag": "ANTIF",
+          "value": 110
+        },
+        {
+          "name": "Transantarctic Zone",
+          "tag": "ANTTR",
+          "value": 120
+        },
+        {
+          "name": "Hara's Wall",
+          "tag": "ANTHA",
+          "value": 80
+        },
+        {
+          "name": "Mann's Sea",
+          "tag": "ANTMA",
+          "value": 300
+        },
+        {
+          "name": "Point Zero",
+          "tag": "ANTZ0",
+          "value": 80
+        },
+        {
+          "name": "Grand Ice Canyon",
+          "tag": "ANTCA",
+          "value": 170
+        },
+        {
+          "name": "Eastern Antarctica",
+          "tag": "ANTEA",
+          "value": 440
+        },
+        {
+          "name": "Greenfield City",
+          "tag": "ANTGR",
+          "value": 800
+        },
+        {
+          "name": "White Lua Mines",
+          "tag": "ANTWL",
+          "value": 1440
+        }
+      ]
     },
     {
       "name": "Atlas Medical Network",
