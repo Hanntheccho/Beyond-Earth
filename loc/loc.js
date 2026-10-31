@@ -4,10 +4,15 @@
  * Loads every localization JSON listed in loc/manifest.json.
  */
 async function fetchLocalization() {
-    const localization = await fetchLocalizationFiles();
-    const keywords = await fetchKeywords();
+    const [localization, boldKeywords, italicKeywords] = await Promise.all([
+        fetchLocalizationFiles(),
+        fetchKeywords('loc/keywords.json'),
+        fetchKeywords('loc/keywords-italic.json')
+    ]);
 
-    return applyKeywordFormatting(applyDescriptionTitles(localization), keywords);
+    const titled = applyDescriptionTitles(localization);
+    const italicized = applyKeywordFormatting(titled, italicKeywords, 'i');
+    return applyKeywordFormatting(italicized, boldKeywords, 'b');
 }
 
 /** Replace {{title}} in each description with its matching localization title. */
@@ -54,24 +59,24 @@ async function fetchLocalizationFiles() {
     return Object.assign({}, ...entries);
 }
 
-let keywordPromise;
+const keywordPromises = new Map();
 
-/** Load the shared keyword list once; it stays separate from localization JSONs. */
-function fetchKeywords() {
-    if (!keywordPromise) {
-        keywordPromise = fetch('loc/keywords.json').then(response => {
-            if (!response.ok) throw new Error('Failed to load loc/keywords.json');
+/** Load a keyword list once per file; it stays separate from localization JSONs. */
+function fetchKeywords(path) {
+    if (!keywordPromises.has(path)) {
+        keywordPromises.set(path, fetch(path).then(response => {
+            if (!response.ok) throw new Error(`Failed to load ${path}`);
             return response.json();
         }).catch(error => {
-            console.warn('Could not load shared localization keywords:', error);
+            console.warn(`Could not load shared localization keywords from ${path}:`, error);
             return [];
-        });
+        }));
     }
-    return keywordPromise;
+    return keywordPromises.get(path);
 }
 
-/** Bold whole keyword matches in text nodes, leaving existing HTML markup intact. */
-function applyKeywordFormatting(localization, keywords) {
+/** Wrap whole keyword matches in <tag> in text nodes, leaving existing HTML markup intact. */
+function applyKeywordFormatting(localization, keywords, tagName) {
     if (!Array.isArray(keywords) || keywords.length === 0) return localization;
 
     const escaped = keywords
@@ -97,7 +102,7 @@ function applyKeywordFormatting(localization, keywords) {
         });
 
         for (const textNode of textNodes) {
-            if (textNode.parentElement?.closest('b')) continue;
+            if (textNode.parentElement?.closest(tagName)) continue;
             matcher.lastIndex = 0;
             const text = textNode.nodeValue;
             if (!matcher.test(text)) continue;
@@ -107,9 +112,9 @@ function applyKeywordFormatting(localization, keywords) {
             let lastIndex = 0;
             for (const match of text.matchAll(matcher)) {
                 replacement.append(document.createTextNode(text.slice(lastIndex, match.index)));
-                const bold = document.createElement('b');
-                bold.textContent = match[0];
-                replacement.append(bold);
+                const wrapper = document.createElement(tagName);
+                wrapper.textContent = match[0];
+                replacement.append(wrapper);
                 lastIndex = match.index + match[0].length;
             }
             replacement.append(document.createTextNode(text.slice(lastIndex)));

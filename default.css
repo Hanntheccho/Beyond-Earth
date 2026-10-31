@@ -8,8 +8,8 @@
     --clr-h1: #ffffff; /* unused */
     --clr-h2: #ffffff;
     --clr-b: #ffffffe5;
-    --clr-p: #ffffffc7;
-    --clr-i: #ffffff9c;
+    --clr-i: #ffffffc7;
+    --clr-p: #ffffff9c;
     --clr-data: #dbdbdb9c;
     --clr-background: #181818ef;
     --clr-positive: #00ff6a;
@@ -91,14 +91,14 @@ button {
     text-indent: var(--letter-spacing-02);
     border: 2px solid;
     border-bottom-width: 4px;
-    border-image: linear-gradient(to top, var(--clr-p), var(--clr-i)) 1;
+    border-image: linear-gradient(to top, var(--clr-i), var(--clr-p)) 1;
     transition: transform var(--transition-time) ease;
 }
 button:hover {
     transform: translateY(-3px);
 }
 button[aria-pressed="true"] {
-    border-image: linear-gradient(to top, var(--clr-b), var(--clr-p)) 1;
+    border-image: linear-gradient(to top, var(--clr-b), var(--clr-i)) 1;
     background-color: var(--clr-border);
 }
 
@@ -421,7 +421,7 @@ h2 {
 .scenario-chart-plot .chart-series-point.chart-trend-bad { stroke: var(--clr-negative); }
 .scenario-chart-plot .chart-series-point.chart-trend-flat { stroke: color-mix(in srgb, var(--clr-neutrale) 80%, transparent); }
 .scenario-chart-plot text.chart-event-label {
-    fill: var(--clr-p);
+    fill: var(--clr-b);
     font-family: var(--fnt-monospace);
     text-transform: uppercase;
 }
