@@ -7,6 +7,7 @@
     --clr-border: #8b8b8b31;
     --clr-h1: #ffffff; /* unused */
     --clr-h2: #ffffff;
+    --clr-h3: #ffffff; /* unused */
     --clr-b: #ffffffe5;
     --clr-i: #ffffffc7;
     --clr-p: #ffffff9c;
@@ -23,13 +24,14 @@
     --box-shadow: 0 0 16px #00000080;
     --drop-shadow-60: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
     --drop-shadow-20: 0 0 0.6em color-mix(in srgb, currentColor 20%, transparent);
-    --letter-spacing-02: .2em;
+    --letter-spacing-02: .12em;
     --scrollbar-color: var(--clr-p) var(--clr-border);
     --scrollbar-width: thin;
     --fnt: 'Archivo', sans-serif;
     --fnt-monospace: 'Source Code Pro', monospace;
     --fnt-size-h1: 20px;
     --fnt-size-h2: 18px;
+    --fnt-size-h3: 16px;
     --fnt-size-text: 14px;
     --fnt-size-bttn: 12px;
     --fnt-size-data: 10px;
@@ -133,6 +135,9 @@ p b {
 p i {
     line-height: 0;
 }
+p h3 {
+    line-height: 0;
+}
 .p-text-icon { /* unused */
     position: relative;
     width: 1px;
@@ -151,6 +156,15 @@ h1 {
 
 h2 {
     font-size: var(--fnt-size-h2);
+    font-weight: 900;
+    letter-spacing: var(--letter-spacing-02);
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--clr-h2);
+}
+
+h3 {
+    font-size: var(--fnt-size-h3);
     font-weight: 900;
     letter-spacing: var(--letter-spacing-02);
     text-transform: uppercase;
