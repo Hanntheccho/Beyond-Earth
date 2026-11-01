@@ -14,7 +14,7 @@ async function fetchLocalization() {
     const titled = applyDescriptionTitles(localization);
     const italicized = applyKeywordFormatting(titled, italicKeywords, 'i');
     const bolded = applyKeywordFormatting(italicized, boldKeywords, 'b');
-    return applyKeywordFormatting(bolded, Keywords, 'h3');
+    return applyKeywordFormatting(bolded, Keywords, '.ph');
 }
 
 /** Replace {{title}} in each description with its matching localization title. */
@@ -114,7 +114,18 @@ function applyKeywordFormatting(localization, keywords, tagName) {
             let lastIndex = 0;
             for (const match of text.matchAll(matcher)) {
                 replacement.append(document.createTextNode(text.slice(lastIndex, match.index)));
-                const wrapper = document.createElement(tagName);
+                let tag = tagName;
+                let cls = '';
+                if (tagName.startsWith('.')) {
+                    tag = 'span';
+                    cls = tagName.slice(1);
+                } else if (tagName.includes('.')) {
+                    const parts = tagName.split('.');
+                    tag = parts[0] || 'span';
+                    cls = parts.slice(1).join(' ');
+                }
+                const wrapper = document.createElement(tag);
+                if (cls) wrapper.className = cls;
                 wrapper.textContent = match[0];
                 replacement.append(wrapper);
                 lastIndex = match.index + match[0].length;

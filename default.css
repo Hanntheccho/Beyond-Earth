@@ -135,7 +135,12 @@ p b {
 p i {
     line-height: 0;
 }
-p h3 {
+.ph {
+    font-size: var(--fnt-size-h3);
+    font-weight: 900;
+    letter-spacing: var(--letter-spacing-02);
+    text-transform: uppercase;
+    color: var(--clr-h2);
     line-height: 0;
 }
 .p-text-icon { /* unused */
@@ -156,15 +161,6 @@ h1 {
 
 h2 {
     font-size: var(--fnt-size-h2);
-    font-weight: 900;
-    letter-spacing: var(--letter-spacing-02);
-    text-transform: uppercase;
-    line-height: 1;
-    color: var(--clr-h2);
-}
-
-h3 {
-    font-size: var(--fnt-size-h3);
     font-weight: 900;
     letter-spacing: var(--letter-spacing-02);
     text-transform: uppercase;
