@@ -8,9 +8,13 @@
     --clr-h1: #ffffff; /* unused */
     --clr-h2: #ffffff;
     --clr-h3: #ffffff; /* unused */
+    --clr-ph1: #ffffff;
+    --clr-ph2: #d4d4d4;
+    --clr-ph3: #afafaf;
     --clr-b: #ffffffe5;
     --clr-i: #ffffffc7;
     --clr-p: #ffffff9c;
+    --clr-cite: #6a6a6a;
     --clr-data: #dbdbdb9c;
     --clr-background: #181818ef;
     --clr-positive: #00ff6a;
@@ -109,14 +113,16 @@ a {
     color: inherit;
 }
 
-i {
-    color: var(--clr-i);
+b {
+
 }
 
-b {
-    font-weight: bold;
-    text-transform: uppercase;
-    color: var(--clr-b)
+i {
+
+}
+
+cite {
+    color: var(--clr-cite);
 }
 
 p {
@@ -128,19 +134,27 @@ p {
     color: var(--clr-p);
     margin-block: 1em;
 }
-p b {
+.ph1 {
+    font-size: var(--fnt-size-h2);
     font-weight: 900;
+    letter-spacing: var(--letter-spacing-02);
+    text-transform: uppercase;
+    color: var(--clr-ph1);
     line-height: 0;
 }
-p i {
-    line-height: 0;
-}
-.ph {
+.ph2 {
     font-size: var(--fnt-size-h3);
     font-weight: 900;
     letter-spacing: var(--letter-spacing-02);
     text-transform: uppercase;
-    color: var(--clr-h2);
+    color: var(--clr-ph2);
+    line-height: 0;
+}
+.ph3 {
+    font-weight: 900;
+    letter-spacing: var(--letter-spacing-02);
+    text-transform: uppercase;
+    color: var(--clr-ph3);
     line-height: 0;
 }
 .p-text-icon { /* unused */

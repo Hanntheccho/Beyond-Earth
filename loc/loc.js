@@ -4,17 +4,17 @@
  * Loads every localization JSON listed in loc/manifest.json.
  */
 async function fetchLocalization() {
-    const [localization, boldKeywords, italicKeywords, Keywords] = await Promise.all([
+    const [localization, ph2Keywords, ph3Keywords, ph1Keywords] = await Promise.all([
         fetchLocalizationFiles(),
-        fetchKeywords('loc/keywords-bold.json'),
-        fetchKeywords('loc/keywords-italic.json'),
-        fetchKeywords('loc/keywords.json')
+        fetchKeywords('loc/keywords-ph2.json'),
+        fetchKeywords('loc/keywords-ph3.json'),
+        fetchKeywords('loc/keywords-ph1.json')
     ]);
 
     const titled = applyDescriptionTitles(localization);
-    const italicized = applyKeywordFormatting(titled, italicKeywords, 'i');
-    const bolded = applyKeywordFormatting(italicized, boldKeywords, 'b');
-    return applyKeywordFormatting(bolded, Keywords, '.ph');
+    const ph3ed = applyKeywordFormatting(titled, ph3Keywords, '.ph3');
+    const ph2ed = applyKeywordFormatting(ph3ed, ph2Keywords, '.ph2');
+    return applyKeywordFormatting(ph2ed, ph1Keywords, '.ph1');
 }
 
 /** Replace {{title}} in each description with its matching localization title. */
