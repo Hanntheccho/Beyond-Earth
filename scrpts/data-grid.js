@@ -23,8 +23,9 @@
                     const row = document.createElement('div');
                     row.className = 'data-grid-row';
                     row.dataset.itemKey = key;
-                    row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit">€$B</span><span class="data-grid-price"></span><span class="data-grid-change"></span>';
+                    row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit"></span><span class="data-grid-price"></span><span class="data-grid-change"></span>';
                     row.querySelector('.data-grid-name').textContent = item.name;
+                    row.querySelector('.data-grid-unit').textContent = item.unit || '€$B';
                     host.appendChild(row);
                     rows.set(key, row);
                 });

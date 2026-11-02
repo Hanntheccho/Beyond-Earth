@@ -1,5 +1,6 @@
 {
   "name": "Market",
+  "unit": "€$B",
   "children": [
     {
       "name": "ARC International",

@@ -31,7 +31,7 @@
             root: null,
             listeners: new Set(),
             getSnapshot() {
-                return market.root ? market.root.children.map(item => ({ ...item })) : [];
+                return market.root ? market.root.children.map(item => ({ ...item, unit: item.unit || market.root.unit })) : [];
             },
             getQuote(tag) {
                 const item = market.root && market.root.children.find(child => itemKey(child) === tag);

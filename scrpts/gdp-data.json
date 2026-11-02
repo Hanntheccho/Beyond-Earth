@@ -1,5 +1,6 @@
 {
   "name": "World",
+  "unit": "€$B",
   "children": [
     {
       "name": "North American Union",
