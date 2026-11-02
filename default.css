@@ -568,7 +568,7 @@ h2 {
 .data-grid-change.is-down { color: var(--clr-negative); }
 
 @keyframes countUp { from { opacity: 0.1; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes rowFlash { 0% { background: rgba(255,255,255,0.01); } 60% { background: rgba(255,255,255,0.04); } 100% { background: transparent; } }
+@keyframes rowFlash { 0% { background: rgba(255,255,255,0.01); } 60% { background: rgba(255,255,255,0.02); } 100% { background: transparent; } }
 
 .data-grid-row.is-flashing { animation: rowFlash 0.4s ease-out; }
 .data-grid-price { animation: countUp 0.25s ease-out; }
@@ -642,4 +642,69 @@ h2 {
     scrollbar-width: var(--scrollbar-width);
     font: var(--fnt-size-data) var(--fnt-monospace);
     color: var(--clr-data);
+}
+
+/* Scanlines — CRT-style horizontal lines */
+.vfx-scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.18) 0px,
+        rgba(0, 0, 0, 0.18) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    opacity: 0.8;
+}
+
+/* VFX overlay: vignette + halftone */
+.vfx-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    isolation: isolate;
+}
+.vfx-overlay::before,
+.vfx-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+/* Vignette */
+.vfx-overlay::before {
+    background:
+        radial-gradient(
+            ellipse at 0% 100%,
+            rgba(255, 255, 255, 0) 25%,
+            rgba(255, 255, 255, 0.06) 75%,
+            rgba(255, 255, 255, 0.12) 100%
+        ),
+        radial-gradient(
+            ellipse at 50% 50%,
+            rgba(0, 0, 0, 0) 25%,
+            rgba(0, 0, 0, 0.3) 75%,
+            rgba(0, 0, 0, 0.6) 100%
+        );
+    mix-blend-mode: multiply;
+}
+/* Halftone */
+.vfx-overlay::after {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.4) 1.1px, transparent 1.3px);
+    background-size: 6px 6px;
+    opacity: 0.08;
+    mix-blend-mode: multiply;
+}
+@keyframes grain-shift {
+    0% { background-position: 0 0; }
+    100% { background-position: 128px 128px; }
 }
