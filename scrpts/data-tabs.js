@@ -1,7 +1,7 @@
 (function () {
     const PANEL_GROUP = 'data-categories';
     const categories = [
-        { key: 'gdp', label: 'GDP' },
+        { key: 'gdp', label: 'World GDP' },
         { key: 'market', label: 'Market' },
         { key: 'resources', label: 'Resources' }
     ];
