@@ -1,28 +1,28 @@
-$(document).ready(function() {
-    // Audio elements are preloaded but not played until first user interaction
-    var bgm = document.getElementById("music");
-    bgm.volume = 1.0;
-    var hso = document.getElementById("audio");
-    hso.volume = 1.0;
- 
-    // Load music on first user interaction
-    function loadMusic() {
-        if (!bgm.src) {
-            bgm.src = 'sfx/sfx-music.ogg';
-            bgm.load();
-        }
+// Audio elements
+let backgroundMusic = document.getElementById("music");
+let clickSound = document.getElementById("audio");
+backgroundMusic.volume = 1.0;
+clickSound.volume = 1.0;
+
+function loadMusic() {
+    if (!backgroundMusic.src) {
+        backgroundMusic.src = 'sfx/sfx-music.ogg';
+        backgroundMusic.load();
     }
-    
-    // Load music on any user interaction (click anywhere)
-    document.addEventListener('click', function() {
-        loadMusic();
-    }, { once: true });
- 
-    $("button").on("mouseenter click", function() {
-        loadMusic();
-        hso.currentTime = 0;
-        hso.play();
-    });
+}
+
+// Load music on any user interaction
+document.addEventListener('click', loadMusic, { once: true });
+document.addEventListener('mouseover', loadMusic, { once: true });
+
+document.body.addEventListener('click', function(event) {
+    const btn = event.target.closest && event.target.closest('button');
+    if (!btn) return;
+    loadMusic();
+    try {
+        clickSound.currentTime = 0;
+        clickSound.play();
+    } catch (e) { console.error('Click sound failed:', e); }
 });
 
 document.addEventListener('click', function(event) {
@@ -273,8 +273,14 @@ const tooltipObserver = new MutationObserver(function(mutations) {
 
 tooltipObserver.observe(document.body, { childList: true, subtree: true });
 
+let repositionScheduled = false;
 function repositionOpenTooltips() {
-    tooltipEntries.forEach(entry => positionTooltip(entry.popup, entry.trigger));
+    if (repositionScheduled) return;
+    repositionScheduled = true;
+    window.requestAnimationFrame(function () {
+        tooltipEntries.forEach(entry => positionTooltip(entry.popup, entry.trigger));
+        repositionScheduled = false;
+    });
 }
 
 window.addEventListener('resize', repositionOpenTooltips);
@@ -319,14 +325,14 @@ const legacyFiles = {
     beLegacy05: "be-legacy-parties.txt"
 };
 
-for (const [elementId, fileName] of Object.entries(legacyFiles)) {
-  fetch(fileName)
-    .then(response => {
-      if (!response.ok) throw new Error(`Could not load ${fileName}`);
-      return response.text();
-    })
-    .then(text => {
-      document.getElementById(elementId).textContent = text;
-    })
-    .catch(error => console.error(error));
-}
+// Combine legacy file fetches into one request
+Promise.all(Object.values(legacyFiles).map(f => fetch(f).then(r => r.ok ? r.text() : null)))
+.then(texts => {
+  let i = 0;
+  texts.forEach(text => {
+    if (text) document.getElementById(Object.keys(legacyFiles)[i]).textContent = text;
+    i++;
+  });
+})
+.catch(error => console.error('Error loading legacy files:', error));
+

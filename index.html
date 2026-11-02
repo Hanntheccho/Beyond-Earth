@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">    <link rel="icon" href="be-icon-w.svg" type="image/svg+xml">
     <link rel="stylesheet" href="default.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery removed: native DOM APIs used throughout -->
 </head>
 <body>
     <div class="globe-preview" aria-hidden="true"><canvas id="map" class="globe-canvas" data-view="lon=-30&amp;lat=15" data-update-url="false"></canvas></div>
@@ -63,13 +63,8 @@
     </div>
 
     <!-- Audio -->
-    <audio id="music" loop preload="none">
-        <source src="sfx/sfx-music.ogg" type="audio/ogg">
-    </audio>
-
-    <audio id="audio">
-        <source src="sfx/sfx-click.wav" type="audio/wav">
-    </audio>
+    <audio id="music" loop preload="none"><source src="sfx/sfx-music.ogg" type="audio/ogg"></audio>
+    <audio id="audio"><source src="sfx/sfx-click.wav" type="audio/wav"></audio>
 
     <!-- Localisation -->
     <script src="loc/loc.js"></script>

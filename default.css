@@ -603,6 +603,22 @@ h2 {
 /* #endregion */
 /* #endregion */
 
+@media (prefers-reduced-motion: reduce) {
+    .div-desc-win,
+    .tooltip-popup,
+    .cursor-glow,
+    body::before,
+    body::after,
+    .market-text-line {
+        animation: none !important;
+        transition: none !important;
+    }
+    .globe-preview,
+    .div-desc-win {
+        animation-delay: 0ms !important;
+    }
+}
+
 .legacy-list_div {
     margin: var(--px-20);
     padding: var(--px-20);

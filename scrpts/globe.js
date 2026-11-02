@@ -144,7 +144,7 @@ void main() {
   if (d > 0.0 && uMorph > 0.01) {
     glow = (exp(-d / (uR * 0.05)) * 0.5 + exp(-d / (uR * 0.18)) * 0.13) * uMorph;
   }
-  float alpha = clamp(glow, 0.0, 0.0);
+  float alpha = clamp(glow, 0.0, 1.0);
   fragColor = vec4(vec3(0.1) * alpha, alpha);
 }`;
 
@@ -391,7 +391,14 @@ function main() {
 
   let zoomAnim = null; // { s0, s1, lon0, lon1, lat0, lat1, t0, dur }
 
+  let hidden = document.hidden || false;
+  document.addEventListener('visibilitychange', () => {
+    hidden = document.hidden;
+    if (!hidden) requestAnimationFrame(frame);
+  });
+
   function frame(now) {
+    if (hidden) return; // pause when tab hidden
     requestAnimationFrame(frame);
     if (morphT(view.s) === 1 && data && !dataError) {
       view.lon = wrapLon(view.lon + 0.06);
