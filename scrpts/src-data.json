@@ -1,0 +1,27 @@
+{
+  "name": "Resources",
+  "tag": "src",
+  "unit": "",
+  "children": [
+    { "name": "Crude Oil", "tag": "src01", "value": 82, "unit": "bbl" },
+    { "name": "Natural Gas", "tag": "src02", "value": 34, "unit": "MWh" },
+    { "name": "Uranium", "tag": "src03", "value": 96, "unit": "lb U₃O₈" },
+    { "name": "Iron", "tag": "src04", "value": 118, "unit": "tonne" },
+    { "name": "Copper", "tag": "src05", "value": 9400, "unit": "tonne" },
+    { "name": "Lithium", "tag": "src06", "value": 14200, "unit": "tonne" },
+    { "name": "Phosphate", "tag": "src07", "value": 162, "unit": "tonne" },
+    { "name": "Sulfur", "tag": "src08", "value": 118, "unit": "tonne" },
+    { "name": "Bauxite", "tag": "src09", "value": 68, "unit": "tonne" },
+    { "name": "Nickel", "tag": "src10", "value": 16800, "unit": "tonne" },
+    { "name": "Manganese", "tag": "src11", "value": 2100, "unit": "tonne" },
+    { "name": "Cobalt", "tag": "src12", "value": 28500, "unit": "tonne" },
+    { "name": "REE", "tag": "src13", "value": 52000, "unit": "tonne" },
+    { "name": "Graphite", "tag": "src14", "value": 780, "unit": "tonne" },
+    { "name": "Titanium", "tag": "src15", "value": 9200, "unit": "tonne" },
+    { "name": "Chromium", "tag": "src16", "value": 10400, "unit": "tonne" },
+    { "name": "Tungsten", "tag": "src17", "value": 33500, "unit": "tonne" },
+    { "name": "Silica", "tag": "src18", "value": 32, "unit": "tonne" },
+    { "name": "Helium", "tag": "src19", "value": 48, "unit": "m³" },
+    { "name": "Coal", "tag": "src20", "value": 138, "unit": "tonne" }
+  ]
+}

@@ -49,9 +49,14 @@
                     <span class="data-status" data-market-status="market" aria-live="polite"></span>
                     <div class="data-grid" data-market-grid="market"></div>
                 </div>
+                <div class="div-desc-win" treemap-panel>
+                    <span class="data-status" role="status" aria-live="polite">Loading resource data…</span>
+                    <nav class="treemap-breadcrumbs" aria-label="Resource treemap location"></nav>
+                    <div class="treemap" data-treemap="resources" data-source="scrpts/src-data.json" data-use-tags="false" role="group" aria-label="Resources treemap"></div>
+                </div>
                 <div class="div-desc-win">
-                    <span class="data-status" data-resource-market-status aria-live="polite"></span>
-                    <div class="data-grid" data-resource-market></div>
+                    <span class="data-status" data-market-status="resources" aria-live="polite"></span>
+                    <div class="data-grid" data-market-grid="resources"></div>
                 </div>
             </div>
         </div>
@@ -80,6 +85,5 @@
     <script src="default.js"></script>
     <script src="scrpts/scenario-data.js"></script>
     <script src="scrpts/scenario-chart.js"></script>
-    <script src="scrpts/resource-market.js"></script>
 </body>
 </html>
