@@ -31,32 +31,42 @@
                     <div class="data-status"><span>MÜNINSTEK EcoData & Model · 2070 to 2200 outlook</span></div>
                     <div class="data-grid" data-scenario-summary></div>
                 </div>
-                <div class="div-desc-win" treemap-panel>
-                    <span class="data-status" role="status" aria-live="polite">Loading GDP data…</span>
-                    <nav class="treemap-breadcrumbs" aria-label="GDP treemap location"></nav>
-                    <div class="treemap" data-treemap="gdp" data-source="scrpts/gdp-data.json" data-use-tags="false" role="group" aria-label="GDP treemap"></div>
+                <div class="div-desc-win grid" data-data-buttons></div>
+
+                <div id="data-gdp" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
+                    <div class="div-desc-win" treemap-panel>
+                        <span class="data-status" role="status" aria-live="polite">Loading GDP data…</span>
+                        <nav class="treemap-breadcrumbs" aria-label="GDP treemap location"></nav>
+                        <div class="treemap" data-treemap="gdp" data-source="scrpts/gdp-data.json" data-use-tags="false" role="group" aria-label="GDP treemap"></div>
+                    </div>
+                    <div class="div-desc-win">
+                        <span class="data-status" data-market-status="gdp" aria-live="polite"></span>
+                        <div class="data-grid" data-market-grid="gdp"></div>
+                    </div>
                 </div>
-                <div class="div-desc-win">
-                    <span class="data-status" data-market-status="gdp" aria-live="polite"></span>
-                    <div class="data-grid" data-market-grid="gdp"></div>
+
+                <div id="data-market" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
+                    <div class="div-desc-win" treemap-panel>
+                        <span class="data-status" role="status" aria-live="polite">Loading market data…</span>
+                        <nav class="treemap-breadcrumbs" aria-label="Market treemap location"></nav>
+                        <div class="treemap" data-treemap="market" data-source="scrpts/mkt-data.json" data-use-tags="true" role="group" aria-label="Market treemap"></div>
+                    </div>
+                    <div class="div-desc-win">
+                        <span class="data-status" data-market-status="market" aria-live="polite"></span>
+                        <div class="data-grid" data-market-grid="market"></div>
+                    </div>
                 </div>
-                <div class="div-desc-win" treemap-panel>
-                    <span class="data-status" role="status" aria-live="polite">Loading market data…</span>
-                    <nav class="treemap-breadcrumbs" aria-label="Market treemap location"></nav>
-                    <div class="treemap" data-treemap="market" data-source="scrpts/mkt-data.json" data-use-tags="true" role="group" aria-label="Market treemap"></div>
-                </div>
-                <div class="div-desc-win">
-                    <span class="data-status" data-market-status="market" aria-live="polite"></span>
-                    <div class="data-grid" data-market-grid="market"></div>
-                </div>
-                <div class="div-desc-win" treemap-panel>
-                    <span class="data-status" role="status" aria-live="polite">Loading resource data…</span>
-                    <nav class="treemap-breadcrumbs" aria-label="Resource treemap location"></nav>
-                    <div class="treemap" data-treemap="resources" data-source="scrpts/src-data.json" data-use-tags="false" role="group" aria-label="Resources treemap"></div>
-                </div>
-                <div class="div-desc-win">
-                    <span class="data-status" data-market-status="resources" aria-live="polite"></span>
-                    <div class="data-grid" data-market-grid="resources"></div>
+
+                <div id="data-resources" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
+                    <div class="div-desc-win" treemap-panel>
+                        <span class="data-status" role="status" aria-live="polite">Loading resource data…</span>
+                        <nav class="treemap-breadcrumbs" aria-label="Resource treemap location"></nav>
+                        <div class="treemap" data-treemap="resources" data-source="scrpts/src-data.json" data-use-tags="false" role="group" aria-label="Resources treemap"></div>
+                    </div>
+                    <div class="div-desc-win">
+                        <span class="data-status" data-market-status="resources" aria-live="polite"></span>
+                        <div class="data-grid" data-market-grid="resources"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,6 +95,7 @@
     <script src="default.js"></script>
     <script src="scrpts/scenario-data.js"></script>
     <script src="scrpts/scenario-chart.js"></script>
+    <script src="scrpts/data-tabs.js"></script>
     <script src="scrpts/market-text.js"></script>
 </body>
 </html>
