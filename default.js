@@ -1,11 +1,25 @@
 $(document).ready(function() {
+    // Audio elements are preloaded but not played until first user interaction
     var bgm = document.getElementById("music");
     bgm.volume = 1.0;
-
     var hso = document.getElementById("audio");
     hso.volume = 1.0;
-
+ 
+    // Load music on first user interaction
+    function loadMusic() {
+        if (!bgm.src) {
+            bgm.src = 'sfx/sfx-music.ogg';
+            bgm.load();
+        }
+    }
+    
+    // Load music on any user interaction (click anywhere)
+    document.addEventListener('click', function() {
+        loadMusic();
+    }, { once: true });
+ 
     $("button").on("mouseenter click", function() {
+        loadMusic();
         hso.currentTime = 0;
         hso.play();
     });
