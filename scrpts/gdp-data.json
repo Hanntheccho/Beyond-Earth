@@ -87,12 +87,25 @@
       "name": "Andean Compact",
       "children": [
         {
+          "name": "Distrito del Litio",
+          "value": 880
+        },
+        {
           "name": "Peru",
           "value": 350
         },
         {
           "name": "Surandes",
-          "value": 450
+          "children": [
+            {
+              "name": "Bolivia",
+              "value": 300
+            },
+            {
+              "name": "Paraguay",
+              "value": 50
+            }
+          ]
         }
       ]
     },
@@ -221,7 +234,16 @@
           "children": [
             {
               "name": "Livonia",
-              "value": 90
+              "children": [
+                {
+                  "name": "Estonia",
+                  "value": 20
+                },
+                {
+                  "name": "Latvia",
+                  "value": 40
+                }
+              ]
             },
             {
               "name": "Lithuania",

@@ -93,19 +93,9 @@
       "value": 1090
     },
     {
-      "name": "BioTechnica",
-      "tag": "BIOT",
-      "value": 450
-    },
-    {
       "name": "INTRCD",
       "tag": "INTR",
       "value": 290
-    },
-    {
-      "name": "Trauma Medical",
-      "tag": "TMED",
-      "value": 1120
     },
     {
       "name": "LOW Artillery Foundries",
@@ -113,14 +103,9 @@
       "value": 980
     },
     {
-      "name": "Global Concord",
-      "tag": "GLBL",
-      "value": 1920
-    },
-    {
-      "name": "CivMil",
+      "name": "Civil-Military Industries",
       "tag": "CVML",
-      "value": 2040
+      "value": 420
     },
     {
       "name": "Compact Corporation",
@@ -128,19 +113,14 @@
       "value": 1240
     },
     {
-      "name": "ChemMax",
+      "name": "Alchemax",
       "tag": "MAX",
-      "value": 2040
+      "value": 120
     },
     {
       "name": "Ark Initiative",
       "tag": "ARK",
       "value": 460
-    },
-    {
-      "name": "Meridian Continental",
-      "tag": "MECON",
-      "value": 480
     },
     {
       "name": "Vostok Heavy Industries",
@@ -244,49 +224,65 @@
       "value": 810
     },
     {
-      "name": "New Dawn Robotics",
-      "tag": "NDR",
-      "value": 690
-    },
-    {
-      "name": "Petrochem",
-      "tag": "PCHEM",
-      "value": 560
-    },
-    {
       "name": "Ternion Materials",
       "tag": "TRN",
       "value": 470
     },
     {
-      "name": "Parasol Biomedical",
-      "tag": "PABIO",
+      "name": "Muninstek Friends",
+      "tag": "MUN",
       "value": 390
     },
     {
-      "name": "Aurora Biotech",
-      "tag": "AUR",
+      "name": "Lys Works",
+      "tag": "LYS",
       "value": 315
     },
     {
       "name": "Cooperativa Minera de Lima",
       "tag": "COOP",
-      "value": 6380
+      "children": [
+        {
+          "name": "Casino Obrero Minero",
+          "tag": "COOPC",
+          "value": 3100
+        },
+        {
+          "name": "Distrito Minero C2",
+          "tag": "COOP2",
+          "value": 410
+        },
+        {
+          "name": "Distrito Minero C4",
+          "tag": "COOP4",
+          "value": 670
+        },
+        {
+          "name": "Distrito Minero A3",
+          "tag": "COOP3",
+          "value": 390
+        },
+        {
+          "name": "Distritos Mineros Libres",
+          "tag": "COOPL",
+          "value": 210
+        }
+      ]
     },
     {
-      "name": "Lumen Education",
-      "tag": "LUM",
-      "value": 175
+      "name": "University of Eurasia Fund",
+      "tag": "UNEF",
+      "value": 2040
     },
     {
-      "name": "Tundra Ridge Industrial",
-      "tag": "TUN",
-      "value": 120
+      "name": "North Sea Construction",
+      "tag": "NOSC",
+      "value": 2040
     },
     {
-      "name": "Obsidian Plateau",
-      "tag": "OBS",
-      "value": 82
+      "name": "Westralian Logistics",
+      "tag": "WESL",
+      "value": 1120
     },
     {
       "name": "Netwarden",

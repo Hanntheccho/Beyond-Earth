@@ -99,6 +99,7 @@ button {
     border-bottom-width: 4px;
     border-image: linear-gradient(to top, var(--clr-i), var(--clr-p)) 1;
     transition: transform var(--transition-time) ease;
+    font-weight: bold;
 }
 button:hover {
     transform: translateY(-3px);

@@ -16,7 +16,7 @@
         { id: 'synergy', name: 'Synergy', icon: 'gfx/aff/synergy.svg', description: 'affSYN-desc', color: '#09ff00', x: 300, y: 478 },
         { id: 'supremacy', name: 'Supremacy', icon: 'gfx/aff/supremacy.svg', description: 'affSUP-desc', color: '#fbff00', x: 110, y: 368 },
         { id: 'mastery', name: 'Mastery', icon: 'gfx/aff/mastery.svg', description: 'affMAS-desc', color: '#ffa600', x: 110, y: 152 },
-        { id: 'neutrality', name: 'Neutral', symbol: '◉', description: 'affNEU-desc', color: '#ffffff', x: 300, y: 260 }
+        { id: 'neutrality', name: 'Neutral', icon: 'be-icon-w.svg', description: 'affNEU-desc', color: '#ffffff', x: 300, y: 260 }
     ];
 
     // Emphasized perimeter links join neighbors; faint blended links meet at Neutrality.
@@ -84,18 +84,12 @@
         button.style.setProperty('--affinity-color', affinity.color);
         button.style.setProperty('--affinity-node-size', `${buttonSize}px`);
 
-        if (affinity.icon) {
-            const icon = document.createElement('span');
-            icon.className = 'affinity-icon';
-            icon.setAttribute('aria-hidden', 'true');
-            icon.style.setProperty('--affinity-icon', `url("${affinity.icon}")`);
-            button.append(icon);
-        } else {
-            const symbol = document.createElement('span');
-            symbol.setAttribute('aria-hidden', 'true');
-            symbol.textContent = affinity.symbol || '';
-            button.append(symbol);
-        }
+        const icon = document.createElement('span');
+        icon.className = 'affinity-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.style.setProperty('--affinity-icon', `url("${affinity.icon}")`);
+        button.append(icon);
+
         frame.append(button);
         node.append(frame);
         svg.append(node);
