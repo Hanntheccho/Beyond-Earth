@@ -46,7 +46,12 @@
             if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
         }
 
-        market.subscribe(render);
+        market.subscribe((current) => {
+            if (document.hidden) return;
+            const wrapper = host.closest('[data-panel-group]');
+            if (wrapper && wrapper.hidden) return;
+            render(current);
+        });
     }
 
     document.querySelectorAll('[data-market-grid]').forEach(renderMarketGrid);

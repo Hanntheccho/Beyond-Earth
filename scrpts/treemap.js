@@ -191,6 +191,9 @@
             const root = normalizeNode(rawRoot, useTags);
             let chart;
             window.valueChanges.registerSource(host.dataset.treemap, root, () => {
+                if (document.hidden) return;
+                const wrapper = host.closest('[data-panel-group]');
+                if (wrapper && wrapper.hidden) return;
                 if (chart) chart.update();
             });
             chart = mount(host, {
