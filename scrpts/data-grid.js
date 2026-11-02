@@ -37,11 +37,21 @@
                     host.insertBefore(row, host.children[index] || null);
                 }
                 row.querySelector('.data-grid-price').textContent = valueFormat.format(item.value);
+                row.querySelector('.data-grid-price').style.animation = 'none';
+                void row.querySelector('.data-grid-price').offsetWidth;
+                row.querySelector('.data-grid-price').style.animation = 'countUp 0.25s ease-out';
                 const change = row.querySelector('.data-grid-change');
                 change.textContent = percentFormat.format(item.changePercent);
                 change.classList.toggle('is-up', item.change >= 0);
                 change.classList.toggle('is-down', item.change < 0);
-                row.dataset.direction = item.change >= 0 ? 'up' : 'down';
+                const prevDir = row.dataset.direction;
+                const newDir = item.change >= 0 ? 'up' : 'down';
+                row.dataset.direction = newDir;
+                if (prevDir && prevDir !== newDir) {
+                    row.classList.remove('is-flashing');
+                    void row.offsetWidth;
+                    row.classList.add('is-flashing');
+                }
             });
             if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
         }
