@@ -609,22 +609,6 @@ h2 {
 /* #endregion */
 /* #endregion */
 
-@media (prefers-reduced-motion: reduce) {
-    .div-desc-win,
-    .tooltip-popup,
-    .cursor-glow,
-    body::before,
-    body::after,
-    .market-text-line {
-        animation: none !important;
-        transition: none !important;
-    }
-    .globe-preview,
-    .div-desc-win {
-        animation-delay: 0ms !important;
-    }
-}
-
 .legacy-list_div {
     margin: var(--px-20);
     padding: var(--px-20);
@@ -644,23 +628,7 @@ h2 {
     color: var(--clr-data);
 }
 
-/* Scanlines — CRT-style horizontal lines */
-.vfx-scanlines {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    mix-blend-mode: multiply;
-    animation: scanline-scroll 3s linear infinite;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0,0,0,0.2) 0px,
-        transparent 3px
-    );
-    opacity: 1;
-}
-
-/* VFX overlay: vignette + halftone */
+/* vfx */
 .vfx-overlay {
     position: fixed;
     inset: 0;
@@ -675,8 +643,11 @@ h2 {
     inset: 0;
     pointer-events: none;
 }
-/* Vignette */
-.vfx-overlay::before {
+.vfx-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
     background:
         radial-gradient(
             ellipse at 0% 100%,
@@ -698,18 +669,47 @@ h2 {
         );
     mix-blend-mode: multiply;
 }
-/* Halftone */
-.vfx-overlay::after {
-    position: absolute;
+.vfx-scanline {
+    position: fixed;
     inset: 0;
-    z-index: 3;
+    z-index: 9998;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    animation: scanline-scroll 3s linear infinite;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.2) 0px,
+        transparent 3px
+    );
+    opacity: 0.8;
+}
+@keyframes scanline-scroll {
+    from { background-position: 0 0; }
+    to   { background-position: 0 12px; }
+}
+.vfx-halftone {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
     pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.4) 1.1px, transparent 1.3px);
     background-size: 6px 6px;
     opacity: 0.04;
     mix-blend-mode: multiply;
 }
-@keyframes scanline-scroll {
-    from { background-position: 0 0; }
-    to   { background-position: 0 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .div-desc-win,
+    .tooltip-popup,
+    .cursor-glow,
+    body::before,
+    body::after,
+    .market-text-line {
+        animation: none !important;
+        transition: none !important;
+    }
+    .globe-preview,
+    .div-desc-win {
+        animation-delay: 0ms !important;
+    }
 }
