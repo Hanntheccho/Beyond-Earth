@@ -650,22 +650,10 @@ h2 {
     pointer-events: none;
     background:
         radial-gradient(
-            ellipse at 0% 100%,
-            rgba(255, 255, 255, 0) 25%,
-            rgba(255, 255, 255, 0.02) 75%,
-            rgba(255, 255, 255, 0.12) 100%
-        ),
-        radial-gradient(
-            ellipse at 100% 0%,
-            rgba(255, 255, 255, 0) 25%,
-            rgba(255, 255, 255, 0.02) 75%,
-            rgba(255, 255, 255, 0.12) 100%
-        ),
-        radial-gradient(
             ellipse at 50% 50%,
-            rgba(0, 0, 0, 0) 25%,
-            rgba(0, 0, 0, 0.2) 75%,
-            rgba(0, 0, 0, 0.8) 100%
+            rgba(255, 255, 255, 0.04) 20%,
+            rgba(0, 0, 0, 0.2) 90%,
+            rgba(0, 0, 0, 0.6) 100%
         );
     mix-blend-mode: multiply;
 }
@@ -675,17 +663,12 @@ h2 {
     z-index: 9998;
     pointer-events: none;
     mix-blend-mode: multiply;
-    animation: scanline-scroll 3s linear infinite;
     background: repeating-linear-gradient(
         0deg,
         rgba(0,0,0,0.2) 0px,
         transparent 3px
     );
-    opacity: 0.8;
-}
-@keyframes scanline-scroll {
-    from { background-position: 0 0; }
-    to   { background-position: 0 12px; }
+    opacity: 0.6;
 }
 .vfx-halftone {
     position: fixed;
@@ -694,7 +677,7 @@ h2 {
     pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.4) 1.1px, transparent 1.3px);
     background-size: 6px 6px;
-    opacity: 0.04;
+    opacity: 0.08;
     mix-blend-mode: multiply;
 }
 
