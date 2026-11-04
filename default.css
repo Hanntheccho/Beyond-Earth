@@ -567,9 +567,11 @@ h2 {
 .data-grid-change.is-down { color: var(--clr-negative); }
 
 @keyframes countUp { from { opacity: 0.1; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes rowFlash { 0% { background: rgba(255,255,255,0.01); } 60% { background: rgba(255,255,255,0.04); } 100% { background: transparent; } }
+@keyframes rowFlashUp { 0% { background: rgba(0,255,128,0.05); } 60% { background: rgba(0,255,128,0.1); } 100% { background: transparent; } }
+@keyframes rowFlashDown { 0% { background: rgba(255,40,40,0.05); } 60% { background: rgba(255,40,40,0.1); } 100% { background: transparent; } }
 
-.data-grid-row.is-flashing { animation: rowFlash 0.4s ease-out; }
+.data-grid-row.is-flashing.is-positive { animation: rowFlashUp 0.4s ease-out; }
+.data-grid-row.is-flashing.is-negative { animation: rowFlashDown 0.4s ease-out; }
 .data-grid-price { animation: countUp 0.25s ease-out; }
 /* #endregion */
 /* #region mrkt */

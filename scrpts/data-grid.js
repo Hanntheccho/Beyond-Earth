@@ -46,6 +46,8 @@
                 change.classList.toggle('is-down', item.change < 0);
                 const prevDir = row.dataset.direction;
                 const newDir = item.change >= 0 ? 'up' : 'down';
+                row.classList.toggle('is-positive', newDir === 'up');
+                row.classList.toggle('is-negative', newDir === 'down');
                 row.dataset.direction = newDir;
                 if (prevDir && prevDir !== newDir) {
                     row.classList.remove('is-flashing');
