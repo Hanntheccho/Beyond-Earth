@@ -296,6 +296,8 @@ function main() {
   let interacted = num('spin', 1) === 0;
   let dirty = true;
   let dataError = false;
+  let lastFrame = 0;
+  const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
 
   const sMax = 140;
   const sMin = () => 0.44 * Math.min(vw, vh) / DEG_R;
@@ -400,10 +402,12 @@ function main() {
   function frame(now) {
     if (hidden) return; // pause when tab hidden
     requestAnimationFrame(frame);
-    if (morphT(view.s) === 1 && data && !dataError) {
-      view.lon = wrapLon(view.lon + 0.06);
+    if (data && !dataError) {
+      const dt = (now - lastFrame) / 1000;
+      view.lon = wrapLon(view.lon + SPIN_DEG_PER_SEC * dt);
       dirty = true;
     }
+    lastFrame = now;
     if (zoomAnim) {
       const a = Math.min(1, (now - zoomAnim.t0) / zoomAnim.dur);
       const e = 1 - (1 - a) * (1 - a);
