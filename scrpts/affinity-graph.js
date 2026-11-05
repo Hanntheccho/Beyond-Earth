@@ -10,13 +10,13 @@
     svg.setAttribute('aria-hidden', 'true');
 
     const affinities = [
-        { id: 'purity', name: 'Purity', icon: 'gfx/aff/purity.svg', description: 'affPUR-desc', color: '#ff0000', x: 300, y: 42 },
-        { id: 'divinity', name: 'Divinity', icon: 'gfx/aff/divinity.svg', description: 'affDIV-desc', color: '#a200ff', x: 490, y: 152 },
-        { id: 'harmony', name: 'Harmony', icon: 'gfx/aff/harmony.svg', description: 'affHAR-desc', color: '#00e1ff', x: 490, y: 368 },
-        { id: 'synergy', name: 'Synergy', icon: 'gfx/aff/synergy.svg', description: 'affSYN-desc', color: '#09ff00', x: 300, y: 478 },
-        { id: 'supremacy', name: 'Supremacy', icon: 'gfx/aff/supremacy.svg', description: 'affSUP-desc', color: '#fbff00', x: 110, y: 368 },
-        { id: 'mastery', name: 'Mastery', icon: 'gfx/aff/mastery.svg', description: 'affMAS-desc', color: '#ffa600', x: 110, y: 152 },
-        { id: 'neutrality', name: 'Neutral', icon: 'be-icon-w.svg', description: 'affNEU-desc', color: '#ffffff', x: 300, y: 260 }
+        { id: 'purity', name: 'Purity', icon: 'gfx/affy/purity.svg', description: 'affyPUR-desc', color: '#ff0000', x: 300, y: 42 },
+        { id: 'divinity', name: 'Divinity', icon: 'gfx/affy/divinity.svg', description: 'affyDIV-desc', color: '#a200ff', x: 490, y: 152 },
+        { id: 'harmony', name: 'Harmony', icon: 'gfx/affy/harmony.svg', description: 'affyHAR-desc', color: '#00e1ff', x: 490, y: 368 },
+        { id: 'synergy', name: 'Synergy', icon: 'gfx/affy/synergy.svg', description: 'affySYN-desc', color: '#09ff00', x: 300, y: 478 },
+        { id: 'supremacy', name: 'Supremacy', icon: 'gfx/affy/supremacy.svg', description: 'affySUP-desc', color: '#fbff00', x: 110, y: 368 },
+        { id: 'mastery', name: 'Mastery', icon: 'gfx/affy/mastery.svg', description: 'affyMAS-desc', color: '#ffa600', x: 110, y: 152 },
+        { id: 'neutrality', name: 'Neutral', icon: 'gfx/affy/neutrality.svg', description: 'affyNEU-desc', color: '#ffffff', x: 300, y: 260 }
     ];
 
     // Emphasized perimeter links join neighbors; faint blended links meet at Neutrality.
