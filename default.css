@@ -24,6 +24,8 @@
     --border: 2px solid var(--clr-border);
     --border-left: 12px;
     --transition-time: 160ms;
+    --transition-time-clr: 900ms;
+    --transition-time-400: 400ms;
     --opacity-10: 0.1;
     --box-shadow: 0 0 16px #00000080;
     --drop-shadow-60: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
@@ -349,42 +351,6 @@ h2 {
 }
 
 /* #region GFXS */
-/* #region tree */
-.treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
-.treemap-breadcrumbs button { margin-right: 4px; }
-.treemap { width: 100%; overflow: hidden; }
-.treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
-.treemap-tile { color: var(--treemap-color, var(--clr-neutrale)); }
-.treemap-tile[data-direction="up"] { --treemap-color: var(--clr-positive); }
-.treemap-tile[data-direction="down"] { --treemap-color: var(--clr-negative); }
-.treemap-tile[data-direction="neutral"] { --treemap-color: var(--clr-neutrale); }
-.treemap-tile.has-children { cursor: pointer; }
-.treemap-surface {
-    fill: color-mix(in srgb, var(--treemap-color, var(--clr-neutrale)) 6%, transparent);
-    stroke: var(--treemap-color, var(--clr-neutrale));
-    stroke-width: 1px;
-    filter: drop-shadow(var(--drop-shadow-60));
-    transition: filter var(--transition-time) ease;
-}
-.treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
-.treemap-tile:focus { outline: none; }
-.treemap-label { font-family: var(--fnt-monospace); font-weight: 900; text-shadow: var(--drop-shadow-20); fill: var(--treemap-color); pointer-events: none; }
-.treemap-label-name { text-transform: uppercase; }
-.treemap-label-value { filter: brightness(0.4); }
-.treemap-label-change { filter: brightness(0.6); }
-
-@property --treemap-color {
-    syntax: '<color>';
-    inherits: true;
-    initial-value: #a0a0a0;
-}
-.treemap-tile { transition: --treemap-color 400ms ease; }
-.treemap-tile.is-flashing .treemap-surface { animation: tileFlash 500ms ease-out; }
-@keyframes tileFlash {
-    from { fill: color-mix(in srgb, var(--treemap-color) 28%, transparent); }
-    to   { fill: color-mix(in srgb, var(--treemap-color) 6%, transparent); }
-}
-/* #endregion */
 /* #region mitk */
 .scenario-chart-plot {
     position: relative;
@@ -543,6 +509,42 @@ h2 {
 }
 .affinity-node--neutrality { border-style: dashed; }
 /* #endregion */
+/* #region tree */
+.treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
+.treemap-breadcrumbs button { margin-right: 4px; }
+.treemap { width: 100%; overflow: hidden; }
+.treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
+.treemap-tile { color: var(--treemap-color, var(--clr-neutrale)); }
+.treemap-tile[data-direction="up"] { --treemap-color: var(--clr-positive); }
+.treemap-tile[data-direction="down"] { --treemap-color: var(--clr-negative); }
+.treemap-tile[data-direction="neutral"] { --treemap-color: var(--clr-neutrale); }
+.treemap-tile.has-children { cursor: pointer; }
+.treemap-surface {
+    fill: color-mix(in srgb, var(--treemap-color, var(--clr-neutrale)) 6%, transparent);
+    stroke: var(--treemap-color, var(--clr-neutrale));
+    stroke-width: 1px;
+    filter: drop-shadow(var(--drop-shadow-60));
+    transition: filter var(--transition-time) ease;
+}
+.treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
+.treemap-tile:focus { outline: none; }
+.treemap-label { font-family: var(--fnt-monospace); font-weight: 900; text-shadow: var(--drop-shadow-20); fill: var(--treemap-color); pointer-events: none; }
+.treemap-label-name { text-transform: uppercase; }
+.treemap-label-value { filter: brightness(0.4); }
+.treemap-label-change { filter: brightness(0.6); }
+
+@property --treemap-color {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #a0a0a0;
+}
+.treemap-tile { transition: --treemap-color var(--transition-time-clr) ease; }
+.treemap-tile.is-flashing .treemap-surface { animation: tileFlash var(--transition-time-400) ease-out; }
+@keyframes tileFlash {
+    from { fill: color-mix(in srgb, var(--treemap-color) 28%, transparent); }
+    to   { fill: color-mix(in srgb, var(--treemap-color) 6%, transparent); }
+}
+/* #endregion */
 /* #region data */
 .data-status {
     display: grid;
@@ -575,15 +577,15 @@ h2 {
 .data-grid-unit { color: var(--clr-data); }
 .data-grid-price { text-align: right; white-space: nowrap; }
 .data-grid-change { text-align: right; filter: drop-shadow(var(--drop-shadow-60)); }
-.data-grid-change { transition: color 300ms ease; }
+.data-grid-change { transition: color var(--transition-time-clr) ease; }
 .data-grid-change.is-up { color: var(--clr-positive); }
 .data-grid-change.is-down { color: var(--clr-negative); }
 
 @keyframes rowFlashUp { 0% { background: color-mix(in srgb, var(--clr-positive), transparent 98%); } 60% { background: color-mix(in srgb, var(--clr-positive), transparent 90%); } 100% { background: transparent; } }
 @keyframes rowFlashDown { 0% { background: color-mix(in srgb, var(--clr-negative), transparent 98%); } 60% { background: color-mix(in srgb, var(--clr-negative), transparent 90%); } 100% { background: transparent; } }
 
-.data-grid-row.is-flashing.is-positive { animation: rowFlashUp 0.4s ease-out; }
-.data-grid-row.is-flashing.is-negative { animation: rowFlashDown 0.4s ease-out; }
+.data-grid-row.is-flashing.is-positive { animation: rowFlashUp var(--transition-time-400) ease-out; }
+.data-grid-row.is-flashing.is-negative { animation: rowFlashDown var(--transition-time-400) ease-out; }
 /* #endregion */
 /* #region mrkt */
 .market-text {
@@ -609,14 +611,20 @@ h2 {
 }
 .market-text-line {
     flex: none;
-    animation: scroll-left 120s linear infinite;
+    will-change: transform;
 }
 .positive { color: var(--clr-positive); filter: drop-shadow(var(--drop-shadow-60)); }
 .negative { color: var(--clr-negative); filter: drop-shadow(var(--drop-shadow-60)); }
 .neutrale { color: var(--clr-neutrale); filter: drop-shadow(var(--drop-shadow-60)); }
-@keyframes scroll-left {
-    from { transform: translateX(100vw); }
-    to   { transform: translateX(-100%); }
+
+.market-text { animation: ticker-enter 650ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes ticker-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.market-text-val { transition: color var(--transition-time-clr) ease; }
+.market-text-val.is-flashing { animation: ticker-flash var(--transition-time-400) ease-out; }
+@keyframes ticker-flash {
+    from { text-shadow: 0 0 0.9em currentColor, 0 0 0.3em currentColor; }
+    to   { text-shadow: 0 0 0 transparent; }
 }
 /* #endregion */
 /* #endregion */
@@ -686,7 +694,9 @@ h2 {
     .cursor-glow,
     body::before,
     body::after,
+    .market-text,
     .market-text-line,
+    .market-text-val.is-flashing,
     .treemap-tile.is-flashing .treemap-surface {
         animation: none !important;
         transition: none !important;

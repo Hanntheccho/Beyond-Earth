@@ -8,7 +8,7 @@
     const numberFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
-    // Tween settings. Keep DURATION well below the market tick interval (2000 ms).
+    // Tween settings. Keep DURATION well below the market tick interval.
     const DURATION = 700;
     const TWEEN_PROPS = ['x', 'y', 'w', 'h', 'value', 'pct'];
     const ease = t => 1 - Math.pow(1 - t, 3);

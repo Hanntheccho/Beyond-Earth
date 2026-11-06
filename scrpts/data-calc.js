@@ -105,7 +105,7 @@
 
     function startTicker(options = {}) {
         if (timer) clearInterval(timer);
-        timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 2000));
+        timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 1000));
     }
 
     function stopTicker() {
