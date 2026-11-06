@@ -1,10 +1,19 @@
 // Shared treemap layout, labels, colors, and optional hierarchical navigation.
+// Tiles are persistent (keyed by tag/name) and tweened between market ticks, so
+// geometry, value, and change numbers animate instead of being rebuilt each tick.
 (function () {
     const svgNS = 'http://www.w3.org/2000/svg';
     const width = 800;
     const height = 800;
     const numberFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
+
+    // Tween settings. Keep DURATION well below the market tick interval (2000 ms).
+    const DURATION = 700;
+    const TWEEN_PROPS = ['x', 'y', 'w', 'h', 'value', 'pct'];
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     function add(parent, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -63,7 +72,7 @@
     }
 
     function fitLabel(name, valueText, changeText, w, h) {
-        // Keep an inset inside each tile; render() also passes % of the tile dimensions.
+        // Keep an inset inside each tile; paint() also passes % of the tile dimensions.
         const availableWidth = Math.max(1, w - 8);
         const availableHeight = Math.max(1, h - 6);
         const longestWordLength = String(name).trim().split(/\s+/).reduce((longest, word) => Math.max(longest, word.length), 1);
@@ -91,46 +100,160 @@
         const getName = node => node.name || node.label || '';
         const getLabel = node => node.label || getName(node);
         const formatValue = node => `${numberFormat.format(getValue(node))}`;
+        const keyOf = node => node.tag || node.name;
         const breadcrumbs = options.breadcrumbs || null;
         const status = options.status || null;
+
+        // Persistent render state: tiles survive between ticks and only get new targets.
+        const tiles = new Map();
+        let pathSignature = null;
+        let svg = null;
+        let raf = 0;
+
+        function createTile(item) {
+            const canDrill = getChildren(item).length > 0;
+            const group = add(svg, 'g', {
+                class: `treemap-tile${canDrill ? ' has-children' : ''}`,
+                tabindex: canDrill ? '0' : null,
+                role: canDrill ? 'button' : null
+            });
+            const tile = { item, canDrill, group, name: getLabel(item), lastLines: '' };
+            tile.rect = add(group, 'rect', { class: 'treemap-surface' });
+            tile.nameEl = add(group, 'text', { class: 'treemap-label treemap-label-name', 'text-anchor': 'middle' });
+            tile.valueEl = add(group, 'text', { class: 'treemap-label treemap-label-value', 'text-anchor': 'middle' });
+            tile.changeEl = add(group, 'text', { class: 'treemap-label treemap-label-change', 'text-anchor': 'middle' });
+            tile.titleEl = add(group, 'title', {});
+            if (canDrill) {
+                // Reads tile.item at click time so it never goes stale across ticks.
+                const drill = () => { path.push({ node: tile.item, depth: path.length }); render(); };
+                group.addEventListener('click', drill);
+                group.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); drill(); }
+                });
+            }
+            return tile;
+        }
+
+        function paint(tile) {
+            const { x, y, w, h, value, pct } = tile.cur;
+            const valueText = numberFormat.format(value);
+            const changeText = percentFormat.format(pct);
+
+            tile.rect.setAttribute('x', x + 2);
+            tile.rect.setAttribute('y', y + 2);
+            tile.rect.setAttribute('width', Math.max(0, w - 4));
+            tile.rect.setAttribute('height', Math.max(0, h - 4));
+
+            // Use % of the tile dimensions to leave a margin; label font comes from inherited CSS.
+            const fit = fitLabel(tile.name, valueText, changeText, w * 0.9, h * 0.9);
+            const visibility = fit.size >= 2 ? 'visible' : 'hidden';
+            [tile.nameEl, tile.valueEl, tile.changeEl].forEach(element => element.setAttribute('visibility', visibility));
+            if (visibility === 'hidden') return;
+
+            const centerX = x + w / 2;
+            const topY = y + (h - fit.requiredHeight) / 2 + fit.size;
+            // These baseline offsets control the gaps from name to value and value to change.
+            const valueY = topY + (fit.lines.length - 1) * fit.lineHeight + fit.size * 1;
+
+            tile.nameEl.setAttribute('x', centerX);
+            tile.nameEl.setAttribute('y', topY);
+            tile.nameEl.style.fontSize = `${fit.size}px`;
+            const linesKey = fit.lines.join('|');
+            if (linesKey !== tile.lastLines) {
+                // Only rebuild the tspans when the wrapping actually changes.
+                tile.lastLines = linesKey;
+                tile.nameEl.replaceChildren();
+                fit.lines.forEach((line, index) => add(tile.nameEl, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
+            } else {
+                tile.nameEl.childNodes.forEach(span => span.setAttribute('x', centerX));
+            }
+
+            tile.valueEl.setAttribute('x', centerX);
+            tile.valueEl.setAttribute('y', valueY);
+            tile.valueEl.style.fontSize = `${fit.valueSize}px`;
+            tile.valueEl.textContent = valueText;
+
+            tile.changeEl.setAttribute('x', centerX);
+            tile.changeEl.setAttribute('y', valueY + fit.size * 1);
+            tile.changeEl.style.fontSize = `${fit.changeSize}px`;
+            tile.changeEl.textContent = changeText;
+        }
+
+        function setDirection(tile, item) {
+            const change = Number(item.change);
+            const direction = Number.isFinite(change) ? (change > 0 ? 'up' : (change < 0 ? 'down' : 'neutral')) : 'neutral';
+            const previous = tile.group.dataset.direction;
+            if (previous === direction) return;
+            tile.group.dataset.direction = direction;
+            if (previous === undefined) return; // first paint: no flash
+            tile.group.classList.remove('is-flashing');
+            void tile.group.getBoundingClientRect(); // restart the CSS animation
+            tile.group.classList.add('is-flashing');
+        }
+
+        function step(now) {
+            const reduced = reducedMotionQuery.matches;
+            let active = false;
+            tiles.forEach(tile => {
+                const progress = reduced ? 1 : Math.min(1, (now - tile.t0) / DURATION);
+                const eased = ease(progress);
+                TWEEN_PROPS.forEach(prop => { tile.cur[prop] = lerp(tile.from[prop], tile.to[prop], eased); });
+                paint(tile);
+                if (progress < 1) active = true;
+            });
+            raf = active && !document.hidden ? requestAnimationFrame(step) : 0;
+        }
+
+        function startLoop() {
+            if (!raf) raf = requestAnimationFrame(step);
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && tiles.size) startLoop();
+        });
 
         function render() {
             const current = path.length ? path[path.length - 1] : { node: options.root, depth: -1 };
             const children = getChildren(current.node);
             const items = children.length ? children : [current.node];
             const total = items.reduce((sum, node) => sum + getValue(node), 0);
-            host.replaceChildren();
-            const svg = add(host, 'svg', { viewBox: `0 0 ${width} ${height}`, role: options.accessible ? 'img' : 'presentation', 'aria-hidden': options.accessible ? 'false' : 'true', 'aria-label': options.accessible ? `${getName(current.node)} treemap` : null });
+
+            // Drilling in or out changes which tiles exist, so rebuild from scratch.
+            // Normal market ticks keep the same path and only update tile targets.
+            const signature = path.map(entry => getName(entry.node)).join('>');
+            if (signature !== pathSignature || !svg) {
+                pathSignature = signature;
+                cancelAnimationFrame(raf);
+                raf = 0;
+                host.replaceChildren();
+                tiles.clear();
+                svg = add(host, 'svg', {
+                    viewBox: `0 0 ${width} ${height}`,
+                    role: options.accessible ? 'img' : 'presentation',
+                    'aria-hidden': options.accessible ? 'false' : 'true',
+                    'aria-label': options.accessible ? `${getName(current.node)} treemap` : null
+                });
+            }
 
             squarify(items, 0, 0, width, height, getValue).forEach(({ item, x, y, w, h }) => {
-                const change = Number(item.change);
-                const direction = Number.isFinite(change) ? (change > 0 ? 'up' : (change < 0 ? 'down' : 'neutral')) : 'neutral';
-                const nested = getChildren(item);
-                const canDrill = nested.length > 0;
-                const name = getLabel(item);
-                const valueText = formatValue(item);
-                const changeText = `${percentFormat.format(Number(item.changePercent) || 0)}`;
-                const group = add(svg, 'g', { class: `treemap-tile${canDrill ? ' has-children' : ''}`, 'data-direction': direction, tabindex: canDrill ? '0' : null, role: canDrill ? 'button' : null, 'aria-label': `${getName(item)}: ${valueText}${canDrill ? ', open details' : ''}` });
-                add(group, 'rect', { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), class: 'treemap-surface' });
-                // Use % of the tile dimensions to leave a margin; label font comes from inherited CSS.
-                const fit = fitLabel(name, valueText, changeText, w * 0.9, h * 0.9);
-                const centerX = x + w / 2;
-                const topY = y + (h - fit.requiredHeight) / 2 + fit.size;
-                if (fit.size >= 2) {
-                    const label = add(group, 'text', { x: centerX, y: topY, class: 'treemap-label treemap-label-name', style: `font-size:${fit.size}px`, 'text-anchor': 'middle' });
-                    fit.lines.forEach((line, index) => add(label, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
-                    // These baseline offsets control the gaps from name to value and value to change.
-                    const valueY = topY + (fit.lines.length - 1) * fit.lineHeight + fit.size * 1;
-                    add(group, 'text', { x: centerX, y: valueY, class: 'treemap-label treemap-label-value', style: `font-size:${fit.valueSize}px`, 'text-anchor': 'middle' }, valueText);
-                    add(group, 'text', { x: centerX, y: valueY + fit.size * 1, class: 'treemap-label treemap-label-change', style: `font-size:${fit.changeSize}px`, 'text-anchor': 'middle' }, changeText);
+                const key = keyOf(item);
+                const target = { x, y, w, h, value: getValue(item), pct: Number(item.changePercent) || 0 };
+                let tile = tiles.get(key);
+                if (!tile) {
+                    tile = createTile(item);
+                    tile.cur = { ...target };
+                    tiles.set(key, tile);
                 }
-                add(group, 'title', {}, `${getName(item)} — ${valueText} (${changeText})${canDrill ? ' · Click to expand' : ''}`);
-                if (canDrill) {
-                    const drill = () => { path.push({ node: item, depth: current.depth + 1 }); render(); };
-                    group.addEventListener('click', drill);
-                    group.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); drill(); } });
-                }
+                tile.item = item;
+                tile.from = { ...tile.cur };
+                tile.to = target;
+                tile.t0 = performance.now();
+                tile.titleEl.textContent = `${getName(item)} — ${formatValue(item)}${tile.canDrill ? ' · Click to expand' : ''}`;
+                tile.group.setAttribute('aria-label', `${getName(item)}: ${formatValue(item)}${tile.canDrill ? ', open details' : ''}`);
+                setDirection(tile, item);
+                if (!tile.painted) { tile.painted = true; paint(tile); } // avoid an empty first frame
             });
+            startLoop();
 
             if (breadcrumbs) {
                 breadcrumbs.replaceChildren();

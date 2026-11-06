@@ -372,6 +372,18 @@ h2 {
 .treemap-label-name { text-transform: uppercase; }
 .treemap-label-value { filter: brightness(0.4); }
 .treemap-label-change { filter: brightness(0.6); }
+
+@property --treemap-color {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #a0a0a0;
+}
+.treemap-tile { transition: --treemap-color 400ms ease; }
+.treemap-tile.is-flashing .treemap-surface { animation: tileFlash 500ms ease-out; }
+@keyframes tileFlash {
+    from { fill: color-mix(in srgb, var(--treemap-color) 28%, transparent); }
+    to   { fill: color-mix(in srgb, var(--treemap-color) 6%, transparent); }
+}
 /* #endregion */
 /* #region mitk */
 .scenario-chart-plot {
@@ -693,7 +705,8 @@ h2 {
     .cursor-glow,
     body::before,
     body::after,
-    .market-text-line {
+    .market-text-line,
+    .treemap-tile.is-flashing .treemap-surface {
         animation: none !important;
         transition: none !important;
     }
