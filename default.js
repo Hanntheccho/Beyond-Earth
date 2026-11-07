@@ -285,18 +285,6 @@ if (window.matchMedia('(pointer: fine)').matches) {
     }, { passive: true });
 }
 
-let scrollUpdatePending = false;
-window.addEventListener('scroll', function () {
-    if (scrollUpdatePending) return;
-    scrollUpdatePending = true;
-    requestAnimationFrame(function () {
-        const scrollY = window.scrollY;
-        document.documentElement.style.setProperty('--bg-scroll-large', (-scrollY * 0.08) + 'px');
-        document.documentElement.style.setProperty('--bg-scroll-small', (-scrollY * 0.04) + 'px');
-        scrollUpdatePending = false;
-    });
-}, { passive: true });
-
 const legacyFiles = {
     beLegacy01: "be-legacy-countries.txt",
     beLegacy02: "be-legacy-victory-points.txt",

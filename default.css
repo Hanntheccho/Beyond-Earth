@@ -57,7 +57,7 @@ body::before,
 body::after {
     content: "";
     position: fixed;
-    inset: -300vh -140px;
+    inset: -70px;
     z-index: -1;
     pointer-events: none;
     background-repeat: repeat;
@@ -66,21 +66,19 @@ body::before {
     background: url("be-icon-w.svg") center calc(50% - 30px) / 240px repeat;
     opacity: 0.02;
     animation: background-drift-large 36s linear infinite alternate;
-    transform: translate3d(0, var(--bg-scroll-large, 0px), 0);
 }
 body::after {
     background: url("be-icon-w.svg") center calc(50% - 30px) / 160px repeat;
     opacity: 0.01;
     animation: background-drift-small 29s linear infinite alternate;
-    transform: translate3d(0, var(--bg-scroll-small, 0px), 0);
 }
 @keyframes background-drift-large {
-    from { background-position: calc(50% - 60px) calc(50% - 50px); }
-    to { background-position: calc(50% + 60px) calc(50% + 10px); }
+    from { transform: translate3d(-60px, -50px, 0); }
+    to { transform: translate3d(60px, 10px, 0); }
 }
 @keyframes background-drift-small {
-    from { background-position: calc(50% + 45px) calc(50% + 40px); }
-    to { background-position: calc(50% - 45px) calc(50% - 35px); }
+    from { transform: translate3d(45px, 40px, 0); }
+    to { transform: translate3d(-45px, -35px, 0); }
 }
 
 button {
