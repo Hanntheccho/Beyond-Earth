@@ -46,26 +46,6 @@ document.addEventListener('click', function(event) {
     });
 });
 
-function positionTooltips() {
-    document.querySelectorAll('.has-tooltip').forEach(function(element) {
-        const bounds = element.getBoundingClientRect();
-        const viewportWidth = document.documentElement.clientWidth;
-
-        element.dataset.tooltipSide = bounds.top < 140 ? 'bottom' : 'top';
-        if (bounds.left < 150) {
-            element.dataset.tooltipAlign = 'left';
-        } else if (bounds.right > viewportWidth - 150) {
-            element.dataset.tooltipAlign = 'right';
-        } else {
-            element.dataset.tooltipAlign = 'center';
-        }
-    });
-}
-
-positionTooltips();
-window.addEventListener('resize', positionTooltips);
-window.addEventListener('scroll', positionTooltips, { passive: true });
-
 let tooltipEntries = [];
 let tooltipEntryId = 0;
 let tooltipSwitchTimer;
@@ -137,7 +117,7 @@ function positionTooltip(popup, trigger) {
     const viewportHeight = document.documentElement.clientHeight;
     const aboveSpace = Math.max(0, bounds.top - gap - padding);
     const belowSpace = Math.max(0, viewportHeight - bounds.bottom - gap - padding);
-    const preferredSide = trigger.dataset.tooltipSide === 'bottom' ? 'bottom' : 'top';
+    const preferredSide = bounds.top < 140 ? 'bottom' : 'top';
     const preferredSpace = preferredSide === 'top' ? aboveSpace : belowSpace;
     const side = preferredSpace >= Math.min(420, viewportHeight * 0.6)
         ? preferredSide
@@ -335,4 +315,3 @@ Promise.all(Object.values(legacyFiles).map(f => fetch(f).then(r => r.ok ? r.text
   });
 })
 .catch(error => console.error('Error loading legacy files:', error));
-

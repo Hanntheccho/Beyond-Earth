@@ -105,7 +105,8 @@
 
     function startTicker(options = {}) {
         if (timer) clearInterval(timer);
-        timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 1000));
+        advanceValues();
+        timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 4000));
     }
 
     function stopTicker() {
@@ -120,4 +121,18 @@
         start: startTicker,
         stop: stopTicker
     };
+
+    const panelObserver = new MutationObserver(records => {
+        if (records.some(record => record.target.matches('[data-panel-group]:not([data-panel-target])'))) {
+            advanceValues();
+        }
+    });
+    panelObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['hidden'],
+        subtree: true
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) advanceValues();
+    });
 })();
