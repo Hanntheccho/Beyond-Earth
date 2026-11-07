@@ -48,7 +48,7 @@
                 const current = market.getSnapshot();
                 market.listeners.forEach(listener => listener(current));
             },
-            tick: advanceValues,
+            tick: computeValues,
             start(options) { startTicker(options); return market; },
             stop() { stopTicker(); return market; }
         };
@@ -77,7 +77,7 @@
         }
     }
 
-    function advanceValues() {
+    function computeValues() {
         const previous = new Map();
         sources.forEach(source => walk(source.root, node => previous.set(node, node.value)));
         marketMood = Math.max(-0.02, Math.min(0.02, marketMood * 0.86 + (Math.random() - 0.5) * 0.006));
@@ -96,17 +96,22 @@
             node.changePercent = oldValue ? node.change / oldValue * 100 : 0;
         }
 
-        sources.forEach(source => {
-            update(source.root);
-            source.update();
-        });
+        sources.forEach(source => update(source.root));
+    }
+
+    function publishMarkets() {
+        sources.forEach(source => source.update());
         markets.forEach(market => market.publish());
     }
 
     function startTicker(options = {}) {
         if (timer) clearInterval(timer);
-        advanceValues();
-        timer = setInterval(advanceValues, Math.max(250, Number(options.intervalMs) || 4000));
+        computeValues();
+        publishMarkets();
+        timer = setInterval(() => {
+            computeValues();
+            publishMarkets();
+        }, Math.max(250, Number(options.intervalMs) || 4000));
     }
 
     function stopTicker() {
@@ -117,14 +122,15 @@
     window.valueChanges = {
         getMarket,
         registerSource,
-        tick: advanceValues,
+        tick: computeValues,
+        render: publishMarkets,
         start: startTicker,
         stop: stopTicker
     };
 
     const panelObserver = new MutationObserver(records => {
         if (records.some(record => record.target.matches('[data-panel-group]:not([data-panel-target])'))) {
-            advanceValues();
+            publishMarkets();
         }
     });
     panelObserver.observe(document.body, {
@@ -133,6 +139,6 @@
         subtree: true
     });
     document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) advanceValues();
+        if (!document.hidden) publishMarkets();
     });
 })();
