@@ -76,21 +76,19 @@
         const availableWidth = Math.max(1, w - 8);
         const availableHeight = Math.max(1, h - 6);
         const longestWordLength = String(name).trim().split(/\s+/).reduce((longest, word) => Math.max(longest, word.length), 1);
-        // These character-width factors approximate the used font; increase them for more conservative sizing.
-        const maxSizeByWordWidth = availableWidth / (longestWordLength * 0.6);
-        for (let size = Math.min(availableWidth * 0.13, availableHeight * 0.16, maxSizeByWordWidth); size >= 1.5; size -= 0.25) {
-            const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (size * 0.65))));
-            // Number text is sized against the tile width and remains at most the name's font size.
-            const valueSize = Math.min(size * 1, availableWidth / Math.max(1, valueText.length * 0.68));
-            const changeSize = Math.min(size * 1, availableWidth / Math.max(1, changeText.length * 0.68));
+        // Use the widest unwrapped label to size all three labels consistently.
+        const longestLabelLength = Math.max(longestWordLength, valueText.length, changeText.length);
+        const maxSizeByLabelWidth = availableWidth / (longestLabelLength * 0.68);
+        for (let size = Math.min(availableWidth * 0.13, availableHeight * 0.16, maxSizeByLabelWidth); size >= 1.5; size -= 0.25) {
+            const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (size * 0.68))));
             // Vertical spacing between wrapped name lines; requiredHeight reserves room for all three text rows.
             const lineHeight = size * 0.8;
             const requiredHeight = (lines.length - 1) * lineHeight + size * 2.8 + 2;
-            if (requiredHeight <= availableHeight) return { lines, size, valueSize, changeSize, lineHeight, requiredHeight };
+            if (requiredHeight <= availableHeight) return { lines, size, lineHeight, requiredHeight };
         }
         const size = 1.5;
-        const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (size * 0.65))));
-        return { lines, size, valueSize: 1, changeSize: 1, lineHeight: size, requiredHeight: h };
+        const lines = wrapName(name, Math.max(1, Math.floor(availableWidth / (size * 0.68))));
+        return { lines, size, lineHeight: size, requiredHeight: h };
     }
 
     function mount(host, options) {
@@ -178,7 +176,7 @@
 
             tile.valueEl.setAttribute('x', centerX);
             tile.valueEl.setAttribute('y', valueY);
-            tile.valueEl.style.fontSize = `${fit.valueSize}px`;
+            tile.valueEl.style.fontSize = `${fit.size}px`;
             if (valueText !== tile.lastValueText) {
                 tile.lastValueText = valueText;
                 tile.valueEl.textContent = valueText;
@@ -186,7 +184,7 @@
 
             tile.changeEl.setAttribute('x', centerX);
             tile.changeEl.setAttribute('y', valueY + fit.size * 1);
-            tile.changeEl.style.fontSize = `${fit.changeSize}px`;
+            tile.changeEl.style.fontSize = `${fit.size}px`;
             if (changeText !== tile.lastChangeText) {
                 tile.lastChangeText = changeText;
                 tile.changeEl.textContent = changeText;
