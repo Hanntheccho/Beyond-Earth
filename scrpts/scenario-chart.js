@@ -65,7 +65,7 @@
             unit.className = 'data-grid-unit';
             unit.textContent = meta.unit;
             const value = document.createElement('span');
-            value.className = 'data-grid-price';
+            value.className = 'data-grid-value';
             value.textContent = valueFormatter.format(sorted.at(-1).value);
             const change = document.createElement('span');
             change.className = 'data-grid-change';

@@ -575,7 +575,7 @@ h2 {
     border-bottom: var(--border);
 }
 .data-grid-unit { color: var(--clr-data); }
-.data-grid-price { text-align: right; white-space: nowrap; }
+.data-grid-value { text-align: right; white-space: nowrap; }
 .data-grid-change { text-align: right; filter: drop-shadow(var(--drop-shadow-60)); }
 .data-grid-change { transition: color var(--transition-time-clr) ease; }
 .data-grid-change.is-up { color: var(--clr-positive); }

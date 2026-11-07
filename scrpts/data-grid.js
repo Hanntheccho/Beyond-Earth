@@ -1,4 +1,4 @@
-// Market data grids. Rows are persistent (keyed by tag/name): price and change
+// Market data grids. Rows are persistent (keyed by tag/name): value and change
 // numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
 (function () {
@@ -25,23 +25,33 @@
             const row = document.createElement('div');
             row.className = 'data-grid-row';
             row.dataset.itemKey = key;
-            row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit"></span><span class="data-grid-price"></span><span class="data-grid-change"></span>';
+            row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit"></span><span class="data-grid-value"></span><span class="data-grid-change"></span>';
             row.querySelector('.data-grid-name').textContent = item.name;
             row.querySelector('.data-grid-unit').textContent = item.unit || '€$B';
             return {
                 row,
-                priceEl: row.querySelector('.data-grid-price'),
+                valueEl: row.querySelector('.data-grid-value'),
                 changeEl: row.querySelector('.data-grid-change'),
                 cur: null,
                 from: null,
                 to: null,
-                t0: 0
+                t0: 0,
+                lastValueText: null,
+                lastChangeText: null
             };
         }
 
         function paint(entry) {
-            entry.priceEl.textContent = valueFormat.format(entry.cur.value);
-            entry.changeEl.textContent = percentFormat.format(entry.cur.pct);
+            const valueText = valueFormat.format(entry.cur.value);
+            if (valueText !== entry.lastValueText) {
+                entry.lastValueText = valueText;
+                entry.valueEl.textContent = valueText;
+            }
+            const changeText = percentFormat.format(entry.cur.pct);
+            if (changeText !== entry.lastChangeText) {
+                entry.lastChangeText = changeText;
+                entry.changeEl.textContent = changeText;
+            }
         }
 
         function step(now) {
@@ -72,10 +82,15 @@
             const keyOf = item => item.tag || item.name;
             const keys = new Set(sorted.map(keyOf));
             const now = performance.now();
+            const reduced = reducedMotionQuery.matches;
+            const orderChanged = host.children.length !== sorted.length
+                || sorted.some((item, index) => host.children[index].dataset.itemKey !== keyOf(item));
 
             // FLIP "first": remember where each existing row is before reordering.
             const firstRects = new Map();
-            rows.forEach((entry, key) => firstRects.set(key, entry.row.getBoundingClientRect()));
+            if (!reduced && orderChanged) {
+                rows.forEach((entry, key) => firstRects.set(key, entry.row.getBoundingClientRect()));
+            }
 
             // Drop rows whose items disappeared; create rows for new items.
             rows.forEach((entry, key) => {
@@ -92,6 +107,7 @@
             });
 
             // Apply the new order, then set tween targets and direction state.
+            const flashes = [];
             sorted.forEach((item, index) => {
                 const entry = rows.get(keyOf(item));
                 if (host.children[index] !== entry.row) {
@@ -113,13 +129,16 @@
                 entry.row.dataset.direction = newDir;
                 if (prevDir && prevDir !== newDir) {
                     entry.row.classList.remove('is-flashing');
-                    void entry.row.offsetWidth;
-                    entry.row.classList.add('is-flashing');
+                    flashes.push(entry.row);
                 }
             });
+            if (flashes.length) {
+                void flashes[0].offsetWidth;
+                flashes.forEach(row => row.classList.add('is-flashing'));
+            }
 
             // FLIP "last/invert/play": slide rows from their old position to the new one.
-            if (!reducedMotionQuery.matches) {
+            if (!reduced && orderChanged) {
                 rows.forEach((entry, key) => {
                     const first = firstRects.get(key);
                     if (!first) return;

@@ -117,7 +117,15 @@
                 tabindex: canDrill ? '0' : null,
                 role: canDrill ? 'button' : null
             });
-            const tile = { item, canDrill, group, name: getLabel(item), lastLines: '' };
+            const tile = {
+                item,
+                canDrill,
+                group,
+                name: getLabel(item),
+                lastLines: '',
+                lastValueText: null,
+                lastChangeText: null
+            };
             tile.rect = add(group, 'rect', { class: 'treemap-surface' });
             tile.nameEl = add(group, 'text', { class: 'treemap-label treemap-label-name', 'text-anchor': 'middle' });
             tile.valueEl = add(group, 'text', { class: 'treemap-label treemap-label-value', 'text-anchor': 'middle' });
@@ -171,12 +179,18 @@
             tile.valueEl.setAttribute('x', centerX);
             tile.valueEl.setAttribute('y', valueY);
             tile.valueEl.style.fontSize = `${fit.valueSize}px`;
-            tile.valueEl.textContent = valueText;
+            if (valueText !== tile.lastValueText) {
+                tile.lastValueText = valueText;
+                tile.valueEl.textContent = valueText;
+            }
 
             tile.changeEl.setAttribute('x', centerX);
             tile.changeEl.setAttribute('y', valueY + fit.size * 1);
             tile.changeEl.style.fontSize = `${fit.changeSize}px`;
-            tile.changeEl.textContent = changeText;
+            if (changeText !== tile.lastChangeText) {
+                tile.lastChangeText = changeText;
+                tile.changeEl.textContent = changeText;
+            }
         }
 
         function setDirection(tile, item) {
@@ -185,10 +199,15 @@
             const previous = tile.group.dataset.direction;
             if (previous === direction) return;
             tile.group.dataset.direction = direction;
-            if (previous === undefined) return; // first paint: no flash
+            if (previous === undefined) return false;
             tile.group.classList.remove('is-flashing');
-            void tile.group.getBoundingClientRect(); // restart the CSS animation
-            tile.group.classList.add('is-flashing');
+            return true;
+        }
+
+        function restartFlashes(groups) {
+            if (!groups.length) return;
+            void groups[0].getBoundingClientRect();
+            groups.forEach(group => group.classList.add('is-flashing'));
         }
 
         function step(now) {
@@ -235,6 +254,7 @@
                 });
             }
 
+            const flashes = [];
             squarify(items, 0, 0, width, height, getValue).forEach(({ item, x, y, w, h }) => {
                 const key = keyOf(item);
                 const target = { x, y, w, h, value: getValue(item), pct: Number(item.changePercent) || 0 };
@@ -250,9 +270,10 @@
                 tile.t0 = performance.now();
                 tile.titleEl.textContent = `${getName(item)} — ${formatValue(item)}${tile.canDrill ? ' · Click to expand' : ''}`;
                 tile.group.setAttribute('aria-label', `${getName(item)}: ${formatValue(item)}${tile.canDrill ? ', open details' : ''}`);
-                setDirection(tile, item);
+                if (setDirection(tile, item)) flashes.push(tile.group);
                 if (!tile.painted) { tile.painted = true; paint(tile); } // avoid an empty first frame
             });
+            restartFlashes(flashes);
             startLoop();
 
             if (breadcrumbs) {

@@ -32,17 +32,20 @@
         lineWidth = line.offsetWidth;
     }
 
+    const lineResizeObserver = new ResizeObserver(entries => {
+        lineWidth = entries[0].contentRect.width;
+    });
+    lineResizeObserver.observe(line);
+
     function applyTransform() {
         line.style.transform = reducedMotionQuery.matches ? '' : `translate3d(${x}px, 0, 0)`;
     }
 
-    // Returns true when the visible text actually changed (so width must be re-measured).
     function paint(entry) {
         const text = format(entry.cur);
-        if (text === entry.text) return false;
+        if (text === entry.text) return;
         entry.text = text;
         entry.val.textContent = text;
-        return true;
     }
 
     function setDirection(entry, item) {
@@ -53,10 +56,15 @@
         entry.dir = direction;
         entry.val.classList.remove(...DIRECTIONS);
         entry.val.classList.add(direction);
-        if (previous === null) return; // first paint: no flash
+        if (previous === null) return false;
         entry.val.classList.remove('is-flashing');
-        void entry.val.offsetWidth; // restart the CSS animation
-        entry.val.classList.add('is-flashing');
+        return true;
+    }
+
+    function restartFlashes(entries) {
+        if (!entries.length) return;
+        void entries[0].offsetWidth;
+        entries.forEach(entry => entry.classList.add('is-flashing'));
     }
 
     function build(current) {
@@ -87,16 +95,14 @@
         const dt = Math.min(0.1, (now - last) / 1000);
         last = now;
 
-        let textChanged = false;
         let tweening = false;
         items.forEach(entry => {
             if (entry.done) return;
             const progress = reduced ? 1 : Math.min(1, (now - entry.t0) / DURATION);
             entry.cur = lerp(entry.from, entry.to, ease(progress));
-            if (paint(entry)) textChanged = true;
+            paint(entry);
             if (progress < 1) tweening = true; else entry.done = true;
         });
-        if (textChanged) measure();
 
         if (reduced) {
             x = 0;
@@ -125,6 +131,7 @@
             return;
         }
         const now = performance.now();
+        const flashes = [];
         current.forEach(item => {
             const entry = items.get(keyOf(item));
             if (!entry) return;
@@ -132,8 +139,9 @@
             entry.to = item.changePercent || 0;
             entry.t0 = now;
             entry.done = false;
-            setDirection(entry, item);
+            if (setDirection(entry, item)) flashes.push(entry.val);
         });
+        restartFlashes(flashes);
         startLoop();
     }
 
