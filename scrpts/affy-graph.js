@@ -1,11 +1,11 @@
-// Builds the affinity map before default.js binds the shared tooltip behavior.
+// Builds the affy map before default.js binds the shared tooltip behavior.
 (function () {
-    const map = document.querySelector('.affinity-map');
+    const map = document.querySelector('.affy-map');
     if (!map) return;
 
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('class', 'affinity-map-lines');
+    svg.setAttribute('class', 'affy-map-lines');
     svg.setAttribute('viewBox', '0 0 600 520');
     svg.setAttribute('aria-hidden', 'true');
 
@@ -42,52 +42,52 @@
         return `url(#${id})`;
     }
 
-    ideologicalNodes.forEach((affinity, index) => {
+    ideologicalNodes.forEach((affy, index) => {
         const neighbor = ideologicalNodes[(index + 1) % ideologicalNodes.length];
         const line = document.createElementNS(svgNS, 'line');
-        line.setAttribute('x1', affinity.x);
-        line.setAttribute('y1', affinity.y);
+        line.setAttribute('x1', affy.x);
+        line.setAttribute('y1', affy.y);
         line.setAttribute('x2', neighbor.x);
         line.setAttribute('y2', neighbor.y);
-        line.setAttribute('class', 'affinity-link affinity-link--strong');
-        line.setAttribute('stroke', addGradient(`affinity-neighbor-${affinity.id}-${neighbor.id}`, affinity, neighbor));
+        line.setAttribute('class', 'affy-link affy-link--strong');
+        line.setAttribute('stroke', addGradient(`affy-neighbor-${affy.id}-${neighbor.id}`, affy, neighbor));
         svg.append(line);
     });
 
-    ideologicalNodes.forEach(affinity => {
+    ideologicalNodes.forEach(affy => {
         const line = document.createElementNS(svgNS, 'line');
         line.setAttribute('x1', neutrality.x);
         line.setAttribute('y1', neutrality.y);
-        line.setAttribute('x2', affinity.x);
-        line.setAttribute('y2', affinity.y);
-        line.setAttribute('class', 'affinity-link affinity-link--soft');
-        line.setAttribute('stroke', addGradient(`affinity-neutrality-${affinity.id}`, neutrality, affinity));
+        line.setAttribute('x2', affy.x);
+        line.setAttribute('y2', affy.y);
+        line.setAttribute('class', 'affy-link affy-link--soft');
+        line.setAttribute('stroke', addGradient(`affy-neutrality-${affy.id}`, neutrality, affy));
         svg.append(line);
     });
     svg.insertBefore(definitions, svg.firstChild);
-    affinities.forEach(affinity => {
+    affinities.forEach(affy => {
         const size = 144;
-        const buttonSize = affinity.id === 'neutrality' ? 76 : 84;
+        const buttonSize = affy.id === 'neutrality' ? 76 : 84;
         const node = document.createElementNS(svgNS, 'foreignObject');
-        node.setAttribute('x', affinity.x - size / 2);
-        node.setAttribute('y', affinity.y - size / 2);
+        node.setAttribute('x', affy.x - size / 2);
+        node.setAttribute('y', affy.y - size / 2);
         node.setAttribute('width', size);
         node.setAttribute('height', size);
 
         const frame = document.createElement('div');
-        frame.className = 'affinity-node-frame';
+        frame.className = 'affy-node-frame';
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = `affinity-node affinity-node--${affinity.id} has-tooltip`;
-        button.dataset.tooltip = affinity.description;
-        button.setAttribute('aria-label', affinity.name);
-        button.style.setProperty('--affinity-color', affinity.color);
-        button.style.setProperty('--affinity-node-size', `${buttonSize}px`);
+        button.className = `affy-node affy-node--${affy.id} has-tooltip`;
+        button.dataset.tooltip = affy.description;
+        button.setAttribute('aria-label', affy.name);
+        button.style.setProperty('--affy-color', affy.color);
+        button.style.setProperty('--affy-node-size', `${buttonSize}px`);
 
         const icon = document.createElement('span');
-        icon.className = 'affinity-icon';
+        icon.className = 'affy-icon';
         icon.setAttribute('aria-hidden', 'true');
-        icon.style.setProperty('--affinity-icon', `url("${affinity.icon}")`);
+        icon.style.setProperty('--affy-icon', `url("${affy.icon}")`);
         button.append(icon);
 
         frame.append(button);

@@ -460,54 +460,54 @@ h2 {
 .globe-canvas.dragging { cursor: grabbing; }
 /* #endregion */
 /* #region affy */
-.affinity-map {
+.affy-map {
     position: relative;
     width: calc(100% - 200px);
     aspect-ratio: 600 / 520;
     margin: 0 auto;
     background: radial-gradient(ellipse at center, #ffffff18, transparent 68%);
 }
-.affinity-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.affinity-link { fill: none; stroke-width: 2; opacity: .8; }
-.affinity-link--strong { stroke-width: 2; opacity: .9; }
-.affinity-link--soft { stroke-dasharray: 5 9; stroke-width: 2; opacity: .26; }
-.affinity-node-frame { width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
-.affinity-node {
+.affy-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.affy-link { fill: none; stroke-width: 2; opacity: .8; }
+.affy-link--strong { stroke-width: 2; opacity: .9; }
+.affy-link--soft { stroke-dasharray: 5 9; stroke-width: 2; opacity: .26; }
+.affy-node-frame { width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
+.affy-node {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 3px;
-    width: var(--affinity-node-size, 84px);
-    height: var(--affinity-node-size, 84px);
+    width: var(--affy-node-size, 84px);
+    height: var(--affy-node-size, 84px);
     padding: 4px;
-    border: 2px solid var(--affinity-color);
+    border: 2px solid var(--affy-color);
     border-radius: 50%;
-    color: var(--affinity-color);
+    color: var(--affy-color);
     background: #161616;
-    box-shadow: 0 0 1em color-mix(in srgb, var(--affinity-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affinity-color), transparent 90%);
+    box-shadow: 0 0 1em color-mix(in srgb, var(--affy-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affy-color), transparent 90%);
     transition: border var(--transition-time) ease;
     z-index: 2;
 }
-.affinity-node:hover, .affinity-node:focus-visible { border: 8px solid var(--affinity-color); }
-.affinity-node > span { font-size: 34px; line-height: 1; text-shadow: 0 0 0.4em color-mix(in srgb, var(--affinity-color), transparent 60%); }
-.affinity-node > .affinity-icon {
+.affy-node:hover, .affy-node:focus-visible { border: 8px solid var(--affy-color); }
+.affy-node > span { font-size: 34px; line-height: 1; text-shadow: 0 0 0.4em color-mix(in srgb, var(--affy-color), transparent 60%); }
+.affy-node > .affy-icon {
     display: block;
     position: relative;
     width: 40px;
     height: 40px;
-    filter: drop-shadow(0 0 0.4em color-mix(in srgb, var(--affinity-color), transparent 60%));
+    filter: drop-shadow(0 0 0.4em color-mix(in srgb, var(--affy-color), transparent 60%));
     transition: filter var(--transition-time) ease;
 }
-.affinity-node > .affinity-icon::before {
+.affy-node > .affy-icon::before {
     content: "";
     position: absolute;
     inset: 0;
-    background-color: var(--affinity-color);
-    -webkit-mask: var(--affinity-icon) center / contain no-repeat;
-    mask: var(--affinity-icon) center / contain no-repeat;
+    background-color: var(--affy-color);
+    -webkit-mask: var(--affy-icon) center / contain no-repeat;
+    mask: var(--affy-icon) center / contain no-repeat;
 }
-.affinity-node--neutrality { border-style: dashed; }
+.affy-node--neutrality { border-style: dashed; }
 /* #endregion */
 /* #region tree */
 .treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
