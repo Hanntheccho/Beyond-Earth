@@ -5,7 +5,7 @@
 // index.html only needs an empty <div class="div-desc-win grid" data-scenario-buttons></div>;
 // the panels are inserted right after it.
 //
-// Animation: the series (areas, lines, points) sit in a group clipped by a rect
+// Animation: the series (areas, lines) sit in a group clipped by a rect
 // that grows left to right (see .chart-reveal in default.css). Event tags fade
 // in as the reveal passes them, using the --p custom property (0 to 1 across
 // the chart width). The 150ms delay and 1400ms duration are set in default.css;
@@ -212,19 +212,6 @@
                 class: `chart-series-line ${trendClass}`
             });
         }
-        sorted.forEach((point, index) => {
-            const { x: px, y: py } = coordinates[index];
-            const segmentIndex = index === 0 ? 1 : index;
-            const previous = sorted[segmentIndex - 1];
-            const current = sorted[segmentIndex];
-            const pointTrendClass = previous && current
-                ? trendClassForChange(current.value - previous.value)
-                : 'chart-trend-flat';
-            const dot = add(series, 'circle', {
-                cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
-            });
-            add(dot, 'title', {}, `${point.year}: ${point.value} ${meta.unit}`);
-        });
         events.forEach(event => {
             const label = String(event.label || '');
             const eventX = x(event.year);

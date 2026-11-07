@@ -411,22 +411,10 @@ h2 {
 .scenario-chart-plot .chart-series-line.chart-trend-good { color: var(--clr-positive); stroke: var(--clr-positive); }
 .scenario-chart-plot .chart-series-line.chart-trend-bad { color: var(--clr-negative); stroke: var(--clr-negative); }
 .scenario-chart-plot .chart-series-line.chart-trend-flat { color: var(--clr-neutrale); stroke: color-mix(in srgb, var(--clr-neutrale) 1%, transparent); }
-.scenario-chart-plot .chart-series-point {
-    r: 0;
-    fill: #000;
-    stroke: var(--clr-neutrale);
-    stroke-width: 2px;
-}
-.scenario-chart-plot .chart-series-point.chart-trend-good { stroke: var(--clr-positive); }
-.scenario-chart-plot .chart-series-point.chart-trend-bad { stroke: var(--clr-negative); }
-.scenario-chart-plot .chart-series-point.chart-trend-flat { stroke: color-mix(in srgb, var(--clr-neutrale) 80%, transparent); }
 .scenario-chart-plot text.chart-event-label {
     fill: var(--clr-b);
     font-family: var(--fnt-monospace);
     text-transform: uppercase;
-}
-.scenario-chart-plot circle {
-    cursor: help;
 }
 
 .scenario-chart-plot .chart-reveal {
