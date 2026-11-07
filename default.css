@@ -430,6 +430,18 @@ h2 {
 .scenario-chart-plot circle {
     cursor: help;
 }
+
+.scenario-chart-plot .chart-reveal {
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation: chart-reveal 1400ms cubic-bezier(.2, .7, .2, 1) 150ms both;
+}
+.scenario-chart-plot .chart-event-group {
+    animation: chart-fade 400ms ease-out both;
+    animation-delay: calc(150ms + var(--p, 0) * 1400ms);
+}
+@keyframes chart-reveal { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes chart-fade   { from { opacity: 0; } to { opacity: 1; } }
 /* #endregion */
 /* #region glob */
 .globe-preview {
@@ -694,15 +706,16 @@ h2 {
     .cursor-glow,
     body::before,
     body::after,
+    .globe-preview,
+    .div-desc-win,
     .market-text,
     .market-text-line,
     .market-text-val.is-flashing,
-    .treemap-tile.is-flashing .treemap-surface {
+    .treemap-tile.is-flashing .treemap-surface,
+    .scenario-chart-plot .chart-reveal,
+    .scenario-chart-plot .chart-event-group {
         animation: none !important;
         transition: none !important;
-    }
-    .globe-preview,
-    .div-desc-win {
         animation-delay: 0ms !important;
     }
 }

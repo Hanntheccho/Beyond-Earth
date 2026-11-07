@@ -4,6 +4,12 @@
 // window.scenarioSeries / window.scenarioConfig in scenario-data.js.
 // index.html only needs an empty <div class="div-desc-win grid" data-scenario-buttons></div>;
 // the panels are inserted right after it.
+//
+// Animation: the series (areas, lines, points) sit in a group clipped by a rect
+// that grows left to right (see .chart-reveal in default.css). Event tags fade
+// in as the reveal passes them, using the --p custom property (0 to 1 across
+// the chart width). The 150ms delay and 1400ms duration are set in default.css;
+// keep the two rules there in sync..
 (function () {
     const datasets = window.scenarioChartData || {};
     const seriesMeta = window.scenarioSeries || {};
@@ -15,6 +21,7 @@
 
     const TAG_HEIGHT = 18;
     const PANEL_GROUP = 'mit-charts';
+    const sortedData = new Map();
 
     function add(svg, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);
@@ -40,10 +47,14 @@
     }
 
     function sortedPoints(series) {
+        if (sortedData.has(series)) return sortedData.get(series);
         const points = datasets[series];
-        if (!Array.isArray(points)) return [];
-        return points.filter(point => Number.isFinite(point.year) && Number.isFinite(point.value))
-            .sort((a, b) => a.year - b.year);
+        const sorted = Array.isArray(points)
+            ? points.filter(point => Number.isFinite(point.year) && Number.isFinite(point.value))
+                .sort((a, b) => a.year - b.year)
+            : [];
+        sortedData.set(series, sorted);
+        return sorted;
     }
 
     function renderSummary(plots) {
@@ -96,8 +107,11 @@
         const margin = { top: 40, right: 40, bottom: 40, left: 40 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
-        let min = Math.min(...sorted.map(point => point.value));
-        let max = Math.max(...sorted.map(point => point.value));
+        let min = Infinity, max = -Infinity;
+        sorted.forEach(point => {
+            min = Math.min(min, point.value);
+            max = Math.max(max, point.value);
+        });
         if (min === max) { min -= 1; max += 1; }
         const padding = (max - min) * 0.12;
         if (meta.min !== undefined) min = meta.min;
@@ -106,6 +120,7 @@
         else max += padding;
         const x = year => margin.left + ((year - sorted[0].year) / ((sorted.at(-1).year - sorted[0].year) || 1)) * innerWidth;
         const y = value => margin.top + ((max - value) / (max - min)) * innerHeight;
+        const coordinates = sorted.map(point => ({ x: x(point.year), y: y(point.value) }));
         const negativeTrend = meta.trend === 'negative';
         const trendClassForChange = change => {
             const direction = negativeTrend ? -change : change;
@@ -171,32 +186,41 @@
             });
         });
 
+        // Reveal: everything in `series` is clipped by a rect that grows left to
+        // right via CSS. The clip covers the full viewBox so glows are not cut off.
+        const clipId = `chart-reveal-${meta.key}`;
+        const defs = add(svg, 'defs', {});
+        const clip = add(defs, 'clipPath', { id: clipId });
+        add(clip, 'rect', { x: 0, y: 0, width, height, class: 'chart-reveal' });
+        const series = add(svg, 'g', { 'clip-path': `url(#${clipId})` });
+
         const baseline = height - margin.bottom;
         for (let index = 1; index < sorted.length; index++) {
             const previous = sorted[index - 1], current = sorted[index];
+            const previousPosition = coordinates[index - 1], currentPosition = coordinates[index];
             const trendClass = trendClassForChange(current.value - previous.value);
             const segmentArea = [
-                `M ${x(previous.year)} ${y(previous.value)}`,
-                `L ${x(current.year)} ${y(current.value)}`,
-                `L ${x(current.year)} ${baseline}`,
-                `L ${x(previous.year)} ${baseline}`,
+                `M ${previousPosition.x} ${previousPosition.y}`,
+                `L ${currentPosition.x} ${currentPosition.y}`,
+                `L ${currentPosition.x} ${baseline}`,
+                `L ${previousPosition.x} ${baseline}`,
                 'Z'
             ].join(' ');
-            add(svg, 'path', { d: segmentArea, class: `chart-series-area ${trendClass}` });
-            add(svg, 'path', {
-                d: `M ${x(previous.year)} ${y(previous.value)} L ${x(current.year)} ${y(current.value)}`,
+            add(series, 'path', { d: segmentArea, class: `chart-series-area ${trendClass}` });
+            add(series, 'path', {
+                d: `M ${previousPosition.x} ${previousPosition.y} L ${currentPosition.x} ${currentPosition.y}`,
                 class: `chart-series-line ${trendClass}`
             });
         }
         sorted.forEach((point, index) => {
-            const px = x(point.year), py = y(point.value);
+            const { x: px, y: py } = coordinates[index];
             const segmentIndex = index === 0 ? 1 : index;
             const previous = sorted[segmentIndex - 1];
             const current = sorted[segmentIndex];
             const pointTrendClass = previous && current
                 ? trendClassForChange(current.value - previous.value)
                 : 'chart-trend-flat';
-            const dot = add(svg, 'circle', {
+            const dot = add(series, 'circle', {
                 cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
             });
             add(dot, 'title', {}, `${point.year}: ${point.value} ${meta.unit}`);
@@ -214,12 +238,18 @@
             const eventValue = right.year === event.year
                 ? right.value
                 : left.value + (event.year - left.year) / (right.year - left.year) * (right.value - left.value);
-            add(svg, 'line', {
+            // --p is how far across the chart the event sits (0 to 1); CSS uses it
+            // to delay the fade so the tag appears as the reveal reaches it.
+            const eventGroup = add(svg, 'g', {
+                class: 'chart-event-group',
+                style: `--p:${(eventX / width).toFixed(3)}`
+            });
+            add(eventGroup, 'line', {
                 x1: eventX, x2: eventX, y1: tagY + TAG_HEIGHT, y2: y(eventValue),
                 class: 'chart-event-line'
             });
-            add(svg, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, rx: 3, class: 'chart-event-tag' });
-            add(svg, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);
+            add(eventGroup, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, rx: 3, class: 'chart-event-tag' });
+            add(eventGroup, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);
         });
         plot.replaceChildren(svg);
     }
