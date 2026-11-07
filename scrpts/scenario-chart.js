@@ -8,7 +8,7 @@
 // Animation: the series (areas, lines) sit in a group clipped by a rect
 // that grows left to right (see .chart-reveal in default.css). Event tags fade
 // in as the reveal passes them, using the --p custom property (0 to 1 across
-// the chart width). The 150ms delay and 1400ms duration are set in default.css;
+// the chart width). The delay and duration are set in default.css;
 // keep the two rules there in sync..
 (function () {
     const datasets = window.scenarioChartData || {};

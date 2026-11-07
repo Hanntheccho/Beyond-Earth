@@ -506,6 +506,17 @@ h2 {
     mask: var(--affy-icon) center / contain no-repeat;
 }
 .affy-node--neutrality { border-style: dashed; }
+
+/* soft links: dashes drift toward the center (optional, remove if it feels busy with the rotation) */
+.affy-link--soft { animation: affy-march 6s linear infinite; }
+@keyframes affy-march { to { stroke-dashoffset: 42; } } /* 3 periods of (5 + 9) */
+
+/* hover focus */
+.affy-map-lines .affy-link { transition: opacity var(--transition-time) ease; }
+.affy-map-lines.is-focusing .affy-link:not(.is-related) { opacity: .08; }
+.affy-map-lines.is-focusing .affy-link.is-related { opacity: 1; }
+
+.affy-map { overflow-anchor: none; }
 /* #endregion */
 /* #region tree */
 .treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
@@ -699,7 +710,8 @@ h2 {
     .market-text-val.is-flashing,
     .treemap-tile.is-flashing .treemap-surface,
     .scenario-chart-plot .chart-reveal,
-    .scenario-chart-plot .chart-event-group {
+    .scenario-chart-plot .chart-event-group,
+    .affy-link--soft {
         animation: none !important;
         transition: none !important;
         animation-delay: 0ms !important;
