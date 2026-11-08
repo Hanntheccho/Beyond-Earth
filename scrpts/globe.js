@@ -570,4 +570,8 @@ function main() {
   requestAnimationFrame(frame);
 }
 
-main();
+const start = () => ('requestIdleCallback' in window
+    ? requestIdleCallback(main, { timeout: 2500 })
+    : setTimeout(main, 300));
+if (document.readyState === 'complete') start();
+else window.addEventListener('load', start, { once: true });

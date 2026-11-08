@@ -352,7 +352,8 @@
     }
 
     window.defaultTreemap = { mount };
-    Promise.all(Array.from(document.querySelectorAll('.treemap[data-source]'), loadSource)).then(() => {
-        if (loadedSources) window.valueChanges.start();
-    });
+    const boot = () => Promise.all(Array.from(document.querySelectorAll('.treemap[data-source]'), loadSource))
+        .then(() => { if (loadedSources) window.valueChanges.start(); });
+    if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 1500 });
+    else setTimeout(boot, 300);
 })();
