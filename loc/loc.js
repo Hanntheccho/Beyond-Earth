@@ -4,17 +4,7 @@
  * Loads every localization JSON listed in loc/manifest.json.
  */
 async function fetchLocalization() {
-    const [localization, ph2Keywords, ph3Keywords, ph1Keywords] = await Promise.all([
-        fetchLocalizationFiles(),
-        fetchKeywords('loc/keywords-ph2.json'),
-        fetchKeywords('loc/keywords-ph3.json'),
-        fetchKeywords('loc/keywords-ph1.json')
-    ]);
-
-    const titled = applyDescriptionTitles(localization);
-    const ph3ed = applyKeywordFormatting(titled, ph3Keywords, '.ph3');
-    const ph2ed = applyKeywordFormatting(ph3ed, ph2Keywords, '.ph2');
-    return applyKeywordFormatting(ph2ed, ph1Keywords, '.ph1');
+    return applyDescriptionTitles(await fetchLocalizationFiles());
 }
 
 /** Replace {{title}} in each description with its matching localization title. */
@@ -139,6 +129,44 @@ function applyKeywordFormatting(localization, keywords, tagName) {
     return localization;
 }
 
+const formattedLocalization = new Map();
+
+/** Format one localization string on demand, sharing keyword fetches across callers. */
+function formatLocalizationValue(key) {
+    if (formattedLocalization.has(key)) return formattedLocalization.get(key);
+
+    const value = window.localizationData && window.localizationData[key];
+    if (typeof value !== 'string') return Promise.resolve(value);
+
+    const formatted = Promise.all([
+        fetchKeywords('loc/keywords-ph3.json'),
+        fetchKeywords('loc/keywords-ph2.json'),
+        fetchKeywords('loc/keywords-ph1.json')
+    ]).then(([ph3Keywords, ph2Keywords, ph1Keywords]) => {
+        const localized = { [key]: value };
+        applyKeywordFormatting(localized, ph3Keywords, '.ph3');
+        applyKeywordFormatting(localized, ph2Keywords, '.ph2');
+        applyKeywordFormatting(localized, ph1Keywords, '.ph1');
+        return localized[key];
+    });
+
+    formattedLocalization.set(key, formatted);
+    return formatted;
+}
+
+window.formatLocalizationValue = formatLocalizationValue;
+
+function buildLocalizationElementLookup() {
+    const elementsByClass = new Map();
+    document.querySelectorAll('[class]').forEach(element => {
+        element.classList.forEach(className => {
+            if (!elementsByClass.has(className)) elementsByClass.set(className, []);
+            elementsByClass.get(className).push(element);
+        });
+    });
+    return elementsByClass;
+}
+
 
 /**
  * Loads localization data and updates the page.
@@ -147,25 +175,51 @@ function applyKeywordFormatting(localization, keywords, tagName) {
 async function loadLocalization() {
     try {
         const data = await fetchLocalization();
+        if (window.poisReady) await window.poisReady;
         window.localizationData = data;
 
+        const elementsByClass = buildLocalizationElementLookup();
         Object.entries(data).forEach(([key, value]) => {
-            const elements = document.querySelectorAll(`.${key}`);
+            const elements = elementsByClass.get(key);
+            if (elements) elements.forEach(element => {
+                element.innerHTML = value;
+            });
+        });
 
-            if (elements.length) {
+        const formattedPoiDescriptions = new Set();
+        function formatPoiPanel(button) {
+            const key = `${button.dataset.panelTarget}-desc`;
+            const elements = elementsByClass.get(key);
+            if (!elements || !Object.prototype.hasOwnProperty.call(data, key) ||
+                formattedPoiDescriptions.has(key)) return;
+
+            formattedPoiDescriptions.add(key);
+            formatLocalizationValue(key).then(value => {
                 elements.forEach(element => {
                     element.innerHTML = value;
                 });
-            } else {
-                console.warn(`No element found for key: ${key}`);
-            }
-
-            // Keep localized markup so tooltip descriptions can render basic
-            // formatting such as paragraphs, bold, and italics.
-            document.querySelectorAll(`[data-tooltip="${key}"]`).forEach(element => {
-                element.dataset.tooltip = value;
+            }).catch(error => {
+                formattedPoiDescriptions.delete(key);
+                console.error(`Error formatting localization ${key}:`, error);
             });
+        }
+
+        document.addEventListener('click', event => {
+            const button = event.target.closest &&
+                event.target.closest('[data-panel-target][data-panel-group="lys-pois"]');
+            if (!button) return;
+            formatPoiPanel(button);
         });
+
+        const initialPoiButton = document.querySelector(
+            '[data-panel-target][data-panel-group="lys-pois"][aria-pressed="true"]'
+        );
+        if (initialPoiButton) {
+            window.requestAnimationFrame(() => {
+                const initialPanel = document.getElementById(initialPoiButton.dataset.panelTarget);
+                if (initialPanel && !initialPanel.hidden) formatPoiPanel(initialPoiButton);
+            });
+        }
 
         // Let the title cycle the main description through archived quotes.
         const loadingTips = Object.entries(data)

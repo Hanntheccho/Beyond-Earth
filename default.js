@@ -154,7 +154,14 @@ function localizeTooltipContent(popup) {
     popup.querySelectorAll('[class]').forEach(function(element) {
         const localizationKey = Array.from(element.classList)
             .find(className => Object.prototype.hasOwnProperty.call(window.localizationData, className));
-        if (localizationKey) element.innerHTML = window.localizationData[localizationKey];
+        if (!localizationKey) return;
+
+        element.innerHTML = window.localizationData[localizationKey];
+        window.formatLocalizationValue(localizationKey).then(function(value) {
+            if (element.isConnected) element.innerHTML = value;
+        }).catch(function(error) {
+            console.error('Error formatting tooltip localization:', error);
+        });
     });
 }
 
@@ -188,9 +195,12 @@ function showTooltip(trigger) {
     popup.id = 'tooltip-popup-' + (++tooltipEntryId);
     popup.className = 'tooltip-popup';
     const tooltipValue = trigger.dataset.tooltip || '';
-    popup.innerHTML = window.localizationData &&
+    const localizationKey = window.localizationData &&
         Object.prototype.hasOwnProperty.call(window.localizationData, tooltipValue)
-        ? window.localizationData[tooltipValue]
+        ? tooltipValue
+        : null;
+    popup.innerHTML = localizationKey
+        ? window.localizationData[localizationKey]
         : tooltipValue;
     popup.setAttribute('role', 'tooltip');
     popup.style.zIndex = String(1100 + tooltipEntries.length * 20);
@@ -207,9 +217,25 @@ function showTooltip(trigger) {
     document.body.appendChild(popup);
     trigger.setAttribute('aria-describedby', popup.id);
     tooltipEntries.push(entry);
-    localizeTooltipContent(popup);
     positionTooltip(popup, trigger);
-    popup.querySelectorAll('.has-tooltip').forEach(bindTooltip);
+
+    function finishTooltipContent() {
+        if (!popup.isConnected) return;
+        localizeTooltipContent(popup);
+        popup.querySelectorAll('.has-tooltip').forEach(bindTooltip);
+        positionTooltip(popup, trigger);
+    }
+
+    if (localizationKey) {
+        window.formatLocalizationValue(localizationKey).then(function(value) {
+            if (popup.isConnected) popup.innerHTML = value;
+            finishTooltipContent();
+        }).catch(function(error) {
+            console.error('Error formatting tooltip localization:', error);
+        });
+    } else {
+        finishTooltipContent();
+    }
 }
 
 function bindTooltip(trigger) {
