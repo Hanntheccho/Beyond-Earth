@@ -121,6 +121,7 @@
                 group,
                 name: getLabel(item),
                 lastLines: '',
+                lastLineHeight: null,
                 lastValueText: null,
                 lastChangeText: null
             };
@@ -150,8 +151,7 @@
             tile.rect.setAttribute('width', Math.max(0, w - 4));
             tile.rect.setAttribute('height', Math.max(0, h - 4));
 
-            // Use % of the tile dimensions to leave a margin; label font comes from inherited CSS.
-            const fit = fitLabel(tile.name, valueText, changeText, w * 0.9, h * 0.9);
+            const fit = tile.fit;
             const visibility = fit.size >= 2 ? 'visible' : 'hidden';
             [tile.nameEl, tile.valueEl, tile.changeEl].forEach(element => element.setAttribute('visibility', visibility));
             if (visibility === 'hidden') return;
@@ -171,8 +171,12 @@
                 tile.nameEl.replaceChildren();
                 fit.lines.forEach((line, index) => add(tile.nameEl, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
             } else {
-                tile.nameEl.childNodes.forEach(span => span.setAttribute('x', centerX));
+                tile.nameEl.childNodes.forEach((span, index) => {
+                    span.setAttribute('x', centerX);
+                    if (fit.lineHeight !== tile.lastLineHeight) span.setAttribute('dy', index === 0 ? 0 : fit.lineHeight);
+                });
             }
+            tile.lastLineHeight = fit.lineHeight;
 
             tile.valueEl.setAttribute('x', centerX);
             tile.valueEl.setAttribute('y', valueY);
@@ -265,6 +269,13 @@
                 tile.item = item;
                 tile.from = { ...tile.cur };
                 tile.to = target;
+                tile.fit = fitLabel(
+                    tile.name,
+                    numberFormat.format(target.value),
+                    percentFormat.format(target.pct),
+                    target.w * 0.9,
+                    target.h * 0.9
+                );
                 tile.t0 = performance.now();
                 tile.titleEl.textContent = `${getName(item)} — ${formatValue(item)}${tile.canDrill ? ' · hasChildren' : ''}`;
                 tile.group.setAttribute('aria-label', `${getName(item)}: ${formatValue(item)}${tile.canDrill ? ', open details' : ''}`);
