@@ -300,7 +300,7 @@ function main() {
   const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
 
   const sMax = 140;
-  const sMin = () => 0.44 * Math.min(vw, vh) / DEG_R;
+  const sMin = () => 0.36 * Math.min(vw, vh) / DEG_R;
   const morphT = (s) => {
     const e0 = sMin() * 1.15, e1 = sMin() * 2.6;
     const x = Math.min(1, Math.max(0, (s - e0) / (e1 - e0)));
@@ -516,6 +516,7 @@ function main() {
   });
 
   window.addEventListener('keydown', (ev) => {
+    if (!canvas.classList.contains('is-emphasized')) return;
     if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
     const pan = 60 / view.s;
     let handled = true;

@@ -266,7 +266,7 @@
                 tile.from = { ...tile.cur };
                 tile.to = target;
                 tile.t0 = performance.now();
-                tile.titleEl.textContent = `${getName(item)} — ${formatValue(item)}${tile.canDrill ? ' · Click to expand' : ''}`;
+                tile.titleEl.textContent = `${getName(item)} — ${formatValue(item)}${tile.canDrill ? ' · hasChildren' : ''}`;
                 tile.group.setAttribute('aria-label', `${getName(item)}: ${formatValue(item)}${tile.canDrill ? ', open details' : ''}`);
                 if (setDirection(tile, item)) flashes.push(tile.group);
                 if (!tile.painted) { tile.painted = true; paint(tile); } // avoid an empty first frame

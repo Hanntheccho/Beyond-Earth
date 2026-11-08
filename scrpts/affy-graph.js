@@ -90,7 +90,7 @@
     const placed = [];
     affinities.forEach(affy => {
         const size = 144;
-        const buttonSize = affy.id === 'neutrality' ? 76 : 84;
+        const buttonSize = 84;
         const node = document.createElementNS(svgNS, 'foreignObject');
         node.setAttribute('x', affy.x - size / 2);
         node.setAttribute('y', affy.y - size / 2);

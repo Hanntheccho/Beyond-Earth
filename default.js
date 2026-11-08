@@ -46,6 +46,17 @@ document.addEventListener('click', function(event) {
     });
 });
 
+const mainVisibilityToggle = document.querySelector('.main-visibility-toggle');
+const mainContent = document.getElementById('main-content');
+const globeCanvas = document.getElementById('map');
+mainVisibilityToggle.addEventListener('click', function() {
+    const isExpanded = mainVisibilityToggle.getAttribute('aria-expanded') === 'true';
+    mainContent.hidden = isExpanded;
+    globeCanvas.classList.toggle('is-emphasized', isExpanded);
+    mainVisibilityToggle.setAttribute('aria-expanded', String(!isExpanded));
+    mainVisibilityToggle.textContent = isExpanded ? 'Show content' : 'Hide content';
+});
+
 let tooltipEntries = [];
 let tooltipEntryId = 0;
 let tooltipSwitchTimer;

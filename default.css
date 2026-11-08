@@ -109,6 +109,13 @@ button[aria-pressed="true"] {
     background-color: var(--clr-border);
 }
 
+.main-visibility-toggle {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 1200;
+}
+
 a {
     text-decoration: none;
     color: inherit;
@@ -432,13 +439,8 @@ h2 {
 /* #region glob */
 .globe-preview {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
     isolation: isolate;
-    width: calc(var(--max-width) - 200px);
-    height: calc(var(--max-width) - 200px);
-    margin: 0;
     overflow: hidden;
     z-index: 0;
 }
@@ -454,6 +456,11 @@ h2 {
     touch-action: none;
     opacity: 0.2;
     pointer-events: none;
+    transition: opacity var(--transition-time-400) ease;
+}
+.globe-canvas.is-emphasized {
+    opacity: 1;
+    pointer-events: auto;
 }
 .globe-canvas.dragging { cursor: grabbing; }
 /* #endregion */
@@ -466,9 +473,8 @@ h2 {
     background: radial-gradient(ellipse at center, #ffffff18, transparent 68%);
 }
 .affy-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.affy-link { fill: none; stroke-width: 2; opacity: .8; }
-.affy-link--strong { stroke-width: 2; opacity: .9; }
-.affy-link--soft { stroke-dasharray: 5 9; stroke-width: 2; opacity: .26; }
+.affy-link { fill: none; stroke-width: 2; }
+.affy-link--soft { stroke-dasharray: 5 5; opacity: .26; }
 .affy-node-frame { width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
 .affy-node {
     display: flex;

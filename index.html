@@ -14,13 +14,14 @@
 <body>
     <div class="globe-preview" aria-hidden="true"><canvas id="map" class="globe-canvas" data-view="lon=-30&amp;lat=15" data-update-url="false"></canvas></div>
     <!-- Main -->
-    <div class="market-text"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
     <div class="vfx-halftone" aria-hidden="true"></div>
     <div class="vfx-overlay">
         <div class="vfx-scanline" aria-hidden="true"></div>
         <div class="vfx-vignette" aria-hidden="true"></div>
     </div>
-    <div class="div-main">
+    <button class="main-visibility-toggle" type="button" aria-controls="main-content" aria-expanded="true">Hide content</button>
+    <div class="div-main" id="main-content">
+        <div class="market-text"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
         <div class="title-div" data-panel-group="main" data-panel-target="BE0-panel"><div class="title-loc"><span class="title-txt">Beyond Earth</span><span class="title-ver">HTML v0.0.1</span></div><img src="be-icon-b.svg" class="title-ico"></div>
         <div class="div-submain">
             <div id="BE0-panel" data-panel-group="main" aria-hidden="false">
