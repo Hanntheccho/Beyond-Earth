@@ -310,8 +310,8 @@ function main() {
   let lastFrame = performance.now();
   const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
 
-  const sMax = 140;
-  const sMin = () => 0.36 * Math.min(vw, vh) / DEG_R;
+  const sMax = 20;
+  const sMin = () => 240 / DEG_R;
   const morphT = (s) => {
     const e0 = sMin() * 1.15, e1 = sMin() * 2.6;
     const x = Math.min(1, Math.max(0, (s - e0) / (e1 - e0)));
