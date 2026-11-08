@@ -190,23 +190,25 @@ async function decodeElevation(url) {
     throw new Error(`Could not decode elevation image ${img.src}: ${err.message}`);
   }
   let bmp;
-  try {
-    bmp = await createImageBitmap(img, {
-      premultiplyAlpha: 'none',
-      colorSpaceConversion: 'none',
-    });
-  } catch (_) {
-    // older Safari rejects the options bag; the PNG is fully opaque, so
-    // premultiplication is a no-op and a plain decode is still lossless
-    bmp = await createImageBitmap(img);
+  if (typeof createImageBitmap === 'function') {
+    try {
+      bmp = await createImageBitmap(img, {
+        premultiplyAlpha: 'none',
+        colorSpaceConversion: 'none',
+      });
+    } catch (_) {
+      // Safari versions that reject these options use the canvas fallback.
+    }
   }
-  const W = bmp.width, H = bmp.height;
+  const W = bmp ? bmp.width : img.naturalWidth;
+  const H = bmp ? bmp.height : img.naturalHeight;
+  if (bmp) return { W, H, bmp };
+
   const cnv = typeof OffscreenCanvas !== 'undefined'
     ? new OffscreenCanvas(W, H)
     : Object.assign(document.createElement('canvas'), { width: W, height: H });
   const ctx = cnv.getContext('2d', { willReadFrequently: true });
-  ctx.drawImage(bmp, 0, 0);
-  bmp.close();
+  ctx.drawImage(img, 0, 0);
   const px = ctx.getImageData(0, 0, W, H).data;
   return { W, H, px };
 }
@@ -266,15 +268,23 @@ function main() {
 
   // elevation texture
   const elevTex = gl.createTexture();
-  let data = null; // { W, H, px }
+  let data = null;
   function uploadElevation(d) {
-    data = d;
+    data = { W: d.W, H: d.H };
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, elevTex);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, d.W, d.H, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-      new Uint8Array(d.px.buffer, d.px.byteOffset, d.px.length));
+    if (d.bmp) {
+      try {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, d.bmp);
+      } finally {
+        d.bmp.close();
+      }
+    } else {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, d.W, d.H, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+        new Uint8Array(d.px.buffer, d.px.byteOffset, d.px.length));
+    }
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -288,6 +298,7 @@ function main() {
   const num = (k, d) => (params.has(k) && isFinite(+params.get(k)) ? +params.get(k) : d);
 
   let vw = 0, vh = 0, dpr = 1;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const view = {
     lon: num('lon', 105),
     lat: num('lat', 25),
@@ -296,7 +307,7 @@ function main() {
   let interacted = num('spin', 1) === 0;
   let dirty = true;
   let dataError = false;
-  let lastFrame = 0;
+  let lastFrame = performance.now();
   const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
 
   const sMax = 140;
@@ -319,7 +330,7 @@ function main() {
   }
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     vw = canvas.clientWidth;
     vh = canvas.clientHeight;
     canvas.width = Math.round(vw * dpr);
@@ -396,13 +407,17 @@ function main() {
   let hidden = document.hidden || false;
   document.addEventListener('visibilitychange', () => {
     hidden = document.hidden;
-    if (!hidden) requestAnimationFrame(frame);
+    if (!hidden) {
+      lastFrame = performance.now();
+      requestAnimationFrame(frame);
+    }
   });
 
   function frame(now) {
     if (hidden) return; // pause when tab hidden
     requestAnimationFrame(frame);
-    if (data && !dataError) {
+    if (now - lastFrame < 33) return;
+    if (data && !dataError && !reducedMotion.matches) {
       const dt = (now - lastFrame) / 1000;
       view.lon = wrapLon(view.lon + SPIN_DEG_PER_SEC * dt);
       dirty = true;
@@ -421,6 +436,7 @@ function main() {
     if (dirty) {
       dirty = false;
       draw();
+      if (data) canvas.classList.add('is-loaded');
       scheduleUrlUpdate();
     }
   }

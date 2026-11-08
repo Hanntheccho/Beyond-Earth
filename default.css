@@ -454,9 +454,12 @@ h2 {
     border: 0;
     cursor: grab;
     touch-action: none;
-    opacity: 0.2;
+    opacity: 0;
     pointer-events: none;
-    transition: opacity var(--transition-time-400) ease;
+    transition: opacity 600ms ease;
+}
+.globe-canvas.is-loaded {
+    opacity: 0.2;
 }
 .globe-canvas.is-emphasized {
     opacity: 1;
@@ -710,6 +713,7 @@ h2 {
     body::before,
     body::after,
     .globe-preview,
+    .globe-canvas,
     .div-desc-win,
     .market-text,
     .market-text-line,
