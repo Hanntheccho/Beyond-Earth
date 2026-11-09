@@ -128,6 +128,7 @@
     let clock = 0; // seconds into the step loop
     let last = 0;
     let raf = 0;
+    let inViewport = false;
     let hovered = 0; // nodes currently hovered or focused; the ring rests while > 0
 
     function applyRotation() {
@@ -162,12 +163,25 @@
     }
 
     function start() {
-        if (raf || document.hidden || reducedMotion.matches) return;
+        if (raf || document.hidden || reducedMotion.matches || !inViewport) return;
         last = performance.now();
         raf = requestAnimationFrame(frame);
     }
 
+    function setViewportVisibility(isVisible) {
+        if (inViewport === isVisible) return;
+        inViewport = isVisible;
+        map.classList.toggle('is-inview', inViewport);
+        if (inViewport) {
+            start();
+        } else {
+            cancelAnimationFrame(raf);
+            raf = 0;
+        }
+    }
+
     document.addEventListener('visibilitychange', start);
+    window.viewportVisibility.observe(map, setViewportVisibility);
     reducedMotion.addEventListener('change', () => {
         if (reducedMotion.matches) {
             angle = 0;
@@ -176,7 +190,6 @@
             start();
         }
     });
-    start();
 
     // ------------------------------------------------------------- hover focus
 

@@ -343,19 +343,33 @@
             const useTags = host.dataset.useTags === 'true';
             const root = normalizeNode(rawRoot, useTags);
             let chart;
-            window.valueChanges.registerSource(host.dataset.treemap, root, () => {
-                if (document.hidden) return;
+            let inViewport = false;
+
+            function updateChart() {
+                if (!inViewport || document.hidden) return;
                 const wrapper = host.closest('[data-panel-group]');
                 if (wrapper && wrapper.hidden) return;
-                if (chart) chart.update();
-            });
-            chart = mount(host, {
-                root,
-                rootLabel: root.name,
-                breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
-                status,
-                accessible: true
-            });
+                if (chart) {
+                    chart.update();
+                } else {
+                    chart = mount(host, {
+                        root,
+                        rootLabel: root.name,
+                        breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
+                        status,
+                        accessible: true
+                    });
+                }
+            }
+
+            function setViewportVisibility(isVisible) {
+                const changed = inViewport !== isVisible;
+                inViewport = isVisible;
+                if (inViewport && changed) updateChart();
+            }
+
+            window.viewportVisibility.observe(host, setViewportVisibility);
+            window.valueChanges.registerSource(host.dataset.treemap, root, updateChart);
             loadedSources += 1;
         } catch (error) {
             if (status) status.textContent = `${host.dataset.treemap || 'Treemap'} data could not be loaded. Check ${host.dataset.source}.`;

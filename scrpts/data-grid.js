@@ -20,6 +20,7 @@
         const market = window.valueChanges.getMarket(marketId);
         const rows = new Map();
         let raf = 0;
+        let inViewport = false;
 
         function createRow(item, key) {
             const row = document.createElement('div');
@@ -65,16 +66,30 @@
                 paint(entry);
                 if (progress < 1) active = true;
             });
-            raf = active && !document.hidden ? requestAnimationFrame(step) : 0;
+            raf = active && !document.hidden && inViewport ? requestAnimationFrame(step) : 0;
         }
 
         function startLoop() {
-            if (!raf) raf = requestAnimationFrame(step);
+            if (!raf && inViewport) raf = requestAnimationFrame(step);
         }
 
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && rows.size) startLoop();
+            if (document.hidden || !inViewport) return;
+            render(market.getSnapshot());
         });
+
+        function setViewportVisibility(isVisible) {
+            const changed = inViewport !== isVisible;
+            inViewport = isVisible;
+            if (!inViewport) {
+                cancelAnimationFrame(raf);
+                raf = 0;
+            } else if (changed && !document.hidden) {
+                render(market.getSnapshot());
+            }
+        }
+
+        window.viewportVisibility.observe(host, setViewportVisibility);
 
         function render(current) {
             if (!current.length) return;
@@ -161,6 +176,7 @@
             if (document.hidden) return;
             const wrapper = host.closest('[data-panel-group]');
             if (wrapper && wrapper.hidden) return;
+            if (!inViewport) return;
             render(current);
         });
     }
