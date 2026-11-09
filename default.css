@@ -114,6 +114,17 @@ button[aria-pressed="true"] {
     top: 8px;
     right: 8px;
     z-index: 1200;
+    width: 60px;
+    height: auto;
+    padding: 4px;
+    margin: 0 0;
+    background: var(--clr-border);
+}
+.main-visibility-toggle img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
 }
 
 a {
@@ -216,7 +227,6 @@ h2 {
     background-size: auto, 22px, auto;
     background-repeat: auto, repeat, auto;
     border-bottom: 8px solid var(--clr-border);
-    text-transform: uppercase;
     letter-spacing: 1em;
     color: var(--clr-title);
     font-weight: 900;

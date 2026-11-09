@@ -54,7 +54,7 @@ mainVisibilityToggle.addEventListener('click', function() {
     mainContent.hidden = isExpanded;
     globeCanvas.classList.toggle('is-emphasized', isExpanded);
     mainVisibilityToggle.setAttribute('aria-expanded', String(!isExpanded));
-    mainVisibilityToggle.textContent = isExpanded ? 'Show content' : 'Hide content';
+    mainVisibilityToggle.setAttribute('aria-label', isExpanded ? 'Show content' : 'Hide content');
 });
 
 let tooltipEntries = [];
