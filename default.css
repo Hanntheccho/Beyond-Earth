@@ -729,17 +729,21 @@ h2 {
     z-index: -1000000;
     opacity: 0.2;
     pointer-events: none;
+    overflow: hidden;
 }
 .legacy-list {
-    margin: 0;
-    padding: var(--px-20);
-    height: 36rem;
+    height: 100vh;
     columns: 6;
     column-gap: 36rem;
     column-fill: auto;
     font: var(--fnt-size-data) var(--fnt-monospace);
     color: var(--clr-data);
     white-space: pre;
+    animation: legacy-scroll 40s linear infinite;
+}
+@keyframes legacy-scroll {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-400vh); }
 }
 
 @media (prefers-reduced-motion: reduce) {
