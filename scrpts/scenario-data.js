@@ -26,18 +26,19 @@ window.scenarioSeries = {
 // Add `series: ['seaLevel', 'iceSheet']` to an event or era to limit it to some charts.
 // Events also take an optional `y` (chart pixels): positive moves the tag down,
 // negative moves it up; 0 or omitted keeps it just above the plot.
+// Add positive: true to an event or era to draw it in green instead of red.
 // ---------------------------------------------------------------------------
 window.scenarioConfig = {
     baselineYear: 2070, // the summary grid shows % change since this year
     events: [
         { year: 2070, label: 'The Great Mistake' },
-        { year: 2033, label: 'Nuclear Fusion', y: 100, series: ['worldGDP'] },
-        { year: 2000, label: '2000 Miracle', y: 140, series: ['worldGDP'] },
+        { year: 2033, label: 'Nuclear Fusion', y: 100, series: ['worldGDP'], positive: true },
+        { year: 2000, label: '2000 Miracle', y: 140, series: ['worldGDP'], positive: true },
         { year: 2075, label: 'Nuclear Ashfall', y: 260, series: ['temperature'] }
     ],
     eras: [
         { start: 2070, end: 2100, label: 'Dark Age' },
-        { start: 2000, end: 2070, label: 'Age of Plenty', series: ['worldGDP'] }
+        { start: 2000, end: 2070, label: 'Age of Plenty', series: ['worldGDP'], positive: true }
     ]
 };
 

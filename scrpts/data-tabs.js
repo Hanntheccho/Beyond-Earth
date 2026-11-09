@@ -1,9 +1,9 @@
 (function () {
     const PANEL_GROUP = 'data-categories';
     const categories = [
-        { key: 'gdp', label: 'World GDP' },
-        { key: 'market', label: 'Market' },
-        { key: 'resources', label: 'Resources' }
+        { key: 'gdp', label: ':wrldValues' },
+        { key: 'market', label: ':mrktValues' },
+        { key: 'resources', label: ':rsrcValues' }
     ];
 
     const host = document.querySelector('[data-data-buttons]');

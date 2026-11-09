@@ -1,5 +1,5 @@
 (function () {
-    const revealSelector = '.title-div, .div-desc-win, .legacy-list';
+    const revealSelector = '.div-desc-win';
     const copySelector = 'p, h1, h2, .ph1, .ph2, .ph3';
     const observed = new WeakSet();
     const preparedCopy = new WeakSet();

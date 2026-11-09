@@ -112,12 +112,11 @@ button[aria-pressed="true"] {
 .main-visibility-toggle {
     position: fixed;
     top: 8px;
-    right: 8px;
+    left: 8px;
     z-index: 1200;
     width: 60px;
     height: auto;
     padding: 4px;
-    margin: 0 0;
     background: var(--clr-border);
 }
 .main-visibility-toggle img {
@@ -378,7 +377,7 @@ h2 {
     will-change: transform;
 }
 
-/* #region GFXS */
+/* #region gfx */
 /* #region mitk */
 .scenario-chart-plot {
     position: relative;
@@ -413,12 +412,12 @@ h2 {
 .scenario-chart-plot .chart-era-label { text-anchor: middle; }
 .scenario-chart-plot .chart-grid-line { stroke: #383838; stroke-width: 1; }
 .scenario-chart-plot .chart-year-tick { stroke: #888; stroke-width: 1; }
-.scenario-chart-plot .chart-event-line { stroke: #ff3333; stroke-width: 1.5; stroke-dasharray: 4 4; }
-.scenario-chart-plot .chart-event-tag { fill: #2a1111; stroke: #ff3333; stroke-width: 0.8; }
-.scenario-chart-plot .chart-era-band { fill: #d84a4a; fill-opacity: 0.09; }
-.scenario-chart-plot .chart-era-boundary { stroke: #ba7777; stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.75; }
+.scenario-chart-plot .chart-event-line { stroke: var(--clr-negative); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.scenario-chart-plot .chart-event-tag { fill: color-mix(in srgb, var(--clr-negative) 20%, black); stroke: var(--clr-negative); stroke-width: 0.8; }
+.scenario-chart-plot .chart-era-band { fill: var(--clr-negative); fill-opacity: 0.09; }
+.scenario-chart-plot .chart-era-boundary { stroke: var(--clr-negative); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.75; }
 .scenario-chart-plot text.chart-era-label {
-    fill: #f0c1c162;
+    fill: color-mix(in srgb, var(--clr-negative) 80%, rgba(255, 255, 255, 0));;
     text-transform: uppercase;
 }
 .scenario-chart-plot .chart-series-area {
@@ -458,6 +457,12 @@ h2 {
 }
 @keyframes chart-reveal { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes chart-fade   { from { opacity: 0; } to { opacity: 1; } }
+
+.scenario-chart-plot .chart-era-band.chart-positive { fill: var(--clr-positive); }
+.scenario-chart-plot .chart-era-boundary.chart-positive { stroke: var(--clr-positive); }
+.scenario-chart-plot text.chart-era-label.chart-positive { fill: color-mix(in srgb, var(--clr-positive) 80%, rgba(255, 255, 255, 0)); }
+.scenario-chart-plot .chart-event-group.chart-positive .chart-event-line { stroke: var(--clr-positive); }
+.scenario-chart-plot .chart-event-group.chart-positive .chart-event-tag { fill: color-mix(in srgb, var(--clr-positive) 20%, black); stroke: var(--clr-positive); }
 /* #endregion */
 /* #region glob */
 .globe-preview {
@@ -501,6 +506,9 @@ h2 {
 .affy-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .affy-link { fill: none; stroke-width: 2; }
 .affy-link--soft { stroke-dasharray: 5 5; opacity: .26; }
+.affy-link--soft[data-to="purity"],
+.affy-link--soft[data-to="supremacy"],
+.affy-link--soft[data-to="harmony"] { opacity: 1; }
 .affy-node-frame { width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
 .affy-node {
     display: flex;
@@ -671,28 +679,7 @@ h2 {
 /* #endregion */
 /* #endregion */
 
-.legacy-list_div {
-    margin: var(--px-20);
-    padding: var(--px-20);
-}
-.legacy-list {
-    margin: 40px;
-    margin-top: var(--px-20);
-    height: 36rem;
-    overflow: auto;
-    white-space: pre;
-    columns: 3;
-    column-gap: 36rem;
-    column-fill: auto;
-    scrollbar-color: var(--scrollbar-color);
-    scrollbar-width: var(--scrollbar-width);
-    font: var(--fnt-size-data) var(--fnt-monospace);
-    color: var(--clr-data);
-    content-visibility: auto;
-    contain-intrinsic-size: auto 576px;
-}
-
-/* vfx */
+/* region vfx */
 .vfx-overlay,
 .vfx-scanline,
 .vfx-vignette,
@@ -730,6 +717,29 @@ h2 {
     background-image: radial-gradient(circle, white 1.1px, transparent 1.3px);
     background-size: 5px 5px;
     opacity: 0.05;
+}
+/* endregion */
+
+.legacy-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    z-index: -1000000;
+    opacity: 0.2;
+    pointer-events: none;
+}
+.legacy-list {
+    margin: 0;
+    padding: var(--px-20);
+    height: 36rem;
+    columns: 6;
+    column-gap: 36rem;
+    column-fill: auto;
+    font: var(--fnt-size-data) var(--fnt-monospace);
+    color: var(--clr-data);
+    white-space: pre;
 }
 
 @media (prefers-reduced-motion: reduce) {

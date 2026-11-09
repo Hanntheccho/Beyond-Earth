@@ -19,7 +19,7 @@
     // 60 degrees maps the hexagon onto itself, so every stop lands exactly on a vertex.
     const STEP_ANGLE = 360 / 6;
     const MOVE_TIME = 0.8; // seconds spent turning between vertices
-    const HOLD_TIME = 2.2; // seconds resting on each vertex
+    const HOLD_TIME = 4.4; // seconds resting on each vertex
     const CYCLE_TIME = MOVE_TIME + HOLD_TIME;
     const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 

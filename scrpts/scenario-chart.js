@@ -5,6 +5,9 @@
 // index.html only needs an empty <div class="div-desc-win grid" data-scenario-buttons></div>;
 // the panels are inserted right after it.
 //
+// Events and eras are drawn in red by default. Add `positive: true` to one in
+// scenarioConfig to draw it in green instead (the .chart-positive class).
+//
 // Animation: the series (areas, lines) sit in a group clipped by a rect
 // that grows left to right (see .chart-reveal in default.css). Event tags fade
 // in as the reveal passes them, using the --p custom property (0 to 1 across
@@ -126,6 +129,8 @@
             const direction = negativeTrend ? -change : change;
             return direction > 0 ? 'chart-trend-good' : direction < 0 ? 'chart-trend-bad' : 'chart-trend-flat';
         };
+        // Appends the green variant class when an event or era has `positive: true`.
+        const positiveClass = item => (item.positive ? ' chart-positive' : '');
         const firstYear = sorted[0].year;
         const lastYear = sorted[sorted.length - 1].year;
         const svg = document.createElementNS(svgNS, 'svg');
@@ -142,7 +147,7 @@
             const eraEnd = Math.min(era.end, lastYear);
             add(svg, 'rect', {
                 x: x(eraStart), y: margin.top, width: x(eraEnd) - x(eraStart),
-                height: innerHeight, class: 'chart-era-band'
+                height: innerHeight, class: `chart-era-band${positiveClass(era)}`
             });
         });
 
@@ -176,12 +181,13 @@
         eras.forEach(era => {
             if (!(era.start >= firstYear && era.end <= lastYear)) return;
             add(svg, 'text', {
-                x: (x(era.start) + x(era.end)) / 2, y: margin.top + 16, class: 'chart-era-label'
+                x: (x(era.start) + x(era.end)) / 2, y: margin.top + 16,
+                class: `chart-era-label${positiveClass(era)}`
             }, era.label || '');
             [era.start, era.end].forEach(year => {
                 add(svg, 'line', {
                     x1: x(year), x2: x(year), y1: margin.top, y2: height - margin.bottom,
-                    class: 'chart-era-boundary'
+                    class: `chart-era-boundary${positiveClass(era)}`
                 });
             });
         });
@@ -212,10 +218,23 @@
                 class: `chart-series-line ${trendClass}`
             });
         }
+        sorted.forEach((point, index) => {
+            const { x: px, y: py } = coordinates[index];
+            const segmentIndex = index === 0 ? 1 : index;
+            const previous = sorted[segmentIndex - 1];
+            const current = sorted[segmentIndex];
+            const pointTrendClass = previous && current
+                ? trendClassForChange(current.value - previous.value)
+                : 'chart-trend-flat';
+            const dot = add(series, 'circle', {
+                cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
+            });
+            add(dot, 'title', {}, `${point.year}: ${point.value} ${meta.unit}`);
+        });
         events.forEach(event => {
             const label = String(event.label || '');
             const eventX = x(event.year);
-            const tagWidth = Math.max(56, label.length * 6.6 + 16);
+            const tagWidth = Math.max(56, label.length * 6.6 + 6);
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
             // Default tag sits just above the plot; `y` shifts it down (positive) or up (negative).
             const tagY = margin.top - TAG_HEIGHT + (Number.isFinite(event.y) ? event.y : 0);
@@ -228,14 +247,14 @@
             // --p is how far across the chart the event sits (0 to 1); CSS uses it
             // to delay the fade so the tag appears as the reveal reaches it.
             const eventGroup = add(svg, 'g', {
-                class: 'chart-event-group',
+                class: `chart-event-group${positiveClass(event)}`,
                 style: `--p:${(eventX / width).toFixed(3)}`
             });
             add(eventGroup, 'line', {
                 x1: eventX, x2: eventX, y1: tagY + TAG_HEIGHT, y2: y(eventValue),
                 class: 'chart-event-line'
             });
-            add(eventGroup, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, rx: 3, class: 'chart-event-tag' });
+            add(eventGroup, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, class: 'chart-event-tag' });
             add(eventGroup, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);
         });
         plot.replaceChildren(svg);
