@@ -3,7 +3,6 @@
     --clr02: #afafaf;
     --clr-body: #ececec;
     --clr-body-background: #0f0f0f;
-    --clr-title: #000000c5;
     --clr-border: #8b8b8b31;
     --clr-h1: #ffffff; /* unused */
     --clr-h2: #ffffff;
@@ -111,7 +110,7 @@ button[aria-pressed="true"] {
 .main-visibility-toggle {
     position: fixed;
     top: 8px;
-    left: 8px;
+    right: 8px;
     z-index: 1200;
     width: 60px;
     height: auto;
@@ -200,9 +199,10 @@ h2 {
 }
 
 .div-main {
+    isolation: isolate;
     position: relative;
     z-index: 1;
-    padding-bottom: 40px;
+    padding: 40px 0 40px;
     max-width: var(--max-width);
     margin: 0 auto;
     box-shadow: 0 0 600px #000000b0, 0 0 600px #000000b0;
@@ -210,45 +210,40 @@ h2 {
     box-sizing: border-box;
 }
 .div-submain {
+    position: relative;
+    z-index: 1;
     max-width: 100%;
     margin: 0 auto;
 }
 
 .title-div {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    box-sizing: border-box;
     display: flex;
-    align-items: center;
-    background-image:
-        linear-gradient(to left, var(--clr01) 10px, transparent 20%, transparent),
-        url('be-icon-b-o10.svg'),
-        linear-gradient(to top, var(--clr01), var(--clr02));
-    background-position: 0 0, 20px 16px, 0 0;
-    background-size: auto, 22px, auto;
-    background-repeat: auto, repeat, auto;
-    border-bottom: 8px solid var(--clr-border);
-    letter-spacing: 1em;
-    color: var(--clr-title);
+    align-items: flex-start;
+    margin: 0;
+    padding: 12px 12px;
+    border: 0;
+    isolation: isolate;
+    color: var(--clr-h1);
+    font-size: 40px;
     font-weight: 900;
+    letter-spacing: 0.2em;
     line-height: 1;
-    margin-top: 1px;
-    padding-left: 12px;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    cursor: pointer;
+    pointer-events: none;
 }
-.title-loc {
-    display: flex;
-    flex-direction: column;
-}
-.title-txt {
-    font-size: 30px;
-}
-.title-ver {
-    font-size: 14px;
-}
-.title-ico {
-    margin-left: auto;
-    height: 60px;
-    opacity: 0.2;
+.title-div::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('be-icon-w.svg') center / 36px repeat;
+    content: "";
+    opacity: 0.1;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 10%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 10%);
+    pointer-events: none;
 }
 
 .div-desc-win {
@@ -326,11 +321,11 @@ h2 {
     z-index: 1;
 }
 .tooltip-popup {
-    position: fixed;
+    position: absolute;
     z-index: 1100;
     box-sizing: border-box;
     width: max-content;
-    max-width: 500px;
+    max-width: min(500px, calc(100vw - 16px));
     overflow: auto;
     padding: 18px 26px;
     border: var(--border);

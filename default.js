@@ -144,8 +144,8 @@ function positionTooltip(popup, trigger) {
 
     left = Math.max(padding, Math.min(left, viewportWidth - popupBounds.width - padding));
 
-    popup.style.left = left + 'px';
-    popup.style.top = top + 'px';
+    popup.style.left = (left + window.scrollX) + 'px';
+    popup.style.top = (top + window.scrollY) + 'px';
 }
 
 function localizeTooltipContent(popup) {
@@ -289,19 +289,6 @@ const tooltipObserver = new MutationObserver(function(mutations) {
 });
 
 tooltipObserver.observe(document.body, { childList: true, subtree: true });
-
-let repositionScheduled = false;
-function repositionOpenTooltips() {
-    if (repositionScheduled) return;
-    repositionScheduled = true;
-    window.requestAnimationFrame(function () {
-        tooltipEntries.forEach(entry => positionTooltip(entry.popup, entry.trigger));
-        repositionScheduled = false;
-    });
-}
-
-window.addEventListener('resize', repositionOpenTooltips);
-window.addEventListener('scroll', repositionOpenTooltips, { passive: true });
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
