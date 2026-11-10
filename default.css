@@ -86,10 +86,9 @@ button {
     text-transform: uppercase;
     text-align: center;
     box-shadow: none;
-    background: none;
+    background-color: var(--clr-background);
     font-family: var(--fnt);
     margin: 4px;
-    margin-right: 2px;
     padding: 4px 8px;
     font-size: var(--fnt-size-bttn);
     color: var(--clr-b);
@@ -117,7 +116,7 @@ button[aria-pressed="true"] {
     width: 60px;
     height: auto;
     padding: 4px;
-    background: var(--clr-border);
+    background: var(--clr-background);
 }
 .main-visibility-toggle img {
     display: block;
@@ -273,7 +272,7 @@ h2 {
     padding: 0;
 }
 
-/* region scrl */
+/* #region scrl */
 .scroll-reveal-ready .scroll-reveal {
     opacity: 0;
     transform: translateY(14px);
@@ -293,7 +292,7 @@ h2 {
     transform: translateY(0);
     transition-delay: calc(var(--copy-order, 0) * 45ms);
 }
-/* endregion */
+/* #endregion */
 
 .div-desc {
     margin: var(--px-20);
@@ -516,18 +515,18 @@ h2 {
     align-items: center;
     justify-content: center;
     gap: 3px;
-    width: var(--affy-node-size, 84px);
-    height: var(--affy-node-size, 84px);
+    width: var(--affy-node-size, 74px);
+    height: var(--affy-node-size, 74px);
     padding: 4px;
     border: 2px solid var(--affy-color);
-    border-radius: 50%;
-    color: var(--affy-color);
-    background: #161616;
+    border-bottom-width: 4px;
     box-shadow: 0 0 1em color-mix(in srgb, var(--affy-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affy-color), transparent 90%);
     transition: border var(--transition-time) ease;
     z-index: 2;
 }
-.affy-node:hover, .affy-node:focus-visible { border: 8px solid var(--affy-color); }
+.affy-node:hover, .affy-node:focus-visible {
+    border-width: 8px;
+}
 .affy-node > span { font-size: 34px; line-height: 1; text-shadow: 0 0 0.4em color-mix(in srgb, var(--affy-color), transparent 60%); }
 .affy-node > .affy-icon {
     display: block;
@@ -545,7 +544,6 @@ h2 {
     -webkit-mask: var(--affy-icon) center / contain no-repeat;
     mask: var(--affy-icon) center / contain no-repeat;
 }
-.affy-node--neutrality { border-style: dashed; }
 
 /* soft links: dashes drift toward the center (optional, remove if it feels busy with the rotation) */
 .affy-link--soft { animation: affy-march 6s linear infinite; }
@@ -679,7 +677,7 @@ h2 {
 /* #endregion */
 /* #endregion */
 
-/* region vfx */
+/* #region vfx */
 .vfx-overlay,
 .vfx-scanline,
 .vfx-vignette,
@@ -718,7 +716,7 @@ h2 {
     background-size: 5px 5px;
     opacity: 0.05;
 }
-/* endregion */
+/* #endregion */
 
 .legacy-bg {
     position: fixed;
@@ -736,6 +734,7 @@ h2 {
     columns: 6;
     column-gap: 36rem;
     column-fill: auto;
+    margin-block: 0;
     font: var(--fnt-size-data) var(--fnt-monospace);
     color: var(--clr-data);
     white-space: pre;
