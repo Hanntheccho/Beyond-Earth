@@ -194,9 +194,10 @@
     // ------------------------------------------------------------- hover focus
 
     // Hovering or focusing a node holds the rotation (so the node and its tooltip
-    // stay put) and dims every link that does not touch it.
+    // stay put) and dims links and nodes that are not connected to it.
     const links = svg.querySelectorAll('.affy-link');
-    svg.querySelectorAll('.affy-node').forEach(node => {
+    const nodes = svg.querySelectorAll('.affy-node');
+    nodes.forEach(node => {
         const id = node.dataset.affy;
         const enter = () => {
             hovered++;
@@ -204,12 +205,22 @@
             links.forEach(link => {
                 link.classList.toggle('is-related', link.dataset.from === id || link.dataset.to === id);
             });
+            const relatedNodeIds = new Set();
+            links.forEach(link => {
+                if (!link.classList.contains('is-related')) return;
+                relatedNodeIds.add(link.dataset.from);
+                relatedNodeIds.add(link.dataset.to);
+            });
+            nodes.forEach(affyNode => {
+                affyNode.classList.toggle('is-related', relatedNodeIds.has(affyNode.dataset.affy));
+            });
         };
         const leave = () => {
             hovered = Math.max(0, hovered - 1);
             if (hovered) return;
             svg.classList.remove('is-focusing');
             links.forEach(link => link.classList.remove('is-related'));
+            nodes.forEach(affyNode => affyNode.classList.remove('is-related'));
             start();
         };
         node.addEventListener('pointerenter', enter);

@@ -521,7 +521,7 @@ h2 {
     border: 2px solid var(--affy-color);
     border-bottom-width: 4px;
     box-shadow: 0 0 1em color-mix(in srgb, var(--affy-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affy-color), transparent 90%);
-    transition: border var(--transition-time) ease;
+    transition: border var(--transition-time) ease, opacity var(--transition-time) ease;
     z-index: 2;
 }
 .affy-node:hover, .affy-node:focus-visible {
@@ -554,6 +554,7 @@ h2 {
 .affy-map-lines .affy-link { transition: opacity var(--transition-time) ease; }
 .affy-map-lines.is-focusing .affy-link:not(.is-related) { opacity: .08; }
 .affy-map-lines.is-focusing .affy-link.is-related { opacity: 1; }
+.affy-map-lines.is-focusing .affy-node:not(.is-related) { opacity: .08; }
 
 .affy-map { overflow-anchor: none; }
 /* #endregion */
