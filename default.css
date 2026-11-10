@@ -41,6 +41,7 @@
     --fnt-size-bttn: 12px;
     --fnt-size-data: 10px;
     --px-20: 20px;
+    --btn-size: 74px;
 }
 
 body {
@@ -112,9 +113,9 @@ button[aria-pressed="true"] {
     top: 8px;
     right: 8px;
     z-index: 1200;
-    width: 60px;
-    height: auto;
-    padding: 4px;
+    width: var(--btn-size);
+    height: var(--btn-size);
+    padding: 6px;
     background: var(--clr-background);
 }
 .main-visibility-toggle img {
@@ -127,14 +128,6 @@ button[aria-pressed="true"] {
 a {
     text-decoration: none;
     color: inherit;
-}
-
-b {
-
-}
-
-i {
-
 }
 
 cite {
@@ -202,7 +195,7 @@ h2 {
     isolation: isolate;
     position: relative;
     z-index: 1;
-    padding: 40px 0 40px;
+    padding: 1px 0 40px;
     max-width: var(--max-width);
     margin: 0 auto;
     box-shadow: 0 0 600px #000000b0, 0 0 600px #000000b0;
@@ -227,10 +220,10 @@ h2 {
     padding: 12px 12px;
     border: 0;
     isolation: isolate;
-    color: var(--clr-h1);
-    font-size: 40px;
+    color: var(--clr-data);
+    font-size: 30px;
     font-weight: 900;
-    letter-spacing: 0.2em;
+    letter-spacing: .6em;
     line-height: 1;
     pointer-events: none;
 }
@@ -241,8 +234,14 @@ h2 {
     background: url('be-icon-w.svg') center / 36px repeat;
     content: "";
     opacity: 0.1;
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 10%);
-    mask-image: linear-gradient(to bottom, #000 0%, transparent 10%);
+    -webkit-mask-image:
+        linear-gradient(to bottom, #000 0%, transparent 10%),
+        linear-gradient(to right, #000 0%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to bottom, #000 0%, transparent 10%),
+        linear-gradient(to right, #000 0%, transparent 100%);
+    mask-composite: intersect;
     pointer-events: none;
 }
 
@@ -510,8 +509,8 @@ h2 {
     align-items: center;
     justify-content: center;
     gap: 3px;
-    width: var(--affy-node-size, 74px);
-    height: var(--affy-node-size, 74px);
+    width: var(--btn-size);
+    height: var(--btn-size);
     padding: 4px;
     border: 2px solid var(--affy-color);
     border-bottom-width: 4px;

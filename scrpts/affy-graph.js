@@ -90,7 +90,6 @@
     const placed = [];
     affinities.forEach(affy => {
         const size = 144;
-        const buttonSize = 74;
         const node = document.createElementNS(svgNS, 'foreignObject');
         node.setAttribute('x', affy.x - size / 2);
         node.setAttribute('y', affy.y - size / 2);
@@ -106,7 +105,6 @@
         button.dataset.affy = affy.id;
         button.setAttribute('aria-label', affy.name);
         button.style.setProperty('--affy-color', affy.color);
-        button.style.setProperty('--affy-node-size', `${buttonSize}px`);
 
         const icon = document.createElement('span');
         icon.className = 'affy-icon';
