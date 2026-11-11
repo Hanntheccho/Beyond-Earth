@@ -207,15 +207,15 @@ h2 {
     inset: 0;
     z-index: 0;
     box-sizing: border-box;
-    background: url('be-icon-w.svg') center / 36px repeat;
+    background: url('be-icon-w.svg') center / 62px repeat;
     content: "";
     opacity: 0.1;
     -webkit-mask-image:
-        linear-gradient(to bottom, #000 40px, transparent 260px),
+        linear-gradient(to bottom, #000 40px, transparent 320px),
         linear-gradient(to right, #000 120px, transparent 100%);
     -webkit-mask-composite: source-in;
     mask-image:
-        linear-gradient(to bottom, #000 40px, transparent 260px),
+        linear-gradient(to bottom, #000 40px, transparent 320px),
         linear-gradient(to right, #000 120px, transparent 100%);
     mask-composite: intersect;
     pointer-events: none;
