@@ -211,12 +211,12 @@ h2 {
     content: "";
     opacity: 0.1;
     -webkit-mask-image:
-        linear-gradient(to bottom, #000 0%, transparent 160px),
-        linear-gradient(to right, #000 0%, transparent 100%);
+        linear-gradient(to bottom, #000 60px, transparent 180px),
+        linear-gradient(to right, #000 60px, transparent 100%);
     -webkit-mask-composite: source-in;
     mask-image:
-        linear-gradient(to bottom, #000 0%, transparent 160px),
-        linear-gradient(to right, #000 0%, transparent 100%);
+        linear-gradient(to bottom, #000 60px, transparent 180px),
+        linear-gradient(to right, #000 60px, transparent 100%);
     mask-composite: intersect;
     pointer-events: none;
 }
