@@ -34,12 +34,12 @@
     --scrollbar-width: thin;
     --fnt: 'Archivo', sans-serif;
     --fnt-monospace: 'Source Code Pro', monospace;
-    --fnt-size-h1: 20px;
-    --fnt-size-h2: 18px;
-    --fnt-size-h3: 16px;
+    --fnt-size-h1: calc(var(--fnt-size-text) + 6px);
+    --fnt-size-h2: calc(var(--fnt-size-text) + 4px);
+    --fnt-size-h3: calc(var(--fnt-size-text) + 2px);
     --fnt-size-text: 14px;
-    --fnt-size-bttn: 12px;
-    --fnt-size-data: 10px;
+    --fnt-size-bttn: calc(var(--fnt-size-text) - 2px);
+    --fnt-size-data: calc(var(--fnt-size-text) - 4px);
     --px-20: 20px;
     --btn-size: 74px;
 }
@@ -91,12 +91,12 @@ button {
     margin: 4px;
     padding: 4px 8px;
     font-size: var(--fnt-size-bttn);
-    color: var(--clr-b);
+    color: var(--clr-data);
     letter-spacing: var(--letter-spacing-02);
     text-indent: var(--letter-spacing-02);
     border: 2px solid;
     border-bottom-width: 4px;
-    border-image: linear-gradient(to top, var(--clr-i), var(--clr-p)) 1;
+    border-color: var(--clr-border);
     transition: transform var(--transition-time) ease;
     font-weight: bold;
 }
@@ -104,8 +104,9 @@ button:hover {
     transform: translateY(-3px);
 }
 button[aria-pressed="true"] {
-    border-image: linear-gradient(to top, var(--clr-b), var(--clr-i)) 1;
+    border-color: var(--clr-b);
     background-color: var(--clr-border);
+    color: var(--clr-b);
 }
 
 .main-visibility-toggle {
@@ -207,16 +208,18 @@ h2 {
     inset: 0;
     z-index: 0;
     box-sizing: border-box;
-    background: url('be-icon-w.svg') center / 62px repeat;
+    background: url('be-icon-w.svg') center / 40px repeat;
     content: "";
-    opacity: 0.1;
+    opacity: 0.6;
     -webkit-mask-image:
-        linear-gradient(to bottom, #000 40px, transparent 320px),
-        linear-gradient(to right, #000 120px, transparent 100%);
+        linear-gradient(to bottom, #000 0, transparent calc(var(--max-width) / 2 )),
+        linear-gradient(to right, #000 0, transparent 100%),
+        linear-gradient(to left, #000 0, transparent 100%);
     -webkit-mask-composite: source-in;
     mask-image:
-        linear-gradient(to bottom, #000 40px, transparent 320px),
-        linear-gradient(to right, #000 120px, transparent 100%);
+        linear-gradient(to bottom, #000 0, transparent calc(var(--max-width) / 2 )),
+        linear-gradient(to right, #000 0, transparent 100%),
+        linear-gradient(to left, #000 0, transparent 100%);
     mask-composite: intersect;
     pointer-events: none;
 }
@@ -227,7 +230,7 @@ h2 {
     margin-bottom: -20px;
     padding: 12px 20px;
     color: var(--clr-h1);
-    font-size: 30px;
+    font-size: calc(var(--fnt-size-h1) + 10px);
     font-weight: 900;
     letter-spacing: var(--letter-spacing-02);
     cursor: pointer;
@@ -238,17 +241,14 @@ h2 {
     left: 0;
     z-index: 2;
     width: 100vw;
-    text-overflow: hidden;
-    margin: 0;
-    padding: 12px;
-    border: 0;
     color: var(--clr-h1);
     opacity: 0.08;
     font-family: var(--fnt-monospace);
     font-size: 64px;
     font-weight: bold;
     letter-spacing: .6em;
-    line-height: 1;
+    line-height: 0;
+    margin: 32px 10px;
     pointer-events: none;
 }
 .div-submain {
