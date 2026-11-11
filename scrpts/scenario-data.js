@@ -32,14 +32,14 @@ window.scenarioConfig = {
     baselineYear: 2070, // the summary grid shows % change since this year
     events: [
         { year: 2070, label: 'The Great Mistake' },
-        { year: 2000, label: '2000 Miracle', y: 140, series: ['worldGDP'] },
-        { year: 2033, label: 'Nuclear Fusion', y: 100, series: ['worldGDP'] },
+        { year: 2000, label: '2000 Miracle', y: 180, series: ['worldGDP'] },
+        { year: 2033, label: 'Nuclear Fusion', y: 140, series: ['worldGDP'] },
         { year: 2074, label: 'Satellites Fall', y: 100, series: ['worldGDP'] },
         { year: 2075, label: 'Nuclear Ashfall', y: 260, series: ['temperature'] },
         { year: 2084, label: 'Siege of Washington', y: 310, series: ['worldGDP', 'population'] },
-        { year: 2088, label: 'Hamburg Flood', y: 80, series: ['seaLevel', 'population'] },
+        { year: 2088, label: 'Hamburg Flood', y: 140, series: ['seaLevel', 'population'] },
         { year: 2089, label: 'INTEGR Founded', y: 100, series: ['ecobalance'] },
-        { year: 2090, label: 'Antarctic Collapse', y: 190, series: ['iceVolume', 'seaLevel'] },
+        { year: 2090, label: 'Antarctic Collapse', y: 210, series: ['iceVolume', 'seaLevel'] },
         { year: 2107, label: 'Swiss Plebiscite', y: 160, series: ['worldGDP'] },
         { year: 2170, label: 'War of Unification', y: 180, series: ['worldGDP', 'population'] },
         { year: 2194, label: 'Green Soil', y: 60, series: ['ecobalance'] },
@@ -47,7 +47,7 @@ window.scenarioConfig = {
     ],
     eras: [
         { start: 2070, end: 2100, label: 'Dark Age', series: ['temperature', 'ecobalance', 'population', 'worldGDP'] },
-        { start: 2080, end: 2160, label: 'Drowning Century', series: ['seaLevel', 'iceVolume'] },
+        { start: 2080, end: 2160, label: 'Ice Sheet Collapse', series: ['seaLevel', 'iceVolume'] },
         { start: 2100, end: 2200, label: 'Reconstruction Era', series: ['worldGDP', 'ecobalance'], positive: true },
         { start: 2000, end: 2070, label: 'Age of Plenty', series: ['worldGDP'], positive: true }
     ]
@@ -196,8 +196,8 @@ window.scenarioChartData = {
         { year: 2000, value: 5.6 },
         { year: 2010, value: 3.8 },
         { year: 2020, value: 5.2 },
-        { year: 2033, value: 8.2 },
-        { year: 2050, value: 10.4 },
+        { year: 2033, value: 10.2 },
+        { year: 2050, value: 11.4 },
         { year: 2060, value: 8.2 },
         { year: 2069, value: 9.4 },
         { year: 2070, value: -35.0 },
@@ -209,13 +209,14 @@ window.scenarioChartData = {
         { year: 2100, value: 2.0 },
         { year: 2107, value: 3.4 },
         { year: 2120, value: 2.5 },
-        { year: 2130, value: 2.2 },
-        { year: 2150, value: 2.8 },
+        { year: 2130, value: 3.0 },
+        { year: 2140, value: 4.8 },
+        { year: 2150, value: 2.2 },
         { year: 2160, value: 3.6 },
-        { year: 2170, value: 1.1 },
+        { year: 2170, value: 0.1 },
         { year: 2180, value: 2.6 },
-        { year: 2185, value: 3.0 },
-        { year: 2200, value: 3.3 }
+        { year: 2185, value: 2.1 },
+        { year: 2200, value: 3.9 }
     ]
 };
 
