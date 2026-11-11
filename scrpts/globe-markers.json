@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sample-hotspot",
+    "label": "Sample hotspot",
+    "icon": "../be-icon-w.svg",
+    "lon": -30,
+    "lat": 15,
+    "altitudeKm": 100,
+    "size": 34,
+    "info": "Example marker. Replace its icon, coordinates, altitude, size, and information with your own hotspot."
+  },
+  {
+    "id": "sample-hotspot2",
+    "label": "Sample hotspot 2",
+    "icon": "../gfx/FRA/coa.svg",
+    "lon": 0,
+    "lat": 43,
+    "altitudeKm": 100,
+    "size": 34,
+    "info": "Example marker. Replace its icon, coordinates, altitude, size, and information with your own hotspot."
+  }
+]

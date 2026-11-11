@@ -20,7 +20,10 @@
         <div class="vfx-scanline" aria-hidden="true"></div>
         <div class="vfx-vignette" aria-hidden="true"></div>
     </div>
-    <div class="globe-preview" aria-hidden="true"><canvas id="map" class="globe-canvas" data-view="lon=-30&amp;lat=15" data-update-url="false"></canvas></div>
+    <div class="globe-preview" role="group" aria-label="Interactive globe">
+        <canvas id="map" class="globe-canvas" data-view="lon=-30&amp;lat=15" data-update-url="false" aria-hidden="true"></canvas>
+        <div id="globe-markers" class="globe-marker-layer" role="group" aria-label="Globe hotspots" aria-hidden="true" inert></div>
+    </div>
     <button class="main-visibility-toggle" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true" aria-pressed="true"><img src="be-icon-w.svg" alt=""></button>
     <div class="legacy-bg" aria-hidden="true">
         <pre id="beLegacy01" class="legacy-list"></pre>

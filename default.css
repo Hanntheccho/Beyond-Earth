@@ -501,6 +501,91 @@ h2 {
     pointer-events: auto;
 }
 .globe-canvas.dragging { cursor: grabbing; }
+.globe-marker-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 600ms ease;
+}
+.globe-canvas.is-loaded + .globe-marker-layer { opacity: 0.2; }
+.globe-canvas.is-emphasized + .globe-marker-layer { opacity: 1; }
+.globe-marker {
+    position: absolute;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: var(--marker-size);
+    height: var(--marker-size);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    text-transform: none;
+    letter-spacing: normal;
+    text-indent: 0;
+    opacity: var(--marker-opacity, 1);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+.globe-marker[hidden] { display: none; }
+.globe-marker-layer.is-emphasized .globe-marker { pointer-events: auto; }
+.globe-marker img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px #000);
+}
+.globe-marker:hover { transform: translate(-50%, -50%) scale(1.12); }
+.globe-marker:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+.globe-marker-info {
+    position: absolute;
+    z-index: 4;
+    width: min(280px, calc(100vw - 32px));
+    box-sizing: border-box;
+    padding: 14px 36px 12px 14px;
+    border: 1px solid #ffffff80;
+    border-left: 4px solid #fff;
+    background: #101010ed;
+    color: var(--clr-body);
+    box-shadow: 0 0 16px #000a;
+    transform: translate(-50%, -100%);
+    pointer-events: auto;
+}
+.globe-marker-info h2 {
+    margin: 0 0 8px;
+    font-size: var(--fnt-size-h3);
+}
+.globe-marker-info p {
+    max-height: 36vh;
+    overflow: auto;
+    margin: 0;
+    white-space: pre-wrap;
+}
+.globe-marker-info-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--clr-body);
+    box-shadow: none;
+    font-size: 20px;
+    line-height: 1;
+    text-indent: 0;
+}
 /* #endregion */
 /* #region affy */
 .affy-map {

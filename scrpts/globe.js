@@ -13,6 +13,7 @@
 'use strict';
 
 const DEG_R = 57.29577951308232; // 180/pi: globe radius = scale(px/deg) * DEG_R
+const EARTH_RADIUS_KM = 6371;
 const SEA_LEVEL = 50;
 
 // ---------------------------------------------------------------- shaders
@@ -217,6 +218,11 @@ async function decodeElevation(url) {
 
 function main() {
   const canvas = document.getElementById('map');
+  const markerLayer = document.getElementById('globe-markers');
+  if (!markerLayer) {
+    console.error('The globe marker layer is missing; markers cannot be displayed.');
+    return;
+  }
   const gl = canvas.getContext('webgl2', {
     antialias: true,
     depth: true,
@@ -296,6 +302,28 @@ function main() {
 
   const params = new URLSearchParams(canvas.dataset.view || location.search);
   const num = (k, d) => (params.has(k) && isFinite(+params.get(k)) ? +params.get(k) : d);
+
+  const markerInfo = document.createElement('section');
+  markerInfo.className = 'globe-marker-info';
+  markerInfo.id = 'globe-marker-info';
+  markerInfo.setAttribute('role', 'dialog');
+  markerInfo.setAttribute('aria-modal', 'false');
+  markerInfo.setAttribute('aria-labelledby', 'globe-marker-info-title');
+  markerInfo.hidden = true;
+  const markerInfoClose = document.createElement('button');
+  markerInfoClose.className = 'globe-marker-info-close';
+  markerInfoClose.type = 'button';
+  markerInfoClose.setAttribute('aria-label', 'Close hotspot information');
+  markerInfoClose.textContent = '\u00d7';
+  const markerInfoTitle = document.createElement('h2');
+  markerInfoTitle.id = 'globe-marker-info-title';
+  const markerInfoText = document.createElement('p');
+  markerInfo.append(markerInfoClose, markerInfoTitle, markerInfoText);
+  markerLayer.append(markerInfo);
+  markerInfoClose.addEventListener('click', () => closeMarkerInfo(true));
+
+  const markerInstances = [];
+  let selectedMarker = null;
 
   let vw = 0, vh = 0, dpr = 1;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -398,6 +426,151 @@ function main() {
       gl.uniform1f(mesh.u.uAlpha, k === 0 ? 1 : 1 - t);
       gl.drawElements(gl.TRIANGLES, MESH_COUNT, gl.UNSIGNED_INT, 0);
     }
+    renderMarkers(t, halfW);
+  }
+
+  function closeMarkerInfo(returnFocus = false) {
+    if (!selectedMarker) return;
+    const button = selectedMarker.button;
+    button.setAttribute('aria-expanded', 'false');
+    selectedMarker = null;
+    markerInfo.hidden = true;
+    if (returnFocus && !markerLayer.inert) button.focus();
+  }
+
+  function openMarkerInfo(entry, button, copy) {
+    if (selectedMarker && selectedMarker.button === button) {
+      closeMarkerInfo();
+      return;
+    }
+    closeMarkerInfo();
+    selectedMarker = { entry, button, copy };
+    interacted = true;
+    zoomAnim = null;
+    button.setAttribute('aria-expanded', 'true');
+    markerInfoTitle.textContent = entry.label;
+    markerInfoText.textContent = entry.info;
+    markerInfo.hidden = false;
+    canvas.dispatchEvent(new CustomEvent('globe-marker-select', {
+      detail: { ...entry },
+    }));
+    dirty = true;
+  }
+
+  function createMarkerButton(entry, copy) {
+    const button = document.createElement('button');
+    button.className = 'globe-marker';
+    button.type = 'button';
+    button.hidden = true;
+    button.style.setProperty('--marker-size', `${entry.size}px`);
+    button.setAttribute('aria-label', `Show hotspot information: ${entry.label}`);
+    button.setAttribute('aria-controls', markerInfo.id);
+    button.setAttribute('aria-expanded', 'false');
+    button.title = entry.label;
+    const image = document.createElement('img');
+    image.src = new URL(entry.icon, import.meta.url);
+    image.alt = '';
+    image.draggable = false;
+    image.addEventListener('error', () => {
+      console.error(`Could not load globe marker icon for "${entry.id}": ${image.src}`);
+    }, { once: true });
+    button.append(image);
+    button.addEventListener('click', () => openMarkerInfo(entry, button, copy));
+    markerLayer.append(button);
+    return button;
+  }
+
+  function addMarkers(definitions) {
+    if (!Array.isArray(definitions)) {
+      throw new TypeError('Globe marker JSON must contain an array.');
+    }
+    const ids = new Set();
+    definitions.forEach((marker, index) => {
+      if (!marker || typeof marker.id !== 'string' || !marker.id
+        || ids.has(marker.id)
+        || typeof marker.label !== 'string' || !marker.label
+        || typeof marker.icon !== 'string' || !marker.icon
+        || typeof marker.info !== 'string'
+        || !Number.isFinite(marker.lon) || marker.lon < -180 || marker.lon > 180
+        || !Number.isFinite(marker.lat) || marker.lat < -90 || marker.lat > 90
+        || !Number.isFinite(marker.altitudeKm) || marker.altitudeKm < 0 || marker.altitudeKm > 100000
+        || !Number.isFinite(marker.size) || marker.size <= 0 || marker.size > 256) {
+        throw new TypeError(`Invalid globe marker at JSON index ${index}.`);
+      }
+      ids.add(marker.id);
+      const entry = { ...marker };
+      const copies = [];
+      for (let copy = -3; copy <= 3; copy++) {
+        copies.push({ copy, button: createMarkerButton(entry, copy) });
+      }
+      markerInstances.push({ entry, copies });
+    });
+    dirty = true;
+  }
+
+  function renderMarkers(t, halfW) {
+    let selectedPosition = null;
+    const phi0 = view.lat / DEG_R;
+    const cosPhi0 = Math.cos(phi0), sinPhi0 = Math.sin(phi0);
+    const globeRadius = view.s * DEG_R;
+
+    markerInstances.forEach(({ entry, copies }) => {
+      const phi = entry.lat / DEG_R;
+      const cosPhi = Math.cos(phi), sinPhi = Math.sin(phi);
+      const radialScale = 1 + entry.altitudeKm / EARTH_RADIUS_KM;
+      const visibleHorizon = -Math.sqrt(Math.max(0, 1 - 1 / (radialScale * radialScale)));
+
+      copies.forEach(({ copy, button }) => {
+        const dlon = entry.lon + copy * 360 - view.lon;
+        const lam = dlon / DEG_R;
+        const px = cosPhi * Math.sin(lam);
+        const py = sinPhi;
+        const pz = cosPhi * Math.cos(lam);
+        const y2 = py * cosPhi0 - pz * sinPhi0;
+        const z2 = py * sinPhi0 + pz * cosPhi0;
+        const flatX = dlon * view.s;
+        const flatY = (entry.lat - view.lat) * view.s;
+        const globeX = px * globeRadius * radialScale;
+        const globeY = y2 * globeRadius * radialScale;
+        const x = vw / 2 + flatX * (1 - t) + globeX * t;
+        const y = vh / 2 - (flatY * (1 - t) + globeY * t);
+        const mapLeft = copy * 360 - 180 - view.lon;
+        const mapRight = copy * 360 + 180 - view.lon;
+        const mapCopyVisible = !(mapRight < -halfW || mapLeft > halfW);
+        const backVisibility = Math.min(1, Math.max(0,
+          (z2 - visibleHorizon + 0.025) / 0.05));
+        const visibility = 1 - t * (1 - backVisibility);
+        const copyAlpha = copy === 0 ? 1 : 1 - t;
+        const visible = mapCopyVisible && (copy === 0 || t <= 0.95)
+          && visibility > 0.01
+          && x > -entry.size && x < vw + entry.size
+          && y > -entry.size && y < vh + entry.size;
+
+        button.hidden = !visible;
+        if (!visible) return;
+        button.style.left = `${x.toFixed(2)}px`;
+        button.style.top = `${y.toFixed(2)}px`;
+        button.style.opacity = String(copyAlpha * visibility);
+        if (selectedMarker && selectedMarker.button === button) {
+          selectedPosition = { x, y, size: entry.size };
+        }
+      });
+    });
+
+    if (selectedMarker) {
+      if (!selectedPosition) {
+        closeMarkerInfo();
+      } else {
+        const panelWidth = markerInfo.offsetWidth || Math.min(280, vw - 24);
+        const panelHeight = markerInfo.offsetHeight || 120;
+        const halfPanel = panelWidth / 2;
+        const x = Math.max(halfPanel + 12, Math.min(vw - halfPanel - 12, selectedPosition.x));
+        const y = Math.min(vh - 12, Math.max(panelHeight + 12,
+          selectedPosition.y - selectedPosition.size / 2 - 10));
+        markerInfo.style.left = `${x}px`;
+        markerInfo.style.top = `${y}px`;
+      }
+    }
   }
 
   // ---------------------------------------------------------- animation
@@ -482,6 +655,7 @@ function main() {
   let pinchDist = 0;
 
   canvas.addEventListener('pointerdown', (ev) => {
+    if (!markerLayer.contains(ev.target)) closeMarkerInfo();
     interacted = true;
     try { canvas.setPointerCapture(ev.pointerId); } catch (_) { /* synthetic events */ }
     pointers.set(ev.pointerId, [ev.clientX, ev.clientY]);
@@ -534,6 +708,11 @@ function main() {
   window.addEventListener('keydown', (ev) => {
     if (!canvas.classList.contains('is-emphasized')) return;
     if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
+    if (ev.key === 'Escape' && selectedMarker) {
+      closeMarkerInfo(true);
+      ev.preventDefault();
+      return;
+    }
     const pan = 60 / view.s;
     let handled = true;
     if (ev.key === '+' || ev.key === '=') zoomAt(vw / 2, vh / 2, 1.35);
@@ -569,6 +748,17 @@ function main() {
   }
 
   // ------------------------------------------------------------ terrain load
+  (async () => {
+    try {
+      const { default: markers } = await import('./globe-markers.json', {
+        with: { type: 'json' },
+      });
+      addMarkers(markers);
+    } catch (err) {
+      console.error('Failed to load globe marker data.', err);
+    }
+  })();
+
   (async () => {
     try {
       uploadElevation(await decodeElevation('elev-1080.png'));
