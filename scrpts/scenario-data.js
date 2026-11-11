@@ -23,7 +23,7 @@ window.scenarioSeries = {
 };
 
 // ---------------------------------------------------------------------------
-// Add `series: ['seaLevel', 'iceSheet']` to an event or era to limit it to some charts.
+// Add `series: ['seaLevel', 'iceVolume']` to an event or era to limit it to some charts.
 // Events also take an optional `y` (chart pixels): positive moves the tag down,
 // negative moves it up; 0 or omitted keeps it just above the plot.
 // Add positive: true to an event or era to draw it in green instead of red.
@@ -32,9 +32,18 @@ window.scenarioConfig = {
     baselineYear: 2070, // the summary grid shows % change since this year
     events: [
         { year: 2070, label: 'The Great Mistake' },
-        { year: 2033, label: 'Nuclear Fusion', y: 100, series: ['worldGDP'], positive: true },
-        { year: 2000, label: '2000 Miracle', y: 140, series: ['worldGDP'], positive: true },
-        { year: 2075, label: 'Nuclear Ashfall', y: 260, series: ['temperature'] }
+        { year: 2000, label: '2000 Miracle', y: 140, series: ['worldGDP'] },
+        { year: 2033, label: 'Nuclear Fusion', y: 100, series: ['worldGDP'] },
+        { year: 2074, label: 'Satellites Fall', y: 60, series: ['worldGDP'] },
+        { year: 2075, label: 'Nuclear Ashfall', y: 260, series: ['temperature'] },
+        { year: 2084, label: 'Siege of Washington', y: 180, series: ['worldGDP', 'population'] },
+        { year: 2088, label: 'Hamburg Flood', y: 40, series: ['seaLevel', 'population'] },
+        { year: 2089, label: 'INTEGR Founded', y: 100, series: ['ecobalance'] },
+        { year: 2090, label: 'Antarctic Collapse', y: 40, series: ['iceVolume', 'seaLevel'] },
+        { year: 2107, label: 'Swiss Plebiscite', y: 80, series: ['worldGDP'] },
+        { year: 2170, label: 'War of Unification', y: 80, series: ['worldGDP', 'population'] },
+        { year: 2194, label: 'Green Soil', y: 60, series: ['ecobalance'] },
+        { year: 2198, label: "Coup of '98", y: 140, series: ['population'] }
     ],
     eras: [
         { start: 2070, end: 2100, label: 'Dark Age' },

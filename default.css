@@ -104,7 +104,7 @@ button:hover {
     transform: translateY(-3px);
 }
 button[aria-pressed="true"] {
-    border-color: var(--clr-b);
+    border-color: var(--clr-p);
     background-color: var(--clr-border);
     color: var(--clr-b);
 }
@@ -240,7 +240,7 @@ h2 {
     top: 0;
     left: 0;
     z-index: 2;
-    width: 100vw;
+    width: 100%;
     color: var(--clr-h1);
     opacity: 0.08;
     font-family: var(--fnt-monospace);
@@ -248,8 +248,9 @@ h2 {
     font-weight: bold;
     letter-spacing: .6em;
     line-height: 0;
-    margin: 32px 10px;
+    margin: 0 10px;
     pointer-events: none;
+    line-height: 1em;
 }
 .div-submain {
     position: relative;

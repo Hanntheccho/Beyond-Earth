@@ -287,15 +287,16 @@
 
             if (breadcrumbs) {
                 breadcrumbs.replaceChildren();
-                const addCrumb = (name, onClick) => {
+                const addCrumb = (name, onClick, pressed) => {
                     const button = document.createElement('button');
                     button.type = 'button'; button.textContent = name;
+                    button.setAttribute('aria-pressed', String(pressed));
                     button.addEventListener('click', onClick); breadcrumbs.appendChild(button);
                 };
-                addCrumb(options.rootLabel || 'World', () => { path = []; render(); });
+                addCrumb(options.rootLabel || 'World', () => { path = []; render(); }, path.length === 0);
                 path.forEach((entry, index) => {
                     const separator = document.createElement('span'); separator.textContent = ' | '; separator.setAttribute('aria-hidden', 'true'); breadcrumbs.appendChild(separator);
-                    addCrumb(getName(entry.node), () => { path = path.slice(0, index + 1); render(); });
+                    addCrumb(getName(entry.node), () => { path = path.slice(0, index + 1); render(); }, index === path.length - 1);
                 });
             }
             if (status) {
