@@ -16,7 +16,7 @@ document.addEventListener('click', loadMusic, { once: true });
 document.addEventListener('mouseover', loadMusic, { once: true });
 
 document.body.addEventListener('click', function(event) {
-    const btn = event.target.closest && event.target.closest('button, .title-div, .treemap-tile.has-children');
+    const btn = event.target.closest && event.target.closest('button, .treemap-tile.has-children');
     if (!btn) return;
     loadMusic();
     try {

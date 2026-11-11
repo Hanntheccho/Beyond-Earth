@@ -195,54 +195,67 @@ h2 {
     isolation: isolate;
     position: relative;
     z-index: 1;
-    padding: 1px 0 40px;
+    padding-bottom: 40px;
     max-width: var(--max-width);
     margin: 0 auto;
     box-shadow: 0 0 600px #000000b0, 0 0 600px #000000b0;
     min-height: 100vh;
     box-sizing: border-box;
 }
+.div-main::before {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    box-sizing: border-box;
+    background: url('be-icon-w.svg') center / 36px repeat;
+    content: "";
+    opacity: 0.1;
+    -webkit-mask-image:
+        linear-gradient(to bottom, #000 0%, transparent 160px),
+        linear-gradient(to right, #000 0%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to bottom, #000 0%, transparent 160px),
+        linear-gradient(to right, #000 0%, transparent 100%);
+    mask-composite: intersect;
+    pointer-events: none;
+}
+.main-title {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    margin-bottom: -20px;
+    padding: 12px 20px;
+    color: var(--clr-h1);
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: var(--letter-spacing-02);
+    cursor: pointer;
+}
+.back-title {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100vw;
+    text-overflow: hidden;
+    margin: 0;
+    padding: 12px;
+    border: 0;
+    color: var(--clr-h1);
+    opacity: 0.08;
+    font-family: var(--fnt-monospace);
+    font-size: 64px;
+    font-weight: bold;
+    letter-spacing: .6em;
+    line-height: 1;
+    pointer-events: none;
+}
 .div-submain {
     position: relative;
     z-index: 1;
     max-width: 100%;
     margin: 0 auto;
-}
-
-.title-div {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    box-sizing: border-box;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    padding: 12px 12px;
-    border: 0;
-    isolation: isolate;
-    color: var(--clr-data);
-    font-size: 30px;
-    font-weight: 900;
-    letter-spacing: .6em;
-    line-height: 1;
-    pointer-events: none;
-}
-.title-div::before {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: url('be-icon-w.svg') center / 36px repeat;
-    content: "";
-    opacity: 0.1;
-    -webkit-mask-image:
-        linear-gradient(to bottom, #000 0%, transparent 10%),
-        linear-gradient(to right, #000 0%, transparent 100%);
-    -webkit-mask-composite: source-in;
-    mask-image:
-        linear-gradient(to bottom, #000 0%, transparent 10%),
-        linear-gradient(to right, #000 0%, transparent 100%);
-    mask-composite: intersect;
-    pointer-events: none;
 }
 
 .div-desc-win {

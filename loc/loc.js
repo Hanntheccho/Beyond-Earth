@@ -226,7 +226,7 @@ async function loadLocalization() {
             .filter(([key, value]) => key.startsWith('LOADING_TIP_') && typeof value === 'string' && value.length > 0)
             .map(([, value]) => value);
         const description = document.querySelector('.BE0-desc');
-        const title = document.querySelector('.title-div');
+        const title = document.querySelector('.main-title');
         if (description && title && loadingTips.length > 0 && !title.dataset.loadingTipsBound) {
             const initialIndex = Math.floor(Math.random() * loadingTips.length);
             description.dataset.loadingTipIndex = '' + initialIndex;
