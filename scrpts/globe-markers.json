@@ -6,7 +6,7 @@
     "lat": 30,
     "lon": 70,
     "altitudeKm": 300,
-    "size": 44
+    "size": 50
   },
   {
     "id": "poiMIT",
@@ -24,7 +24,7 @@
     "lat": 44,
     "lon": 5,
     "altitudeKm": 100,
-    "size": 16
+    "size": 20
   },
   {
     "id": "poi002",
@@ -33,7 +33,7 @@
     "lat": 51,
     "lon": 2,
     "altitudeKm": 100,
-    "size": 16
+    "size": 20
   },
   {
     "id": "poi003",
@@ -42,7 +42,16 @@
     "lat": 47,
     "lon": 8,
     "altitudeKm": 4000,
-    "size": 24
+    "size": 30
+  },
+  {
+    "id": "poi004",
+    "label": "Great Pacific Garbage Patch",
+    "icon": "../gfx/GPGP.svg",
+    "lat": 25,
+    "lon": -140,
+    "altitudeKm": 10,
+    "size": 120
   },
   {
     "id": "poiFRA",
@@ -51,16 +60,16 @@
     "lat": 43,
     "lon": 0,
     "altitudeKm": 200,
-    "size": 32
+    "size": 40
   },
   {
     "id": "poiGER",
     "label": "INTEGR",
     "icon": "../gfx/GER.svg",
-    "lat": 53,
-    "lon": 12,
+    "lat": 54,
+    "lon": 18,
     "altitudeKm": 200,
-    "size": 34
+    "size": 40
   },
   {
     "id": "poiNSA",
@@ -69,16 +78,16 @@
     "lat": 62,
     "lon": -7,
     "altitudeKm": 200,
-    "size": 34
+    "size": 40
   },
   {
     "id": "poiNAU",
     "label": "North American Union",
-    "icon": "../be-icon-w.svg",
+    "icon": "../gfx/NAU.svg",
     "lat": 39,
     "lon": -112,
     "altitudeKm": 400,
-    "size": 54
+    "size": 100
   },
   {
     "id": "poiARC",
@@ -87,7 +96,7 @@
     "lat": 41,
     "lon": -74,
     "altitudeKm": 300,
-    "size": 34
+    "size": 60
   },
   {
     "id": "poiBRA",
@@ -96,25 +105,25 @@
     "lat": -20,
     "lon": -51,
     "altitudeKm": 200,
-    "size": 34
+    "size": 50
   },
   {
     "id": "poiSLA",
     "label": "Slavic Federation",
-    "icon": "../be-icon-w.svg",
-    "lat": 54,
-    "lon": 37,
+    "icon": "../gfx/SLA.svg",
+    "lat": 56,
+    "lon": 39,
     "altitudeKm": 300,
-    "size": 34
+    "size": 50
   },
   {
     "id": "poiIND",
     "label": "Pact of Hyderabad",
-    "icon": "../be-icon-w.svg",
-    "lat": 27,
-    "lon": 77,
+    "icon": "../gfx/IND.svg",
+    "lat": 24,
+    "lon": 79,
     "altitudeKm": 300,
-    "size": 34
+    "size": 40
   },
   {
     "id": "poiCHI",
@@ -123,16 +132,16 @@
     "lat": 35,
     "lon": 109,
     "altitudeKm": 400,
-    "size": 44
+    "size": 100
   },
   {
     "id": "poiPAU",
     "label": "People's African Union",
-    "icon": "../be-icon-w.svg",
+    "icon": "../gfx/PAU.svg",
     "lat": -6,
     "lon": 37,
     "altitudeKm": 400,
-    "size": 54
+    "size": 60
   },
   {
     "id": "poiANC",
@@ -141,15 +150,15 @@
     "lat": -12,
     "lon": -75,
     "altitudeKm": 300,
-    "size": 44
+    "size": 50
   },
   {
     "id": "poiPLY",
     "label": "Polystralia",
-    "icon": "../be-icon-w.svg",
+    "icon": "../gfx/PLY.svg",
     "lat": -6,
     "lon": 127,
     "altitudeKm": 300,
-    "size": 44
+    "size": 50
   }
 ]
