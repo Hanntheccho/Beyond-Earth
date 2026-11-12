@@ -1,0 +1,9 @@
+    "poiLYS": "Lyscore",
+
+    "poiALF": "Al-Falah",
+
+    "poiKIL": "Kimpwanza League",
+
+    "poiEGY": "United Arab Alliance",
+
+    "poiMLI": "Bamako Compact",

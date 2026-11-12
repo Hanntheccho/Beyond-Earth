@@ -200,8 +200,10 @@ h2 {
     max-width: var(--max-width);
     margin: 0 auto;
     box-shadow: 0 0 600px #000000b0, 0 0 600px #000000b0;
-    min-height: 100vh;
     box-sizing: border-box;
+    max-height: 100vh;
+    overflow-y: scroll;
+    scrollbar-width: none;
 }
 .div-main::before {
     position: absolute;
@@ -396,7 +398,7 @@ h2 {
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background-image: url('gfx/text_icons/mit.svg');
+    background-image: url('gfx/mit.svg');
     background-position: center;
     background-size: auto 60%;
     background-repeat: no-repeat;
@@ -534,58 +536,55 @@ h2 {
 }
 .globe-marker[hidden] { display: none; }
 .globe-marker-layer.is-emphasized .globe-marker { pointer-events: auto; }
+.globe-marker::after {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    width: max-content;
+    padding: 5px 8px;
+    border: 1px solid var(--clr-border);
+    background: var(--clr-background);
+    color: var(--clr-b);
+    content: attr(data-label);
+    text-align: center;
+    text-indent: var(--letter-spacing-02);
+    white-space: normal;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 3px);
+    transition: opacity 120ms ease, transform 120ms ease;
+    font: var(--fnt-size-bttn) var(--fnt);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-02);
+    font-weight: bold;
+}
+.globe-marker:hover::after,
+.globe-marker:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
 .globe-marker img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 5px #000);
+    filter: drop-shadow(0 0 10px #000);
 }
-.globe-marker:hover { transform: translate(-50%, -50%) scale(1.12); }
-.globe-marker:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 3px;
-}
-.globe-marker-info {
+.globe-marker:hover { transform: translate(-50%, -50%); }
+.globe-coordinates {
     position: absolute;
-    z-index: 4;
-    width: min(280px, calc(100vw - 32px));
-    box-sizing: border-box;
-    padding: 14px 36px 12px 14px;
-    border: 1px solid #ffffff80;
-    border-left: 4px solid #fff;
-    background: #101010ed;
-    color: var(--clr-body);
-    box-shadow: 0 0 16px #000a;
-    transform: translate(-50%, -100%);
-    pointer-events: auto;
+    bottom: 16px;
+    left: 16px;
+    z-index: 3;
+    padding: 6px 9px;
+    border: 1px solid var(--clr-border);
+    background: var(--clr-background);
+    color: var(--clr-b);
+    font: var(--fnt-size-bttn) var(--fnt);
+    letter-spacing: var(--letter-spacing-02);
+    pointer-events: none;
 }
-.globe-marker-info h2 {
-    margin: 0 0 8px;
-    font-size: var(--fnt-size-h3);
-}
-.globe-marker-info p {
-    max-height: 36vh;
-    overflow: auto;
-    margin: 0;
-    white-space: pre-wrap;
-}
-.globe-marker-info-close {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 28px;
-    height: 28px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--clr-body);
-    box-shadow: none;
-    font-size: 20px;
-    line-height: 1;
-    text-indent: 0;
-}
+.globe-coordinates[hidden] { display: none; }
 /* #endregion */
 /* #region affy */
 .affy-map {

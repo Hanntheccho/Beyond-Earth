@@ -1,22 +1,155 @@
 [
   {
-    "id": "sample-hotspot",
-    "label": "Sample hotspot",
+    "id": "poiBE0",
+    "label": "The Great Mistake",
     "icon": "../be-icon-w.svg",
-    "lon": -30,
-    "lat": 15,
-    "altitudeKm": 100,
-    "size": 34,
-    "info": "Example marker. Replace its icon, coordinates, altitude, size, and information with your own hotspot."
+    "lat": 30,
+    "lon": 70,
+    "altitudeKm": 300,
+    "size": 44
   },
   {
-    "id": "sample-hotspot2",
-    "label": "Sample hotspot 2",
-    "icon": "../gfx/FRA/coa.svg",
-    "lon": 0,
-    "lat": 43,
+    "id": "poiMIT",
+    "label": "Müninstek",
+    "icon": "../gfx/mit.svg",
+    "lat": 49,
+    "lon": 12,
     "altitudeKm": 100,
-    "size": 34,
-    "info": "Example marker. Replace its icon, coordinates, altitude, size, and information with your own hotspot."
+    "size": 24
+  },
+  {
+    "id": "poi001",
+    "label": "State of the Church",
+    "icon": "../be-icon-w.svg",
+    "lat": 44,
+    "lon": 5,
+    "altitudeKm": 100,
+    "size": 14
+  },
+  {
+    "id": "poi002",
+    "label": "Third Millennium Eurotunnel",
+    "icon": "../gfx/III.svg",
+    "lat": 51,
+    "lon": 2,
+    "altitudeKm": 100,
+    "size": 18
+  },
+  {
+    "id": "poi003",
+    "label": "WCRB-Lua Colony",
+    "icon": "../gfx/WCRB.svg",
+    "lat": 47,
+    "lon": 8,
+    "altitudeKm": 4000,
+    "size": 24
+  },
+  {
+    "id": "poiFRA",
+    "label": "Franco-Iberia",
+    "icon": "../gfx/FRA.svg",
+    "lat": 43,
+    "lon": 0,
+    "altitudeKm": 200,
+    "size": 32
+  },
+  {
+    "id": "poiGER",
+    "label": "INTEGR",
+    "icon": "../gfx/GER.svg",
+    "lat": 53,
+    "lon": 12,
+    "altitudeKm": 200,
+    "size": 34
+  },
+  {
+    "id": "poiNSA",
+    "label": "North Sea Alliance",
+    "icon": "../be-icon-w.svg",
+    "lat": 62,
+    "lon": -7,
+    "altitudeKm": 200,
+    "size": 34
+  },
+  {
+    "id": "poiNAU",
+    "label": "North American Union",
+    "icon": "../be-icon-w.svg",
+    "lat": 39,
+    "lon": -112,
+    "altitudeKm": 400,
+    "size": 54
+  },
+  {
+    "id": "poiARC",
+    "label": "American Reclamation Corporation",
+    "icon": "../gfx/ARC.svg",
+    "lat": 41,
+    "lon": -74,
+    "altitudeKm": 300,
+    "size": 34
+  },
+  {
+    "id": "poiBRA",
+    "label": "Brasilia",
+    "icon": "../be-icon-w.svg",
+    "lat": -20,
+    "lon": -51,
+    "altitudeKm": 200,
+    "size": 34
+  },
+  {
+    "id": "poiSLA",
+    "label": "Slavic Federation",
+    "icon": "../be-icon-w.svg",
+    "lat": 54,
+    "lon": 37,
+    "altitudeKm": 300,
+    "size": 34
+  },
+  {
+    "id": "poiIND",
+    "label": "Pact of Hyderabad",
+    "icon": "../be-icon-w.svg",
+    "lat": 27,
+    "lon": 77,
+    "altitudeKm": 300,
+    "size": 34
+  },
+  {
+    "id": "poiCHI",
+    "label": "Pan-Asian Cooperative",
+    "icon": "../be-icon-w.svg",
+    "lat": 35,
+    "lon": 109,
+    "altitudeKm": 400,
+    "size": 44
+  },
+  {
+    "id": "poiPAU",
+    "label": "People's African Union",
+    "icon": "../be-icon-w.svg",
+    "lat": -6,
+    "lon": 37,
+    "altitudeKm": 400,
+    "size": 54
+  },
+  {
+    "id": "poiANC",
+    "label": "Andean Compact",
+    "icon": "../be-icon-w.svg",
+    "lat": -12,
+    "lon": -75,
+    "altitudeKm": 300,
+    "size": 44
+  },
+  {
+    "id": "poiPLY",
+    "label": "Polystralia",
+    "icon": "../be-icon-w.svg",
+    "lat": -6,
+    "lon": 127,
+    "altitudeKm": 300,
+    "size": 44
   }
 ]

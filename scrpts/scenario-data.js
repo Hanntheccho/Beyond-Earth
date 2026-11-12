@@ -32,17 +32,17 @@ window.scenarioConfig = {
     baselineYear: 2070, // the summary grid shows % change since this year
     events: [
         { year: 2070, label: 'The Great Mistake' },
-        { year: 2000, label: '2000 Miracle', y: 180, series: ['worldGDP'] },
-        { year: 2033, label: 'Nuclear Fusion', y: 140, series: ['worldGDP'] },
+        { year: 2000, label: '2000 Miracle', y: 180, series: ['worldGDP'], positive: true },
+        { year: 2033, label: 'Nuclear Fusion', y: 140, series: ['worldGDP'], positive: true },
         { year: 2074, label: 'Satellites Fall', y: 100, series: ['worldGDP'] },
         { year: 2075, label: 'Nuclear Ashfall', y: 260, series: ['temperature'] },
         { year: 2084, label: 'Siege of Washington', y: 310, series: ['worldGDP', 'population'] },
         { year: 2088, label: 'Hamburg Flood', y: 140, series: ['seaLevel', 'population'] },
-        { year: 2089, label: 'INTEGR Founded', y: 100, series: ['ecobalance'] },
+        { year: 2089, label: 'INTEGR Founded', y: 100, series: ['ecobalance'], positive: true },
         { year: 2090, label: 'Antarctic Collapse', y: 210, series: ['iceVolume', 'seaLevel'] },
-        { year: 2107, label: 'Swiss Plebiscite', y: 160, series: ['worldGDP'] },
+        { year: 2107, label: 'Swiss Plebiscite', y: 160, series: ['worldGDP'], positive: true },
         { year: 2170, label: 'War of Unification', y: 180, series: ['worldGDP', 'population'] },
-        { year: 2194, label: 'Green Soil', y: 60, series: ['ecobalance'] },
+        { year: 2194, label: 'Green Soil', y: 60, series: ['ecobalance'], positive: true },
         { year: 2198, label: "Coup of '98", y: 140, series: ['population'] }
     ],
     eras: [

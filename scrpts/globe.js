@@ -303,27 +303,13 @@ function main() {
   const params = new URLSearchParams(canvas.dataset.view || location.search);
   const num = (k, d) => (params.has(k) && isFinite(+params.get(k)) ? +params.get(k) : d);
 
-  const markerInfo = document.createElement('section');
-  markerInfo.className = 'globe-marker-info';
-  markerInfo.id = 'globe-marker-info';
-  markerInfo.setAttribute('role', 'dialog');
-  markerInfo.setAttribute('aria-modal', 'false');
-  markerInfo.setAttribute('aria-labelledby', 'globe-marker-info-title');
-  markerInfo.hidden = true;
-  const markerInfoClose = document.createElement('button');
-  markerInfoClose.className = 'globe-marker-info-close';
-  markerInfoClose.type = 'button';
-  markerInfoClose.setAttribute('aria-label', 'Close hotspot information');
-  markerInfoClose.textContent = '\u00d7';
-  const markerInfoTitle = document.createElement('h2');
-  markerInfoTitle.id = 'globe-marker-info-title';
-  const markerInfoText = document.createElement('p');
-  markerInfo.append(markerInfoClose, markerInfoTitle, markerInfoText);
-  markerLayer.append(markerInfo);
-  markerInfoClose.addEventListener('click', () => closeMarkerInfo(true));
-
   const markerInstances = [];
-  let selectedMarker = null;
+  const coordinateReadout = document.createElement('output');
+  coordinateReadout.className = 'globe-coordinates';
+  coordinateReadout.setAttribute('aria-label', 'Cursor coordinates');
+  coordinateReadout.hidden = true;
+  canvas.parentElement.append(coordinateReadout);
+  let pointerPosition = null;
 
   let vw = 0, vh = 0, dpr = 1;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -337,6 +323,7 @@ function main() {
   let dataError = false;
   let lastFrame = performance.now();
   const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
+  const AUTO_SPIN_MIN_MORPH = 0.8;
 
   const sMax = 20;
   const sMin = () => 240 / DEG_R;
@@ -385,6 +372,7 @@ function main() {
 
   function draw() {
     const t = morphT(view.s);
+    updateCoordinateReadout();
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.BLEND);
@@ -429,43 +417,14 @@ function main() {
     renderMarkers(t, halfW);
   }
 
-  function closeMarkerInfo(returnFocus = false) {
-    if (!selectedMarker) return;
-    const button = selectedMarker.button;
-    button.setAttribute('aria-expanded', 'false');
-    selectedMarker = null;
-    markerInfo.hidden = true;
-    if (returnFocus && !markerLayer.inert) button.focus();
-  }
-
-  function openMarkerInfo(entry, button, copy) {
-    if (selectedMarker && selectedMarker.button === button) {
-      closeMarkerInfo();
-      return;
-    }
-    closeMarkerInfo();
-    selectedMarker = { entry, button, copy };
-    interacted = true;
-    zoomAnim = null;
-    button.setAttribute('aria-expanded', 'true');
-    markerInfoTitle.textContent = entry.label;
-    markerInfoText.textContent = entry.info;
-    markerInfo.hidden = false;
-    canvas.dispatchEvent(new CustomEvent('globe-marker-select', {
-      detail: { ...entry },
-    }));
-    dirty = true;
-  }
-
   function createMarkerButton(entry, copy) {
     const button = document.createElement('button');
     button.className = 'globe-marker';
     button.type = 'button';
     button.hidden = true;
     button.style.setProperty('--marker-size', `${entry.size}px`);
-    button.setAttribute('aria-label', `Show hotspot information: ${entry.label}`);
-    button.setAttribute('aria-controls', markerInfo.id);
-    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-label', entry.label);
+    button.dataset.label = entry.label;
     button.title = entry.label;
     const image = document.createElement('img');
     image.src = new URL(entry.icon, import.meta.url);
@@ -475,7 +434,6 @@ function main() {
       console.error(`Could not load globe marker icon for "${entry.id}": ${image.src}`);
     }, { once: true });
     button.append(image);
-    button.addEventListener('click', () => openMarkerInfo(entry, button, copy));
     markerLayer.append(button);
     return button;
   }
@@ -490,7 +448,6 @@ function main() {
         || ids.has(marker.id)
         || typeof marker.label !== 'string' || !marker.label
         || typeof marker.icon !== 'string' || !marker.icon
-        || typeof marker.info !== 'string'
         || !Number.isFinite(marker.lon) || marker.lon < -180 || marker.lon > 180
         || !Number.isFinite(marker.lat) || marker.lat < -90 || marker.lat > 90
         || !Number.isFinite(marker.altitudeKm) || marker.altitudeKm < 0 || marker.altitudeKm > 100000
@@ -509,7 +466,6 @@ function main() {
   }
 
   function renderMarkers(t, halfW) {
-    let selectedPosition = null;
     const phi0 = view.lat / DEG_R;
     const cosPhi0 = Math.cos(phi0), sinPhi0 = Math.sin(phi0);
     const globeRadius = view.s * DEG_R;
@@ -551,26 +507,8 @@ function main() {
         button.style.left = `${x.toFixed(2)}px`;
         button.style.top = `${y.toFixed(2)}px`;
         button.style.opacity = String(copyAlpha * visibility);
-        if (selectedMarker && selectedMarker.button === button) {
-          selectedPosition = { x, y, size: entry.size };
-        }
       });
     });
-
-    if (selectedMarker) {
-      if (!selectedPosition) {
-        closeMarkerInfo();
-      } else {
-        const panelWidth = markerInfo.offsetWidth || Math.min(280, vw - 24);
-        const panelHeight = markerInfo.offsetHeight || 120;
-        const halfPanel = panelWidth / 2;
-        const x = Math.max(halfPanel + 12, Math.min(vw - halfPanel - 12, selectedPosition.x));
-        const y = Math.min(vh - 12, Math.max(panelHeight + 12,
-          selectedPosition.y - selectedPosition.size / 2 - 10));
-        markerInfo.style.left = `${x}px`;
-        markerInfo.style.top = `${y}px`;
-      }
-    }
   }
 
   // ---------------------------------------------------------- animation
@@ -590,7 +528,8 @@ function main() {
     if (hidden) return; // pause when tab hidden
     requestAnimationFrame(frame);
     if (now - lastFrame < 33) return;
-    if (data && !dataError && !reducedMotion.matches) {
+    if (data && !dataError && !reducedMotion.matches
+      && morphT(view.s) >= AUTO_SPIN_MIN_MORPH) {
       const dt = (now - lastFrame) / 1000;
       view.lon = wrapLon(view.lon + SPIN_DEG_PER_SEC * dt);
       dirty = true;
@@ -639,6 +578,32 @@ function main() {
     return [wrapLon(view.lon + Math.atan2(X, z) * DEG_R), Math.asin(Math.max(-1, Math.min(1, y))) * DEG_R];
   }
 
+  function updateCoordinateReadout() {
+    if (!pointerPosition) {
+      coordinateReadout.hidden = true;
+      return;
+    }
+    const coordinates = screenToLonLat(pointerPosition.x, pointerPosition.y);
+    if (!coordinates || coordinates[1] < -90 || coordinates[1] > 90) {
+      coordinateReadout.hidden = true;
+      return;
+    }
+    const [lon, lat] = coordinates;
+    coordinateReadout.textContent = `LAT ${lat >= 0 ? '+' : ''}${lat.toFixed(2)}°   LON ${lon >= 0 ? '+' : ''}${lon.toFixed(2)}°`;
+    coordinateReadout.hidden = false;
+  }
+
+  const globePreview = canvas.parentElement;
+  globePreview.addEventListener('pointermove', (ev) => {
+    const bounds = canvas.getBoundingClientRect();
+    pointerPosition = { x: ev.clientX - bounds.left, y: ev.clientY - bounds.top };
+    dirty = true;
+  });
+  globePreview.addEventListener('pointerleave', () => {
+    pointerPosition = null;
+    coordinateReadout.hidden = true;
+  });
+
   function zoomAt(px, py, factor) {
     const t = morphT(view.s);
     const before = t < 0.5 ? screenToLonLat(px, py) : null;
@@ -655,7 +620,6 @@ function main() {
   let pinchDist = 0;
 
   canvas.addEventListener('pointerdown', (ev) => {
-    if (!markerLayer.contains(ev.target)) closeMarkerInfo();
     interacted = true;
     try { canvas.setPointerCapture(ev.pointerId); } catch (_) { /* synthetic events */ }
     pointers.set(ev.pointerId, [ev.clientX, ev.clientY]);
@@ -708,11 +672,6 @@ function main() {
   window.addEventListener('keydown', (ev) => {
     if (!canvas.classList.contains('is-emphasized')) return;
     if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
-    if (ev.key === 'Escape' && selectedMarker) {
-      closeMarkerInfo(true);
-      ev.preventDefault();
-      return;
-    }
     const pan = 60 / view.s;
     let handled = true;
     if (ev.key === '+' || ev.key === '=') zoomAt(vw / 2, vh / 2, 1.35);
