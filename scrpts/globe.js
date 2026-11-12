@@ -325,7 +325,7 @@ function main() {
   const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
   const AUTO_SPIN_MIN_MORPH = 0.8;
 
-  const sMax = 20;
+  const sMax = 7;
   const sMin = () => 240 / DEG_R;
   const morphT = (s) => {
     const e0 = sMin() * 1.15, e1 = sMin() * 2.6;

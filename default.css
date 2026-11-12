@@ -538,6 +538,7 @@ h2 {
 .globe-marker-layer.is-emphasized .globe-marker { pointer-events: auto; }
 .globe-marker::after {
     position: absolute;
+    z-index: 1;
     bottom: calc(100% + 8px);
     left: 50%;
     width: max-content;
@@ -568,9 +569,13 @@ h2 {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 10px #000);
+    filter: drop-shadow(0 0 4px #000);
 }
-.globe-marker:hover { transform: translate(-50%, -50%); }
+.globe-marker:hover,
+.globe-marker:focus-visible {
+    z-index: 3;
+    transform: translate(-50%, -50%);
+}
 .globe-coordinates {
     position: absolute;
     bottom: 16px;
