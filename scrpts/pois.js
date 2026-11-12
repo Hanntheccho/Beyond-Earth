@@ -1,8 +1,7 @@
 // Builds the POI buttons and description panels from loc/pois.json, so adding
 // a POI only means adding its "poiXXX" and "poiXXX-desc" keys to the JSON.
 // Top-level POIs are the keys starting with "poi" that do not end in "-desc".
-// Nested POIs (e.g. "FRApoi001") are not listed here: they are referenced from
-// inside their parent's description as tooltip buttons.
+// Nested POIs (e.g. "FRApoi001") are tooltip buttons in their parent's panel.
 //
 // index.html only needs an empty <div class="div-desc-win grid" data-poi-buttons></div>;
 // the panels are inserted right after it. The elements carry the same classes
@@ -28,7 +27,26 @@
         return button;
     }
 
-    function buildPanel(id, active) {
+    function buildTooltipButton(id) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'poi has-tooltip';
+        button.dataset.tooltip = `${id}-desc`;
+        button.setAttribute('aria-pressed', 'false');
+        button.addEventListener('mouseenter', () => {
+            button.setAttribute('aria-pressed', 'true');
+        });
+        button.addEventListener('mouseleave', () => {
+            button.setAttribute('aria-pressed', 'false');
+        });
+
+        const label = document.createElement('span');
+        label.className = id;
+        button.append(label);
+        return button;
+    }
+
+    function buildPanel(id, active, pois) {
         const panel = document.createElement('div');
         panel.className = 'div-desc-win';
         panel.id = id;
@@ -41,6 +59,14 @@
         const text = document.createElement('span');
         text.className = `${id}-desc`;
         desc.append(text);
+
+        const nestedPrefix = `${id.slice(3)}poi`;
+        Object.keys(pois)
+            .filter(key => key.startsWith(nestedPrefix) &&
+                /^\d+$/.test(key.slice(nestedPrefix.length)) &&
+                Object.prototype.hasOwnProperty.call(pois, `${key}-desc`))
+            .forEach(key => desc.append(buildTooltipButton(key)));
+
         panel.append(desc);
         return panel;
     }
@@ -59,7 +85,7 @@
             ids.forEach((id, index) => {
                 const active = index === 0;
                 buttons.push(buildButton(id, active));
-                panels.push(buildPanel(id, active));
+                panels.push(buildPanel(id, active, pois));
             });
 
             buttonHost.replaceChildren(...buttons);
