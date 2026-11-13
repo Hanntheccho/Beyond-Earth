@@ -584,9 +584,8 @@ h2 {
     padding: 6px 9px;
     border: 1px solid var(--clr-border);
     background: var(--clr-background);
-    color: var(--clr-b);
-    font: var(--fnt-size-bttn) var(--fnt);
-    letter-spacing: var(--letter-spacing-02);
+    color: var(--clr-data);
+    font: var(--fnt-size-data) var(--fnt-monospace);
     pointer-events: none;
 }
 .globe-coordinates[hidden] { display: none; }
