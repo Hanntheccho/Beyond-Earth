@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="100mm"
-   height="100mm"
-   viewBox="0 0 100 100"
+   width="84.527809mm"
+   height="88.562088mm"
+   viewBox="0 0 84.527809 88.562088"
    version="1.1"
    id="svg1"
    xml:space="preserve"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
-     inkscape:zoom="0.68862935"
-     inkscape:cx="-58.81248"
-     inkscape:cy="269.37568"
+     inkscape:zoom="0.97386897"
+     inkscape:cx="-103.19663"
+     inkscape:cy="240.79215"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
@@ -36,7 +36,16 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(43.838871,-15.068393)"><path
-       id="rect5"
-       style="fill:#ffffff;stroke:#000000;stroke-width:0.474426;stroke-linejoin:round;stroke-opacity:0"
-       d="M -43.601676 15.305588 L -43.601676 114.8313 L -4.212866 114.8313 L -4.212866 72.339316 L -35.677095 72.339316 L -35.677095 55.901043 L -4.212866 55.901043 L -4.212866 33.702914 L 16.535222 33.702914 L 16.535222 55.901043 L 47.999451 55.901043 L 47.999451 72.339316 L 16.535222 72.339316 L 16.535222 114.8313 L 55.924032 114.8313 L 55.924032 15.305588 L -43.601676 15.305588 z " /></g></svg>
+     transform="translate(36.102776,-33.702934)"><rect
+       style="fill:#ffffff;stroke:none;stroke-width:1;stroke-linejoin:round;stroke-opacity:0"
+       id="rect1"
+       width="21.131952"
+       height="88.562088"
+       x="-4.4048471"
+       y="33.702934" /><rect
+       style="fill:#ffffff;stroke:none;stroke-width:1;stroke-linejoin:round;stroke-opacity:0"
+       id="rect2"
+       width="84.527809"
+       height="16.329237"
+       x="-36.102776"
+       y="56.179646" /></g></svg>

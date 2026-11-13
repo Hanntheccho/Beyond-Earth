@@ -45,13 +45,22 @@
     "size": 30
   },
   {
-    "id": "poi004",
+    "id": "poiGPGP",
     "label": "Great Pacific Garbage Patch",
     "icon": "../gfx/GPGP.svg",
     "lat": 25,
     "lon": -140,
     "altitudeKm": 10,
-    "size": 120
+    "size": 80
+  },
+  {
+    "id": "poiANTT",
+    "label": "Antarctica Trust",
+    "icon": "../gfx/ANTT.svg",
+    "lat": -90,
+    "lon": 0,
+    "altitudeKm": 400,
+    "size": 60
   },
   {
     "id": "poiFRA",
@@ -84,19 +93,91 @@
     "id": "poiNAU",
     "label": "North American Union",
     "icon": "../gfx/NAU.svg",
-    "lat": 39,
-    "lon": -112,
+    "lat": 45,
+    "lon": -100,
     "altitudeKm": 400,
     "size": 100
+  },
+  {
+    "id": "poiUNO",
+    "label": "District 1",
+    "icon": "../gfx/UNO.svg",
+    "lat": 60,
+    "lon": -100,
+    "altitudeKm": 400,
+    "size": 40
+  },
+  {
+    "id": "poiDOS",
+    "label": "District 2",
+    "icon": "../gfx/DOS.svg",
+    "lat": 52.5,
+    "lon": -90,
+    "altitudeKm": 200,
+    "size": 40
+  },
+  {
+    "id": "poiTRE",
+    "label": "District 3",
+    "icon": "../gfx/TRE.svg",
+    "lat": 45,
+    "lon": -80,
+    "altitudeKm": 200,
+    "size": 40
+  },
+  {
+    "id": "poiCUA",
+    "label": "District 4",
+    "icon": "../gfx/CUA.svg",
+    "lat": 37.5,
+    "lon": -90,
+    "altitudeKm": 200,
+    "size": 40
+  },
+  {
+    "id": "poiCIN",
+    "label": "District 5",
+    "icon": "../gfx/CIN.svg",
+    "lat": 30,
+    "lon": -100,
+    "altitudeKm": 200,
+    "size": 40
+  },
+  {
+    "id": "poiSEI",
+    "label": "District 6",
+    "icon": "../gfx/SEI.svg",
+    "lat": 37.5,
+    "lon": -110,
+    "altitudeKm": 200,
+    "size": 40
+  },
+  {
+    "id": "poiSIT",
+    "label": "District 7",
+    "icon": "../gfx/SIT.svg",
+    "lat": 45,
+    "lon": -120,
+    "altitudeKm": 200,
+    "size": 40
+  },
+  {
+    "id": "poiOCH",
+    "label": "District 8",
+    "icon": "../gfx/OCH.svg",
+    "lat": 52.5,
+    "lon": -110,
+    "altitudeKm": 200,
+    "size": 40
   },
   {
     "id": "poiARC",
     "label": "American Reclamation Corporation",
     "icon": "../gfx/ARC.svg",
-    "lat": 41,
+    "lat": 38,
     "lon": -74,
     "altitudeKm": 300,
-    "size": 60
+    "size": 50
   },
   {
     "id": "poiBRA",
@@ -147,10 +228,19 @@
     "id": "poiANC",
     "label": "Andean Compact",
     "icon": "../gfx/ANC.svg",
-    "lat": -12,
-    "lon": -75,
+    "lat": -8,
+    "lon": -77,
     "altitudeKm": 300,
-    "size": 50
+    "size": 60
+  },
+  {
+    "id": "poiCOOP",
+    "label": "Cooperativa Minera de Lima",
+    "icon": "../gfx/COOP.svg",
+    "lat": -15,
+    "lon": -70,
+    "altitudeKm": 200,
+    "size": 30
   },
   {
     "id": "poiPLY",
