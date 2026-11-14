@@ -1,0 +1,16 @@
+# Ignore the misleading ignore.txt (it's leftover JSON data, not gitignore)
+ignore.txt
+
+# Node / tooling
+node_modules/
+*.local
+
+# IDE / editor artifacts
+.vscode/
+*.swp
+*.swo
+*~
+
+# Static site / dist artifacts (if you add a build step later)
+dist/
+build/

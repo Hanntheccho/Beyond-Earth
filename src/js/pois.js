@@ -1,4 +1,4 @@
-// Builds the POI buttons and description panels from loc/pois.json, so adding
+// Builds the POI buttons and description panels from data/loc/pois.json, so adding
 // a POI only means adding its "poiXXX" and "poiXXX-desc" keys to the JSON.
 // Top-level POIs are the keys starting with "poi" that do not end in "-desc".
 // Nested POIs (e.g. "FRApoi001") are tooltip buttons in their parent's panel.
@@ -9,7 +9,7 @@
 // loc.js waits for window.poisReady so the elements exist before it localizes.
 (function () {
     const PANEL_GROUP = 'lys-pois';
-    const POI_SOURCE = 'loc/pois.json';
+    const POI_SOURCE = 'data/loc/pois.json';
 
     const buttonHost = document.querySelector('[data-poi-buttons]');
     if (!buttonHost) return;

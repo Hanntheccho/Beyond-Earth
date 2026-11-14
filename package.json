@@ -1,0 +1,9 @@
+{
+  "name": "beyond-earth-html",
+  "description": "BYOND UNiTY HTML — interactive scenario briefing (2070+)",
+  "version": "0.1.0",
+  "scripts": {
+    "validate": "node tools/validate.mjs",
+    "validate:info": "node tools/validate.mjs --info"
+  }
+}

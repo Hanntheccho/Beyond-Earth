@@ -51,13 +51,13 @@ function readJson(rel) {
 // ---------------------------------------------------------------- localization
 
 function checkLocalization() {
-    const manifest = readJson('loc/manifest.json');
+    const manifest = readJson('data/loc/manifest.json');
     if (!Array.isArray(manifest)) return {};
 
     const merged = {};
     const origin = {};
     manifest.forEach(file => {
-        const rel = `loc/${file}`;
+        const rel = `data/loc/${file}`;
         if (!exists(abs(rel))) {
             error('loc', `${rel} is listed in manifest.json but does not exist`);
             return;
@@ -85,16 +85,16 @@ function checkLocalization() {
         });
     });
 
-    // JSON files in loc/ that the manifest does not load (keyword lists are loaded separately).
+    // JSON files in data/loc/ that the manifest does not load (keyword lists are loaded separately).
     fs.readdirSync(abs('loc'))
         .filter(f => f.endsWith('.json') && f !== 'manifest.json' && !f.startsWith('keywords-'))
         .filter(f => !manifest.includes(f))
-        .forEach(f => warn('loc', `loc/${f} is not listed in manifest.json, so it is never loaded`));
+        .forEach(f => warn('loc', `data/loc/${f} is not listed in manifest.json, so it is never loaded`));
 
     ['keywords-ph1.json', 'keywords-ph2.json', 'keywords-ph3.json'].forEach(file => {
-        const list = readJson(`loc/${file}`);
+        const list = readJson(`data/loc/${file}`);
         if (list && (!Array.isArray(list) || list.some(item => typeof item !== 'string'))) {
-            error('loc', `loc/${file} must be an array of strings`);
+            error('loc', `data/loc/${file} must be an array of strings`);
         }
     });
 
@@ -163,10 +163,10 @@ function checkPois(loc) {
 function checkMarkers(poiIds) {
     // globe.js throws on the first invalid marker and then shows none at all,
     // so every problem here is an error.
-    const markers = readJson('scrpts/globe-markers.json');
+    const markers = readJson('src/js/globe-markers.json');
     if (!markers) return;
     if (!Array.isArray(markers)) {
-        error('markers', 'scrpts/globe-markers.json must contain an array');
+        error('markers', 'src/js/globe-markers.json must contain an array');
         return;
     }
 
@@ -185,9 +185,9 @@ function checkMarkers(poiIds) {
         if (typeof marker.label !== 'string' || !marker.label) error('markers', `${where}: missing label`);
         if (typeof marker.icon !== 'string' || !marker.icon) {
             error('markers', `${where}: missing icon`);
-        } else if (!exists(path.resolve(abs('scrpts'), marker.icon))) {
-            // globe.js resolves icons against its own location, scrpts/.
-            error('markers', `${where}: icon "${marker.icon}" not found (resolved from scrpts/)`);
+        } else if (!exists(path.resolve(abs('src/js'), marker.icon))) {
+            // globe.js resolves icons against its own location, src/js/.
+            error('markers', `${where}: icon "${marker.icon}" not found (resolved from src/js/)`);
         }
 
         const number = (field, ok, rule) => {
@@ -250,7 +250,7 @@ function checkTreemaps(html) {
 // -------------------------------------------------------------- scenario data
 
 function checkScenario() {
-    const rel = 'scrpts/scenario-data.js';
+    const rel = 'src/js/scenario-data.js';
     if (!exists(abs(rel))) {
         error('files', `${rel} is missing`);
         return;
@@ -313,7 +313,7 @@ function checkScenario() {
     });
 
     // Without the slider the globe uses this constant, so it should match the chart.
-    const globePath = abs('scrpts/globe.js');
+    const globePath = abs('src/js/globe.js');
     const sea = Array.isArray(data.seaLevel) ? data.seaLevel.slice().sort((a, b) => a.year - b.year) : [];
     const match = exists(globePath) && /const\s+DEFAULT_SEA_LEVEL\s*=\s*([\d.]+)/.exec(read(globePath));
     if (match && sea.length && Number(match[1]) !== sea[sea.length - 1].value) {
@@ -340,22 +340,22 @@ function checkHtmlAndAssets(loc) {
         if (!exists(abs(stripQuery(match[1])))) error('assets', `index.html references "${match[1]}" which does not exist`);
     }
 
-    if (exists(abs('default.css'))) {
-        for (const match of read(abs('default.css')).matchAll(/url\(\s*(["']?)([^"')]+)\1\s*\)/g)) {
+    if (exists(abs('src/css/default.css'))) {
+        for (const match of read(abs('src/css/default.css')).matchAll(/url\(\s*(["']?)([^"')]+)\1\s*\)/g)) {
             if (isExternal(match[2])) continue;
             if (!exists(abs(stripQuery(match[2])))) error('assets', `default.css references "${match[2]}" which does not exist`);
         }
     }
 
-    if (exists(abs('default.js'))) {
-        for (const match of read(abs('default.js')).matchAll(/(beLegacy\d+):\s*"([^"]+)"/g)) {
+    if (exists(abs('src/js/default.js'))) {
+        for (const match of read(abs('src/js/default.js')).matchAll(/(beLegacy\d+):\s*"([^"]+)"/g)) {
             if (!exists(abs(match[2]))) error('assets', `default.js loads "${match[2]}" which does not exist`);
             if (!ids.includes(match[1])) error('html', `default.js fills #${match[1]} but index.html has no such element`);
         }
     }
 
-    if (exists(abs('scrpts/affy-graph.js'))) {
-        const source = read(abs('scrpts/affy-graph.js'));
+    if (exists(abs('src/js/affy-graph.js'))) {
+        const source = read(abs('src/js/affy-graph.js'));
         for (const match of source.matchAll(/icon:\s*'([^']+)'/g)) {
             if (!exists(abs(match[1]))) error('assets', `affy-graph.js uses icon "${match[1]}" which does not exist`);
         }
@@ -364,11 +364,11 @@ function checkHtmlAndAssets(loc) {
         }
     }
 
-    if (exists(abs('scrpts/globe.js'))) {
-        // globe.js resolves this against its own location, scrpts/.
-        const match = /decodeElevation\(\s*'([^']+)'\s*\)/.exec(read(abs('scrpts/globe.js')));
-        if (match && !exists(path.resolve(abs('scrpts'), match[1]))) {
-            error('assets', `globe.js loads "${match[1]}" but scrpts/${match[1]} does not exist`);
+    if (exists(abs('src/js/globe.js'))) {
+        // globe.js resolves this against its own location, src/js/.
+        const match = /decodeElevation\(\s*'([^']+)'\s*\)/.exec(read(abs('src/js/globe.js')));
+        if (match && !exists(path.resolve(abs('src/js'), match[1]))) {
+            error('assets', `globe.js loads "${match[1]}" but src/js/${match[1]} does not exist`);
         }
     }
 
@@ -383,7 +383,7 @@ function listJs(dir) {
 }
 
 function checkSyntax() {
-    const files = [...(exists(abs('default.js')) ? ['default.js'] : []), ...listJs('loc'), ...listJs('scrpts')];
+    const files = [...(exists(abs('src/js/default.js')) ? ['src/js/default.js'] : []), ...listJs('loc'), ...listJs('src/js')];
     const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'validate-'));
     try {
         files.forEach((rel, index) => {

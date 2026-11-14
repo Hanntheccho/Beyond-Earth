@@ -24,13 +24,13 @@
     const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
     const affinities = [
-        { id: 'purity', name: 'Purity', icon: 'gfx/affy/purity.svg', description: 'affyPUR-desc', color: '#ff0000', x: 300, y: 42 },
-        { id: 'divinity', name: 'Divinity', icon: 'gfx/affy/divinity.svg', description: 'affyDIV-desc', color: '#a200ff', x: 490, y: 152 },
-        { id: 'harmony', name: 'Harmony', icon: 'gfx/affy/harmony.svg', description: 'affyHAR-desc', color: '#00e1ff', x: 490, y: 368 },
-        { id: 'synergy', name: 'Synergy', icon: 'gfx/affy/synergy.svg', description: 'affySYN-desc', color: '#09ff00', x: 300, y: 478 },
-        { id: 'supremacy', name: 'Supremacy', icon: 'gfx/affy/supremacy.svg', description: 'affySUP-desc', color: '#fbff00', x: 110, y: 368 },
-        { id: 'mastery', name: 'Mastery', icon: 'gfx/affy/mastery.svg', description: 'affyMAS-desc', color: '#ffa600', x: 110, y: 152 },
-        { id: 'neutrality', name: 'Neutral', icon: 'gfx/affy/neutrality.svg', description: 'affyNEU-desc', color: '#ffffff', x: 300, y: 260 }
+        { id: 'purity', name: 'Purity', icon: '../../assets/affy/purity.svg', description: 'affyPUR-desc', color: '#ff0000', x: 300, y: 42 },
+        { id: 'divinity', name: 'Divinity', icon: '../../assets/affy/divinity.svg', description: 'affyDIV-desc', color: '#a200ff', x: 490, y: 152 },
+        { id: 'harmony', name: 'Harmony', icon: '../../assets/affy/harmony.svg', description: 'affyHAR-desc', color: '#00e1ff', x: 490, y: 368 },
+        { id: 'synergy', name: 'Synergy', icon: '../../assets/affy/synergy.svg', description: 'affySYN-desc', color: '#09ff00', x: 300, y: 478 },
+        { id: 'supremacy', name: 'Supremacy', icon: '../../assets/affy/supremacy.svg', description: 'affySUP-desc', color: '#fbff00', x: 110, y: 368 },
+        { id: 'mastery', name: 'Mastery', icon: '../../assets/affy/mastery.svg', description: 'affyMAS-desc', color: '#ffa600', x: 110, y: 152 },
+        { id: 'neutrality', name: 'Neutral', icon: '../../assets/affy/neutrality.svg', description: 'affyNEU-desc', color: '#ffffff', x: 300, y: 260 }
     ];
 
     // Emphasized perimeter links join neighbors; faint blended links meet at Neutrality.

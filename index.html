@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Source+Code+Pro:wght@400;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Source+Code+Pro:wght@400;700&display=swap"></noscript>
-    <link rel="icon" href="be-icon-w.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="default.css">
+    <link rel="icon" href="be-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="src/css/default.css">
     <!-- jQuery removed: native DOM APIs used throughout -->
 </head>
 <body>
@@ -24,7 +24,7 @@
         <canvas id="map" class="globe-canvas" data-view="lon=-30&amp;lat=15" data-update-url="false" aria-hidden="true"></canvas>
         <div id="globe-markers" class="globe-marker-layer" role="group" aria-label="Globe hotspots" aria-hidden="true" inert></div>
     </div>
-    <button class="main-visibility-toggle" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true" aria-pressed="true"><img src="be-icon-w.svg" alt=""></button>
+    <button class="main-visibility-toggle" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true" aria-pressed="true"><img src="be-icon.svg" alt=""></button>
     <div class="legacy-bg" aria-hidden="true">
         <pre id="beLegacy01" class="legacy-list"></pre>
         <pre id="beLegacy02" class="legacy-list"></pre>
@@ -56,7 +56,7 @@
                     <div class="div-desc-win" treemap-panel>
                         <span class="data-status" role="status" aria-live="polite">Loading GDP data…</span>
                         <nav class="treemap-breadcrumbs" aria-label="GDP treemap location"></nav>
-                        <div class="treemap" data-treemap="gdp" data-source="scrpts/gdp-data.json" data-use-tags="false" role="group" aria-label="GDP treemap"></div>
+                        <div class="treemap" data-treemap="gdp" data-source="src/js/gdp-data.json" data-use-tags="false" role="group" aria-label="GDP treemap"></div>
                     </div>
                     <div class="div-desc-win">
                         <span class="data-status" data-market-status="gdp" aria-live="polite"></span>
@@ -68,7 +68,7 @@
                     <div class="div-desc-win" treemap-panel>
                         <span class="data-status" role="status" aria-live="polite">Loading market data…</span>
                         <nav class="treemap-breadcrumbs" aria-label="Market treemap location"></nav>
-                        <div class="treemap" data-treemap="market" data-source="scrpts/mkt-data.json" data-use-tags="true" role="group" aria-label="Market treemap"></div>
+                        <div class="treemap" data-treemap="market" data-source="src/js/mkt-data.json" data-use-tags="true" role="group" aria-label="Market treemap"></div>
                     </div>
                     <div class="div-desc-win">
                         <span class="data-status" data-market-status="market" aria-live="polite"></span>
@@ -80,7 +80,7 @@
                     <div class="div-desc-win" treemap-panel>
                         <span class="data-status" role="status" aria-live="polite">Loading resource data…</span>
                         <nav class="treemap-breadcrumbs" aria-label="Resource treemap location"></nav>
-                        <div class="treemap" data-treemap="resources" data-source="scrpts/src-data.json" data-use-tags="false" role="group" aria-label="Resources treemap"></div>
+                        <div class="treemap" data-treemap="resources" data-source="src/js/src-data.json" data-use-tags="false" role="group" aria-label="Resources treemap"></div>
                     </div>
                     <div class="div-desc-win">
                         <span class="data-status" data-market-status="resources" aria-live="polite"></span>
@@ -92,29 +92,29 @@
     </main>
 
     <!-- Audio -->
-    <audio id="music" loop preload="none"><source src="sfx/sfx-music.ogg" type="audio/ogg"></audio>
-    <audio id="audio"><source src="sfx/sfx-click.wav" type="audio/wav"></audio>
+    <audio id="music" loop preload="none"><source src="assets/sfx/sfx-music.ogg" type="audio/ogg"></audio>
+    <audio id="audio"><source src="assets/sfx/sfx-click.wav" type="audio/wav"></audio>
 
     <!-- Localisation -->
-    <script src="loc/loc.js"></script>
+    <script src="data/loc/loc.js"></script>
 
     <!-- Scripts -->
     <div class="cursor-glow" aria-hidden="true"></div>
-    <script type="module" src="scrpts/globe.js"></script>
-    <script src="scrpts/viewport-visibility.js"></script>
-    <script src="scrpts/affy-graph.js"></script>
-    <script src="scrpts/data-calc.js"></script>
-    <script src="scrpts/data-grid.js"></script>
-    <script src="scrpts/treemap.js"></script>
-    <script src="scrpts/pois.js"></script>
-    <script src="default.js"></script>
-    <script src="scrpts/globe-markers-link.js"></script>
-    <script src="scrpts/scenario-data.js"></script>
-    <script src="scrpts/globe-sea-level.js"></script>
-    <script src="scrpts/scenario-chart.js"></script>
-    <script src="scrpts/data-tabs.js"></script>
-    <script src="scrpts/market-text.js"></script>
-    <script src="scrpts/scroll-reveal.js"></script>
-    <script src="scrpts/deep-links.js"></script>
+    <script type="module" src="src/js/globe.js"></script>
+    <script src="src/js/viewport-visibility.js"></script>
+    <script src="src/js/affy-graph.js"></script>
+    <script src="src/js/data-calc.js"></script>
+    <script src="src/js/data-grid.js"></script>
+    <script src="src/js/treemap.js"></script>
+    <script src="src/js/pois.js"></script>
+    <script src="src/js/default.js"></script>
+    <script src="src/js/globe-markers-link.js"></script>
+    <script src="src/js/scenario-data.js"></script>
+    <script src="src/js/globe-sea-level.js"></script>
+    <script src="src/js/scenario-chart.js"></script>
+    <script src="src/js/data-tabs.js"></script>
+    <script src="src/js/market-text.js"></script>
+    <script src="src/js/scroll-reveal.js"></script>
+    <script src="src/js/deep-links.js"></script>
 </body>
 </html>

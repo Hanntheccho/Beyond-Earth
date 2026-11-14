@@ -6,7 +6,7 @@ clickSound.volume = 1.0;
 
 function loadMusic() {
     if (!backgroundMusic.src) {
-        backgroundMusic.src = 'sfx/sfx-music.ogg';
+        backgroundMusic.src = '../../assets/sfx/sfx-music.ogg';
         backgroundMusic.load();
     }
 }
@@ -316,11 +316,11 @@ if (window.matchMedia('(pointer: fine)').matches) {
 }
 
 const legacyFiles = {
-    beLegacy01: "be-legacy-countries.txt",
-    beLegacy02: "be-legacy-victory-points.txt",
-    beLegacy03: "be-legacy-strategic-regions.txt",
-    beLegacy04: "be-legacy-states.txt",
-    beLegacy05: "be-legacy-parties.txt"
+    beLegacy01: "data/legacy/be-legacy-countries.txt",
+    beLegacy02: "data/legacy/be-legacy-victory-points.txt",
+    beLegacy03: "data/legacy/be-legacy-strategic-regions.txt",
+    beLegacy04: "data/legacy/be-legacy-states.txt",
+    beLegacy05: "data/legacy/be-legacy-parties.txt"
 };
 
 // Combine legacy file fetches into one request

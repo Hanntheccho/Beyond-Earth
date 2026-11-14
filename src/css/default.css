@@ -63,12 +63,12 @@ body::after {
     background-repeat: repeat;
 }
 body::before {
-    background: url("be-icon-w.svg") center calc(50% - 30px) / 240px repeat;
+    background: url("../../be-icon.svg") center calc(50% - 30px) / 240px repeat;
     opacity: 0.02;
     animation: background-drift-large 36s linear infinite alternate;
 }
 body::after {
-    background: url("be-icon-w.svg") center calc(50% - 30px) / 160px repeat;
+    background: url("../../be-icon.svg") center calc(50% - 30px) / 160px repeat;
     opacity: 0.01;
     animation: background-drift-small 29s linear infinite alternate;
 }
@@ -231,7 +231,7 @@ h2 {
     inset: 0;
     z-index: 0;
     box-sizing: border-box;
-    background: url('be-icon-w.svg') center / 40px repeat;
+    background: url('../../be-icon.svg') center / 40px repeat;
     content: "";
     opacity: 0.6;
     -webkit-mask-image:
@@ -344,7 +344,7 @@ h2 {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: var(--desc-bg, url("be-icon-w.svg"));
+    background-image: var(--desc-bg, url("../../be-icon.svg"));
     background-position: center;
     background-size: auto 90%;
     background-repeat: no-repeat;
@@ -419,7 +419,7 @@ h2 {
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background-image: url('gfx/mit.svg');
+    background-image: url('../../assets/mit.svg');
     background-position: center;
     background-size: auto 60%;
     background-repeat: no-repeat;

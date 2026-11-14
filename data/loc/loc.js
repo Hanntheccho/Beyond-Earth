@@ -1,7 +1,7 @@
 /**
  * Gets the localization data.
  *
- * Loads every localization JSON listed in loc/manifest.json.
+ * Loads every localization JSON listed in data/loc/manifest.json.
  */
 async function fetchLocalization() {
     return applyDescriptionTitles(await fetchLocalizationFiles());
@@ -30,7 +30,7 @@ function applyDescriptionTitles(localization) {
 
 /** Load and merge all localization files listed in the root localization manifest. */
 async function fetchLocalizationFiles() {
-    const manifestPath = 'loc/manifest.json';
+    const manifestPath = 'data/loc/manifest.json';
     const manifestResponse = await fetch(manifestPath);
     if (!manifestResponse.ok) {
         throw new Error(`Failed to load localization manifest ${manifestPath}`);
@@ -42,7 +42,7 @@ async function fetchLocalizationFiles() {
     }
 
     const entries = await Promise.all(files.map(async file => {
-        const path = `loc/${file}`;
+        const path = `data/loc/${file}`;
         const response = await fetch(path);
         if (!response.ok) throw new Error(`Failed to load localization file ${path}`);
         return response.json();
@@ -139,9 +139,9 @@ function formatLocalizationValue(key) {
     if (typeof value !== 'string') return Promise.resolve(value);
 
     const formatted = Promise.all([
-        fetchKeywords('loc/keywords-ph3.json'),
-        fetchKeywords('loc/keywords-ph2.json'),
-        fetchKeywords('loc/keywords-ph1.json')
+        fetchKeywords('data/loc/keywords-ph3.json'),
+        fetchKeywords('data/loc/keywords-ph2.json'),
+        fetchKeywords('data/loc/keywords-ph1.json')
     ]).then(([ph3Keywords, ph2Keywords, ph1Keywords]) => {
         const localized = { [key]: value };
         applyKeywordFormatting(localized, ph3Keywords, '.ph3');
