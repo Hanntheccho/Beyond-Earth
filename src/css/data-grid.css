@@ -5,7 +5,7 @@
     margin-top: 0;
     margin-bottom: 0;
     color: var(--clr-data);
-    font: var(--fnt-size-bttn) var(--fnt-monospace);
+    font-size: var(--fnt-size-bttn);
     text-align: right;
     border-bottom: var(--border);
     border-top: var(--border);
@@ -18,7 +18,7 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 0 20px;
     margin-top: 0;
-    font: var(--fnt-size-data) var(--fnt-monospace);
+    font-size: var(--fnt-size-data);
 }
 .data-grid-row {
     display: grid;

@@ -25,7 +25,7 @@
 }
 .scenario-chart-plot text {
     fill: var(--clr-data);
-    font: var(--fnt-size-data) var(--fnt-monospace);
+    font-size: var(--fnt-size-data);
 }
 .scenario-chart-plot .chart-axis-label { text-anchor: end; }
 .scenario-chart-plot .year-label,
@@ -63,7 +63,6 @@
 .scenario-chart-plot .chart-series-line.chart-trend-flat { color: var(--clr-neutrale); stroke: color-mix(in srgb, var(--clr-neutrale) 1%, transparent); }
 .scenario-chart-plot text.chart-event-label {
     fill: var(--clr-b);
-    font-family: var(--fnt-monospace);
     text-transform: uppercase;
 }
 

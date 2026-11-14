@@ -15,7 +15,6 @@
     font-size: var(--fnt-size-bttn);
     letter-spacing: var(--letter-spacing-02);
     color: var(--clr-data);
-    font-family: var(--fnt-monospace);
     background-color: var(--clr-background);
     box-shadow: var(--box-shadow);
     border-top: var(--border);

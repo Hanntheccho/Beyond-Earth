@@ -115,7 +115,7 @@
     border: 1px solid var(--clr-border);
     background: var(--clr-background);
     color: var(--clr-data);
-    font: var(--fnt-size-data) var(--fnt-monospace);
+    font-size: var(--fnt-size-data);
     pointer-events: none;
 }
 .globe-coordinates[hidden] { display: none; }
@@ -133,7 +133,7 @@
     border: 1px solid var(--clr-border);
     background: var(--clr-background);
     color: var(--clr-data);
-    font: var(--fnt-size-data) var(--fnt-monospace);
+    font-size: var(--fnt-size-data);
 }
 .globe-canvas.is-emphasized ~ .sea-level { display: flex; }
 .sea-level input { width: 200px; accent-color: var(--clr-border); }

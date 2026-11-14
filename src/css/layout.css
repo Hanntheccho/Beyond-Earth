@@ -40,9 +40,8 @@
     margin-bottom: -20px;
     padding: 12px 20px;
     color: var(--clr-h1);
-    font-size: calc(var(--fnt-size-h1) + 10px);
     font-weight: 900;
-    letter-spacing: var(--letter-spacing-02);
+    letter-spacing: .2em;
     cursor: pointer;
 }
 .back-title {
@@ -53,7 +52,6 @@
     width: 100%;
     color: var(--clr-h1);
     opacity: 0.08;
-    font-family: var(--fnt-monospace);
     font-size: 64px;
     font-weight: bold;
     letter-spacing: .6em;

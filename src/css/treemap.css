@@ -18,7 +18,7 @@
 }
 .treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
 .treemap-tile:focus { outline: none; }
-.treemap-label { font-family: var(--fnt-monospace); font-weight: 900; text-shadow: var(--drop-shadow-20); fill: var(--treemap-color); pointer-events: none; }
+.treemap-label { font-weight: 900; text-shadow: var(--drop-shadow-20); fill: var(--treemap-color); pointer-events: none; }
 .treemap-label-name { text-transform: uppercase; }
 .treemap-label-value { filter: brightness(0.4); }
 .treemap-label-change { filter: brightness(0.6); }

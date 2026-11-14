@@ -17,7 +17,7 @@
     column-gap: 36rem;
     column-fill: auto;
     margin-block: 0;
-    font: var(--fnt-size-data) var(--fnt-monospace);
+    font-size: var(--fnt-size-data);
     color: var(--clr-data);
     white-space: pre;
     animation: legacy-scroll 40s linear infinite;
