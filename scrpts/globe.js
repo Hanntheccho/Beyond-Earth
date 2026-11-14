@@ -14,7 +14,7 @@
 
 const DEG_R = 57.29577951308232; // 180/pi: globe radius = scale(px/deg) * DEG_R
 const EARTH_RADIUS_KM = 6371;
-const SEA_LEVEL = 50;
+const DEFAULT_SEA_LEVEL = 50; // 2200 value, keeps today's look as the fallback
 
 // ---------------------------------------------------------------- shaders
 
@@ -320,6 +320,11 @@ function main() {
   };
   let interacted = num('spin', 1) === 0;
   let dirty = true;
+  let seaLevel = Number.isFinite(window.__seaLevel) ? window.__seaLevel : DEFAULT_SEA_LEVEL;
+  window.addEventListener('sealevelchange', (ev) => {
+    seaLevel = ev.detail.meters;
+    dirty = true;
+  });
   let dataError = false;
   let lastFrame = performance.now();
   const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
@@ -401,7 +406,7 @@ function main() {
     gl.uniform1f(mesh.u.uScale, view.s);
     gl.uniform1f(mesh.u.uMorph, t);
     gl.uniform2f(mesh.u.uViewport, vw, vh);
-    gl.uniform1f(mesh.u.uSeaLevel, SEA_LEVEL);
+    gl.uniform1f(mesh.u.uSeaLevel, seaLevel);
     gl.uniform1f(mesh.u.uInterval, autoInterval(view.s));
     gl.uniform1f(mesh.u.uMetersPerPx, 111320 / (view.s * dpr));
 
@@ -425,6 +430,7 @@ function main() {
     button.style.setProperty('--marker-size', `${entry.size}px`);
     button.setAttribute('aria-label', entry.label);
     button.dataset.label = entry.label;
+    button.dataset.id = entry.id;
     button.title = entry.label;
     const image = document.createElement('img');
     image.src = new URL(entry.icon, import.meta.url);
