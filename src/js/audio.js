@@ -6,7 +6,7 @@ clickSound.volume = 1.0;
 
 function loadMusic() {
     if (!backgroundMusic.src) {
-        backgroundMusic.src = '../../assets/sfx/sfx-music.ogg';
+        backgroundMusic.src = 'assets/sfx/sfx-music.ogg';
         backgroundMusic.load();
     }
 }
@@ -16,7 +16,7 @@ document.addEventListener('click', loadMusic, { once: true });
 document.addEventListener('mouseover', loadMusic, { once: true });
 
 document.body.addEventListener('click', function(event) {
-    const btn = event.target.closest && event.target.closest('button, .treemap-tile.has-children');
+    const btn = event.target.closest && event.target.closest('button, .treemap-tile.has-children, .globe-marker img');
     if (!btn) return;
     loadMusic();
     try {

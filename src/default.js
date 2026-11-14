@@ -31,4 +31,4 @@ import './js/market-text.js';
 import './js/scroll-reveal.js';
 import './js/deep-links.js';
 
-console.log('[BYOND UNiTY] System initialized.');
+console.log('[BYOND UNiTY HTML] System initialized.');
