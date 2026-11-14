@@ -163,10 +163,10 @@ function checkPois(loc) {
 function checkMarkers(poiIds) {
     // globe.js throws on the first invalid marker and then shows none at all,
     // so every problem here is an error.
-    const markers = readJson('src/js/globe-markers.json');
+    const markers = readJson('data/globe-markers.json');
     if (!markers) return;
     if (!Array.isArray(markers)) {
-        error('markers', 'src/js/globe-markers.json must contain an array');
+        error('markers', 'data/globe-markers.json must contain an array');
         return;
     }
 
@@ -368,7 +368,7 @@ function checkHtmlAndAssets(loc) {
         // globe.js resolves this against its own location, src/js/.
         const match = /decodeElevation\(\s*'([^']+)'\s*\)/.exec(read(abs('src/js/globe.js')));
         if (match && !exists(path.resolve(abs('src/js'), match[1]))) {
-            error('assets', `globe.js loads "${match[1]}" but src/js/${match[1]} does not exist`);
+            error('assets', `globe.js loads "${match[1]}" (resolved from src/js/) which does not exist`);
         }
     }
 

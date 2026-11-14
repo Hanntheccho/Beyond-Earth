@@ -715,7 +715,7 @@ function main() {
   // ------------------------------------------------------------ terrain load
   (async () => {
     try {
-      const { default: markers } = await import('./globe-markers.json', {
+      const { default: markers } = await import('../../data/globe-markers.json', {
         with: { type: 'json' },
       });
       addMarkers(markers);
@@ -726,7 +726,7 @@ function main() {
 
   (async () => {
     try {
-      uploadElevation(await decodeElevation('elev-1080.png'));
+      uploadElevation(await decodeElevation('../../data/elev-1080.png'));
     } catch (err) {
       console.error('Failed to load globe elevation data.', err);
       dataError = true;
