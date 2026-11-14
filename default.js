@@ -21,7 +21,7 @@ document.body.addEventListener('click', function(event) {
     loadMusic();
     try {
         clickSound.currentTime = 0;
-        clickSound.play();
+        clickSound.play().catch(() => {});
     } catch (e) { console.error('Click sound failed:', e); }
 });
 
