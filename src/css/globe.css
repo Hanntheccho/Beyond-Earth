@@ -1,0 +1,138 @@
+/* globe.css - Globe preview, markers, sea-level control (see src/js/globe.js). */
+
+/* #region glob */
+.globe-preview {
+    position: fixed;
+    inset: 0;
+    isolation: isolate;
+    overflow: hidden;
+    z-index: 0;
+}
+.globe-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+    cursor: grab;
+    touch-action: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 600ms ease;
+}
+.globe-canvas.is-loaded {
+    opacity: 0.2;
+}
+.globe-canvas.is-emphasized {
+    opacity: 1;
+    pointer-events: auto;
+}
+.globe-canvas.dragging { cursor: grabbing; }
+.globe-marker-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 600ms ease;
+}
+.globe-canvas.is-loaded + .globe-marker-layer { opacity: 0.2; }
+.globe-canvas.is-emphasized + .globe-marker-layer { opacity: 1; }
+.globe-marker {
+    position: absolute;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: var(--marker-size);
+    height: var(--marker-size);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    text-transform: none;
+    letter-spacing: normal;
+    text-indent: 0;
+    opacity: var(--marker-opacity, 1);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+.globe-marker[hidden] { display: none; }
+.globe-marker-layer.is-emphasized .globe-marker { pointer-events: auto; }
+.globe-marker::after {
+    position: absolute;
+    z-index: 1;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    width: max-content;
+    padding: 5px 8px;
+    border: 1px solid var(--clr-border);
+    background: var(--clr-background);
+    color: var(--clr-b);
+    content: attr(data-label);
+    text-align: center;
+    text-indent: var(--letter-spacing-02);
+    white-space: normal;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 3px);
+    transition: opacity 120ms ease, transform 120ms ease;
+    font: var(--fnt-size-bttn) var(--fnt);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-02);
+    font-weight: bold;
+}
+.globe-marker:hover::after,
+.globe-marker:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+.globe-marker img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px #000);
+}
+.globe-marker:hover,
+.globe-marker:focus-visible {
+    z-index: 3;
+    transform: translate(-50%, -50%);
+}
+.globe-coordinates {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 3;
+    padding: 6px 9px;
+    border: 1px solid var(--clr-border);
+    background: var(--clr-background);
+    color: var(--clr-data);
+    font: var(--fnt-size-data) var(--fnt-monospace);
+    pointer-events: none;
+}
+.globe-coordinates[hidden] { display: none; }
+
+.sea-level {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    z-index: 3;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    transform: translateX(-50%);
+    padding: 6px 9px;
+    border: 1px solid var(--clr-border);
+    background: var(--clr-background);
+    color: var(--clr-data);
+    font: var(--fnt-size-data) var(--fnt-monospace);
+}
+.globe-canvas.is-emphasized ~ .sea-level { display: flex; }
+.sea-level input { width: 200px; accent-color: var(--clr-border); }
+.sea-level-readout { min-width: 14ch; }
+/* #endregion */

@@ -1,0 +1,47 @@
+/* tokens.css - Design tokens shared by every component. */
+
+:root {
+    --clr01: #ffffff;
+    --clr02: #afafaf;
+    --clr-body: #ececec;
+    --clr-body-background: #0f0f0f;
+    --clr-border: #8b8b8b31;
+    --clr-h1: #ffffff; /* unused */
+    --clr-h2: #ffffff;
+    --clr-h3: #ffffff; /* unused */
+    --clr-ph1: #ffffff;
+    --clr-ph2: #d4d4d4;
+    --clr-ph3: #afafaf;
+    --clr-b: #ffffffe5;
+    --clr-i: #ffffffc7;
+    --clr-p: #ffffff9c;
+    --clr-cite: #ffffff;
+    --clr-data: #dbdbdb9c;
+    --clr-background: #181818ef;
+    --clr-positive: #00ff6a;
+    --clr-negative: #ff0000;
+    --clr-neutrale: #a0a0a0;
+    --max-width: 800px;
+    --border: 2px solid var(--clr-border);
+    --border-left: 12px;
+    --transition-time: 160ms;
+    --transition-time-clr: 900ms;
+    --transition-time-400: 400ms;
+    --opacity-10: 0.1;
+    --box-shadow: 0 0 16px #00000080;
+    --drop-shadow-60: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
+    --drop-shadow-20: 0 0 0.6em color-mix(in srgb, currentColor 20%, transparent);
+    --letter-spacing-02: .12em;
+    --scrollbar-color: var(--clr-p) var(--clr-border);
+    --scrollbar-width: thin;
+    --fnt: 'Archivo', sans-serif;
+    --fnt-monospace: 'Source Code Pro', monospace;
+    --fnt-size-h1: calc(var(--fnt-size-text) + 6px);
+    --fnt-size-h2: calc(var(--fnt-size-text) + 4px);
+    --fnt-size-h3: calc(var(--fnt-size-text) + 2px);
+    --fnt-size-text: 14px;
+    --fnt-size-bttn: calc(var(--fnt-size-text) - 2px);
+    --fnt-size-data: calc(var(--fnt-size-text) - 4px);
+    --px-20: 20px;
+    --btn-size: 74px;
+}

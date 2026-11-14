@@ -340,10 +340,18 @@ function checkHtmlAndAssets(loc) {
         if (!exists(abs(stripQuery(match[1])))) error('assets', `index.html references "${match[1]}" which does not exist`);
     }
 
-    if (exists(abs('src/css/default.css'))) {
-        for (const match of read(abs('src/css/default.css')).matchAll(/url\(\s*(["']?)([^"')]+)\1\s*\)/g)) {
+    // Stylesheets: every url() must resolve and every @import must point at a real file.
+    // url()s resolve against the stylesheet that contains them, so each file is checked in its own directory.
+    for (const file of listCss('src/css')) {
+        const dir = path.dirname(abs(file));
+        const text = read(abs(file));
+        for (const match of text.matchAll(/url\(\s*(["']?)([^"')]+)\1\s*\)/g)) {
             if (isExternal(match[2])) continue;
-            if (!exists(path.resolve(abs('src/css'), stripQuery(match[2])))) error('assets', `default.css references "${match[2]}" which does not exist`);
+            if (!exists(path.resolve(dir, stripQuery(match[2])))) error('assets', `${file} references "${match[2]}" which does not exist`);
+        }
+        for (const match of text.matchAll(/@import\s+(?:url\(\s*)?["']([^"')]+)["']/g)) {
+            if (isExternal(match[1])) continue;
+            if (!exists(path.resolve(dir, stripQuery(match[1])))) error('assets', `${file} imports "${match[1]}" which does not exist`);
         }
     }
 
@@ -380,6 +388,11 @@ function checkHtmlAndAssets(loc) {
 function listJs(dir) {
     if (!exists(abs(dir))) return [];
     return fs.readdirSync(abs(dir)).filter(f => f.endsWith('.js')).map(f => `${dir}/${f}`);
+}
+
+function listCss(dir) {
+    if (!exists(abs(dir))) return [];
+    return fs.readdirSync(abs(dir)).filter(f => f.endsWith('.css')).map(f => `${dir}/${f}`);
 }
 
 function checkSyntax() {

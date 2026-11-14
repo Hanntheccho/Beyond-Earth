@@ -1,0 +1,42 @@
+/* market-text.css - Market ticker (see src/js/market-text.js). */
+
+/* #region mrkt */
+.market-text {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: var(--fnt-size-bttn);
+    letter-spacing: var(--letter-spacing-02);
+    color: var(--clr-data);
+    font-family: var(--fnt-monospace);
+    background-color: var(--clr-background);
+    box-shadow: var(--box-shadow);
+    border-top: var(--border);
+    z-index: 1000;
+}
+.market-text-line {
+    flex: none;
+    will-change: transform;
+}
+.positive { color: var(--clr-positive); filter: drop-shadow(var(--drop-shadow-60)); }
+.negative { color: var(--clr-negative); filter: drop-shadow(var(--drop-shadow-60)); }
+.neutrale { color: var(--clr-neutrale); filter: drop-shadow(var(--drop-shadow-60)); }
+
+.market-text { animation: ticker-enter 650ms cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes ticker-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.market-text-val { transition: color var(--transition-time-clr) ease; }
+.market-text-val.is-flashing { animation: ticker-flash var(--transition-time-400) ease-out; }
+@keyframes ticker-flash {
+    from { text-shadow: 0 0 0.9em currentColor, 0 0 0.3em currentColor; }
+    to   { text-shadow: 0 0 0 transparent; }
+}
+/* #endregion */

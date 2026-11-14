@@ -1,0 +1,38 @@
+/* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
+
+/* #region tree */
+.treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
+.treemap-breadcrumbs button { margin-right: 4px; }
+.treemap { width: 100%; overflow: hidden; }
+.treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
+.treemap-tile { color: var(--treemap-color, var(--clr-neutrale)); }
+.treemap-tile[data-direction="up"] { --treemap-color: var(--clr-positive); }
+.treemap-tile[data-direction="down"] { --treemap-color: var(--clr-negative); }
+.treemap-tile[data-direction="neutral"] { --treemap-color: var(--clr-neutrale); }
+.treemap-tile.has-children { cursor: pointer; }
+.treemap-surface {
+    fill: color-mix(in srgb, var(--treemap-color, var(--clr-neutrale)) 6%, transparent);
+    stroke: var(--treemap-color, var(--clr-neutrale));
+    stroke-width: 1px;
+    filter: drop-shadow(var(--drop-shadow-60));
+    transition: filter var(--transition-time) ease;
+}
+.treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
+.treemap-tile:focus { outline: none; }
+.treemap-label { font-family: var(--fnt-monospace); font-weight: 900; text-shadow: var(--drop-shadow-20); fill: var(--treemap-color); pointer-events: none; }
+.treemap-label-name { text-transform: uppercase; }
+.treemap-label-value { filter: brightness(0.4); }
+.treemap-label-change { filter: brightness(0.6); }
+
+@property --treemap-color {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #a0a0a0;
+}
+.treemap-tile { transition: --treemap-color var(--transition-time-clr) ease; }
+.treemap-tile.is-flashing .treemap-surface { animation: tileFlash var(--transition-time-400) ease-out; }
+@keyframes tileFlash {
+    from { fill: color-mix(in srgb, var(--treemap-color) 28%, transparent); }
+    to   { fill: color-mix(in srgb, var(--treemap-color) 6%, transparent); }
+}
+/* #endregion */
