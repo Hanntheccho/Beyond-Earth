@@ -40,7 +40,7 @@ window.scenarioConfig = {
         { year: 2088, label: 'Hamburg Flood', y: 140, series: ['seaLevel', 'population'] },
         { year: 2089, label: 'INTEGR Founded', y: 100, series: ['ecobalance'], positive: true },
         { year: 2090, label: 'Antarctic Collapse', y: 210, series: ['iceVolume', 'seaLevel'] },
-        { year: 2107, label: 'Swiss Plebiscite', y: 160, series: ['worldGDP'], positive: true },
+        { year: 2107, label: 'Swiss Plebiscite', y: 200, series: ['worldGDP'], positive: true },
         { year: 2170, label: 'War of Unification', y: 180, series: ['worldGDP', 'population'] },
         { year: 2194, label: 'Green Soil', y: 60, series: ['ecobalance'], positive: true },
         { year: 2198, label: "Coup of '98", y: 140, series: ['population'] }
@@ -57,7 +57,7 @@ window.scenarioChartData = {
     temperature: [
         { year: 1950, value: 13.9 },
         { year: 1960, value: 14.0 },
-        { year: 1970, value: 14.0 },
+        { year: 1970, value: 14.1 },
         { year: 1980, value: 14.2 },
         { year: 1990, value: 14.4 },
         { year: 2000, value: 14.6 },
@@ -81,10 +81,10 @@ window.scenarioChartData = {
         { year: 2120, value: 16.8 },
         { year: 2130, value: 17.4 },
         { year: 2140, value: 17.5 },
-        { year: 2150, value: 17.7 },
-        { year: 2160, value: 17.8 },
-        { year: 2170, value: 17.9 },
-        { year: 2180, value: 18.0 },
+        { year: 2150, value: 17.6 },
+        { year: 2160, value: 17.7 },
+        { year: 2170, value: 17.8 },
+        { year: 2180, value: 17.9 },
         { year: 2190, value: 18.0 },
         { year: 2200, value: 18.1 }
     ],
@@ -189,10 +189,10 @@ window.scenarioChartData = {
         { year: 2200, value: 11.7 }
     ],
     worldGDP: [
-        { year: 1950, value: 3.8 },
-        { year: 1970, value: 4.0 },
-        { year: 1990, value: 2.8 },
-        { year: 1995, value: 3.2 },
+//      { year: 1950, value: 3.8 },
+//      { year: 1970, value: 4.0 },
+//      { year: 1990, value: 2.8 },
+//      { year: 1995, value: 3.2 },
         { year: 2000, value: 5.6 },
         { year: 2010, value: 3.8 },
         { year: 2020, value: 5.2 },

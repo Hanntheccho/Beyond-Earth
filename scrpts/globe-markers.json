@@ -102,10 +102,10 @@
     "id": "poiUNO",
     "label": "District 1",
     "icon": "../gfx/UNO.svg",
-    "lat": 60,
+    "lat": 55,
     "lon": -100,
     "altitudeKm": 400,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiDOS",
@@ -114,16 +114,16 @@
     "lat": 52.5,
     "lon": -90,
     "altitudeKm": 200,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiTRE",
     "label": "District 3",
     "icon": "../gfx/TRE.svg",
     "lat": 45,
-    "lon": -80,
+    "lon": -85,
     "altitudeKm": 200,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiCUA",
@@ -132,16 +132,16 @@
     "lat": 37.5,
     "lon": -90,
     "altitudeKm": 200,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiCIN",
     "label": "District 5",
     "icon": "../gfx/CIN.svg",
-    "lat": 30,
+    "lat": 35,
     "lon": -100,
     "altitudeKm": 200,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiSEI",
@@ -150,16 +150,16 @@
     "lat": 37.5,
     "lon": -110,
     "altitudeKm": 200,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiSIT",
     "label": "District 7",
     "icon": "../gfx/SIT.svg",
     "lat": 45,
-    "lon": -120,
+    "lon": -115,
     "altitudeKm": 200,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiOCH",
@@ -168,7 +168,7 @@
     "lat": 52.5,
     "lon": -110,
     "altitudeKm": 200,
-    "size": 40
+    "size": 30
   },
   {
     "id": "poiARC",

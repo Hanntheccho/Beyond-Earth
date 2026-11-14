@@ -145,7 +145,6 @@ button[aria-pressed="true"] {
     display: block;
     width: 100%;
     height: 100%;
-    opacity: 0.8;
 }
 
 a {
@@ -628,8 +627,8 @@ h2 {
     font: var(--fnt-size-data) var(--fnt-monospace);
 }
 .globe-canvas.is-emphasized ~ .sea-level { display: flex; }
-.sea-level input { width: min(40vw, 360px); accent-color: var(--clr-border); }
-.sea-level-readout { min-width: 14ch; letter-spacing: var(--letter-spacing-02); }
+.sea-level input { width: 200px; accent-color: var(--clr-border); }
+.sea-level-readout { min-width: 14ch; }
 /* #endregion */
 /* #region affy */
 .affy-map {
