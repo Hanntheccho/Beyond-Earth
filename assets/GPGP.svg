@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
-     inkscape:zoom="0.24346724"
-     inkscape:cx="418.94753"
-     inkscape:cy="1197.2863"
+     inkscape:zoom="0.12173362"
+     inkscape:cx="53.395274"
+     inkscape:cy="2509.5779"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
@@ -51,5 +51,19 @@
        style="font-weight:900;font-size:70.5556px;font-family:Arial;-inkscape-font-specification:'Arial Heavy';fill:#ffffff;stroke-width:1.64;stroke-linejoin:round;stroke-opacity:0.920611"
        transform="rotate(180,104.97829,148.59305)"
        aria-label="GREAT PACIFIC GARBAGE PATCH" />
+    <path
+       style="display:inline;fill:#ffffff;stroke-width:0.612748;stroke-linejoin:round;stroke-opacity:0.920611"
+       id="circle1"
+       transform="rotate(135)"
+       sodipodi:type="arc"
+       sodipodi:cx="30.759129"
+       sodipodi:cy="-179.25159"
+       sodipodi:rx="175"
+       sodipodi:ry="175"
+       sodipodi:start="0"
+       sodipodi:end="3.1415927"
+       sodipodi:open="true"
+       sodipodi:arc-type="arc"
+       d="m 205.75913,-179.25159 a 175,175 0 0 1 -87.5,151.55445 175,175 0 0 1 -175.000006,-4e-6 175,175 0 0 1 -87.499994,-151.554446" />
   </g>
 </svg>

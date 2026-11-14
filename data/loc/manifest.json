@@ -1,11 +1,15 @@
 [
     "default.json",
     "pois/poi000.json",
+    "pois/poiGPGP.json",
     "pois/poiFRA.json",
     "pois/poiGER.json",
     "pois/poiNAU.json",
     "pois/poiBRA.json",
     "pois/poiSLA.json",
     "pois/poiARC.json",
+    "pois/poiANC.json",
+    "pois/poiCHI.json",
+    "pois/poiPAU.json",
     "quotes.json"
 ]

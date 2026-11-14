@@ -114,11 +114,6 @@
       "value": 1240
     },
     {
-      "name": "Alchemax",
-      "tag": "MAX",
-      "value": 120
-    },
-    {
       "name": "Ark Initiative",
       "tag": "ARK",
       "value": 460
@@ -129,29 +124,19 @@
       "value": 780
     },
     {
-      "name": "Aegis Security Group",
-      "tag": "AEG",
-      "value": 310
+      "name": "ABTBIA",
+      "tag": "ABT",
+      "value": 2130
     },
     {
-      "name": "Verdant Covenant",
-      "tag": "VERCO",
-      "value": 50
+      "name": "Morgan Industries",
+      "tag": "MOR",
+      "value": 3010
     },
     {
       "name": "Arakawa-Sun",
       "tag": "ARAK",
-      "value": 830
-    },
-    {
-      "name": "Militarch",
-      "tag": "MILI",
-      "value": 580
-    },
-    {
-      "name": "Vanguard Terraform",
-      "tag": "VAN",
-      "value": 270
+      "value": 230
     },
     {
       "name": "Pioneer Habitat Works",
@@ -215,19 +200,9 @@
       ]
     },
     {
-      "name": "Atlas Medical Network",
-      "tag": "AMN",
-      "value": 930
-    },
-    {
-      "name": "Apex Executive Trust",
-      "tag": "AET",
-      "value": 810
-    },
-    {
       "name": "Ternion Materials",
       "tag": "TRN",
-      "value": 470
+      "value": 90
     },
     {
       "name": "Müninstek Freunde",
@@ -289,6 +264,11 @@
       "name": "Netwarden",
       "tag": "NETW",
       "value": 46
+    },
+    {
+      "name": "Pacific Patch Market",
+      "tag": "PPM",
+      "value": 82
     }
   ]
 }
