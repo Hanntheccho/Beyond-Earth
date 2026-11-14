@@ -86,7 +86,7 @@ function checkLocalization() {
     });
 
     // JSON files in data/loc/ that the manifest does not load (keyword lists are loaded separately).
-    fs.readdirSync(abs('loc'))
+    fs.readdirSync(abs('data/loc'))
         .filter(f => f.endsWith('.json') && f !== 'manifest.json' && !f.startsWith('keywords-'))
         .filter(f => !manifest.includes(f))
         .forEach(f => warn('loc', `data/loc/${f} is not listed in manifest.json, so it is never loaded`));
@@ -343,7 +343,7 @@ function checkHtmlAndAssets(loc) {
     if (exists(abs('src/css/default.css'))) {
         for (const match of read(abs('src/css/default.css')).matchAll(/url\(\s*(["']?)([^"')]+)\1\s*\)/g)) {
             if (isExternal(match[2])) continue;
-            if (!exists(abs(stripQuery(match[2])))) error('assets', `default.css references "${match[2]}" which does not exist`);
+            if (!exists(path.resolve(abs('src/css'), stripQuery(match[2])))) error('assets', `default.css references "${match[2]}" which does not exist`);
         }
     }
 
@@ -357,7 +357,7 @@ function checkHtmlAndAssets(loc) {
     if (exists(abs('src/js/affy-graph.js'))) {
         const source = read(abs('src/js/affy-graph.js'));
         for (const match of source.matchAll(/icon:\s*'([^']+)'/g)) {
-            if (!exists(abs(match[1]))) error('assets', `affy-graph.js uses icon "${match[1]}" which does not exist`);
+            if (!exists(path.resolve(abs('src/js'), match[1]))) error('assets', `affy-graph.js uses icon "${match[1]}" which does not exist`);
         }
         for (const match of source.matchAll(/description:\s*'([^']+)'/g)) {
             if (typeof loc[match[1]] !== 'string') error('loc', `affy-graph.js uses tooltip "${match[1]}" which is not in the localization files`);
@@ -383,7 +383,7 @@ function listJs(dir) {
 }
 
 function checkSyntax() {
-    const files = [...(exists(abs('src/js/default.js')) ? ['src/js/default.js'] : []), ...listJs('loc'), ...listJs('src/js')];
+    const files = [...(exists(abs('src/js/default.js')) ? ['src/js/default.js'] : []), ...listJs('data/loc'), ...listJs('src/js')];
     const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'validate-'));
     try {
         files.forEach((rel, index) => {
