@@ -7,7 +7,7 @@ async function fetchLocalization() {
     return applyDescriptionTitles(await fetchLocalizationFiles());
 }
 
-/** Replace {{title}} in each description with its matching localization title. */
+/** Add each description's localized title heading. */
 function applyDescriptionTitles(localization) {
     for (const [key, description] of Object.entries(localization)) {
         if (!key.endsWith('-desc') || typeof description !== 'string') continue;
@@ -22,7 +22,7 @@ function applyDescriptionTitles(localization) {
             '"': '&quot;',
             "'": '&#39;'
         })[character]);
-        localization[key] = description.replaceAll('{{title}}', escapedTitle);
+        localization[key] = `<h2>[${escapedTitle}]</h2>${description}`;
     }
 
     return localization;
