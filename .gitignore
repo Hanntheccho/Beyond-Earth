@@ -1,6 +1,3 @@
-# Ignore the misleading ignore.txt (it's leftover JSON data, not gitignore)
-ignore.txt
-
 # Node / tooling
 node_modules/
 *.local
