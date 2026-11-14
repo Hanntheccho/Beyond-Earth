@@ -4,7 +4,7 @@
  */
 
 // 1. Core Services (Localization & Data)
-import '../data/loc/loc.js';
+import './js/loc.js';
 import './js/viewport-visibility.js';
 import './js/data-calc.js';
 import './js/scenario-data.js';

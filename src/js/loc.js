@@ -275,3 +275,5 @@ async function getLocalization() {
 
 // Load localization
 loadLocalization();
+
+window.getLocalization = getLocalization;
