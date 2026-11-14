@@ -1,6 +1,5 @@
 /* chart.css - Scenario chart plot (see src/js/scenario-chart.js). */
 
-/* #region mitk */
 .scenario-chart-plot {
     position: relative;
     isolation: isolate;
@@ -85,4 +84,3 @@
 .scenario-chart-plot text.chart-era-label.chart-positive { fill: color-mix(in srgb, var(--clr-positive) 80%, rgba(255, 255, 255, 0)); }
 .scenario-chart-plot .chart-event-group.chart-positive .chart-event-line { stroke: var(--clr-positive); }
 .scenario-chart-plot .chart-event-group.chart-positive .chart-event-tag { fill: color-mix(in srgb, var(--clr-positive) 20%, black); stroke: var(--clr-positive); }
-/* #endregion */

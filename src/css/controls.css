@@ -1,4 +1,19 @@
-/* controls.css - Form controls: range input, buttons, main visibility toggle. */
+/* controls.css - Form controls: scrollbar, range input, buttons, main visibility toggle. */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--clr-background);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--clr-data);
+    border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--clr-p);
+}
 
 input[type="range"] {
     appearance: none;

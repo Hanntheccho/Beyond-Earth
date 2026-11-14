@@ -1,6 +1,5 @@
 /* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
 
-/* #region tree */
 .treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
 .treemap-breadcrumbs button { margin-right: 4px; }
 .treemap { width: 100%; overflow: hidden; }
@@ -35,4 +34,3 @@
     from { fill: color-mix(in srgb, var(--treemap-color) 28%, transparent); }
     to   { fill: color-mix(in srgb, var(--treemap-color) 6%, transparent); }
 }
-/* #endregion */

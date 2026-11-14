@@ -1,6 +1,5 @@
 /* vfx.css - Full-screen effects: scanlines, vignette, halftone. */
 
-/* #region vfx */
 .vfx-overlay,
 .vfx-scanline,
 .vfx-vignette,
@@ -39,4 +38,3 @@
     background-size: 5px 5px;
     opacity: 0.05;
 }
-/* #endregion */

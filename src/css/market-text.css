@@ -1,6 +1,5 @@
 /* market-text.css - Market ticker (see src/js/market-text.js). */
 
-/* #region mrkt */
 .market-text {
     position: fixed;
     top: auto;
@@ -39,4 +38,3 @@
     from { text-shadow: 0 0 0.9em currentColor, 0 0 0.3em currentColor; }
     to   { text-shadow: 0 0 0 transparent; }
 }
-/* #endregion */

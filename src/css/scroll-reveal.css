@@ -1,6 +1,5 @@
 /* scroll-reveal.css - Scroll-reveal entrance states (see src/js/scroll-reveal.js). */
 
-/* #region scrl */
 .scroll-reveal-ready .scroll-reveal {
     opacity: 0;
     transform: translateY(14px);
@@ -20,4 +19,3 @@
     transform: translateY(0);
     transition-delay: calc(var(--copy-order, 0) * 45ms);
 }
-/* #endregion */

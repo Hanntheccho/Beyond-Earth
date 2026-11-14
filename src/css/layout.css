@@ -85,8 +85,6 @@
     flex-wrap: wrap;
     max-height: 180px;
     overflow-y: auto;
-    scrollbar-color: var(--scrollbar-color);
-    scrollbar-width: var(--scrollbar-width);
     padding: 0;
 }
 
@@ -97,8 +95,6 @@
     border-left-width: var(--border-left);
     max-height: calc(100vh - 96px);
     overflow-y: auto;
-    scrollbar-color: var(--scrollbar-color);
-    scrollbar-width: var(--scrollbar-width);
 }
 .div-desc.has-background {
     position: relative;

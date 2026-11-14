@@ -1,6 +1,5 @@
 /* affy.css - Affinity map (see src/js/affy-graph.js). */
 
-/* #region affy */
 .affy-map {
     position: relative;
     width: calc(100% - 200px);
@@ -63,4 +62,3 @@
 .affy-map-lines.is-focusing .affy-node:not(.is-related) { opacity: .08; }
 
 .affy-map { overflow-anchor: none; }
-/* #endregion */

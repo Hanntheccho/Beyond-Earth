@@ -1,6 +1,5 @@
 /* data-grid.css - Data status bar and data grid (see src/js/data-grid.js). */
 
-/* #region data */
 .data-status {
     display: grid;
     margin-top: 0;
@@ -41,4 +40,3 @@
 
 .data-grid-row.is-flashing.is-positive { animation: rowFlashUp var(--transition-time-400) ease-out; }
 .data-grid-row.is-flashing.is-negative { animation: rowFlashDown var(--transition-time-400) ease-out; }
-/* #endregion */

@@ -1,6 +1,5 @@
 /* globe.css - Globe preview, markers, sea-level control (see src/js/globe.js). */
 
-/* #region glob */
 .globe-preview {
     position: fixed;
     inset: 0;
@@ -135,4 +134,3 @@
 .globe-canvas.is-emphasized ~ .sea-level { display: flex; }
 .sea-level input { width: 200px; accent-color: var(--clr-border); }
 .sea-level-readout { min-width: 14ch; }
-/* #endregion */

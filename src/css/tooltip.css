@@ -20,8 +20,6 @@
     overflow-wrap: anywhere;
     box-shadow: var(--box-shadow);
     overscroll-behavior: contain;
-    scrollbar-color: var(--scrollbar-color);
-    scrollbar-width: var(--scrollbar-width);
     animation: tooltip-show-up var(--transition-time) ease-out both;
 }
 @keyframes tooltip-show-up {
