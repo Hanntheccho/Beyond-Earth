@@ -35,7 +35,7 @@
         // aria-expanded="false" means the content is currently hidden.
         if (toggle && toggle.getAttribute('aria-expanded') === 'false') toggle.click();
 
-        // default.js swaps the panels and loc.js formats the text on this click.
+        // panel-toggle.js swaps the panels and loc.js formats the text on this click.
         button.click();
 
         panel.scrollIntoView({

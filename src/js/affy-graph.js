@@ -1,4 +1,4 @@
-// Builds the affy map before default.js binds the shared tooltip behavior.
+// Builds the affy map before tooltips.js binds the shared tooltip behavior.
 // The whole graph rotates in a loop, in quick one-vertex steps with a rest between
 // them. The lines live in one <g> that is
 // rotated with an SVG transform; the node buttons are foreignObjects that are

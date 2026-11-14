@@ -347,10 +347,10 @@ function checkHtmlAndAssets(loc) {
         }
     }
 
-    if (exists(abs('src/js/default.js'))) {
-        for (const match of read(abs('src/js/default.js')).matchAll(/(beLegacy\d+):\s*"([^"]+)"/g)) {
-            if (!exists(abs(match[2]))) error('assets', `default.js loads "${match[2]}" which does not exist`);
-            if (!ids.includes(match[1])) error('html', `default.js fills #${match[1]} but index.html has no such element`);
+    for (const file of listJs('src/js')) {
+        for (const match of read(abs(file)).matchAll(/(beLegacy\d+):\s*"([^"]+)"/g)) {
+            if (!exists(abs(match[2]))) error('assets', `${file} loads "${match[2]}" which does not exist`);
+            if (!ids.includes(match[1])) error('html', `${file} fills #${match[1]} but index.html has no such element`);
         }
     }
 
@@ -383,7 +383,7 @@ function listJs(dir) {
 }
 
 function checkSyntax() {
-    const files = [...(exists(abs('src/js/default.js')) ? ['src/js/default.js'] : []), ...listJs('data/loc'), ...listJs('src/js')];
+    const files = [...listJs('data/loc'), ...listJs('src/js')];
     const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'validate-'));
     try {
         files.forEach((rel, index) => {
