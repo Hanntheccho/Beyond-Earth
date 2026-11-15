@@ -147,7 +147,20 @@
             }));
         }
 
-        // Pass 3: roll parent values upward and record changes for every node.
+        // Pass 3: speculative momentum — price trends attract trend-followers, creating overshoot.
+        // Circuit breaker prevents runaway bubbles: if momentum exceeds 5% it's clamped.
+        sources.forEach(source => walk(source.root, node => {
+            const oldValue = previous.get(node) || 0;
+            const rawChange = node.value - oldValue;
+            const rawChangePercent = oldValue ? rawChange / oldValue * 100 : 0;
+            const prevMomentum = node.momentum || 0;
+            node.momentum = 0.9 * prevMomentum + 0.1 * rawChangePercent;
+            const clampedMomentum = Math.max(-5, Math.min(5, node.momentum));
+            const momentumBoost = 0.05 * Math.sign(clampedMomentum) * Math.min(Math.abs(clampedMomentum), 5);
+            node.value *= (1 + momentumBoost);
+        }));
+
+        // Pass 4: roll parent values upward and record changes for every node.
         function finalize(node) {
             if (node.children.length) {
                 node.children.forEach(finalize);
