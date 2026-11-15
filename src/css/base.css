@@ -3,7 +3,7 @@
 body {
     margin: 0;
     font-family: var(--fnt);
-    color: var(--clr-body);
+    color: white;
     background-color: var(--clr-body-background);
     position: relative;
     isolation: isolate;

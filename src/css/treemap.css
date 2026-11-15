@@ -1,6 +1,6 @@
 /* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
 
-.treemap-breadcrumbs { color: var(--clr-b); font-size: var(--fnt-size-bttn); }
+.treemap-breadcrumbs { color: var(--clr-p); font-size: var(--fnt-size-bttn); }
 .treemap-breadcrumbs button { margin-right: 4px; }
 .treemap { width: 100%; overflow: hidden; }
 .treemap svg { overflow: visible; display: block; width: 100%; height: auto; }

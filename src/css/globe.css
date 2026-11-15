@@ -71,7 +71,7 @@
     padding: 5px 8px;
     border: 1px solid var(--clr-border);
     background: var(--clr-background);
-    color: var(--clr-b);
+    color: var(--clr-ph1);
     content: attr(data-label);
     text-align: center;
     text-indent: var(--letter-spacing-02);

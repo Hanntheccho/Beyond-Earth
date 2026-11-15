@@ -91,11 +91,23 @@ function checkLocalization() {
         .filter(f => !manifest.includes(f))
         .forEach(f => warn('loc', `data/loc/${f} is not listed in manifest.json, so it is never loaded`));
 
+    const seenKeywords = new Map();
     ['keywords-ph1.json', 'keywords-ph2.json', 'keywords-ph3.json'].forEach(file => {
         const list = readJson(`data/loc/${file}`);
-        if (list && (!Array.isArray(list) || list.some(item => typeof item !== 'string'))) {
+        if (!list) return;
+
+        if (!Array.isArray(list) || list.some(item => typeof item !== 'string')) {
             error('loc', `data/loc/${file} must be an array of strings`);
+            return;
         }
+
+        list.forEach(keyword => {
+            if (seenKeywords.has(keyword)) {
+                warn('loc', `keyword "${keyword}" is in both ${seenKeywords.get(keyword)} and ${file}`);
+            } else {
+                seenKeywords.set(keyword, file);
+            }
+        });
     });
 
     // Loading-tip headers should carry the same number as their key.

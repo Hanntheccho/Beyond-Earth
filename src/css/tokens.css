@@ -1,21 +1,16 @@
 /* tokens.css - Design tokens shared by every component. */
 
 :root {
-    --clr01: #ffffff;
-    --clr02: #afafaf;
-    --clr-body: #ececec;
     --clr-body-background: #0f0f0f;
     --clr-border: #8b8b8b31;
-    --clr-h1: #ffffff;
-    --clr-h2: #ffffff;
-    --clr-ph1: #ffffff;
-    --clr-ph2: #d4d4d4;
-    --clr-ph3: #afafaf;
-    --clr-b: #ffffffe5;
-    --clr-i: #ffffffc7;
-    --clr-p: #ffffff9c;
-    --clr-cite: #ffffff;
-    --clr-data: #dbdbdb9c;
+    --clr-h1: white;
+    --clr-h2: white;
+    --clr-ph1: white;
+    --clr-ph2: color-mix(in srgb, var(--clr-ph1) 90%, black);
+    --clr-ph3: color-mix(in srgb, var(--clr-ph1) 80%, black);
+    --clr-p: color-mix(in srgb, var(--clr-ph1) 70%, black);
+    --clr-cite: white;
+    --clr-data: color-mix(in srgb, var(--clr-ph1) 60%, black);
     --clr-background: #181818ef;
     --clr-positive: #00ff6a;
     --clr-negative: #ff0000;

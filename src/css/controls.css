@@ -31,7 +31,7 @@ input[type="range"]::-webkit-slider-thumb {
 
     width: 12px;
     height: 12px;
-    background: var(--clr-b);
+    background: var(--clr-ph1);
     border: none;
     border-radius: 0;
     cursor: pointer;
@@ -62,7 +62,7 @@ button:hover {
 button[aria-pressed="true"] {
     border-color: var(--clr-p);
     background-color: var(--clr-border);
-    color: var(--clr-b);
+    color: var(--clr-ph1);
 }
 
 .main-visibility-toggle {

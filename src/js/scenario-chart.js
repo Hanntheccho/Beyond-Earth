@@ -37,7 +37,6 @@
     function metaFor(plot) {
         const key = plot.dataset.series;
         const meta = seriesMeta[key];
-        if (!meta) console.warn(`No scenarioSeries metadata for "${key}".`);
         const safe = meta || {};
         return {
             key,
