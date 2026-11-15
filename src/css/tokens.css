@@ -37,6 +37,8 @@
     --fnt-size-bttn: calc(var(--fnt-size-text) - 2px);
     --fnt-size-data: calc(var(--fnt-size-text) - 4px);
     --px-20: 20px;
+    --px-10: 10px;
     --btn-size: 74px;
     --img-filter: invert(0);
+    --img-url: url("../../be-icon-w.svg");
 }

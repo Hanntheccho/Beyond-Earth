@@ -65,36 +65,28 @@ button[aria-pressed="true"] {
     color: var(--clr-ph1);
 }
 
-.main-visibility-toggle {
+.main-visibility-toggle,
+.theme-toggle {
     position: fixed;
-    top: 8px;
-    right: 8px;
     z-index: 1200;
     width: var(--btn-size);
     height: var(--btn-size);
-    padding: 6px;
+    padding: 12px;
     background: var(--clr-background);
-    filter: drop-shadow(var(--drop-shadow-20));
-    text-shadow: var(--drop-shadow-20);
+    filter: drop-shadow(var(--drop-shadow-60));
 }
-.main-visibility-toggle img {
+.main-visibility-toggle img,
+.theme-toggle img {
     display: block;
     width: 100%;
     height: 100%;
 }
-
+.main-visibility-toggle {
+    top: var(--px-10);
+    right: var(--px-10);
+}
 .theme-toggle {
-    position: fixed;
-    top: 8px;
-    right: 90px;
-    z-index: 1200;
-    width: var(--btn-size);
-    height: var(--btn-size);
-    background: var(--clr-background);
-    filter: drop-shadow(var(--drop-shadow-20));
-    text-shadow: var(--drop-shadow-20);
-    font-size: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    bottom: 48px;
+    left: var(--px-10);
+    padding: 12px
 }

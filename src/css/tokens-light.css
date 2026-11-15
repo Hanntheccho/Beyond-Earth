@@ -26,6 +26,7 @@
 
     /* Invert for light theme */
     --img-filter: invert(1);
+    --img-url: url("../../be-icon-b.svg");
 }
 .light-theme img {
     filter: invert(1);

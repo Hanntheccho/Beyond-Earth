@@ -106,34 +106,28 @@
     z-index: 3;
     transform: translate(-50%, -50%);
 }
-.globe-coordinates {
+.globe-coordinates,
+.sea-level {
     position: absolute;
-    bottom: 16px;
-    left: 16px;
+    bottom: var(--px-10);
     z-index: 3;
     padding: 6px 9px;
     border: 1px solid var(--clr-border);
     background: var(--clr-background);
     color: var(--clr-data);
     font-size: var(--fnt-size-data);
+}
+.globe-coordinates {
+    left: var(--px-10);
     pointer-events: none;
 }
 .globe-coordinates[hidden] { display: none; }
-
 .sea-level {
-    position: absolute;
-    bottom: 16px;
     left: 50%;
-    z-index: 3;
     display: none;
     align-items: center;
     gap: 12px;
     transform: translateX(-50%);
-    padding: 6px 9px;
-    border: 1px solid var(--clr-border);
-    background: var(--clr-background);
-    color: var(--clr-data);
-    font-size: var(--fnt-size-data);
 }
 .globe-canvas.is-emphasized ~ .sea-level { display: flex; }
 .sea-level input { width: 200px; accent-color: var(--clr-border); }

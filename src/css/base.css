@@ -19,12 +19,12 @@ body::after {
     background-repeat: repeat;
 }
 body::before {
-    background: url("../../be-icon.svg") center calc(50% - 30px) / 240px repeat;
+    background: var(--img-url) center calc(50% - 30px) / 240px repeat;
     opacity: 0.02;
     animation: background-drift-large 36s linear infinite alternate;
 }
 body::after {
-    background: url("../../be-icon.svg") center calc(50% - 30px) / 160px repeat;
+    background: var(--img-url) center calc(50% - 30px) / 160px repeat;
     opacity: 0.01;
     animation: background-drift-small 29s linear infinite alternate;
 }
