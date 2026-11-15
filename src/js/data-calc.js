@@ -2,7 +2,12 @@
     const sources = [];
     let marketMood = 0;
     let relations = [];
+    let influences = [];
     let timer = null;
+    const MIN_VALUE_RATIO = 0.05;
+    const MAX_VALUE_RATIO = 10;
+    const MAX_MOMENTUM = 5;
+    const MAX_MOMENTUM_BOOST = 0.005;
 
     function itemKey(item) {
         return item.tag || item.name;
@@ -11,6 +16,13 @@
     function walk(node, callback) {
         callback(node);
         node.children.forEach(child => walk(child, callback));
+    }
+
+    function clampValue(node, value) {
+        return Math.max(
+            node.baseValue * MIN_VALUE_RATIO,
+            Math.min(node.baseValue * MAX_VALUE_RATIO, value)
+        );
     }
 
     function prepareValues(node) {
@@ -79,8 +91,44 @@
         }
     }
 
-    function setRelations(newRelations) {
-        relations = newRelations;
+    function setRelations(data) {
+        relations = data.dependencies || [];
+        influences = data.influences || [];
+    }
+
+    function getInfluenceMap() {
+        return influences;
+    }
+
+    // Debug renderer: dumps active dependencies + influences as live plain text into .debug-influence
+    function renderInfluenceDebug() {
+        const container = document.querySelector('.debug-influence');
+        if (!container) return;
+        const lines = [];
+        lines.push('=== DEPENDENCIES (source -> target) ===');
+        relations.forEach(rel => {
+            const source = findNodeByTag(rel.sourceKey);
+            const target = findNodeByTag(rel.targetKey);
+            const srcInfo = source ? `${source.name} ${source.value.toFixed(0)} (${source.changePercent >= 0 ? '+' : ''}${source.changePercent.toFixed(2)}%)` : rel.sourceKey;
+            const tgtInfo = target ? `${target.name} ${target.value.toFixed(0)} (${target.changePercent >= 0 ? '+' : ''}${target.changePercent.toFixed(2)}%)` : rel.targetKey;
+            lines.push(`${srcInfo} -> ${tgtInfo} [${rel.weight}]`);
+        });
+        lines.push('');
+        lines.push('=== INFLUENCES (company <-> country) ===');
+        influences.forEach(link => {
+            const source = findNodeByTag(link.sourceKey);
+            const target = findNodeByTag(link.targetKey);
+            const srcInfo = source ? `${source.name} ${source.value.toFixed(0)} (${source.changePercent >= 0 ? '+' : ''}${source.changePercent.toFixed(2)}%)` : link.sourceKey;
+            const tgtInfo = target ? `${target.name} ${target.value.toFixed(0)} (${target.changePercent >= 0 ? '+' : ''}${target.changePercent.toFixed(2)}%)` : link.targetKey;
+            lines.push(`${srcInfo} -> ${tgtInfo} [${link.weight}]`);
+        });
+        container.textContent = lines.join('\n');
+    }
+
+    function findNodeByTag(targetKey) {
+        let found = null;
+        sources.forEach(source => walk(source.root, node => { if ((node.tag || node.name) === targetKey) found = node; }));
+        return found;
     }
 
     function computeValues() {
@@ -102,7 +150,7 @@
             } else {
                 const drift = (Math.random() - 0.5) * 0.0012;
                 const shock = (Math.random() * 2 - 1) * node.volatility;
-                node.value = Math.max(node.baseValue * 0.25, node.value * (1 + marketMood * 0.2 + drift + shock));
+                node.value = clampValue(node, node.value * (1 + marketMood * 0.2 + drift + shock));
             }
         }
         sources.forEach(source => updateLeaf(source.root));
@@ -127,10 +175,10 @@
                         const currentSourceVal = currentKeyMap.get(rel.sourceKey);
                         if (prevSourceVal && currentSourceVal) {
                             const sourceChange = (currentSourceVal - prevSourceVal) / prevSourceVal;
-                            impact += sourceChange * rel.impactFactor * leaf.value;
+                            impact += sourceChange * rel.weight * leaf.value;
                         }
                     });
-                    leaf.value = Math.max(leaf.baseValue * 0.25, leaf.value + impact);
+                    leaf.value = clampValue(leaf, leaf.value + impact);
                 };
 
                 const applyToNode = (n) => {
@@ -147,20 +195,51 @@
             }));
         }
 
-        // Pass 3: speculative momentum — price trends attract trend-followers, creating overshoot.
-        // Circuit breaker prevents runaway bubbles: if momentum exceeds 5% it's clamped.
+        // Pass 3: propagate company/country influences (cascade parents to leaves)
+        if (influences.length) {
+            influences.forEach(link => {
+                const sourceVal = currentKeyMap.get(link.sourceKey);
+                const prevSourceVal = previousKeyMap.get(link.sourceKey);
+                if (!sourceVal || !prevSourceVal) return;
+
+                let targetNode = null;
+                sources.forEach(s => {
+                    walk(s.root, n => { if ((n.tag || n.name) === link.targetKey) targetNode = n; });
+                });
+                if (!targetNode) return;
+
+                const sourceChange = (sourceVal - prevSourceVal) / prevSourceVal;
+                const applyImpact = (leaf) => {
+                    const impact = sourceChange * link.weight * leaf.value;
+                    leaf.value = clampValue(leaf, leaf.value + impact);
+                };
+                const applyToNode = (n) => {
+                    if (n.children.length) n.children.forEach(applyToNode);
+                    else applyImpact(n);
+                };
+                applyToNode(targetNode);
+            });
+        }
+
+        // Pass 4: speculative momentum (leaves only; parents are re-aggregated in finalize)
         sources.forEach(source => walk(source.root, node => {
+            if (node.children.length) return;
             const oldValue = previous.get(node) || 0;
             const rawChange = node.value - oldValue;
             const rawChangePercent = oldValue ? rawChange / oldValue * 100 : 0;
             const prevMomentum = node.momentum || 0;
-            node.momentum = 0.9 * prevMomentum + 0.1 * rawChangePercent;
-            const clampedMomentum = Math.max(-5, Math.min(5, node.momentum));
-            const momentumBoost = 0.05 * Math.sign(clampedMomentum) * Math.min(Math.abs(clampedMomentum), 5);
-            node.value *= (1 + momentumBoost);
+            node.momentum = Math.max(
+                -MAX_MOMENTUM,
+                Math.min(MAX_MOMENTUM, 0.9 * prevMomentum + 0.1 * rawChangePercent)
+            );
+            const momentumBoost = Math.max(
+                -MAX_MOMENTUM_BOOST,
+                Math.min(MAX_MOMENTUM_BOOST, node.momentum / 1000)
+            );
+            node.value = clampValue(node, node.value * (1 + momentumBoost));
         }));
 
-        // Pass 4: roll parent values upward and record changes for every node.
+        // Pass 5: roll parent values upward and record changes for every node.
         function finalize(node) {
             if (node.children.length) {
                 node.children.forEach(finalize);
@@ -176,6 +255,7 @@
     function publishMarkets() {
         sources.forEach(source => source.update());
         markets.forEach(market => market.publish());
+        renderInfluenceDebug();
     }
 
     function startTicker(options = {}) {
@@ -197,6 +277,8 @@
         getMarket,
         registerSource,
         setRelations,
+        getInfluenceMap,
+        renderInfluenceDebug,
         tick: computeValues,
         render: publishMarkets,
         start: startTicker,

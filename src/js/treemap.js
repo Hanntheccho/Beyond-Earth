@@ -333,7 +333,7 @@
         try {
             const response = await fetch('data/economic-relations.json');
             const data = await response.json();
-            window.valueChanges.setRelations(data.dependencies);
+            window.valueChanges.setRelations(data);
         } catch (e) {
             console.error('Failed to load relations', e);
         }
