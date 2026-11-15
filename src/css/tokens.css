@@ -3,17 +3,17 @@
 :root {
     --clr: black;
     --clr-body: white;
-    --clr-body-background: #0f0f0f;
-    --clr-border: #8b8b8b31;
-    --clr-h1: white;
-    --clr-h2: white;
-    --clr-ph1: white;
-    --clr-ph2: color-mix(in srgb, var(--clr-ph1) 90%, black);
-    --clr-ph3: color-mix(in srgb, var(--clr-ph1) 80%, black);
-    --clr-p: color-mix(in srgb, var(--clr-ph1) 70%, black);
-    --clr-cite: white;
-    --clr-data: color-mix(in srgb, var(--clr-ph1) 60%, black);
-    --clr-background: #181818ef;
+    --clr-body-background: color-mix(in srgb, var(--clr), var(--clr-body) 6%);
+    --clr-border: color-mix(in srgb, var(--clr-body), transparent 90%);
+    --clr-h1: var(--clr-body);
+    --clr-h2: var(--clr-body);
+    --clr-ph1: var(--clr-body);
+    --clr-ph2: color-mix(in srgb, var(--clr-body) 90%, var(--clr));
+    --clr-ph3: color-mix(in srgb, var(--clr-body) 80%, var(--clr));
+    --clr-p: color-mix(in srgb, var(--clr-body) 70%, var(--clr));
+    --clr-cite: var(--clr-body);
+    --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
+    --clr-background: color-mix(in srgb, var(--clr-body-background), transparent 10%);
     --clr-positive: #00ff6a;
     --clr-negative: #ff0000;
     --clr-neutrale: #a0a0a0;
@@ -25,7 +25,7 @@
     --transition-time-400: 400ms;
     --opacity-10: 0.1;
     --box-shadow: 0 0 16px var(--box-shadow-clr);
-    --box-shadow-clr: #00000080;
+    --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
     --drop-shadow-60: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
     --drop-shadow-20: 0 0 0.6em color-mix(in srgb, currentColor 20%, transparent);
     --letter-spacing-02: .1em;
@@ -40,5 +40,5 @@
     --px-10: 10px;
     --btn-size: 74px;
     --img-filter: invert(0);
-    --img-url: url("../../be-icon-w.svg");
+    --img-url: url("../../be-icon.svg");
 }

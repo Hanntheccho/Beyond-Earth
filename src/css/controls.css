@@ -88,5 +88,4 @@ button[aria-pressed="true"] {
 .theme-toggle {
     bottom: 48px;
     left: var(--px-10);
-    padding: 12px
 }

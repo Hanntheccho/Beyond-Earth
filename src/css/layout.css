@@ -32,6 +32,7 @@
         linear-gradient(to left, #000 0, transparent 85%);
     mask-composite: intersect;
     pointer-events: none;
+    filter: var(--img-filter);
 }
 .main-title {
     position: relative;
@@ -67,8 +68,12 @@
     margin: 0 auto;
 }
 
-.div-desc-win {
+.div-desc-win,
+.div-desc {
     margin: var(--px-20);
+}
+
+.div-desc-win {
     padding: var(--px-20);
     border: var(--border);
     border-left-width: var(--border-left);
@@ -87,7 +92,6 @@
 }
 
 .div-desc {
-    margin: var(--px-20);
     padding: 0px var(--px-20) 0px var(--px-20);
     border: 0 solid var(--clr-border);
     border-left-width: var(--border-left);
@@ -108,4 +112,5 @@
     background-size: auto 90%;
     background-repeat: no-repeat;
     opacity: var(--opacity-10);
+    filter: var(--img-filter);
 }

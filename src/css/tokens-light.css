@@ -3,17 +3,18 @@
 .light-theme {
     --clr: white;                   /* Was black */
     --clr-body: black;              /* Was white */
-    --clr-body-background: #f0f0f0; /* Was #0f0f0f */
-    --clr-border: #74747431;        /* Was #8b8b8b31 */
-    --clr-h1: black;                /* Was white */
-    --clr-h2: black;                /* Was white */
-    --clr-ph1: black;               /* Was white */
-    --clr-ph2: color-mix(in srgb, var(--clr-ph1) 90%, white);
-    --clr-ph3: color-mix(in srgb, var(--clr-ph1) 80%, white);
-    --clr-p: color-mix(in srgb, var(--clr-ph1) 70%, white);
-    --clr-cite: black;              /* Was white */
-    --clr-data: color-mix(in srgb, var(--clr-ph1) 60%, white);
-    --clr-background: #e7e7e7ef;    /* Was #181818ef */
+    --clr-body-background: color-mix(in srgb, var(--clr), var(--clr-body) 6%);
+    --clr-border: color-mix(in srgb, var(--clr-body), transparent 90%);
+    --clr-h1: var(--clr-body);
+    --clr-h2: var(--clr-body);
+    --clr-ph1: var(--clr-body);
+    --clr-ph2: color-mix(in srgb, var(--clr-body) 90%, var(--clr));
+    --clr-ph3: color-mix(in srgb, var(--clr-body) 80%, var(--clr));
+    --clr-p: color-mix(in srgb, var(--clr-body) 70%, var(--clr));
+    --clr-cite: var(--clr-body);
+    --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
+    --clr-background: color-mix(in srgb, var(--clr-body-background), transparent 10%);
+    --border: 2px solid var(--clr-border);
 
     /* Keep these or adjust for better contrast on white */
     --clr-positive: color-mix(in srgb, #00ff6a 60%, black);        /* Darker green for white bg */
@@ -22,12 +23,11 @@
 
     /* Update shadow for light mode */
     --box-shadow: 0 0 16px var(--box-shadow-clr);
-    --box-shadow-clr: #00000020;    /* Was #00000080 */
+    --box-shadow-clr: color-mix(in srgb, black 20%, transparent);
 
     /* Invert for light theme */
     --img-filter: invert(1);
-    --img-url: url("../../be-icon-b.svg");
 }
 .light-theme img {
-    filter: invert(1);
+    filter: var(--img-filter);
 }
