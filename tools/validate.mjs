@@ -395,6 +395,46 @@ function checkHtmlAndAssets(loc) {
     return html;
 }
 
+// ------------------------------------------------------------- check data files
+// Walk a treemap JSON tree and report duplicate tag/name values.
+function checkDataFileDuplicates(filePath) {
+    const data = readJson(filePath);
+    if (!data) return;
+
+    const seenTags = new Map();   // tag -> file
+    const seenNames = new Map();  // name -> file
+
+    function walk(node) {
+        if (!node || typeof node !== 'object') return;
+
+        // Check tag
+        if (typeof node.tag === 'string' && node.tag.trim()) {
+            if (seenTags.has(node.tag)) {
+                error('data', `duplicate tag "${node.tag}" in ${filePath}`);
+            } else {
+                seenTags.set(node.tag, filePath);
+            }
+        }
+
+        // Check name
+        if (typeof node.name === 'string' && node.name.trim()) {
+            if (seenNames.has(node.name)) {
+                error('data', `duplicate name "${node.name}" in ${filePath}`);
+            } else {
+                seenNames.set(node.name, filePath);
+            }
+        }
+
+        // Recurse into children
+        const children = Array.isArray(node.children) ? node.children : [];
+        for (const child of children) {
+            walk(child);
+        }
+    }
+
+    walk(data);
+}
+
 // ---------------------------------------------------------------------- syntax
 
 function listJs(dir) {
@@ -436,6 +476,9 @@ const poiIds = checkPois(loc);
 checkMarkers(poiIds);
 const html = checkHtmlAndAssets(loc);
 checkTreemaps(html);
+checkDataFileDuplicates('data/src-data.json');
+checkDataFileDuplicates('data/mkt-data.json');
+checkDataFileDuplicates('data/gdp-data.json');
 checkScenario();
 checkSyntax();
 

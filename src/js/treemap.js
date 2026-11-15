@@ -329,6 +329,16 @@
 
     let loadedSources = 0;
 
+    async function loadRelations() {
+        try {
+            const response = await fetch('data/economic-relations.json');
+            const data = await response.json();
+            window.valueChanges.setRelations(data.dependencies);
+        } catch (e) {
+            console.error('Failed to load relations', e);
+        }
+    }
+
     async function loadSource(host) {
         const panel = host.closest('[treemap-panel]');
         const status = panel && panel.querySelector('.data-status');
@@ -378,8 +388,11 @@
     }
 
     window.defaultTreemap = { mount };
-    const boot = () => Promise.all(Array.from(document.querySelectorAll('.treemap[data-source]'), loadSource))
-        .then(() => { if (loadedSources) window.valueChanges.start(); });
+    const boot = async () => {
+        await loadRelations();
+        await Promise.all(Array.from(document.querySelectorAll('.treemap[data-source]'), loadSource));
+        if (loadedSources) window.valueChanges.start();
+    };
     if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 1500 });
     else setTimeout(boot, 300);
 })();

@@ -1,6 +1,7 @@
 (function () {
     const sources = [];
     let marketMood = 0;
+    let relations = [];
     let timer = null;
 
     function itemKey(item) {
@@ -77,9 +78,19 @@
         }
     }
 
+    function setRelations(newRelations) {
+        relations = newRelations;
+    }
+
     function computeValues() {
         const previous = new Map();
-        sources.forEach(source => walk(source.root, node => previous.set(node, node.value)));
+        const previousKeyMap = new Map();
+
+        sources.forEach(source => walk(source.root, node => {
+            previous.set(node, node.value);
+            previousKeyMap.set(node.tag || node.name, node.value);
+        }));
+
         marketMood = Math.max(-0.02, Math.min(0.02, marketMood * 0.86 + (Math.random() - 0.5) * 0.006));
 
         function update(node) {
@@ -87,9 +98,22 @@
                 node.children.forEach(update);
                 node.value = node.children.reduce((sum, child) => sum + child.value, 0);
             } else {
+                const nodeKey = node.tag || node.name;
+                const relevantRelations = relations.filter(r => r.targetKey === nodeKey);
+                
+                let impact = 0;
+                relevantRelations.forEach(rel => {
+                    const prevSourceVal = previousKeyMap.get(rel.sourceKey);
+                    if (prevSourceVal) {
+                        // Impact based on previous tick change, simplified
+                        // In a more complex sim, we'd track the actual delta
+                        impact += (prevSourceVal * rel.impactFactor);
+                    }
+                });
+
                 const drift = (Math.random() - 0.5) * 0.0012;
                 const shock = (Math.random() * 2 - 1) * node.volatility;
-                node.value = Math.max(node.baseValue * 0.25, node.value * (1 + marketMood * 0.2 + drift + shock));
+                node.value = Math.max(node.baseValue * 0.25, node.value * (1 + marketMood * 0.2 + drift + shock) + impact);
             }
             const oldValue = previous.get(node) || 0;
             node.change = node.value - oldValue;
@@ -122,6 +146,7 @@
     window.valueChanges = {
         getMarket,
         registerSource,
+        setRelations,
         tick: computeValues,
         render: publishMarkets,
         start: startTicker,

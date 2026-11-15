@@ -1,0 +1,19 @@
+{
+  "dependencies": [
+    {
+      "sourceKey": "OIL",
+      "targetKey": "North American Union",
+      "impactFactor": 0.005
+    },
+    {
+      "sourceKey": "LIT",
+      "targetKey": "LITH",
+      "impactFactor": 0.02
+    },
+    {
+      "sourceKey": "IRON",
+      "targetKey": "PLEN",
+      "impactFactor": 0.01
+    }
+  ]
+}

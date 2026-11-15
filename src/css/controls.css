@@ -74,6 +74,7 @@ button[aria-pressed="true"] {
     padding: 12px;
     background: var(--clr-background);
     filter: drop-shadow(var(--drop-shadow-60));
+    right: var(--px-10);
 }
 .main-visibility-toggle img,
 .theme-toggle img {
@@ -83,9 +84,7 @@ button[aria-pressed="true"] {
 }
 .main-visibility-toggle {
     top: var(--px-10);
-    right: var(--px-10);
 }
 .theme-toggle {
-    bottom: var(--px-10);
-    left: var(--px-10);
+    top: calc(var(--px-10) * 2 + var(--btn-size));
 }
