@@ -22,4 +22,10 @@
 
     /* Update shadow for light mode */
     --box-shadow: 0 0 16px #00000020;
+
+    /* Invert for light theme */
+    --img-filter: invert(1);
+}
+.light-theme img {
+    filter: invert(1);
 }

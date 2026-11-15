@@ -37,4 +37,5 @@
     --fnt-size-data: calc(var(--fnt-size-text) - 4px);
     --px-20: 20px;
     --btn-size: 74px;
+    --img-filter: invert(0);
 }
