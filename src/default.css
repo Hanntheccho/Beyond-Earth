@@ -1,6 +1,7 @@
 /* default.css - entry point. Component partials live in the css/ directory.
    Import order matters: reduced-motion.css must stay last. */
 @import url("css/tokens.css");
+@import url("css/tokens-light.css");
 @import url("css/base.css");
 @import url("css/controls.css");
 @import url("css/typography.css");

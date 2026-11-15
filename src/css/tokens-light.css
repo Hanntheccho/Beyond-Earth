@@ -1,6 +1,6 @@
 /* tokens-light.css - Light theme version of design tokens. */
 
-:root {
+.light-theme {
     --clr: white;                   /* Was black */
     --clr-body: black;              /* Was white */
     --clr-body-background: #f0f0f0; /* Was #0f0f0f */

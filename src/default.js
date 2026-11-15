@@ -23,6 +23,7 @@ import './js/data-tabs.js';
 import './js/pois.js';
 import './js/audio.js';
 import './js/panel-toggle.js';
+import './js/theme-toggle.js';
 import './js/main-visibility.js';
 import './js/tooltips.js';
 import './js/cursor-glow.js';

@@ -82,3 +82,18 @@ button[aria-pressed="true"] {
     height: 100%;
     filter: drop-shadow(var(--drop-shadow-20));
 }
+
+.theme-toggle {
+    position: fixed;
+    top: 8px;
+    right: 90px;
+    z-index: 1200;
+    width: var(--btn-size);
+    height: var(--btn-size);
+    background: var(--clr-background);
+    filter: drop-shadow(var(--drop-shadow-20));
+    font-size: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
