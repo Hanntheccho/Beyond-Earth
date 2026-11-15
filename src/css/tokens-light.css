@@ -1,0 +1,25 @@
+/* tokens-light.css - Light theme version of design tokens. */
+
+:root {
+    --clr: white;                   /* Was black */
+    --clr-body: black;              /* Was white */
+    --clr-body-background: #f0f0f0; /* Was #0f0f0f */
+    --clr-border: #74747431;        /* Was #8b8b8b31 */
+    --clr-h1: black;                /* Was white */
+    --clr-h2: black;                /* Was white */
+    --clr-ph1: black;               /* Was white */
+    --clr-ph2: color-mix(in srgb, var(--clr-ph1) 90%, white);
+    --clr-ph3: color-mix(in srgb, var(--clr-ph1) 80%, white);
+    --clr-p: color-mix(in srgb, var(--clr-ph1) 70%, white);
+    --clr-cite: black;              /* Was white */
+    --clr-data: color-mix(in srgb, var(--clr-ph1) 60%, white);
+    --clr-background: #e7e7e7ef;    /* Was #181818ef */
+
+    /* Keep these or adjust for better contrast on white */
+    --clr-positive: color-mix(in srgb, #00ff6a 60%, black);        /* Darker green for white bg */
+    --clr-negative: color-mix(in srgb, #ff0000 60%, black);        /* Darker red for white bg */
+    --clr-neutrale: color-mix(in srgb, #a0a0a0 60%, black);
+
+    /* Update shadow for light mode */
+    --box-shadow: 0 0 16px #00000020;
+}

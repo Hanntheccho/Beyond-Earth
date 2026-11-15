@@ -1,6 +1,8 @@
 /* tokens.css - Design tokens shared by every component. */
 
 :root {
+    --clr: black;
+    --clr-body: white;
     --clr-body-background: #0f0f0f;
     --clr-border: #8b8b8b31;
     --clr-h1: white;

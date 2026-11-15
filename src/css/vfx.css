@@ -21,9 +21,9 @@
     background:
         radial-gradient(
             ellipse at 50% 50%,
-            rgba(255, 255, 255, 0.04) 20%,
-            rgba(0, 0, 0, 0.5) 80%,
-            rgba(0, 0, 0, 1) 100%
+            color-mix(in srgb, var(--clr-body) 4%, transparent) 20%,
+            color-mix(in srgb, var(--clr) 50%, transparent) 80%,
+            var(--clr) 100%
         );
     opacity: 0.5;
 }
@@ -34,7 +34,7 @@
 }
 .vfx-halftone {
     z-index: -1;
-    background-image: radial-gradient(circle, white 1.1px, transparent 1.3px);
+    background-image: radial-gradient(circle, var(--clr-body) 1.1px, transparent 1.3px);
     background-size: 5px 5px;
     opacity: 0.05;
 }

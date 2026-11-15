@@ -5,7 +5,7 @@
     width: calc(100% - 200px);
     aspect-ratio: 600 / 520;
     margin: 0 auto;
-    background: radial-gradient(ellipse at center, #ffffff18, transparent 68%);
+    background: radial-gradient(circle at center, var(--clr-border), transparent 60%);
 }
 .affy-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .affy-link { fill: none; stroke-width: 2; }

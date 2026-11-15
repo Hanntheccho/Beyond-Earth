@@ -31,18 +31,17 @@
 .scenario-chart-plot .year-label,
 .scenario-chart-plot .chart-event-label,
 .scenario-chart-plot .chart-era-label { text-anchor: middle; }
-.scenario-chart-plot .chart-grid-line { stroke: #383838; stroke-width: 1; }
-.scenario-chart-plot .chart-year-tick { stroke: #888; stroke-width: 1; }
+.scenario-chart-plot .chart-grid-line { stroke: var(--clr-border); stroke-width: 1; }
+.scenario-chart-plot .chart-year-tick { stroke: var(--clr-border); stroke-width: 1; }
 .scenario-chart-plot .chart-event-line { stroke: var(--clr-negative); stroke-width: 1.5; stroke-dasharray: 4 4; }
-.scenario-chart-plot .chart-event-tag { fill: color-mix(in srgb, var(--clr-negative) 20%, black); stroke: var(--clr-negative); stroke-width: 0.8; }
+.scenario-chart-plot .chart-event-tag { fill: color-mix(in srgb, var(--clr-negative) 20%, var(--clr)); stroke: var(--clr-negative); stroke-width: 0.8; }
 .scenario-chart-plot .chart-era-band { fill: var(--clr-negative); fill-opacity: 0.09; }
 .scenario-chart-plot .chart-era-boundary { stroke: var(--clr-negative); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.75; }
 .scenario-chart-plot text.chart-era-label {
-    fill: color-mix(in srgb, var(--clr-negative) 80%, rgba(255, 255, 255, 0));
+    fill: color-mix(in srgb, var(--clr-negative) 80%, transparent);
     text-transform: uppercase;
 }
 .scenario-chart-plot .chart-series-area {
-    fill: #c9c9c9;
     fill-opacity: 0.1;
     stroke: none;
     filter: drop-shadow(var(--drop-shadow-60));
@@ -52,7 +51,6 @@
 .scenario-chart-plot .chart-series-area.chart-trend-flat { color: var(--clr-neutrale); fill: var(--clr-neutrale); fill-opacity: 0.01; }
 .scenario-chart-plot .chart-series-line {
     fill: none;
-    stroke: #c9c9c9;
     stroke-width: 1.5px;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -82,4 +80,4 @@
 .scenario-chart-plot .chart-era-boundary.chart-positive { stroke: var(--clr-positive); }
 .scenario-chart-plot text.chart-era-label.chart-positive { fill: color-mix(in srgb, var(--clr-positive) 80%, rgba(255, 255, 255, 0)); }
 .scenario-chart-plot .chart-event-group.chart-positive .chart-event-line { stroke: var(--clr-positive); }
-.scenario-chart-plot .chart-event-group.chart-positive .chart-event-tag { fill: color-mix(in srgb, var(--clr-positive) 20%, black); stroke: var(--clr-positive); }
+.scenario-chart-plot .chart-event-group.chart-positive .chart-event-tag { fill: color-mix(in srgb, var(--clr-positive) 20%, var(--clr)); stroke: var(--clr-positive); }
