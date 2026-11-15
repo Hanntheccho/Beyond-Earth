@@ -238,6 +238,12 @@
             const children = getChildren(current.node);
             const items = children.length ? children : [current.node];
             const total = items.reduce((sum, node) => sum + getValue(node), 0);
+            if (options.marketId) {
+                host.dispatchEvent(new CustomEvent('treemap:items', {
+                    bubbles: true,
+                    detail: { marketId: options.marketId, items }
+                }));
+            }
 
             // Drilling in or out changes which tiles exist, so rebuild from scratch.
             // Normal market ticks keep the same path and only update tile targets.
@@ -365,6 +371,7 @@
                 } else {
                     chart = mount(host, {
                         root,
+                        marketId: host.dataset.treemap,
                         rootLabel: root.name,
                         breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
                         status,

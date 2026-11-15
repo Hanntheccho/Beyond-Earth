@@ -19,6 +19,7 @@
             .find(element => element.dataset.marketStatus === marketId);
         const market = window.valueChanges.getMarket(marketId);
         const rows = new Map();
+        let displayedItems = null;
         let raf = 0;
         let inViewport = false;
 
@@ -75,7 +76,7 @@
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden || !inViewport) return;
-            render(market.getSnapshot());
+            render(displayedItems || market.getSnapshot());
         });
 
         function setViewportVisibility(isVisible) {
@@ -85,7 +86,7 @@
                 cancelAnimationFrame(raf);
                 raf = 0;
             } else if (changed && !document.hidden) {
-                render(market.getSnapshot());
+                render(displayedItems || market.getSnapshot());
             }
         }
 
@@ -172,12 +173,22 @@
             if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
         }
 
+        document.addEventListener('treemap:items', event => {
+            const detail = event.detail;
+            if (!detail || detail.marketId !== marketId) return;
+            displayedItems = detail.items;
+            if (document.hidden || !inViewport) return;
+            const wrapper = host.closest('[data-panel-group]');
+            if (wrapper && wrapper.hidden) return;
+            render(displayedItems);
+        });
+
         market.subscribe((current) => {
             if (document.hidden) return;
             const wrapper = host.closest('[data-panel-group]');
             if (wrapper && wrapper.hidden) return;
             if (!inViewport) return;
-            render(current);
+            render(displayedItems || current);
         });
     }
 
