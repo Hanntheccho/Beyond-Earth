@@ -86,6 +86,6 @@ button[aria-pressed="true"] {
     right: var(--px-10);
 }
 .theme-toggle {
-    bottom: 48px;
+    bottom: var(--px-10);
     left: var(--px-10);
 }
