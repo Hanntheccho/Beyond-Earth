@@ -100,32 +100,106 @@
         return influences;
     }
 
-    // Debug renderer: dumps active dependencies + influences as live plain text into .debug-influence
     function renderInfluenceDebug() {
         const container = document.querySelector('.debug-influence');
         if (!container) return;
-        const lines = [];
-        lines.push('=== DEPENDENCIES (source -> target) ===');
-        relations.forEach(rel => {
-            const source = findNodeByTag(rel.sourceKey);
-            const target = findNodeByTag(rel.targetKey);
-            const srcInfo = source ? `${source.name} ${source.value.toFixed(0)} (${source.changePercent >= 0 ? '+' : ''}${source.changePercent.toFixed(2)}%)` : rel.sourceKey;
-            const tgtInfo = target ? `${target.name} ${target.value.toFixed(0)} (${target.changePercent >= 0 ? '+' : ''}${target.changePercent.toFixed(2)}%)` : rel.targetKey;
-            lines.push(`${srcInfo} -> ${tgtInfo} [${rel.weight}]`);
+
+        const openSections = new Map();
+        container.querySelectorAll('details[data-debug-section]').forEach(section => {
+            openSections.set(section.dataset.debugSection, section.open);
         });
-        lines.push('');
-        lines.push('=== INFLUENCES (company <-> country) ===');
-        influences.forEach(link => {
-            const source = findNodeByTag(link.sourceKey);
-            const target = findNodeByTag(link.targetKey);
-            const srcInfo = source ? `${source.name} ${source.value.toFixed(0)} (${source.changePercent >= 0 ? '+' : ''}${source.changePercent.toFixed(2)}%)` : link.sourceKey;
-            const tgtInfo = target ? `${target.name} ${target.value.toFixed(0)} (${target.changePercent >= 0 ? '+' : ''}${target.changePercent.toFixed(2)}%)` : link.targetKey;
-            lines.push(`${srcInfo} -> ${tgtInfo} [${link.weight}]`);
+        container.replaceChildren();
+
+        const sections = [
+            { key: 'dependencies', title: 'dependencies:sourceKey => targetKey', items: relations, open: false },
+            { key: 'influences', title: 'influences:sourceKey <=> targetKey', items: influences, open: false }
+        ];
+
+        sections.forEach(sectionData => {
+            const section = document.createElement('details');
+            section.className = 'debug-influence-section';
+            section.dataset.debugSection = sectionData.key;
+            section.open = openSections.has(sectionData.key)
+                ? openSections.get(sectionData.key)
+                : sectionData.open;
+
+            const summary = document.createElement('summary');
+            summary.textContent = `${sectionData.title} (${sectionData.items.length})`;
+            section.append(summary);
+
+            if (!sectionData.items.length) {
+                const empty = document.createElement('p');
+                empty.className = 'debug-influence-empty';
+                empty.textContent = 'No relations configured.';
+                section.append(empty);
+                container.append(section);
+                return;
+            }
+
+            const tableWrap = document.createElement('div');
+            tableWrap.className = 'debug-influence-table-wrap';
+            const table = document.createElement('table');
+            table.className = 'debug-influence-table';
+            const header = document.createElement('tr');
+
+            ['sourceKey', 'targetKey', 'weight'].forEach(label => {
+                const cell = document.createElement('th');
+                cell.scope = 'col';
+                cell.textContent = label;
+                header.append(cell);
+            });
+
+            const thead = document.createElement('thead');
+            thead.append(header);
+            table.append(thead);
+
+            const tbody = document.createElement('tbody');
+            const sortedItems = sectionData.items.slice().sort((left, right) =>
+                left.sourceKey.localeCompare(right.sourceKey) ||
+                left.targetKey.localeCompare(right.targetKey)
+            );
+
+            sortedItems.forEach(item => {
+                const row = document.createElement('tr');
+
+                [item.sourceKey, item.targetKey].forEach(key => {
+                    const cell = document.createElement('td');
+                    const entity = document.createElement('div');
+                    entity.className = 'debug-influence-entity';
+                    const name = document.createElement('span');
+                    name.className = 'debug-influence-name';
+                    const node = findNodeByKey(key);
+                    name.textContent = node ? node.name : 'Waiting for data';
+                    entity.append(name);
+
+                    const value = document.createElement('span');
+                    if (node) {
+                        value.className = `data-grid-change debug-influence-value ${node.changePercent >= 0 ? 'is-up' : 'is-down'}`;
+                        value.textContent = `${node.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} · ${node.changePercent >= 0 ? '+' : ''}${node.changePercent.toFixed(2)}`;
+                    } else {
+                        value.className = 'debug-influence-value';
+                        value.textContent = 'Waiting for data';
+                    }
+                    entity.append(value);
+                    cell.append(entity);
+                    row.append(cell);
+                });
+
+                const weight = document.createElement('td');
+                weight.className = 'debug-influence-weight';
+                weight.textContent = Number(item.weight).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                row.append(weight);
+                tbody.append(row);
+            });
+
+            table.append(tbody);
+            tableWrap.append(table);
+            section.append(tableWrap);
+            container.append(section);
         });
-        container.textContent = lines.join('\n');
     }
 
-    function findNodeByTag(targetKey) {
+    function findNodeByKey(targetKey) {
         let found = null;
         sources.forEach(source => walk(source.root, node => { if ((node.tag || node.name) === targetKey) found = node; }));
         return found;

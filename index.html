@@ -78,7 +78,7 @@
                     <!-- Market Data Panels -->
                     <div id="data-gdp" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
                         <div class="div-desc-win" treemap-panel>
-                            <span class="data-status" role="status" aria-live="polite">Loading GDP data…</span>
+                            <span class="data-status" role="status" aria-live="polite">Loading data…</span>
                             <nav class="treemap-breadcrumbs" aria-label="GDP treemap location"></nav>
                             <div class="treemap" data-treemap="gdp" data-source="data/gdp-data.json" data-use-tags="false" role="group" aria-label="GDP treemap"></div>
                         </div>
@@ -90,7 +90,7 @@
 
                     <div id="data-market" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
                         <div class="div-desc-win" treemap-panel>
-                            <span class="data-status" role="status" aria-live="polite">Loading market data…</span>
+                            <span class="data-status" role="status" aria-live="polite">Loading data…</span>
                             <nav class="treemap-breadcrumbs" aria-label="Market treemap location"></nav>
                             <div class="treemap" data-treemap="market" data-source="data/mkt-data.json" data-use-tags="true" role="group" aria-label="Market treemap"></div>
                         </div>
@@ -102,7 +102,7 @@
 
                     <div id="data-resources" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
                         <div class="div-desc-win" treemap-panel>
-                            <span class="data-status" role="status" aria-live="polite">Loading resource data…</span>
+                            <span class="data-status" role="status" aria-live="polite">Loading data…</span>
                             <nav class="treemap-breadcrumbs" aria-label="Resource treemap location"></nav>
                             <div class="treemap" data-treemap="resources" data-source="data/src-data.json" data-use-tags="false" role="group" aria-label="Resources treemap"></div>
                         </div>
@@ -112,9 +112,11 @@
                         </div>
                     </div>
 
-                    <div class="div-desc-win" style="margin-bottom: 1rem;">
-                        <span class="data-status">:liveData</span>
-                        <div class="debug-influence" style="font-size: 0.8rem; max-height: 150px; overflow-y: auto; padding: 0.5rem; background: rgba(0,0,0,0.2);">Waiting for ticker...</div>
+                    <div class="div-desc-win debug-influence-panel">
+                        <span class="data-status">:liveDataDebug</span>
+                        <div class="debug-influence">
+                            <p class="debug-influence-empty">Waiting for data…</p>
+                        </div>
                     </div>
                 </section>
             </div>

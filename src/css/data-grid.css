@@ -40,3 +40,61 @@
 
 .data-grid-row.is-flashing.is-positive { animation: rowFlashUp var(--transition-time-400) ease-out; }
 .data-grid-row.is-flashing.is-negative { animation: rowFlashDown var(--transition-time-400) ease-out; }
+
+.debug-influence {
+    display: grid;
+    gap: 10px;
+    font-size: var(--fnt-size-bttn);
+    max-height: 500px;
+    overflow-y: auto;
+}
+.debug-influence-section {
+    border-bottom: var(--border);
+}
+.debug-influence-section > summary {
+    padding: 10px;
+    color: var(--clr-b);
+    cursor: pointer;
+    background: var(--clr-border);
+}
+.debug-influence-table-wrap {
+    overflow-x: auto;
+}
+.debug-influence-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fnt-size-bttn);
+}
+.debug-influence-table th,
+.debug-influence-table td {
+    border-bottom: var(--border);
+    text-align: left;
+    vertical-align: top;
+    font-size: var(--fnt-size-data);
+}
+.debug-influence-table th {
+    color: var(--clr-data);
+    font-weight: normal;
+}
+.debug-influence-table th:last-child,
+.debug-influence-weight {
+    text-align: right !important;
+    white-space: nowrap;
+}
+.debug-influence-name,
+.debug-influence-value,
+.debug-influence-weight {
+    font-size: var(--fnt-size-data);
+}
+.debug-influence-entity {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+.debug-influence-value {
+    white-space: nowrap;
+    text-align: right;
+}
+.debug-influence-empty {
+    color: var(--clr-data);
+}
