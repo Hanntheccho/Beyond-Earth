@@ -13,7 +13,6 @@
 .affy-node {
     position: relative;
     isolation: isolate;
-    min-height: 220px;
     border: 2px solid var(--affy-color);
     border-bottom-width: 4px;
     box-shadow: 0 0 1em color-mix(in srgb, var(--affy-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affy-color), transparent 90%);
@@ -27,13 +26,13 @@
     mask-image: var(--affy-icon);
     mask-mode: alpha;
     mask-position: center;
-    mask-size: 50%;
-    mask-repeat: no-repeat;
-    opacity: .3;
+    mask-size: 80%;
+    mask-repeat: repeat;
+    opacity: var(--opacity-10);
     pointer-events: none;
 }
 .affy-desc {
-    max-height: 220px;
+    max-height: 322px;
     overflow-y: auto;
     padding: var(--px-10) var(--px-20);
 }
@@ -42,11 +41,5 @@
     min-height: 0;
 }
 .affy-node--neutrality .affy-desc {
-    max-height: 140px;
-}
-.affy-node--neutrality::before {
-    -webkit-mask-position: left center;
-    -webkit-mask-size: auto 80%;
-    mask-position: left center;
-    mask-size: auto 80%;
+    max-height: 161px;
 }
