@@ -186,6 +186,19 @@ async function loadLocalization() {
             });
         });
 
+        // Affinity descriptions are shown in place, so they need the same keyword
+        // formatting tooltips and POI panels get.
+        document.querySelectorAll('.affy-desc > span[class]').forEach(element => {
+            const key = Array.from(element.classList)
+                .find(className => Object.prototype.hasOwnProperty.call(data, className));
+            if (!key) return;
+            formatLocalizationValue(key).then(value => {
+                if (element.isConnected) element.innerHTML = value;
+            }).catch(error => {
+                console.error(`Error formatting localization ${key}:`, error);
+            });
+        });
+
         const formattedPoiDescriptions = new Set();
         function formatPoiPanel(button) {
             const key = `${button.dataset.panelTarget}-desc`;

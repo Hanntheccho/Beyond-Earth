@@ -11,7 +11,6 @@ import './js/scenario-data.js';
 
 // 2. Visualization Components
 import './js/globe.js';
-import './js/affy-graph.js';
 import './js/treemap.js';
 import './js/scenario-chart.js';
 import './js/globe-sea-level.js';

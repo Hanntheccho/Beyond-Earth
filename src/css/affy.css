@@ -1,64 +1,52 @@
-/* affy.css - Affinity map (see src/js/affy-graph.js). */
+/* affy.css - Affinity grid. Markup lives in index.html; loc.js fills the descriptions. */
 
 .affy-map {
-    position: relative;
-    width: calc(100% - 200px);
-    aspect-ratio: 600 / 520;
-    margin: 0 auto;
-    background: radial-gradient(circle at center, var(--clr-border), transparent 60%);
-}
-.affy-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.affy-link { fill: none; stroke-width: 2; }
-.affy-link--soft { stroke-dasharray: 5 5; opacity: .26; }
-.affy-link--soft[data-to="purity"],
-.affy-link--soft[data-to="supremacy"],
-.affy-link--soft[data-to="harmony"] { opacity: 1; }
-.affy-node-frame { width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
-.affy-node {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    width: var(--btn-size);
-    height: var(--btn-size);
-    padding: 4px;
+    gap: var(--px-10);
+}
+.affy-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--px-10);
+}
+.affy-node {
+    position: relative;
+    isolation: isolate;
+    min-height: 220px;
     border: 2px solid var(--affy-color);
     border-bottom-width: 4px;
     box-shadow: 0 0 1em color-mix(in srgb, var(--affy-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affy-color), transparent 90%);
-    transition: border var(--transition-time) ease, opacity var(--transition-time) ease;
-    z-index: 2;
 }
-.affy-node:hover, .affy-node:focus-visible {
-    border-width: 8px;
-}
-.affy-node > span { font-size: 34px; line-height: 1; text-shadow: 0 0 0.4em color-mix(in srgb, var(--affy-color), transparent 60%); }
-.affy-node > .affy-icon {
-    display: block;
-    position: relative;
-    width: 40px;
-    height: 40px;
-    filter: drop-shadow(0 0 0.4em color-mix(in srgb, var(--affy-color), transparent 60%));
-    transition: filter var(--transition-time) ease;
-}
-.affy-node > .affy-icon::before {
+.affy-node::before {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: -1;
     background-color: var(--affy-color);
-    -webkit-mask: var(--affy-icon) center / contain no-repeat;
-    mask: var(--affy-icon) center / contain no-repeat;
+    mask-image: var(--affy-icon);
+    mask-mode: alpha;
+    mask-position: center;
+    mask-size: 50%;
+    mask-repeat: no-repeat;
+    opacity: .3;
+    pointer-events: none;
 }
-
-/* soft links: dashes drift toward the center (optional, remove if it feels busy with the rotation) */
-.affy-link--soft { animation: affy-march 6s linear infinite; }
-.affy-map:not(.is-inview) .affy-link--soft { animation-play-state: paused; }
-@keyframes affy-march { to { stroke-dashoffset: 42; } } /* 3 periods of (5 + 9) */
-
-/* hover focus */
-.affy-map-lines .affy-link { transition: opacity var(--transition-time) ease; }
-.affy-map-lines.is-focusing .affy-link:not(.is-related) { opacity: .08; }
-.affy-map-lines.is-focusing .affy-link.is-related { opacity: 1; }
-.affy-map-lines.is-focusing .affy-node:not(.is-related) { opacity: .08; }
-
-.affy-map { overflow-anchor: none; }
+.affy-desc {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: var(--px-10) var(--px-20);
+}
+.affy-desc h2 { color: var(--affy-color); }
+.affy-node--neutrality {
+    min-height: 0;
+}
+.affy-node--neutrality .affy-desc {
+    max-height: 140px;
+}
+.affy-node--neutrality::before {
+    -webkit-mask-position: left center;
+    -webkit-mask-size: auto 80%;
+    mask-position: left center;
+    mask-size: auto 80%;
+}

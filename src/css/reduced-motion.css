@@ -20,8 +20,7 @@
     .market-text-val.is-flashing,
     .treemap-tile.is-flashing .treemap-surface,
     .scenario-chart-plot .chart-reveal,
-    .scenario-chart-plot .chart-event-group,
-    .affy-link--soft {
+    .scenario-chart-plot .chart-event-group {
         animation: none !important;
         transition: none !important;
         animation-delay: 0ms !important;
