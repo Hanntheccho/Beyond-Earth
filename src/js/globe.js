@@ -16,6 +16,11 @@ const DEG_R = 57.29577951308232; // 180/pi: globe radius = scale(px/deg) * DEG_R
 const EARTH_RADIUS_KM = 6371;
 const DEFAULT_SEA_LEVEL = 50; // 2200 value, keeps today's look as the fallback
 
+const GLOBE_COLORS = {
+  dark: { ocean: [0.1, 0.1, 0.1], land: [0.4, 0.4, 0.4], contour: [1,1,1], grid: [0.2,0.2,0.2], coast: [0.9,0.9,0.9] },
+  light: { ocean: [0.8, 0.8, 0.8], land: [0.6, 0.6, 0.6], contour: [0,0,0], grid: [0.7,0.7,0.7], coast: [0.1,0.1,0.1] }
+};
+
 // ---------------------------------------------------------------- shaders
 
 const MESH_VS = `#version 300 es
@@ -56,9 +61,11 @@ uniform float uAlpha;
 uniform float uMetersPerPx;
 out vec4 fragColor;
 
-const vec3 OCEAN_COLOR = vec3(0.1);
-const vec3 LAND_COLOR = vec3(0.4);
-const vec3 CONTOUR_COLOR = vec3(1.0);
+uniform vec3 uOceanColor;
+uniform vec3 uLandColor;
+uniform vec3 uContourColor;
+uniform vec3 uGridColor;
+uniform vec3 uCoastColor;
 
 float decode(vec4 c) { return c.r * 65280.0 + c.g * 255.0 - 11000.0; }
 
@@ -90,7 +97,7 @@ void main() {
   float rel = e - uSeaLevel;
   bool water = rel < 0.0;
 
-  vec3 col = water ? OCEAN_COLOR : LAND_COLOR;
+  vec3 col = water ? uOceanColor : uLandColor;
 
   if (!water) {
     vec2 g = vec2(dFdx(e), dFdy(e)) / max(uMetersPerPx, 1.0);
@@ -101,8 +108,8 @@ void main() {
     float f = rel / uInterval;
     float fadeMinor = 1.0 - smoothstep(0.30, 0.65, fwidth(f));
     float fadeMajor = 1.0 - smoothstep(0.30, 0.65, fwidth(f) / 5.0);
-    col = mix(col, CONTOUR_COLOR, lineAA(f, 1.0) * 0.78 * fadeMinor);
-    col = mix(col, CONTOUR_COLOR, lineAA(f / 5.0, 1.25) * 0.95 * fadeMajor);
+    col = mix(col, uContourColor, lineAA(f, 1.0) * 0.78 * fadeMinor);
+    col = mix(col, uContourColor, lineAA(f / 5.0, 1.25) * 0.95 * fadeMajor);
   }
 
   float coast = 1.0 - smoothstep(0.0, 1.0, abs(rel) / max(fwidth(rel), 1e-7));
@@ -111,7 +118,7 @@ void main() {
   vec2 gg = abs(fract(gf + 0.5) - 0.5) / max(fwidth(gf), vec2(1e-7));
   float grat = 1.0 - smoothstep(0.0, 1.0, min(gg.x, gg.y));
   float gridAlpha = grat * 1.0;
-  vec3 gridColor = vec3(0.2);
+  vec3 gridColor = uGridColor;
 
   float surfaceAlpha = water ? 0.0 : 0.1;
   float baseAlpha = gridAlpha + surfaceAlpha * (1.0 - gridAlpha);
@@ -119,7 +126,7 @@ void main() {
     gridColor * gridAlpha + col * surfaceAlpha * (1.0 - gridAlpha)
   ) / max(baseAlpha, 1e-6);
   float coastCoverage = coast * 1.0;
-  vec3 coastColor = vec3(0.9);
+  vec3 coastColor = uCoastColor;
   float finalAlpha = coastCoverage + baseAlpha * (1.0 - coastCoverage);
   vec3 finalColor = (
     coastColor * coastCoverage + baseColor * baseAlpha * (1.0 - coastCoverage)
@@ -409,6 +416,14 @@ function main() {
     gl.uniform1f(mesh.u.uSeaLevel, seaLevel);
     gl.uniform1f(mesh.u.uInterval, autoInterval(view.s));
     gl.uniform1f(mesh.u.uMetersPerPx, 111320 / (view.s * dpr));
+
+    const theme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+    const c = GLOBE_COLORS[theme];
+    gl.uniform3fv(mesh.u.uOceanColor, c.ocean);
+    gl.uniform3fv(mesh.u.uLandColor, c.land);
+    gl.uniform3fv(mesh.u.uContourColor, c.contour);
+    gl.uniform3fv(mesh.u.uGridColor, c.grid);
+    gl.uniform3fv(mesh.u.uCoastColor, c.coast);
 
     const halfW = vw / 2 / view.s;
     for (let k = -3; k <= 3; k++) {

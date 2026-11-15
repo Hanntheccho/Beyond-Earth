@@ -7,7 +7,7 @@
     padding-bottom: 40px;
     max-width: var(--max-width);
     margin: 0 auto;
-    box-shadow: 0 0 600px color-mix(in srgb, var(--clr) 70%, transparent), 0 0 600px color-mix(in srgb, var(--clr) 70%, transparent);
+    box-shadow: 0 0 600px var(--box-shadow-clr), 0 0 600px var(--box-shadow-clr);
     box-sizing: border-box;
 /*  max-height: 100vh;
     overflow-y: scroll;

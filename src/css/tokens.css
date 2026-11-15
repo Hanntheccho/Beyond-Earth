@@ -24,7 +24,8 @@
     --transition-time-clr: 900ms;
     --transition-time-400: 400ms;
     --opacity-10: 0.1;
-    --box-shadow: 0 0 16px #00000080;
+    --box-shadow: 0 0 16px var(--box-shadow-clr);
+    --box-shadow-clr: #00000080;
     --drop-shadow-60: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
     --drop-shadow-20: 0 0 0.6em color-mix(in srgb, currentColor 20%, transparent);
     --letter-spacing-02: .1em;

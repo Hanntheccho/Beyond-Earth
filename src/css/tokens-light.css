@@ -21,7 +21,8 @@
     --clr-neutrale: color-mix(in srgb, #a0a0a0 60%, black);
 
     /* Update shadow for light mode */
-    --box-shadow: 0 0 16px #00000020;
+    --box-shadow: 0 0 16px var(--box-shadow-clr);
+    --box-shadow-clr: #00000020;    /* Was #00000080 */
 
     /* Invert for light theme */
     --img-filter: invert(1);
