@@ -24,6 +24,7 @@
         node.volatility = node.children.length
             ? 0
             : Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(Math.max(node.value, 1) / 100)));
+        node.momentum = 0;  // Initialize momentum tracking
     }
 
     function createMarket(key) {
@@ -93,34 +94,70 @@
 
         marketMood = Math.max(-0.02, Math.min(0.02, marketMood * 0.86 + (Math.random() - 0.5) * 0.006));
 
-        function update(node) {
+        // Pass 1: apply normal stochastic movement to every leaf.
+        function updateLeaf(node) {
             if (node.children.length) {
-                node.children.forEach(update);
+                node.children.forEach(updateLeaf);
                 node.value = node.children.reduce((sum, child) => sum + child.value, 0);
             } else {
-                const nodeKey = node.tag || node.name;
-                const relevantRelations = relations.filter(r => r.targetKey === nodeKey);
-                
-                let impact = 0;
-                relevantRelations.forEach(rel => {
-                    const prevSourceVal = previousKeyMap.get(rel.sourceKey);
-                    if (prevSourceVal) {
-                        // Impact based on previous tick change, simplified
-                        // In a more complex sim, we'd track the actual delta
-                        impact += (prevSourceVal * rel.impactFactor);
-                    }
-                });
-
                 const drift = (Math.random() - 0.5) * 0.0012;
                 const shock = (Math.random() * 2 - 1) * node.volatility;
-                node.value = Math.max(node.baseValue * 0.25, node.value * (1 + marketMood * 0.2 + drift + shock) + impact);
+                node.value = Math.max(node.baseValue * 0.25, node.value * (1 + marketMood * 0.2 + drift + shock));
+            }
+        }
+        sources.forEach(source => updateLeaf(source.root));
+
+        // Snapshot the freshly updated values so relations can compare against the last tick.
+        const currentKeyMap = new Map();
+        sources.forEach(source => walk(source.root, node => {
+            currentKeyMap.set(node.tag || node.name, node.value);
+        }));
+
+        // Pass 2: propagate resource movement to linked targets.
+        if (relations.length) {
+            sources.forEach(source => walk(source.root, node => {
+                const nodeKey = node.tag || node.name;
+                const relevantRelations = relations.filter(rel => rel.targetKey === nodeKey);
+                if (!relevantRelations.length) return;
+
+                const applyToLeaf = (leaf) => {
+                    let impact = 0;
+                    relevantRelations.forEach(rel => {
+                        const prevSourceVal = previousKeyMap.get(rel.sourceKey);
+                        const currentSourceVal = currentKeyMap.get(rel.sourceKey);
+                        if (prevSourceVal && currentSourceVal) {
+                            const sourceChange = (currentSourceVal - prevSourceVal) / prevSourceVal;
+                            impact += sourceChange * rel.impactFactor * leaf.value;
+                        }
+                    });
+                    leaf.value = Math.max(leaf.baseValue * 0.25, leaf.value + impact);
+                };
+
+                const applyToNode = (n) => {
+                    if (n.children.length) n.children.forEach(applyToNode);
+                    else applyToLeaf(n);
+                };
+
+                if (node.children.length) {
+                    // Parent-level relation: cascade down to every leaf descendant.
+                    applyToNode(node);
+                } else {
+                    applyToLeaf(node);
+                }
+            }));
+        }
+
+        // Pass 3: roll parent values upward and record changes for every node.
+        function finalize(node) {
+            if (node.children.length) {
+                node.children.forEach(finalize);
+                node.value = node.children.reduce((sum, child) => sum + child.value, 0);
             }
             const oldValue = previous.get(node) || 0;
             node.change = node.value - oldValue;
             node.changePercent = oldValue ? node.change / oldValue * 100 : 0;
         }
-
-        sources.forEach(source => update(source.root));
+        sources.forEach(source => finalize(source.root));
     }
 
     function publishMarkets() {

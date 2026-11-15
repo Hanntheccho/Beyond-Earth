@@ -1,19 +1,144 @@
 {
   "dependencies": [
-    {
-      "sourceKey": "OIL",
-      "targetKey": "North American Union",
-      "impactFactor": 0.005
-    },
-    {
-      "sourceKey": "LIT",
-      "targetKey": "LITH",
-      "impactFactor": 0.02
-    },
-    {
-      "sourceKey": "IRON",
-      "targetKey": "PLEN",
-      "impactFactor": 0.01
-    }
+    { "sourceKey": "OIL", "targetKey": "Al-Falah", "impactFactor": 0.08 },
+    { "sourceKey": "OIL", "targetKey": "United Arab Alliance", "impactFactor": 0.06 },
+    { "sourceKey": "OIL", "targetKey": "Central Asian Federation", "impactFactor": 0.04 },
+    { "sourceKey": "OIL", "targetKey": "North Sea Alliance", "impactFactor": 0.05 },
+    { "sourceKey": "OIL", "targetKey": "Slavic Federation", "impactFactor": 0.03 },
+    { "sourceKey": "OIL", "targetKey": "ARCEN", "impactFactor": 0.1 },
+    { "sourceKey": "OIL", "targetKey": "PAVL", "impactFactor": 0.08 },
+    { "sourceKey": "OIL", "targetKey": "INTEGR", "impactFactor": -0.04 },
+    { "sourceKey": "OIL", "targetKey": "Pact of Hyderabad", "impactFactor": -0.03 },
+    { "sourceKey": "OIL", "targetKey": "Pan-Asian Cooperative", "impactFactor": -0.05 },
+    { "sourceKey": "OIL", "targetKey": "North American Union", "impactFactor": -0.06 },
+
+    { "sourceKey": "GAS", "targetKey": "Slavic Federation", "impactFactor": 0.07 },
+    { "sourceKey": "GAS", "targetKey": "Central Asian Federation", "impactFactor": 0.05 },
+    { "sourceKey": "GAS", "targetKey": "Al-Falah", "impactFactor": 0.04 },
+    { "sourceKey": "GAS", "targetKey": "North Sea Alliance", "impactFactor": 0.03 },
+    { "sourceKey": "GAS", "targetKey": "PAVL", "impactFactor": 0.12 },
+    { "sourceKey": "GAS", "targetKey": "ARCEN", "impactFactor": 0.08 },
+    { "sourceKey": "GAS", "targetKey": "INTEGR", "impactFactor": -0.03 },
+    { "sourceKey": "GAS", "targetKey": "Pan-Asian Cooperative", "impactFactor": -0.04 },
+    { "sourceKey": "GAS", "targetKey": "North American Union", "impactFactor": -0.03 },
+
+    { "sourceKey": "URA", "targetKey": "Central Asian Federation", "impactFactor": 0.06 },
+    { "sourceKey": "URA", "targetKey": "North Sea Alliance", "impactFactor": 0.03 },
+    { "sourceKey": "URA", "targetKey": "ARCEN", "impactFactor": 0.05 },
+    { "sourceKey": "URA", "targetKey": "PAVL", "impactFactor": 0.1 },
+    { "sourceKey": "URA", "targetKey": "ARCPX", "impactFactor": 0.08 },
+
+    { "sourceKey": "IRON", "targetKey": "PLEN", "impactFactor": 0.15 },
+    { "sourceKey": "IRON", "targetKey": "VHI", "impactFactor": 0.12 },
+    { "sourceKey": "IRON", "targetKey": "LOW", "impactFactor": 0.08 },
+    { "sourceKey": "IRON", "targetKey": "CVML", "impactFactor": 0.05 },
+    { "sourceKey": "IRON", "targetKey": "ANTT", "impactFactor": 0.06 },
+    { "sourceKey": "IRON", "targetKey": "NOSC", "impactFactor": 0.07 },
+    { "sourceKey": "IRON", "targetKey": "WESL", "impactFactor": 0.06 },
+    { "sourceKey": "IRON", "targetKey": "Polystralia", "impactFactor": 0.05 },
+    { "sourceKey": "IRON", "targetKey": "Pact of Hyderabad", "impactFactor": 0.04 },
+    { "sourceKey": "IRON", "targetKey": "INTEGR", "impactFactor": 0.03 },
+
+    { "sourceKey": "COP", "targetKey": "COOP", "impactFactor": 0.15 },
+    { "sourceKey": "COP", "targetKey": "MOR", "impactFactor": 0.12 },
+    { "sourceKey": "COP", "targetKey": "NADL", "impactFactor": 0.08 },
+    { "sourceKey": "COP", "targetKey": "INTR", "impactFactor": 0.06 },
+    { "sourceKey": "COP", "targetKey": "COM", "impactFactor": 0.05 },
+    { "sourceKey": "COP", "targetKey": "Conosur", "impactFactor": 0.06 },
+    { "sourceKey": "COP", "targetKey": "Andean Compact", "impactFactor": 0.05 },
+    { "sourceKey": "COP", "targetKey": "Kimpwanza League", "impactFactor": 0.04 },
+
+    { "sourceKey": "LIT", "targetKey": "LITH", "impactFactor": 0.2 },
+    { "sourceKey": "LIT", "targetKey": "Andean Compact", "impactFactor": 0.12 },
+    { "sourceKey": "LIT", "targetKey": "Conosur", "impactFactor": 0.08 },
+    { "sourceKey": "LIT", "targetKey": "COOP", "impactFactor": 0.1 },
+    { "sourceKey": "LIT", "targetKey": "ARCVT", "impactFactor": 0.06 },
+
+    { "sourceKey": "PHOS", "targetKey": "AFI", "impactFactor": 0.12 },
+    { "sourceKey": "PHOS", "targetKey": "Union of Maghreb", "impactFactor": 0.1 },
+    { "sourceKey": "PHOS", "targetKey": "Bamako Compact", "impactFactor": 0.05 },
+    { "sourceKey": "PHOS", "targetKey": "ARCVT", "impactFactor": 0.08 },
+    { "sourceKey": "PHOS", "targetKey": "PPM", "impactFactor": 0.06 },
+
+    { "sourceKey": "SUL", "targetKey": "AFI", "impactFactor": 0.06 },
+    { "sourceKey": "SUL", "targetKey": "PPM", "impactFactor": 0.05 },
+    { "sourceKey": "SUL", "targetKey": "INTEGR", "impactFactor": 0.03 },
+
+    { "sourceKey": "BAUX", "targetKey": "ARCTA", "impactFactor": 0.1 },
+    { "sourceKey": "BAUX", "targetKey": "Bamako Compact", "impactFactor": 0.08 },
+    { "sourceKey": "BAUX", "targetKey": "NOSC", "impactFactor": 0.04 },
+    { "sourceKey": "BAUX", "targetKey": "ARC", "impactFactor": 0.03 },
+
+    { "sourceKey": "NICK", "targetKey": "PLEN", "impactFactor": 0.08 },
+    { "sourceKey": "NICK", "targetKey": "Polystralia", "impactFactor": 0.05 },
+    { "sourceKey": "NICK", "targetKey": "Nusantaran Association", "impactFactor": 0.06 },
+    { "sourceKey": "NICK", "targetKey": "VHI", "impactFactor": 0.04 },
+
+    { "sourceKey": "MAN", "targetKey": "PLEN", "impactFactor": 0.1 },
+    { "sourceKey": "MAN", "targetKey": "VHI", "impactFactor": 0.06 },
+    { "sourceKey": "MAN", "targetKey": "Kimpwanza League", "impactFactor": 0.04 },
+    { "sourceKey": "MAN", "targetKey": "INTEGR", "impactFactor": 0.03 },
+
+    { "sourceKey": "COB", "targetKey": "Kimpwanza League", "impactFactor": 0.1 },
+    { "sourceKey": "COB", "targetKey": "ARCAG", "impactFactor": 0.06 },
+    { "sourceKey": "COB", "targetKey": "ARCPX", "impactFactor": 0.04 },
+    { "sourceKey": "COB", "targetKey": "COM", "impactFactor": 0.03 },
+
+    { "sourceKey": "REE", "targetKey": "Pan-Asian Cooperative", "impactFactor": 0.08 },
+    { "sourceKey": "REE", "targetKey": "ARCNX", "impactFactor": 0.12 },
+    { "sourceKey": "REE", "targetKey": "TRN", "impactFactor": 0.1 },
+    { "sourceKey": "REE", "targetKey": "MOR", "impactFactor": 0.08 },
+    { "sourceKey": "REE", "targetKey": "ARAK", "impactFactor": 0.06 },
+    { "sourceKey": "REE", "targetKey": "INCOM", "impactFactor": 0.05 },
+    { "sourceKey": "REE", "targetKey": "UNEF", "impactFactor": 0.04 },
+    { "sourceKey": "REE", "targetKey": "INTEGR", "impactFactor": 0.03 },
+
+    { "sourceKey": "GRAPH", "targetKey": "Pan-Asian Cooperative", "impactFactor": 0.05 },
+    { "sourceKey": "GRAPH", "targetKey": "ARCNX", "impactFactor": 0.08 },
+    { "sourceKey": "GRAPH", "targetKey": "ARK", "impactFactor": 0.04 },
+    { "sourceKey": "GRAPH", "targetKey": "COM", "impactFactor": 0.03 },
+    { "sourceKey": "GRAPH", "targetKey": "UNEF", "impactFactor": 0.03 },
+
+    { "sourceKey": "TIT", "targetKey": "SOC", "impactFactor": 0.12 },
+    { "sourceKey": "TIT", "targetKey": "ARCOB", "impactFactor": 0.1 },
+    { "sourceKey": "TIT", "targetKey": "ARCAG", "impactFactor": 0.08 },
+    { "sourceKey": "TIT", "targetKey": "TRN", "impactFactor": 0.08 },
+    { "sourceKey": "TIT", "targetKey": "Polystralia", "impactFactor": 0.06 },
+    { "sourceKey": "TIT", "targetKey": "CVML", "impactFactor": 0.04 },
+
+    { "sourceKey": "CHROM", "targetKey": "Central Asian Federation", "impactFactor": 0.06 },
+    { "sourceKey": "CHROM", "targetKey": "PLEN", "impactFactor": 0.08 },
+    { "sourceKey": "CHROM", "targetKey": "Kimpwanza League", "impactFactor": 0.04 },
+    { "sourceKey": "CHROM", "targetKey": "MUN", "impactFactor": 0.05 },
+    { "sourceKey": "CHROM", "targetKey": "LOW", "impactFactor": 0.03 },
+
+    { "sourceKey": "TUNG", "targetKey": "Pan-Asian Cooperative", "impactFactor": 0.04 },
+    { "sourceKey": "TUNG", "targetKey": "LOW", "impactFactor": 0.06 },
+    { "sourceKey": "TUNG", "targetKey": "TRN", "impactFactor": 0.05 },
+    { "sourceKey": "TUNG", "targetKey": "ARCAG", "impactFactor": 0.04 },
+
+    { "sourceKey": "SIL", "targetKey": "ARCNX", "impactFactor": 0.08 },
+    { "sourceKey": "SIL", "targetKey": "ARAK", "impactFactor": 0.1 },
+    { "sourceKey": "SIL", "targetKey": "INCOM", "impactFactor": 0.08 },
+    { "sourceKey": "SIL", "targetKey": "NETW", "impactFactor": 0.06 },
+    { "sourceKey": "SIL", "targetKey": "ARK", "impactFactor": 0.05 },
+    { "sourceKey": "SIL", "targetKey": "LYS", "impactFactor": 0.05 },
+    { "sourceKey": "SIL", "targetKey": "PHW", "impactFactor": 0.04 },
+    { "sourceKey": "SIL", "targetKey": "North American Union", "impactFactor": 0.03 },
+
+    { "sourceKey": "HEL", "targetKey": "ARCOB", "impactFactor": 0.06 },
+    { "sourceKey": "HEL", "targetKey": "SOC", "impactFactor": 0.04 },
+    { "sourceKey": "HEL", "targetKey": "North American Union", "impactFactor": 0.04 },
+    { "sourceKey": "HEL", "targetKey": "Pan-Asian Cooperative", "impactFactor": 0.03 },
+
+    { "sourceKey": "COAL", "targetKey": "VHI", "impactFactor": 0.1 },
+    { "sourceKey": "COAL", "targetKey": "Pan-Asian Cooperative", "impactFactor": 0.06 },
+    { "sourceKey": "COAL", "targetKey": "Pact of Hyderabad", "impactFactor": 0.05 },
+    { "sourceKey": "COAL", "targetKey": "Kimpwanza League", "impactFactor": 0.04 },
+    { "sourceKey": "COAL", "targetKey": "ANTT", "impactFactor": 0.06 },
+    { "sourceKey": "COAL", "targetKey": "WESL", "impactFactor": 0.05 },
+    { "sourceKey": "COAL", "targetKey": "Polystralia", "impactFactor": 0.04 },
+    { "sourceKey": "COAL", "targetKey": "INTEGR", "impactFactor": -0.03 },
+    { "sourceKey": "COAL", "targetKey": "Mediterranean Bloc", "impactFactor": -0.02 }
   ]
 }
