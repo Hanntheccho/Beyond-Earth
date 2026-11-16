@@ -374,7 +374,7 @@ function checkHtmlAndAssets(loc) {
         }
     }
 
-    for (const match of html.matchAll(/class="affy-node[^"]*"\s+style="([^"]*)"/g)) {
+    for (const match of html.matchAll(/class="affy-desc[^"]*"\s+style="([^"]*)"/g)) {
         const icon = /url\(\s*&quot;([^&]+)&quot;\s*\)/.exec(match[1]);
         if (icon && !exists(abs(icon[1]))) {
             error('assets', `index.html uses affy icon "${icon[1]}" which does not exist`);

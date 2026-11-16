@@ -1,10 +1,10 @@
 /* affy.css - Affy custom layout. Markup lives in index.html; loc.js fills the descriptions. */
 
-.affy-node {
+.affy-desc {
     border-color: var(--affy-color);
     max-height: 200px;
 }
-.affy-node::before {
+.affy-desc::before {
     content: "";
     position: absolute;
     inset: 0;
