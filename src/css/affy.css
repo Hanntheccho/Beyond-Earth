@@ -1,21 +1,7 @@
-/* affy.css - Affinity grid. Markup lives in index.html; loc.js fills the descriptions. */
+/* affy.css - Affinity custom layout. Markup lives in index.html; loc.js fills the descriptions. */
 
-.affy-map {
-    display: flex;
-    flex-direction: column;
-    gap: var(--px-10);
-}
-.affy-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--px-10);
-}
 .affy-node {
-    position: relative;
-    isolation: isolate;
-    border: 2px solid var(--affy-color);
-    border-bottom-width: 4px;
-    box-shadow: 0 0 1em color-mix(in srgb, var(--affy-color), transparent 80%), inset 0 0 16px color-mix(in srgb, var(--affy-color), transparent 90%);
+    border-color: var(--affy-color);
 }
 .affy-node::before {
     content: "";
@@ -26,20 +12,7 @@
     mask-image: var(--affy-icon);
     mask-mode: alpha;
     mask-position: center;
-    mask-size: 80%;
+    mask-size: 100%;
     mask-repeat: repeat;
     opacity: var(--opacity-10);
-    pointer-events: none;
-}
-.affy-desc {
-    max-height: 322px;
-    overflow-y: auto;
-    padding: var(--px-10) var(--px-20);
-}
-.affy-desc h2 { color: var(--affy-color); }
-.affy-node--neutrality {
-    min-height: 0;
-}
-.affy-node--neutrality .affy-desc {
-    max-height: 161px;
 }

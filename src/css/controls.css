@@ -64,6 +64,11 @@ button[aria-pressed="true"] {
     background-color: var(--clr-border);
     color: var(--clr-ph1);
 }
+button img {
+    display: block;
+    width: var(--btn-size);
+    height: auto;
+}
 
 .main-visibility-toggle,
 .theme-toggle {
@@ -80,7 +85,7 @@ button[aria-pressed="true"] {
 .theme-toggle img {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
 }
 .main-visibility-toggle {
     top: var(--px-10);
