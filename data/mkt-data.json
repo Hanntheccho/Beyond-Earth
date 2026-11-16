@@ -104,8 +104,8 @@
       "value": 980
     },
     {
-      "name": "Civil-Military Industries",
-      "tag": "CVML",
+      "name": "Permafrost Reconstruction",
+      "tag": "PERM",
       "value": 420
     },
     {
@@ -132,11 +132,6 @@
       "name": "Morgan Industries",
       "tag": "MOR",
       "value": 3010
-    },
-    {
-      "name": "Arakawa-Sun",
-      "tag": "ARAK",
-      "value": 230
     },
     {
       "name": "Pioneer Habitat Works",
@@ -200,17 +195,12 @@
       ]
     },
     {
-      "name": "Ternion Materials",
-      "tag": "TRN",
-      "value": 90
-    },
-    {
       "name": "Müninstek Freunde",
       "tag": "MUN",
       "value": 390
     },
     {
-      "name": "Lyscore",
+      "name": "LysCore",
       "tag": "LYS",
       "value": 315
     },
@@ -259,11 +249,6 @@
       "name": "Westralian Logistics",
       "tag": "WESL",
       "value": 1120
-    },
-    {
-      "name": "Netwarden",
-      "tag": "NETW",
-      "value": 46
     },
     {
       "name": "Pacific Patch Market",

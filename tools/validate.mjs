@@ -395,6 +395,60 @@ function checkHtmlAndAssets(loc) {
     return html;
 }
 
+// ------------------------------------------------------------- economic relations
+
+function checkEconomicRelations() {
+    // Collect every valid tag and name from the database files so that a
+    // sourceKey/targetKey in economic-relations.json can be checked against them.
+    const validKeys = new Set();
+
+    const srcData = readJson('data/src-data.json');
+    if (srcData) {
+        (function walk(node) {
+            if (node.tag) validKeys.add(node.tag);
+            if (node.name) validKeys.add(node.name);
+            (node.children || []).forEach(walk);
+        })(srcData);
+    }
+
+    const mktData = readJson('data/mkt-data.json');
+    if (mktData) {
+        (function walk(node) {
+            if (node.tag) validKeys.add(node.tag);
+            if (node.name) validKeys.add(node.name);
+            (node.children || []).forEach(walk);
+        })(mktData);
+    }
+
+    const gdpData = readJson('data/gdp-data.json');
+    if (gdpData) {
+        (function walk(node) {
+            if (node.tag) validKeys.add(node.tag);
+            if (node.name) validKeys.add(node.name);
+            (node.children || []).forEach(walk);
+        })(gdpData);
+    }
+
+    const rel = readJson('data/economic-relations.json');
+    if (!rel) return;
+
+    ['dependencies', 'influences'].forEach(category => {
+        const entries = rel[category];
+        if (!Array.isArray(entries)) return;
+        entries.forEach((entry, index) => {
+            const where = `economic-relations.json ${category}[${index}]`;
+            ['sourceKey', 'targetKey'].forEach(field => {
+                const value = entry[field];
+                if (typeof value !== 'string' || !value) {
+                    error('relations', `${where}: missing ${field}`);
+                } else if (!validKeys.has(value)) {
+                    error('relations', `${where}: ${field} "${value}" is not a known name or tag in src-data.json, mkt-data.json, or gdp-data.json`);
+                }
+            });
+        });
+    });
+}
+
 // ------------------------------------------------------------- check data files
 // Walk a treemap JSON tree and report duplicate tag/name values.
 function checkDataFileDuplicates(filePath) {
@@ -479,6 +533,7 @@ checkTreemaps(html);
 checkDataFileDuplicates('data/src-data.json');
 checkDataFileDuplicates('data/mkt-data.json');
 checkDataFileDuplicates('data/gdp-data.json');
+checkEconomicRelations();
 checkScenario();
 checkSyntax();
 

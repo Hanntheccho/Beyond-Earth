@@ -143,6 +143,30 @@
   ],
   "influences": [
     { "sourceKey": "North American Union", "targetKey": "ARC", "weight": 0.1 },
-    { "sourceKey": "ARC", "targetKey": "North American Union", "weight": 0.2 }
+    { "sourceKey": "ARC", "targetKey": "North American Union", "weight": 0.2 },
+    { "sourceKey": "Slavic Federation", "targetKey": "VHI", "weight": 0.15 },
+    { "sourceKey": "VHI", "targetKey": "Slavic Federation", "weight": 0.1 },
+    { "sourceKey": "Al-Falah", "targetKey": "PAVL", "weight": 0.12 },
+    { "sourceKey": "PAVL", "targetKey": "Al-Falah", "weight": 0.08 },
+    { "sourceKey": "Pan-Asian Cooperative", "targetKey": "ARCNX", "weight": 0.1 },
+    { "sourceKey": "ARCNX", "targetKey": "Pan-Asian Cooperative", "weight": 0.07 },
+    { "sourceKey": "INTEGR", "targetKey": "MOR", "weight": 0.09 },
+    { "sourceKey": "MOR", "targetKey": "INTEGR", "weight": 0.06 },
+    { "sourceKey": "North Sea Alliance", "targetKey": "NOSC", "weight": 0.11 },
+    { "sourceKey": "NOSC", "targetKey": "North Sea Alliance", "weight": 0.07 },
+    { "sourceKey": "Polystralia", "targetKey": "WESL", "weight": 0.08 },
+    { "sourceKey": "WESL", "targetKey": "Polystralia", "weight": 0.05 },
+    { "sourceKey": "Pact of Hyderabad", "targetKey": "LITH", "weight": 0.1 },
+    { "sourceKey": "LITH", "targetKey": "Pact of Hyderabad", "weight": 0.06 },
+    { "sourceKey": "Andean Compact", "targetKey": "COOP", "weight": 0.09 },
+    { "sourceKey": "COOP", "targetKey": "Andean Compact", "weight": 0.07 },
+    { "sourceKey": "Bamako Compact", "targetKey": "AFI", "weight": 0.08 },
+    { "sourceKey": "AFI", "targetKey": "Bamako Compact", "weight": 0.05 },
+    { "sourceKey": "Union of Maghreb", "targetKey": "INTR", "weight": 0.07 },
+    { "sourceKey": "INTR", "targetKey": "Union of Maghreb", "weight": 0.04 },
+    { "sourceKey": "Central Asian Federation", "targetKey": "SOC", "weight": 0.08 },
+    { "sourceKey": "SOC", "targetKey": "Central Asian Federation", "weight": 0.05 },
+    { "sourceKey": "Conosur", "targetKey": "PLEN", "weight": 0.06 },
+    { "sourceKey": "PLEN", "targetKey": "Conosur", "weight": 0.04 }
   ]
 }
