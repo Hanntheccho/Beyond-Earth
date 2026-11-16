@@ -96,3 +96,55 @@
     color: var(--clr-data);
     font-size: var(--fnt-size-bttn);
 }
+
+#influence-graph-container .node-group circle {
+    fill-opacity: var(--opacity-10);
+    stroke-width: 1;
+    filter: drop-shadow(var(--drop-shadow-60));
+}
+#influence-graph-container .node-group.is-up {
+    color: var(--clr-positive);
+}
+#influence-graph-container .node-group.is-down {
+    color: var(--clr-negative);
+}
+#influence-graph-container .node-group.is-unavailable {
+    color: var(--clr-neutrale);
+}
+#influence-graph-container .node-group.is-up circle,
+#influence-graph-container .relationship-arrow-positive path {
+    fill: var(--clr-positive);
+}
+#influence-graph-container .node-group.is-up circle {
+    stroke: var(--clr-positive);
+}
+#influence-graph-container .node-group.is-down circle,
+#influence-graph-container .relationship-arrow-negative path {
+    fill: var(--clr-negative);
+}
+#influence-graph-container .node-group.is-down circle {
+    stroke: var(--clr-negative);
+}
+#influence-graph-container .link.is-positive,
+#influence-graph-container .link.is-negative {
+    fill: none;
+    opacity: calc(var(--opacity-10) * 3);
+}
+#influence-graph-container .link.is-positive {
+    stroke: var(--clr-positive);
+}
+#influence-graph-container .link.is-negative {
+    stroke: var(--clr-negative);
+}
+#influence-graph-container .link.is-influence {
+    stroke-dasharray: 5 3;
+}
+#influence-graph-container .node-group.is-unavailable circle {
+    fill: var(--clr-neutrale);
+    stroke: var(--clr-neutrale);
+}
+#influence-graph-container .node-label {
+    fill: var(--clr-body);
+    font-family: var(--fnt);
+    font-size: var(--fnt-size-data);
+}

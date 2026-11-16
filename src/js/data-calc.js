@@ -96,13 +96,47 @@
         influences = data.influences || [];
     }
 
-    function getInfluenceMap() {
-        return influences;
+    function getInfluenceData() {
+        const nodes = new Map();
+        [...relations, ...influences].forEach(relation => {
+            [relation.sourceKey, relation.targetKey].forEach(key => {
+                if (typeof key !== 'string' || !key) return;
+                nodes.set(key, {
+                    id: key,
+                    name: key,
+                    value: 0,
+                    changePercent: 0,
+                    hasData: false
+                });
+            });
+        });
+
+        sources.forEach(source => walk(source.root, node => {
+            const key = node.tag || node.name;
+            if (!nodes.has(key)) return;
+            nodes.set(key, {
+                id: key,
+                name: node.name,
+                value: node.value,
+                changePercent: node.changePercent,
+                hasData: true
+            });
+        }));
+
+        return {
+            nodes: Array.from(nodes.values()),
+            dependencies: relations,
+            influences: influences
+        };
     }
 
     function renderInfluenceDebug() {
         const container = document.querySelector('.debug-influence');
         if (!container) return;
+
+        if (window.influenceGraph && window.influenceGraph.update) {
+            window.influenceGraph.update(getInfluenceData());
+        }
 
         const openSections = new Map();
         container.querySelectorAll('details[data-debug-section]').forEach(section => {
@@ -351,7 +385,7 @@
         getMarket,
         registerSource,
         setRelations,
-        getInfluenceMap,
+        getInfluenceData,
         renderInfluenceDebug,
         tick: computeValues,
         render: publishMarkets,

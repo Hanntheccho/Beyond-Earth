@@ -19,6 +19,7 @@ import './js/globe-markers-link.js';
 // 3. UI Components & Logic
 import './js/data-grid.js';
 import './js/data-tabs.js';
+import './js/influence-graph.js';
 import './js/pois.js';
 import './js/audio.js';
 import './js/panel-toggle.js';
