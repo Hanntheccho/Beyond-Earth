@@ -1,6 +1,7 @@
 /* data-grid.css - Data status bar and data grid (see src/js/data-grid.js). */
 
-.data-status {
+.data-status,
+.debug-influence-section > summary {
     display: grid;
     margin-top: 0;
     margin-bottom: 0;
@@ -43,19 +44,15 @@
 
 .debug-influence {
     display: grid;
-    gap: 10px;
     font-size: var(--fnt-size-bttn);
     max-height: 500px;
     overflow-y: auto;
 }
-.debug-influence-section {
-    border-bottom: var(--border);
-}
 .debug-influence-section > summary {
-    padding: 10px;
     color: var(--clr-b);
+    text-align: left;
+    border-top: none;
     cursor: pointer;
-    background: var(--clr-border);
 }
 .debug-influence-table-wrap {
     overflow-x: auto;
@@ -97,4 +94,5 @@
 }
 .debug-influence-empty {
     color: var(--clr-data);
+    font-size: var(--fnt-size-bttn);
 }

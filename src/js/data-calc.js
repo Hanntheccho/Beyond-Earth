@@ -111,8 +111,8 @@
         container.replaceChildren();
 
         const sections = [
-            { key: 'dependencies', title: 'dependencies:sourceKey => targetKey', items: relations, open: false },
-            { key: 'influences', title: 'influences:sourceKey <=> targetKey', items: influences, open: false }
+            { key: 'dependencies', title: ':dependencies = sourceKey ==> targetKey', items: relations, open: false },
+            { key: 'influences', title: ':influences === sourceKey <=> targetKey', items: influences, open: false }
         ];
 
         sections.forEach(sectionData => {
