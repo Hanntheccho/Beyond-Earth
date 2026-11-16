@@ -186,7 +186,7 @@ async function loadLocalization() {
             });
         });
 
-        // Affinity descriptions are shown in place, so they need the same keyword
+        // Affy descriptions are shown in place, so they need the same keyword
         // formatting tooltips and POI panels get.
         document.querySelectorAll('.affy-desc > span[class]').forEach(element => {
             const key = Array.from(element.classList)

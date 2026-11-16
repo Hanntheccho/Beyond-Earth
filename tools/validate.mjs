@@ -377,11 +377,11 @@ function checkHtmlAndAssets(loc) {
     for (const match of html.matchAll(/class="affy-node[^"]*"\s+style="([^"]*)"/g)) {
         const icon = /url\(\s*&quot;([^&]+)&quot;\s*\)/.exec(match[1]);
         if (icon && !exists(abs(icon[1]))) {
-            error('assets', `index.html uses affinity icon "${icon[1]}" which does not exist`);
+            error('assets', `index.html uses affy icon "${icon[1]}" which does not exist`);
         }
     }
     for (const match of html.matchAll(/<span class="(affy[A-Z]+-desc)"><\/span>/g)) {
-        if (typeof loc[match[1]] !== 'string') error('loc', `index.html shows affinity description "${match[1]}" which is not in the localization files`);
+        if (typeof loc[match[1]] !== 'string') error('loc', `index.html shows affy description "${match[1]}" which is not in the localization files`);
     }
 
     if (exists(abs('src/js/globe.js'))) {
