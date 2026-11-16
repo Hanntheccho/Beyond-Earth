@@ -28,8 +28,8 @@
     --opacity-10: .1;
     --box-shadow: 0 0 16px var(--box-shadow-clr);
     --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
-    --drop-shadow-60: 0 0 0.6em color-mix(in srgb, currentColor 60%, transparent);
-    --drop-shadow-20: 0 0 0.6em color-mix(in srgb, currentColor 20%, transparent);
+    --drop-shadow-60: 0 0 .6em color-mix(in srgb, currentColor 60%, transparent);
+    --drop-shadow-20: 0 0 .6em color-mix(in srgb, currentColor 20%, transparent);
     --letter-spacing-02: .1em;
     --fnt: 'Source Code Pro', monospace;
     --fnt-size-h1: calc(var(--fnt-size-text) + 12px);
