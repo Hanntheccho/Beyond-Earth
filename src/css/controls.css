@@ -63,10 +63,11 @@ button[aria-pressed="true"] {
     border-color: var(--clr-p);
     background-color: var(--clr-border);
     color: var(--clr-ph1);
+    filter: drop-shadow(var(--drop-shadow-60));
 }
 button img {
     display: block;
-    width: var(--btn-size);
+    width: 100%;
     height: auto;
 }
 
@@ -77,15 +78,7 @@ button img {
     width: var(--btn-size);
     height: var(--btn-size);
     padding: 12px;
-    background: var(--clr-background);
-    filter: drop-shadow(var(--drop-shadow-60));
     right: var(--px-10);
-}
-.main-visibility-toggle img,
-.theme-toggle img {
-    display: block;
-    width: 100%;
-    height: auto;
 }
 .main-visibility-toggle {
     top: var(--px-10);
