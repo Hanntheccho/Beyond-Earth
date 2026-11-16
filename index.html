@@ -67,35 +67,35 @@
 
                     <!-- Affinities Info Panels -->
                     <div class="div-desc-win grid">
-                        <button aria-pressed="true">Affy:P1</button>
-                        <button>Affy:H2</button>
-                        <button>Affy:S3</button>
-                        <button>Affy:S4</button>
-                        <button>Affy:M5</button>
-                        <button>Affy:D6</button>
-                        <button>Affy:N7</button>
+                        <button type="button" data-panel-group="affy" data-panel-target="affy-pur" aria-pressed="true">Affy:P1</button>
+                        <button type="button" data-panel-group="affy" data-panel-target="affy-har" aria-pressed="false">Affy:H2</button>
+                        <button type="button" data-panel-group="affy" data-panel-target="affy-sup" aria-pressed="false">Affy:S3</button>
+                        <button type="button" data-panel-group="affy" data-panel-target="affy-syn" aria-pressed="false">Affy:S4</button>
+                        <button type="button" data-panel-group="affy" data-panel-target="affy-mas" aria-pressed="false">Affy:M5</button>
+                        <button type="button" data-panel-group="affy" data-panel-target="affy-div" aria-pressed="false">Affy:D6</button>
+                        <button type="button" data-panel-group="affy" data-panel-target="affy-neu" aria-pressed="false">Affy:N7</button>
                     </div>
                     <div class="div-desc-win">
-                        <div class="div-desc affy-node" style="--affy-color: #ff0000; --affy-icon: url(&quot;../../assets/affy/purity.svg&quot;);" aria-hidden="false">
-                            <span class="affyPUR-desc"></span>
+                        <div class="div-desc affy-node" id="affy-pur" data-panel-group="affy" style="--affy-color: #ff0000; --affy-icon: url(&quot;../../assets/affy/purity.svg&quot;);" aria-hidden="false">
+                            <span class="affyP1-desc"></span>
                         </div>
-                        <div class="div-desc affy-node" style="--affy-color: #a200ff; --affy-icon: url(&quot;../../assets/affy/divinity.svg&quot;);" hidden aria-hidden="true">
-                            <span class="affyHAR-desc"></span>
+                        <div class="div-desc affy-node" id="affy-har" data-panel-group="affy" style="--affy-color: #00e1ff; --affy-icon: url(&quot;../../assets/affy/harmony.svg&quot;);" hidden aria-hidden="true">
+                            <span class="affyH2-desc"></span>
                         </div>
-                        <div class="div-desc affy-node" style="--affy-color: #00e1ff; --affy-icon: url(&quot;../../assets/affy/harmony.svg&quot;);" hidden aria-hidden="true">
-                            <span class="affySUP-desc"></span>
+                        <div class="div-desc affy-node" id="affy-sup" data-panel-group="affy" style="--affy-color: #fbff00; --affy-icon: url(&quot;../../assets/affy/supremacy.svg&quot;);" hidden aria-hidden="true">
+                            <span class="affyS3-desc"></span>
                         </div>
-                        <div class="div-desc affy-node" style="--affy-color: #09ff00; --affy-icon: url(&quot;../../assets/affy/synergy.svg&quot;);" hidden aria-hidden="true">
-                            <span class="affySYN-desc"></span>
+                        <div class="div-desc affy-node" id="affy-syn" data-panel-group="affy" style="--affy-color: #09ff00; --affy-icon: url(&quot;../../assets/affy/synergy.svg&quot;);" hidden aria-hidden="true">
+                            <span class="affyS4-desc"></span>
                         </div>
-                        <div class="div-desc affy-node" style="--affy-color: #fbff00; --affy-icon: url(&quot;../../assets/affy/supremacy.svg&quot;);" hidden aria-hidden="true">
-                            <span class="affyMAS-desc"></span>
+                        <div class="div-desc affy-node" id="affy-mas" data-panel-group="affy" style="--affy-color: #ffa600; --affy-icon: url(&quot;../../assets/affy/mastery.svg&quot;);" hidden aria-hidden="true">
+                            <span class="affyM5-desc"></span>
                         </div>
-                        <div class="div-desc affy-node" style="--affy-color: #ffa600; --affy-icon: url(&quot;../../assets/affy/mastery.svg&quot;);" hidden aria-hidden="true">
-                            <span class="affyDIV-desc"></span>
+                        <div class="div-desc affy-node" id="affy-div" data-panel-group="affy" style="--affy-color: #a200ff; --affy-icon: url(&quot;../../assets/affy/divinity.svg&quot;);" hidden aria-hidden="true">
+                            <span class="affyD6-desc"></span>
                         </div>
-                        <div class="div-desc affy-node" style="--affy-color: #ffffff; --affy-icon: url(&quot;../../assets/affy/neutrality.svg&quot;);" hidden aria-hidden="true">
-                            <span class="affyNEU-desc"></span>
+                        <div class="div-desc affy-node" id="affy-neu" data-panel-group="affy" style="--affy-color: #ffffff; --affy-icon: url(&quot;../../assets/affy/neutrality.svg&quot;);" hidden aria-hidden="true">
+                            <span class="affyN7-desc"></span>
                         </div>
                     </div>
 

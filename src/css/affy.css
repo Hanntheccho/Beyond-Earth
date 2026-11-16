@@ -2,6 +2,7 @@
 
 .affy-node {
     border-color: var(--affy-color);
+    max-height: 200px;
 }
 .affy-node::before {
     content: "";
@@ -12,7 +13,7 @@
     mask-image: var(--affy-icon);
     mask-mode: alpha;
     mask-position: center;
-    mask-size: 100%;
+    mask-size: 50%;
     mask-repeat: repeat;
     opacity: var(--opacity-10);
 }
