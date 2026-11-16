@@ -17,6 +17,8 @@
     --clr-positive: #00ff6a;
     --clr-negative: #ff0000;
     --clr-neutrale: #a0a0a0;
+    --clr-color-mix-20: var(--clr-body) 20%;
+    --clr-color-mix-60: var(--clr-body) 60%;
     --max-width: 800px;
     --border: 2px solid var(--clr-border);
     --border-left: 12px;
