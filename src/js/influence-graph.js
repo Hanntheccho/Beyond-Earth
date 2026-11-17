@@ -6,6 +6,9 @@
     if (!container) return;
 
     let simulation, svg;
+    let simulationNodes = new Map();
+    let layoutInitialized = false;
+    const NODE_TRANSITION_DURATION = 400;
     const numberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
 
     function initGraph() {
@@ -41,7 +44,8 @@
             .force('link', d3.forceLink().id(d => d.id).distance(60))
             .force('charge', d3.forceManyBody().strength(-200))
             .force('collide', d3.forceCollide().strength(0.85).iterations(2))
-            .force('center', d3.forceCenter(width / 2, height / 2));
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .stop();
     }
 
     function update(data) {
@@ -66,12 +70,14 @@
             const widthBasedFontSize = availableWidth / (String(label || '').length * 0.65);
             const labelFontSize = Math.min(radius * 0.5, widthBasedFontSize);
 
-            return {
-                ...n,
+            const node = simulationNodes.get(n.id) || {};
+            Object.assign(node, n, {
                 radius,
                 labelFontSize
-            };
+            });
+            return node;
         });
+        simulationNodes = new Map(nodes.map(node => [node.id, node]));
 
         const links = data.relations.map(relation => ({
             ...relation,
@@ -118,12 +124,14 @@
                 .on('drag', dragged)
                 .on('end', dragended));
 
-        nodeEnter.append('circle');
+        nodeEnter.append('circle')
+            .attr('r', d => d.radius);
 
         nodeEnter.append('text')
             .attr('class', 'node-label')
             .attr('text-anchor', 'middle')
-            .attr('dominant-baseline', 'central');
+            .attr('dominant-baseline', 'central')
+            .attr('font-size', d => d.labelFontSize);
         nodeEnter.append('title');
 
         const nodeMerge = nodeEnter.merge(node);
@@ -133,10 +141,17 @@
             .classed('is-down', d => d.hasData !== false && d.changePercent < 0)
             .classed('is-up', d => d.hasData !== false && d.changePercent >= 0);
         nodeMerge.select('circle')
+            .interrupt()
+            .transition()
+            .duration(NODE_TRANSITION_DURATION)
             .attr('r', d => d.radius);
         nodeMerge.select('text')
             .text(d => d.label || d.name)
-            .attr('font-size', d => d.labelFontSize)
+            .interrupt()
+            .transition()
+            .duration(NODE_TRANSITION_DURATION)
+            .attr('font-size', d => d.labelFontSize);
+        nodeMerge.select('text')
             .attr('visibility', d => d.labelFontSize >= 1 ? 'visible' : 'hidden');
         nodeMerge.select('title').text(d => {
             if (d.hasData === false) return `${d.name}: data unavailable`;
@@ -156,25 +171,35 @@
             return `${source.label || source.name} -> ${target.label || target.name}\nWeight: ${numberFormat.format(d.weight)}`;
         });
 
-        simulation.alpha(0.3).restart();
+        function getLinkPath(d) {
+            const dx = d.target.x - d.source.x;
+            const dy = d.target.y - d.source.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            const startX = d.source.x + dx / distance * d.source.radius;
+            const startY = d.source.y + dy / distance * d.source.radius;
+            const endX = d.target.x - dx / distance * d.target.radius;
+            const endY = d.target.y - dy / distance * d.target.radius;
+            const controlX = (startX + endX) / 2 - dy / distance * d.curveOffset;
+            const controlY = (startY + endY) / 2 + dx / distance * d.curveOffset;
+            return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
+        }
 
-        simulation.on('tick', () => {
-            linkMerge
-                .attr('d', d => {
-                    const dx = d.target.x - d.source.x;
-                    const dy = d.target.y - d.source.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const startX = d.source.x + dx / distance * d.source.radius;
-                    const startY = d.source.y + dy / distance * d.source.radius;
-                    const endX = d.target.x - dx / distance * d.target.radius;
-                    const endY = d.target.y - dy / distance * d.target.radius;
-                    const controlX = (startX + endX) / 2 - dy / distance * d.curveOffset;
-                    const controlY = (startY + endY) / 2 + dx / distance * d.curveOffset;
-                    return `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
-                });
-
+        function updatePositions(animateLinks = false) {
+            const linkPosition = animateLinks
+                ? linkMerge.interrupt().transition().duration(NODE_TRANSITION_DURATION)
+                : linkMerge;
+            linkPosition.attr('d', getLinkPath);
             nodeMerge.attr('transform', d => `translate(${d.x},${d.y})`);
-        });
+        }
+
+        simulation.on('tick', updatePositions);
+        if (!layoutInitialized && nodes.length) {
+            simulation.tick(300);
+            layoutInitialized = true;
+            updatePositions();
+        } else {
+            updatePositions(layoutInitialized);
+        }
     }
 
     function dragstarted(event) {

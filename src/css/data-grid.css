@@ -44,7 +44,7 @@
 .debug-influence {
     display: grid;
     font-size: var(--fnt-size-bttn);
-    max-height: 500px;
+    max-height: 260px;
     overflow-y: auto;
 }
 .debug-influence-table-wrap {
@@ -94,6 +94,7 @@
     fill-opacity: var(--opacity-10);
     stroke-width: 1;
     filter: drop-shadow(var(--drop-shadow-60));
+    transition: fill var(--transition-time-400) ease, stroke var(--transition-time-400) ease;
 }
 #influence-graph-container .node-group.is-up {
     color: var(--clr-positive);
@@ -128,6 +129,7 @@
 #influence-graph-container .link.is-negative {
     fill: none;
     opacity: calc(var(--opacity-10) * 3);
+    transition: stroke var(--transition-time-400) ease, stroke-width var(--transition-time-400) ease;
 }
 #influence-graph-container .link.is-positive {
     stroke: var(--clr-positive);
@@ -144,6 +146,7 @@
     font-weight: bold;
     text-transform: uppercase;
     pointer-events: none;
+    transition: fill var(--transition-time-400) ease;
 }
 #influence-graph-container .node-group.is-unavailable .node-label {
     fill: var(--clr-neutrale);
