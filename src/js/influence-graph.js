@@ -41,7 +41,7 @@
             .force('link', d3.forceLink().id(d => d.id).distance(60))
             .force('charge', d3.forceManyBody().strength(-200))
             .force('collide', d3.forceCollide().strength(0.85).iterations(2))
-            .force('center', d3.forceCenter(width / 2, height / 2 + 24));
+            .force('center', d3.forceCenter(width / 2, height / 2));
     }
 
     function update(data) {
@@ -62,7 +62,8 @@
                     Math.exp(3 * Math.log10(Math.max(0, Number(n.value) || 0) + 1) / maxLogValue) - 1
                 ) / exponentialScale;
             const availableWidth = Math.max(0, radius * 2 - 8);
-            const widthBasedFontSize = availableWidth / (String(n.name || '').length * 0.65);
+            const label = n.label || n.name;
+            const widthBasedFontSize = availableWidth / (String(label || '').length * 0.65);
             const labelFontSize = Math.min(radius * 0.5, widthBasedFontSize);
 
             return {
@@ -134,13 +135,14 @@
         nodeMerge.select('circle')
             .attr('r', d => d.radius);
         nodeMerge.select('text')
-            .text(d => d.name)
+            .text(d => d.label || d.name)
             .attr('font-size', d => d.labelFontSize)
             .attr('visibility', d => d.labelFontSize >= 1 ? 'visible' : 'hidden');
         nodeMerge.select('title').text(d => {
             if (d.hasData === false) return `${d.name}: data unavailable`;
             const change = Number(d.changePercent) || 0;
-            return `${d.name}\nValue: ${numberFormat.format(d.value)}\nChange: ${change >= 0 ? '+' : ''}${numberFormat.format(change)}%`;
+            const label = d.label === d.name ? d.name : `${d.name} (${d.label})`;
+            return `${label}\n${numberFormat.format(d.value)}\n${change >= 0 ? '+' : ''}${numberFormat.format(change)}`;
         });
         const nodesById = new Map(nodes.map(nodeData => [nodeData.id, nodeData]));
         linkMerge
@@ -151,7 +153,7 @@
         linkMerge.select('title').text(d => {
             const source = nodesById.get(d.sourceKey);
             const target = nodesById.get(d.targetKey);
-            return `${source.name} -> ${target.name}\nWeight: ${numberFormat.format(d.weight)}`;
+            return `${source.label || source.name} -> ${target.label || target.name}\nWeight: ${numberFormat.format(d.weight)}`;
         });
 
         simulation.alpha(0.3).restart();

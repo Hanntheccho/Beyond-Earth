@@ -66,10 +66,10 @@
     "id": "poiFRA",
     "label": "Franco-Iberia",
     "icon": "../../assets/FRA.svg",
-    "lat": 43,
-    "lon": 0,
+    "lat": 41,
+    "lon": -5,
     "altitudeKm": 200,
-    "size": 40
+    "size": 50
   },
   {
     "id": "poiGER",

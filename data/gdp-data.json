@@ -4,6 +4,7 @@
   "children": [
     {
       "name": "North American Union",
+      "tag": "NAU",
       "children": [
         {
           "name": "Central",
@@ -53,6 +54,7 @@
     },
     {
       "name": "Brasilia",
+      "tag": "BRA",
       "children": [
         {
           "name": "Brazilian Federative Republic",
@@ -86,6 +88,7 @@
     },
     {
       "name": "Andean Compact",
+      "tag": "ANDEA",
       "children": [
         {
           "name": "Distrito del Litio",
@@ -112,6 +115,7 @@
     },
     {
       "name": "Conosur",
+      "tag": "CONOSUR",
       "children": [
         {
           "name": "Argentina",
@@ -125,6 +129,7 @@
     },
     {
       "name": "North Sea Alliance",
+      "tag": "NSA",
       "children": [
         {
           "name": "England",
@@ -154,6 +159,7 @@
     },
     {
       "name": "Mediterranean Bloc",
+      "tag": "MEDBLOC",
       "children": [
         {
           "name": "Franco-Iberia",
@@ -184,6 +190,7 @@
     },
     {
       "name": "INTEGR",
+      "tag": "INTEGR",
       "children": [
         {
           "name": "German Federation",
@@ -256,6 +263,7 @@
     },
     {
       "name": "Slavic Federation",
+      "tag": "SLAV",
       "children": [
         {
           "name": "Eurasian Union",
@@ -286,10 +294,12 @@
     },
     {
       "name": "Union of Maghreb",
+      "tag": "MAGHREB",
       "value": 700
     },
     {
       "name": "United Arab Alliance",
+      "tag": "UAR",
       "children": [
         {
           "name": "Republic of Egypt",
@@ -307,6 +317,7 @@
     },
     {
       "name": "Bamako Compact",
+      "tag": "BAMAKO",
       "children": [
         {
           "name": "Mauritania",
@@ -368,6 +379,7 @@
     },
     {
       "name": "People's African Union",
+      "tag": "PAU",
       "children": [
         {
           "name": "East African Federation",
@@ -410,6 +422,7 @@
     },
     {
       "name": "Kimpwanza League",
+      "tag": "KIMP",
       "children": [
         {
           "name": "Republic of the Kongo",
@@ -427,6 +440,7 @@
     },
     {
       "name": "Al-Falah",
+      "tag": "ALFALAH",
       "children": [
         {
           "name": "Turkiye",
@@ -452,6 +466,7 @@
     },
     {
       "name": "Central Asian Federation",
+      "tag": "CAF",
       "children": [
         {
           "name": "Iran",
@@ -489,6 +504,7 @@
     },
     {
       "name": "Pact of Hyderabad",
+      "tag": "HYDER",
       "children": [
         {
           "name": "Pashtunistan",
@@ -554,6 +570,7 @@
     },
     {
       "name": "Pan-Asian Cooperative",
+      "tag": "PAC",
       "children": [
         {
           "name": "Nepal",
@@ -692,6 +709,7 @@
     },
     {
       "name": "Polystralia",
+      "tag": "POLYS",
       "children": [
         {
           "name": "Nusantaran Association",

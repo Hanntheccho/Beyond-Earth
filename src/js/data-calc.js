@@ -94,14 +94,43 @@
         relations = data.relations || [];
     }
 
+    function createNodeIndex() {
+        const byTag = new Map();
+        const byName = new Map();
+        sources.forEach(source => walk(source.root, node => {
+            if (node.tag && !byTag.has(node.tag)) byTag.set(node.tag, node);
+            if (node.name && !byName.has(node.name)) byName.set(node.name, node);
+        }));
+        return { byTag, byName };
+    }
+
+    function findNodeByKey(targetKey, nodeIndex) {
+        return nodeIndex.byTag.get(targetKey) || nodeIndex.byName.get(targetKey) || null;
+    }
+
+    function resolveRelations(nodeIndex) {
+        return relations.map(relation => {
+            const source = findNodeByKey(relation.sourceKey, nodeIndex);
+            const target = findNodeByKey(relation.targetKey, nodeIndex);
+            return {
+                ...relation,
+                sourceKey: source ? itemKey(source) : relation.sourceKey,
+                targetKey: target ? itemKey(target) : relation.targetKey
+            };
+        });
+    }
+
     function getInfluenceData() {
+        const nodeIndex = createNodeIndex();
+        const graphRelations = resolveRelations(nodeIndex);
         const nodes = new Map();
-        relations.forEach(relation => {
+        graphRelations.forEach(relation => {
             [relation.sourceKey, relation.targetKey].forEach(key => {
                 if (typeof key !== 'string' || !key) return;
                 nodes.set(key, {
                     id: key,
                     name: key,
+                    label: key,
                     value: 0,
                     changePercent: 0,
                     hasData: false
@@ -115,6 +144,7 @@
             nodes.set(key, {
                 id: key,
                 name: node.name,
+                label: node.tag || node.name,
                 value: node.value,
                 changePercent: node.changePercent,
                 hasData: true
@@ -123,7 +153,7 @@
 
         return {
             nodes: Array.from(nodes.values()),
-            relations
+            relations: graphRelations
         };
     }
 
@@ -145,6 +175,7 @@
             return;
         }
 
+        const nodeIndex = createNodeIndex();
         const tableWrap = document.createElement('div');
         tableWrap.className = 'debug-influence-table-wrap';
         const table = document.createElement('table');
@@ -177,7 +208,7 @@
                 entity.className = 'debug-influence-entity';
                 const name = document.createElement('span');
                 name.className = 'debug-influence-name';
-                const node = findNodeByKey(key);
+                const node = findNodeByKey(key, nodeIndex);
                 name.textContent = node ? node.name : 'Waiting for data';
                 entity.append(name);
 
@@ -206,15 +237,10 @@
         container.append(tableWrap);
     }
 
-    function findNodeByKey(targetKey) {
-        let found = null;
-        sources.forEach(source => walk(source.root, node => { if ((node.tag || node.name) === targetKey) found = node; }));
-        return found;
-    }
-
     function computeValues() {
         const previous = new Map();
         const previousKeyMap = new Map();
+        const resolvedRelations = resolveRelations(createNodeIndex());
 
         sources.forEach(source => walk(source.root, node => {
             previous.set(node, node.value);
@@ -243,9 +269,9 @@
         }));
 
         // Pass 2: sum all incoming relation effects per target before applying them.
-        if (relations.length) {
+        if (resolvedRelations.length) {
             const relationsByTarget = new Map();
-            relations.forEach(relation => {
+            resolvedRelations.forEach(relation => {
                 if (!relationsByTarget.has(relation.targetKey)) relationsByTarget.set(relation.targetKey, []);
                 relationsByTarget.get(relation.targetKey).push(relation);
             });
