@@ -55,14 +55,22 @@
         );
         const exponentialScale = Math.exp(3) - 1;
 
-        const nodes = data.nodes.map(n => ({
-            ...n,
-            radius: n.hasData === false
+        const nodes = data.nodes.map(n => {
+            const radius = n.hasData === false
                 ? 5
                 : 5 + 51 * (
                     Math.exp(3 * Math.log10(Math.max(0, Number(n.value) || 0) + 1) / maxLogValue) - 1
-                ) / exponentialScale
-        }));
+                ) / exponentialScale;
+            const availableWidth = Math.max(0, radius * 2 - 8);
+            const widthBasedFontSize = availableWidth / (String(n.name || '').length * 0.65);
+            const labelFontSize = Math.min(radius * 0.5, widthBasedFontSize);
+
+            return {
+                ...n,
+                radius,
+                labelFontSize
+            };
+        });
 
         const links = [
             ...data.dependencies.map(d => ({
@@ -123,8 +131,8 @@
 
         nodeEnter.append('text')
             .attr('class', 'node-label')
-            .attr('x', 10)
-            .attr('y', 3);
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'central');
         nodeEnter.append('title');
 
         const nodeMerge = nodeEnter.merge(node);
@@ -135,7 +143,10 @@
             .classed('is-up', d => d.hasData !== false && d.changePercent >= 0);
         nodeMerge.select('circle')
             .attr('r', d => d.radius);
-        nodeMerge.select('text').text(d => d.name);
+        nodeMerge.select('text')
+            .text(d => d.name)
+            .attr('font-size', d => d.labelFontSize)
+            .attr('visibility', d => d.labelFontSize >= 1 ? 'visible' : 'hidden');
         nodeMerge.select('title').text(d => {
             if (d.hasData === false) return `${d.name}: data unavailable`;
             const change = Number(d.changePercent) || 0;

@@ -125,6 +125,12 @@
 #influence-graph-container .node-group.is-down circle {
     stroke: var(--clr-negative);
 }
+#influence-graph-container .node-group.is-up .node-label {
+    fill: var(--clr-positive);
+}
+#influence-graph-container .node-group.is-down .node-label {
+    fill: var(--clr-negative);
+}
 #influence-graph-container .link.is-positive,
 #influence-graph-container .link.is-negative {
     fill: none;
@@ -144,7 +150,11 @@
     stroke: var(--clr-neutrale);
 }
 #influence-graph-container .node-label {
-    fill: var(--clr-body);
     font-family: var(--fnt);
-    font-size: var(--fnt-size-data);
+    font-weight: bold;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+#influence-graph-container .node-group.is-unavailable .node-label {
+    fill: var(--clr-neutrale);
 }
