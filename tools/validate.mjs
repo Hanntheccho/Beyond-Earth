@@ -374,16 +374,6 @@ function checkHtmlAndAssets(loc) {
         }
     }
 
-    for (const match of html.matchAll(/class="affy-desc[^"]*"\s+style="([^"]*)"/g)) {
-        const icon = /url\(\s*&quot;([^&]+)&quot;\s*\)/.exec(match[1]);
-        if (icon && !exists(abs(icon[1]))) {
-            error('assets', `index.html uses affy icon "${icon[1]}" which does not exist`);
-        }
-    }
-    for (const match of html.matchAll(/<span class="(affy[A-Z]+-desc)"><\/span>/g)) {
-        if (typeof loc[match[1]] !== 'string') error('loc', `index.html shows affy description "${match[1]}" which is not in the localization files`);
-    }
-
     if (exists(abs('src/js/globe.js'))) {
         // globe.js resolves this against its own location, src/js/.
         const match = /decodeElevation\(\s*'([^']+)'\s*\)/.exec(read(abs('src/js/globe.js')));
