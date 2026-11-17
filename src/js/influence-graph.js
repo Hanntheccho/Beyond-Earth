@@ -1,5 +1,5 @@
 /**
- * influence-graph.js - Force-directed graph visualization for data dependencies.
+ * influence-graph.js - Force-directed graph visualization for weighted relations.
  */
 (function () {
     const container = document.getElementById('influence-graph-container');
@@ -72,22 +72,12 @@
             };
         });
 
-        const links = [
-            ...data.dependencies.map(d => ({
-                ...d,
-                source: d.sourceKey,
-                target: d.targetKey,
-                type: 'dep',
-                weight: Number(d.weight) || 0
-            })),
-            ...data.influences.map(d => ({
-                ...d,
-                source: d.sourceKey,
-                target: d.targetKey,
-                type: 'inf',
-                weight: Number(d.weight) || 0
-            }))
-        ];
+        const links = data.relations.map(relation => ({
+            ...relation,
+            source: relation.sourceKey,
+            target: relation.targetKey,
+            weight: Number(relation.weight) || 0
+        }));
 
         const linksByPair = new Map();
         links.forEach(link => {
@@ -109,7 +99,7 @@
 
         const link = svg.selectAll('.link').data(
             links,
-            d => JSON.stringify([d.sourceKey, d.targetKey, d.type])
+            d => JSON.stringify([d.sourceKey, d.targetKey])
         );
         link.exit().remove();
         const linkEnter = link.enter().append('path')
@@ -157,14 +147,11 @@
             .attr('stroke-width', d => Math.min(4, 0.75 + Math.abs(d.weight) * 12))
             .classed('is-positive', d => d.weight >= 0)
             .classed('is-negative', d => d.weight < 0)
-            .classed('is-dependency', d => d.type === 'dep')
-            .classed('is-influence', d => d.type === 'inf')
             .attr('marker-end', d => `url(#relationship-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
         linkMerge.select('title').text(d => {
             const source = nodesById.get(d.sourceKey);
             const target = nodesById.get(d.targetKey);
-            const type = d.type === 'dep' ? 'Dependency' : 'Influence';
-            return `${source.name} -> ${target.name}\n${type} weight: ${numberFormat.format(d.weight)}`;
+            return `${source.name} -> ${target.name}\nWeight: ${numberFormat.format(d.weight)}`;
         });
 
         simulation.alpha(0.3).restart();

@@ -2,7 +2,6 @@
     const sources = [];
     let marketMood = 0;
     let relations = [];
-    let influences = [];
     let timer = null;
     const MIN_VALUE_RATIO = 0.05;
     const MAX_VALUE_RATIO = 10;
@@ -92,13 +91,12 @@
     }
 
     function setRelations(data) {
-        relations = data.dependencies || [];
-        influences = data.influences || [];
+        relations = data.relations || [];
     }
 
     function getInfluenceData() {
         const nodes = new Map();
-        [...relations, ...influences].forEach(relation => {
+        relations.forEach(relation => {
             [relation.sourceKey, relation.targetKey].forEach(key => {
                 if (typeof key !== 'string' || !key) return;
                 nodes.set(key, {
@@ -125,8 +123,7 @@
 
         return {
             nodes: Array.from(nodes.values()),
-            dependencies: relations,
-            influences: influences
+            relations
         };
     }
 
@@ -138,99 +135,75 @@
             window.influenceGraph.update(getInfluenceData());
         }
 
-        const openSections = new Map();
-        container.querySelectorAll('details[data-debug-section]').forEach(section => {
-            openSections.set(section.dataset.debugSection, section.open);
-        });
         container.replaceChildren();
 
-        const sections = [
-            { key: 'dependencies', title: ':dependencies = sourceKey ==> targetKey', items: relations, open: false },
-            { key: 'influences', title: ':influences === sourceKey <=> targetKey', items: influences, open: false }
-        ];
+        if (!relations.length) {
+            const empty = document.createElement('p');
+            empty.className = 'debug-influence-empty';
+            empty.textContent = 'No relations configured.';
+            container.append(empty);
+            return;
+        }
 
-        sections.forEach(sectionData => {
-            const section = document.createElement('details');
-            section.className = 'debug-influence-section';
-            section.dataset.debugSection = sectionData.key;
-            section.open = openSections.has(sectionData.key)
-                ? openSections.get(sectionData.key)
-                : sectionData.open;
+        const tableWrap = document.createElement('div');
+        tableWrap.className = 'debug-influence-table-wrap';
+        const table = document.createElement('table');
+        table.className = 'debug-influence-table';
+        const header = document.createElement('tr');
 
-            const summary = document.createElement('summary');
-            summary.textContent = `${sectionData.title} (${sectionData.items.length})`;
-            section.append(summary);
-
-            if (!sectionData.items.length) {
-                const empty = document.createElement('p');
-                empty.className = 'debug-influence-empty';
-                empty.textContent = 'No relations configured.';
-                section.append(empty);
-                container.append(section);
-                return;
-            }
-
-            const tableWrap = document.createElement('div');
-            tableWrap.className = 'debug-influence-table-wrap';
-            const table = document.createElement('table');
-            table.className = 'debug-influence-table';
-            const header = document.createElement('tr');
-
-            ['sourceKey', 'targetKey', 'weight'].forEach(label => {
-                const cell = document.createElement('th');
-                cell.scope = 'col';
-                cell.textContent = label;
-                header.append(cell);
-            });
-
-            const thead = document.createElement('thead');
-            thead.append(header);
-            table.append(thead);
-
-            const tbody = document.createElement('tbody');
-            const sortedItems = sectionData.items.slice().sort((left, right) =>
-                left.sourceKey.localeCompare(right.sourceKey) ||
-                left.targetKey.localeCompare(right.targetKey)
-            );
-
-            sortedItems.forEach(item => {
-                const row = document.createElement('tr');
-
-                [item.sourceKey, item.targetKey].forEach(key => {
-                    const cell = document.createElement('td');
-                    const entity = document.createElement('div');
-                    entity.className = 'debug-influence-entity';
-                    const name = document.createElement('span');
-                    name.className = 'debug-influence-name';
-                    const node = findNodeByKey(key);
-                    name.textContent = node ? node.name : 'Waiting for data';
-                    entity.append(name);
-
-                    const value = document.createElement('span');
-                    if (node) {
-                        value.className = `data-grid-change debug-influence-value ${node.changePercent >= 0 ? 'is-up' : 'is-down'}`;
-                        value.textContent = `${node.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} · ${node.changePercent >= 0 ? '+' : ''}${node.changePercent.toFixed(2)}`;
-                    } else {
-                        value.className = 'debug-influence-value';
-                        value.textContent = 'Waiting for data';
-                    }
-                    entity.append(value);
-                    cell.append(entity);
-                    row.append(cell);
-                });
-
-                const weight = document.createElement('td');
-                weight.className = 'debug-influence-weight';
-                weight.textContent = Number(item.weight).toLocaleString(undefined, { maximumFractionDigits: 2 });
-                row.append(weight);
-                tbody.append(row);
-            });
-
-            table.append(tbody);
-            tableWrap.append(table);
-            section.append(tableWrap);
-            container.append(section);
+        ['sourceKey', 'targetKey', 'weight'].forEach(label => {
+            const cell = document.createElement('th');
+            cell.scope = 'col';
+            cell.textContent = label;
+            header.append(cell);
         });
+
+        const thead = document.createElement('thead');
+        thead.append(header);
+        table.append(thead);
+
+        const tbody = document.createElement('tbody');
+        const sortedItems = relations.slice().sort((left, right) =>
+            left.sourceKey.localeCompare(right.sourceKey) ||
+            left.targetKey.localeCompare(right.targetKey)
+        );
+
+        sortedItems.forEach(item => {
+            const row = document.createElement('tr');
+
+            [item.sourceKey, item.targetKey].forEach(key => {
+                const cell = document.createElement('td');
+                const entity = document.createElement('div');
+                entity.className = 'debug-influence-entity';
+                const name = document.createElement('span');
+                name.className = 'debug-influence-name';
+                const node = findNodeByKey(key);
+                name.textContent = node ? node.name : 'Waiting for data';
+                entity.append(name);
+
+                const value = document.createElement('span');
+                if (node) {
+                    value.className = `data-grid-change debug-influence-value ${node.changePercent >= 0 ? 'is-up' : 'is-down'}`;
+                    value.textContent = `${node.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} · ${node.changePercent >= 0 ? '+' : ''}${node.changePercent.toFixed(2)}`;
+                } else {
+                    value.className = 'debug-influence-value';
+                    value.textContent = 'Waiting for data';
+                }
+                entity.append(value);
+                cell.append(entity);
+                row.append(cell);
+            });
+
+            const weight = document.createElement('td');
+            weight.className = 'debug-influence-weight';
+            weight.textContent = Number(item.weight).toLocaleString(undefined, { maximumFractionDigits: 2 });
+            row.append(weight);
+            tbody.append(row);
+        });
+
+        table.append(tbody);
+        tableWrap.append(table);
+        container.append(tableWrap);
     }
 
     function findNodeByKey(targetKey) {
@@ -269,12 +242,18 @@
             currentKeyMap.set(node.tag || node.name, node.value);
         }));
 
-        // Pass 2: propagate resource movement to linked targets.
+        // Pass 2: sum all incoming relation effects per target before applying them.
         if (relations.length) {
+            const relationsByTarget = new Map();
+            relations.forEach(relation => {
+                if (!relationsByTarget.has(relation.targetKey)) relationsByTarget.set(relation.targetKey, []);
+                relationsByTarget.get(relation.targetKey).push(relation);
+            });
+
             sources.forEach(source => walk(source.root, node => {
                 const nodeKey = node.tag || node.name;
-                const relevantRelations = relations.filter(rel => rel.targetKey === nodeKey);
-                if (!relevantRelations.length) return;
+                const relevantRelations = relationsByTarget.get(nodeKey);
+                if (!relevantRelations) return;
 
                 const applyToLeaf = (leaf) => {
                     let impact = 0;
@@ -303,33 +282,7 @@
             }));
         }
 
-        // Pass 3: propagate company/country influences (cascade parents to leaves)
-        if (influences.length) {
-            influences.forEach(link => {
-                const sourceVal = currentKeyMap.get(link.sourceKey);
-                const prevSourceVal = previousKeyMap.get(link.sourceKey);
-                if (!sourceVal || !prevSourceVal) return;
-
-                let targetNode = null;
-                sources.forEach(s => {
-                    walk(s.root, n => { if ((n.tag || n.name) === link.targetKey) targetNode = n; });
-                });
-                if (!targetNode) return;
-
-                const sourceChange = (sourceVal - prevSourceVal) / prevSourceVal;
-                const applyImpact = (leaf) => {
-                    const impact = sourceChange * link.weight * leaf.value;
-                    leaf.value = clampValue(leaf, leaf.value + impact);
-                };
-                const applyToNode = (n) => {
-                    if (n.children.length) n.children.forEach(applyToNode);
-                    else applyImpact(n);
-                };
-                applyToNode(targetNode);
-            });
-        }
-
-        // Pass 4: speculative momentum (leaves only; parents are re-aggregated in finalize)
+        // Pass 3: speculative momentum (leaves only; parents are re-aggregated in finalize)
         sources.forEach(source => walk(source.root, node => {
             if (node.children.length) return;
             const oldValue = previous.get(node) || 0;
@@ -347,7 +300,7 @@
             node.value = clampValue(node, node.value * (1 + momentumBoost));
         }));
 
-        // Pass 5: roll parent values upward and record changes for every node.
+        // Pass 4: roll parent values upward and record changes for every node.
         function finalize(node) {
             if (node.children.length) {
                 node.children.forEach(finalize);

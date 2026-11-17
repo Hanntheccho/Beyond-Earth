@@ -1,5 +1,5 @@
 {
-  "dependencies": [
+  "relations": [
     { "sourceKey": "OIL", "targetKey": "Al-Falah", "weight": 0.08 },
     { "sourceKey": "OIL", "targetKey": "United Arab Alliance", "weight": 0.06 },
     { "sourceKey": "OIL", "targetKey": "Central Asian Federation", "weight": 0.04 },
@@ -197,9 +197,7 @@
     { "sourceKey": "COAL", "targetKey": "WESL", "weight": 0.05 },
     { "sourceKey": "COAL", "targetKey": "Polystralia", "weight": 0.04 },
     { "sourceKey": "COAL", "targetKey": "INTEGR", "weight": -0.03 },
-    { "sourceKey": "COAL", "targetKey": "Mediterranean Bloc", "weight": -0.02 }
-  ],
-  "influences": [
+    { "sourceKey": "COAL", "targetKey": "Mediterranean Bloc", "weight": -0.02 },
     { "sourceKey": "North American Union", "targetKey": "ARC", "weight": 0.1 },
     { "sourceKey": "ARC", "targetKey": "North American Union", "weight": 0.2 },
     { "sourceKey": "Slavic Federation", "targetKey": "VHI", "weight": 0.15 },
