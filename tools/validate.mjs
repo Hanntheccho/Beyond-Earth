@@ -389,7 +389,7 @@ function checkHtmlAndAssets(loc) {
 
 function checkEconomicRelations() {
     // Collect every valid tag and name from the database files so that a
-    // sourceKey/targetKey in economic-relations.json can be checked against them.
+    // sourceKey/targetKey in relations.json can be checked against them.
     const validKeys = new Set();
 
     const srcData = readJson('data/src-data.json');
@@ -419,14 +419,14 @@ function checkEconomicRelations() {
         })(gdpData);
     }
 
-    const rel = readJson('data/economic-relations.json');
+    const rel = readJson('data/relations.json');
     if (!rel) return;
 
     ['dependencies', 'influences'].forEach(category => {
         const entries = rel[category];
         if (!Array.isArray(entries)) return;
         entries.forEach((entry, index) => {
-            const where = `economic-relations.json ${category}[${index}]`;
+            const where = `relations.json ${category}[${index}]`;
             ['sourceKey', 'targetKey'].forEach(field => {
                 const value = entry[field];
                 if (typeof value !== 'string' || !value) {

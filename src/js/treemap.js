@@ -325,7 +325,7 @@
 
     async function loadRelations() {
         try {
-            const response = await fetch('data/economic-relations.json');
+            const response = await fetch('data/relations.json');
             const data = await response.json();
             window.valueChanges.setRelations(data);
         } catch (e) {

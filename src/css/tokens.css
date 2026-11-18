@@ -13,7 +13,7 @@
     --clr-p: color-mix(in srgb, var(--clr-body) 70%, var(--clr));
     --clr-cite: var(--clr-body);
     --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
-    --clr-background: color-mix(in srgb, var(--clr-body-background), transparent 10%);
+    --clr-background: color-mix(in srgb, var(--clr-body-background), transparent 12%);
     --clr-positive: #00ff6a;
     --clr-negative: #ff0000;
     --clr-neutrale: #a0a0a0;

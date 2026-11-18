@@ -20,14 +20,14 @@
 // PUBLIC API: window.valueChanges (assigned at the bottom of the file)
 //   getMarket(id)  -> market object with getSnapshot/getQuote/subscribe/...
 //   registerSource(id, root, update)  register a tree to simulate
-//   setRelations(data)                load data/economic-relations.json
+//   setRelations(data)                load data/relations.json
 //   start / stop / tick / render      control the ticker manually
 (function () {
     // All registered trees: { root, update } where update() redraws its treemap.
     const sources = [];
     // Global sentiment that drifts slowly and nudges every leaf in the same direction.
     let marketMood = 0;
-    // Relations from economic-relations.json: a source's movement pushes a target
+    // Relations from relations.json: a source's movement pushes a target
     // (e.g. oil price -> an energy company).
     let relations = [];
     let timer = null;
@@ -144,7 +144,7 @@
         }
     }
 
-    // Store the relations loaded from data/economic-relations.json.
+    // Store the relations loaded from data/relations.json.
     function setRelations(data) {
         relations = data.relations || [];
     }
