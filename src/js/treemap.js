@@ -198,18 +198,8 @@
         function setDirection(tile, item) {
             const change = Number(item.change);
             const direction = Number.isFinite(change) ? (change > 0 ? 'up' : (change < 0 ? 'down' : 'neutral')) : 'neutral';
-            const previous = tile.group.dataset.direction;
-            if (previous === direction) return;
             tile.group.dataset.direction = direction;
-            if (previous === undefined) return false;
-            tile.group.classList.remove('is-flashing');
             return true;
-        }
-
-        function restartFlashes(groups) {
-            if (!groups.length) return;
-            void groups[0].getBoundingClientRect();
-            groups.forEach(group => group.classList.add('is-flashing'));
         }
 
         function step(now) {
@@ -262,7 +252,6 @@
                 });
             }
 
-            const flashes = [];
             squarify(items, 0, 0, width, height, getValue).forEach(({ item, x, y, w, h }) => {
                 const key = keyOf(item);
                 const target = { x, y, w, h, value: getValue(item), pct: Number(item.changePercent) || 0 };
@@ -285,10 +274,9 @@
                 tile.t0 = performance.now();
                 tile.titleEl.textContent = `${getName(item)}\n${formatValue(item)}${tile.canDrill ? '\nhasChildren' : ''}`;
                 tile.group.setAttribute('aria-label', `${getName(item)}: ${formatValue(item)}${tile.canDrill ? ', open details' : ''}`);
-                if (setDirection(tile, item)) flashes.push(tile.group);
+                setDirection(tile, item);
                 if (!tile.painted) { tile.painted = true; paint(tile); } // avoid an empty first frame
             });
-            restartFlashes(flashes);
             startLoop();
 
             if (breadcrumbs) {

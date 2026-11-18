@@ -1,6 +1,6 @@
 // Scrolling market ticker. Items are persistent (keyed by tag/name): percent values
-// are tweened between ticks and flash when their direction flips. The marquee is
-// driven in JS at a constant px/s, so changes in text width never make it jump.
+// are tweened between ticks. The marquee is driven in JS at a constant px/s, so
+// changes in text width never make it jump.
 (function () {
     const ticker = document.querySelector('.market-text-txt');
     if (!ticker) return;
@@ -52,19 +52,9 @@
         const change = Number(item.change);
         const direction = change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutrale');
         if (entry.dir === direction) return;
-        const previous = entry.dir;
         entry.dir = direction;
         entry.val.classList.remove(...DIRECTIONS);
         entry.val.classList.add(direction);
-        if (previous === null) return false;
-        entry.val.classList.remove('is-flashing');
-        return true;
-    }
-
-    function restartFlashes(entries) {
-        if (!entries.length) return;
-        void entries[0].offsetWidth;
-        entries.forEach(entry => entry.classList.add('is-flashing'));
     }
 
     function build(current) {
@@ -131,7 +121,6 @@
             return;
         }
         const now = performance.now();
-        const flashes = [];
         current.forEach(item => {
             const entry = items.get(keyOf(item));
             if (!entry) return;
@@ -139,9 +128,8 @@
             entry.to = item.changePercent || 0;
             entry.t0 = now;
             entry.done = false;
-            if (setDirection(entry, item)) flashes.push(entry.val);
+            setDirection(entry, item);
         });
-        restartFlashes(flashes);
         startLoop();
     }
 

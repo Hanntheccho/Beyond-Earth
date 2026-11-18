@@ -17,8 +17,6 @@
     .div-desc-win,
     .market-text,
     .market-text-line,
-    .market-text-val.is-flashing,
-    .treemap-tile.is-flashing .treemap-surface,
     .scenario-chart-plot .chart-reveal,
     .scenario-chart-plot .chart-event-group {
         animation: none !important;

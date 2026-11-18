@@ -29,8 +29,3 @@
     initial-value: #a0a0a0;
 }
 .treemap-tile { transition: --treemap-color var(--transition-time-clr) ease; }
-.treemap-tile.is-flashing .treemap-surface { animation: tileFlash var(--transition-time-400) ease-out; }
-@keyframes tileFlash {
-    from { fill: color-mix(in srgb, var(--treemap-color) 28%, transparent); }
-    to   { fill: color-mix(in srgb, var(--treemap-color) 6%, transparent); }
-}

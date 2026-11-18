@@ -32,8 +32,3 @@
 @keyframes ticker-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
 .market-text-val { transition: color var(--transition-time-clr) ease; }
-.market-text-val.is-flashing { animation: ticker-flash var(--transition-time-400) ease-out; }
-@keyframes ticker-flash {
-    from { text-shadow: 0 0 0.9em currentColor, 0 0 0.3em currentColor; }
-    to   { text-shadow: 0 0 0 transparent; }
-}
