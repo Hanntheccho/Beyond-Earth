@@ -1,6 +1,6 @@
 Relation data in data/relations.json is directed. DO NOT use a data/src-data.json name or tag as targetKey, only sourceKey. DO NOT use a CHILD as targetKey, only top-level PARENTS.
 
-Symbols (+/-) give a hint as to how much weight. Open to interpretation.
+Symbols (+/-) give a hint as to how much weight (ie. each + adds 0.05, each - adds -0.05 to weight). Open to interpretation.
 this is just a guide. Can add more relations freely. Try to analize each faction country list and base it in real world data for source availability on the region when adding extra source relations not included here.
 
 As for country to company (or viceversa) relations analize each country or company name, lore and worldbuilding.
