@@ -1,4 +1,22 @@
-/* relations.css - Influence graph node/link styling and debug influence tables. */
+/* relations.css - Influence graph node and link styling. */
+
+#influence-graph-container {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+#influence-graph-container::before {
+    position: absolute;
+    inset: 0;
+    background: var(--img-url-alt) center / 80% no-repeat;
+    content: '';
+    opacity: var(--opacity-10);
+    pointer-events: none;
+}
+#influence-graph-container svg {
+    position: relative;
+}
 
 #influence-graph-container .node-group circle {
     fill-opacity: var(--opacity-10);

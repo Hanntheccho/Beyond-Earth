@@ -14,7 +14,6 @@
     const numberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
 
     function initGraph() {
-        container.style.display = 'block';
         const width = container.clientWidth;
         const height = container.clientHeight;
 

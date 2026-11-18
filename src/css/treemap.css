@@ -2,8 +2,16 @@
 
 .treemap-breadcrumbs { color: var(--clr-p); font-size: var(--fnt-size-bttn); }
 .treemap-breadcrumbs button { margin-right: 4px; }
-.treemap { width: 100%; overflow: hidden; }
-.treemap svg { overflow: visible; display: block; width: 100%; height: auto; }
+.treemap { position: relative; width: 100%; overflow: hidden; }
+.treemap::before {
+    position: absolute;
+    inset: 0;
+    background: var(--img-url-alt) center / 80% no-repeat;
+    content: '';
+    opacity: var(--opacity-10);
+    pointer-events: none;
+}
+.treemap svg { position: relative; overflow: visible; display: block; width: 100%; height: auto; }
 .treemap-tile { color: var(--treemap-color, var(--clr-neutrale)); }
 .treemap-tile[data-direction="up"] { --treemap-color: var(--clr-positive); }
 .treemap-tile[data-direction="down"] { --treemap-color: var(--clr-negative); }
