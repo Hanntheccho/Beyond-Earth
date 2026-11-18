@@ -6,6 +6,7 @@
     const width = 800;
     const height = 800;
     const numberFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+    const tooltipNumberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
     // Tween settings. Keep DURATION well below the market tick interval.
@@ -272,7 +273,11 @@
                     target.h * 0.9
                 );
                 tile.t0 = performance.now();
-                tile.titleEl.textContent = `${getName(item)}\n${formatValue(item)}${tile.canDrill ? '\nhasChildren' : ''}`;
+                const change = Number(item.changePercent) || 0;
+                const tooltipLabel = getLabel(item) === getName(item)
+                    ? getName(item)
+                    : `${getName(item)} (${getLabel(item)})`;
+                tile.titleEl.textContent = `${tooltipLabel}\n${tooltipNumberFormat.format(getValue(item))}\n${change >= 0 ? '+' : ''}${tooltipNumberFormat.format(change)}`;
                 tile.group.setAttribute('aria-label', `${getName(item)}: ${formatValue(item)}${tile.canDrill ? ', open details' : ''}`);
                 setDirection(tile, item);
                 if (!tile.painted) { tile.painted = true; paint(tile); } // avoid an empty first frame
