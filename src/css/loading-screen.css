@@ -1,0 +1,40 @@
+/* loading-screen.css - Full-screen loading overlay (see src/js/loading-screen.js). */
+
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--clr-body-background);
+    color: var(--clr-body);
+    font-family: var(--fnt);
+    font-size: var(--fnt-size-text);
+    letter-spacing: var(--letter-spacing-02);
+    text-transform: uppercase;
+    transition: opacity var(--transition-time-400) ease, visibility var(--transition-time-400) ease;
+}
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    background-image: url(../../be-icon-alt.svg);
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 3px solid var(--clr-border);
+    border-top-color: var(--clr-body);
+    border-radius: 50%;
+    animation: loading-spin 10s linear infinite;
+}
+@keyframes loading-spin {
+    to { transform: rotate(360deg); }
+}

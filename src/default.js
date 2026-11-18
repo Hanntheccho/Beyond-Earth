@@ -30,5 +30,6 @@ import './js/cursor-glow.js';
 import './js/legacy.js';
 import './js/market-text.js';
 import './js/scroll-reveal.js';
+import './js/loading-screen.js';
 
 console.log('[BYOND UNiTY HTML] System initialized.');
