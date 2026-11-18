@@ -212,85 +212,11 @@
         };
     }
 
-    // Refresh the influence graph and relation table with current values.
-    function renderInfluenceDebug() {
-        const container = document.querySelector('.debug-influence');
-        if (!container) return;
-
+    // Refresh the influence graph with current values.
+    function renderInfluenceGraph() {
         if (window.influenceGraph && window.influenceGraph.update) {
             window.influenceGraph.update(getInfluenceData());
         }
-
-        container.replaceChildren();
-
-        if (!relations.length) {
-            const empty = document.createElement('p');
-            empty.className = 'debug-influence-empty';
-            empty.textContent = 'No relations configured.';
-            container.append(empty);
-            return;
-        }
-
-        const nodeIndex = createNodeIndex();
-        const tableWrap = document.createElement('div');
-        tableWrap.className = 'debug-influence-table-wrap';
-        const table = document.createElement('table');
-        table.className = 'debug-influence-table';
-        const header = document.createElement('tr');
-
-        ['sourceKey', 'targetKey', 'weight'].forEach(label => {
-            const cell = document.createElement('th');
-            cell.scope = 'col';
-            cell.textContent = label;
-            header.append(cell);
-        });
-
-        const thead = document.createElement('thead');
-        thead.append(header);
-        table.append(thead);
-
-        const tbody = document.createElement('tbody');
-        const sortedItems = relations.slice().sort((left, right) =>
-            left.sourceKey.localeCompare(right.sourceKey) ||
-            left.targetKey.localeCompare(right.targetKey)
-        );
-
-        sortedItems.forEach(item => {
-            const row = document.createElement('tr');
-
-            [item.sourceKey, item.targetKey].forEach(key => {
-                const cell = document.createElement('td');
-                const entity = document.createElement('div');
-                entity.className = 'debug-influence-entity';
-                const name = document.createElement('span');
-                name.className = 'debug-influence-name';
-                const node = findNodeByKey(key, nodeIndex);
-                name.textContent = node ? node.name : 'Waiting for data';
-                entity.append(name);
-
-                const value = document.createElement('span');
-                if (node) {
-                    value.className = `data-grid-change debug-influence-value ${node.changePercent >= 0 ? 'is-up' : 'is-down'}`;
-                    value.textContent = `${node.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} · ${node.changePercent >= 0 ? '+' : ''}${node.changePercent.toFixed(2)}`;
-                } else {
-                    value.className = 'debug-influence-value';
-                    value.textContent = 'Waiting for data';
-                }
-                entity.append(value);
-                cell.append(entity);
-                row.append(cell);
-            });
-
-            const weight = document.createElement('td');
-            weight.className = 'debug-influence-weight';
-            weight.textContent = Number(item.weight).toLocaleString(undefined, { maximumFractionDigits: 2 });
-            row.append(weight);
-            tbody.append(row);
-        });
-
-        table.append(tbody);
-        tableWrap.append(table);
-        container.append(tableWrap);
     }
 
     // One simulation step. Runs in four passes over all registered trees:
@@ -420,7 +346,7 @@
     function publishMarkets() {
         sources.forEach(source => source.update());
         markets.forEach(market => market.publish());
-        renderInfluenceDebug();
+        renderInfluenceGraph();
     }
 
     // Start the simulation. Ticks once immediately (so the page has movement
@@ -448,7 +374,6 @@
         registerSource,
         setRelations,
         getInfluenceData,
-        renderInfluenceDebug,
         tick: computeValues,
         render: publishMarkets,
         start: startTicker,
