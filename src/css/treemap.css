@@ -10,7 +10,8 @@
 .treemap-tile[data-direction="neutral"] { --treemap-color: var(--clr-neutrale); }
 .treemap-tile.has-children { cursor: pointer; }
 .treemap-surface {
-    fill: color-mix(in srgb, var(--treemap-color, var(--clr-neutrale)) 6%, transparent);
+    fill: var(--treemap-color, var(--clr-neutrale));
+    fill-opacity: var(--opacity-10);
     stroke: var(--treemap-color, var(--clr-neutrale));
     stroke-width: 1px;
     filter: drop-shadow(var(--drop-shadow-60));

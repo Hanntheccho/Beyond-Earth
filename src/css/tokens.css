@@ -25,7 +25,7 @@
     --transition-time: 160ms;
     --transition-time-clr: 900ms;
     --transition-time-400: 400ms;
-    --opacity-10: .1;
+    --opacity-10: .06;
     --box-shadow: 0 0 16px var(--box-shadow-clr);
     --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
     --drop-shadow-60: 0 0 .6em color-mix(in srgb, currentColor 60%, transparent);
@@ -43,4 +43,5 @@
     --btn-size: 74px;
     --img-filter: invert(0);
     --img-url: url("../../be-icon.svg");
+    --img-url-alt: url("../../be-icon-alt.svg");
 }
