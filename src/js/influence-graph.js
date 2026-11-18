@@ -51,13 +51,14 @@
     function update(data) {
         if (!simulation) initGraph();
 
-        const maxLogValue = Math.max(
-            0.001,
-            ...data.nodes
-                .filter(node => node.hasData !== false)
-                .map(node => Math.log10(Math.max(0, Number(node.value) || 0) + 1))
-        );
+        let maxLogValue = 0.001;
+        data.nodes.forEach(node => {
+            if (node.hasData === false) return;
+            const logValue = Math.log10(Math.max(0, Number(node.value) || 0) + 1);
+            if (logValue > maxLogValue) maxLogValue = logValue;
+        });
         const exponentialScale = Math.exp(3) - 1;
+        const nodesById = new Map();
 
         const nodes = data.nodes.map(n => {
             const radius = n.hasData === false
@@ -75,6 +76,7 @@
                 radius,
                 labelFontSize
             });
+            nodesById.set(node.id, node);
             return node;
         });
         simulationNodes = new Map(nodes.map(node => [node.id, node]));
@@ -88,14 +90,16 @@
 
         const linksByPair = new Map();
         links.forEach(link => {
-            const pairKey = JSON.stringify([link.sourceKey, link.targetKey].sort());
+            const pairKey = link.sourceKey <= link.targetKey
+                ? JSON.stringify([link.sourceKey, link.targetKey])
+                : JSON.stringify([link.targetKey, link.sourceKey]);
             if (!linksByPair.has(pairKey)) linksByPair.set(pairKey, []);
             linksByPair.get(pairKey).push(link);
         });
         linksByPair.forEach(group => {
             group.forEach((link, index) => {
                 const sideOffset = (index - (group.length - 1) / 2) * 24;
-                const direction = link.sourceKey.localeCompare(link.targetKey) <= 0 ? 1 : -1;
+                const direction = link.sourceKey <= link.targetKey ? 1 : -1;
                 link.curveOffset = sideOffset * direction;
             });
         });
@@ -150,8 +154,7 @@
             .interrupt()
             .transition()
             .duration(NODE_TRANSITION_DURATION)
-            .attr('font-size', d => d.labelFontSize);
-        nodeMerge.select('text')
+            .attr('font-size', d => d.labelFontSize)
             .attr('visibility', d => d.labelFontSize >= 1 ? 'visible' : 'hidden');
         nodeMerge.select('title').text(d => {
             if (d.hasData === false) return `${d.name}: data unavailable`;
@@ -159,7 +162,6 @@
             const label = d.label === d.name ? d.name : `${d.name} (${d.label})`;
             return `${label}\n${numberFormat.format(d.value)}\n${change >= 0 ? '+' : ''}${numberFormat.format(change)}`;
         });
-        const nodesById = new Map(nodes.map(nodeData => [nodeData.id, nodeData]));
         linkMerge
             .attr('stroke-width', d => Math.min(4, 0.75 + Math.abs(d.weight) * 12))
             .classed('is-positive', d => d.weight >= 0)

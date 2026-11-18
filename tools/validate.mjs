@@ -422,20 +422,28 @@ function checkEconomicRelations() {
     const rel = readJson('data/relations.json');
     if (!rel) return;
 
-    ['dependencies', 'influences'].forEach(category => {
-        const entries = rel[category];
-        if (!Array.isArray(entries)) return;
-        entries.forEach((entry, index) => {
-            const where = `relations.json ${category}[${index}]`;
-            ['sourceKey', 'targetKey'].forEach(field => {
-                const value = entry[field];
-                if (typeof value !== 'string' || !value) {
-                    error('relations', `${where}: missing ${field}`);
-                } else if (!validKeys.has(value)) {
-                    error('relations', `${where}: ${field} "${value}" is not a known name or tag in src-data.json, mkt-data.json, or gdp-data.json`);
-                }
-            });
+    if (!Array.isArray(rel.relations)) {
+        error('relations', 'relations.json must contain a "relations" array');
+        return;
+    }
+
+    rel.relations.forEach((entry, index) => {
+        const where = `relations.json relations[${index}]`;
+        if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+            error('relations', `${where}: expected an object`);
+            return;
+        }
+        ['sourceKey', 'targetKey'].forEach(field => {
+            const value = entry[field];
+            if (typeof value !== 'string' || !value) {
+                error('relations', `${where}: missing ${field}`);
+            } else if (!validKeys.has(value)) {
+                error('relations', `${where}: ${field} "${value}" is not a known name or tag in src-data.json, mkt-data.json, or gdp-data.json`);
+            }
         });
+        if (typeof entry.weight !== 'number' || !Number.isFinite(entry.weight)) {
+            error('relations', `${where}: weight must be a finite JSON number`);
+        }
     });
 }
 
