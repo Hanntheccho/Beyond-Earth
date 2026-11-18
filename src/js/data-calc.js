@@ -35,7 +35,7 @@
     // Safety rails so a value can never collapse to zero or explode.
     // Values stay within 5% to 1000% of their starting value.
     const MIN_VALUE_RATIO = 0.05;
-    const MAX_VALUE_RATIO = 10;
+    const MAX_VALUE_RATIO = 100;
     // Momentum is a smoothed % change, capped at +/-5 (percent).
     const MAX_MOMENTUM = 5;
     // The momentum boost applied to a value per tick is capped at +/-0.5%.

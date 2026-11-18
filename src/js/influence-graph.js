@@ -8,6 +8,8 @@
     let simulation, svg;
     let simulationNodes = new Map();
     let layoutInitialized = false;
+    let inViewport = false;
+    let latestData = null;
     const NODE_TRANSITION_DURATION = 400;
     const numberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
 
@@ -48,7 +50,7 @@
             .stop();
     }
 
-    function update(data) {
+    function render(data) {
         if (!simulation) initGraph();
 
         let maxLogValue = 0.001;
@@ -203,6 +205,25 @@
             updatePositions(layoutInitialized);
         }
     }
+
+    function update(data) {
+        latestData = data;
+        if (!inViewport || document.hidden || container.closest('[hidden]')) return;
+        render(data);
+    }
+
+    window.viewportVisibility.observe(container, isVisible => {
+        inViewport = isVisible;
+        if (inViewport && !document.hidden && !container.closest('[hidden]') && latestData) {
+            render(latestData);
+        }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && inViewport && !container.closest('[hidden]') && latestData) {
+            render(latestData);
+        }
+    });
 
     function dragstarted(event) {
         if (!event.active) simulation.alphaTarget(0.3).restart();
