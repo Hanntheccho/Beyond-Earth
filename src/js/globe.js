@@ -134,27 +134,7 @@ void main() {
   fragColor = vec4(finalColor, finalAlpha * uAlpha);
 }`;
 
-const BG_VS = `#version 300 es
-void main() {
-  vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
-  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
-}`;
 
-const BG_FS = `#version 300 es
-precision highp float;
-uniform vec2 uViewport;
-uniform float uR;
-uniform float uMorph;
-out vec4 fragColor;
-void main() {
-  float d = length(gl_FragCoord.xy - uViewport * 0.5) - uR;
-  float glow = 0.0;
-  if (d > 0.0 && uMorph > 0.01) {
-    glow = (exp(-d / (uR * 0.05)) * 0.5 + exp(-d / (uR * 0.18)) * 0.13) * uMorph;
-  }
-  float alpha = clamp(glow, 0.0, 1.0);
-  fragColor = vec4(vec3(0.1) * alpha, alpha);
-}`;
 
 // ----------------------------------------------------------- GL utilities
 
@@ -242,7 +222,6 @@ function main() {
   }
 
   const mesh = makeProgram(gl, MESH_VS, MESH_FS);
-  const bg = makeProgram(gl, BG_VS, BG_FS);
 
   // lon/lat grid mesh
   const SEG_X = 24, SEG_Y = 12;
@@ -277,7 +256,6 @@ function main() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
   }
   const MESH_COUNT = SEG_X * SEG_Y * 6;
-  const bgVao = gl.createVertexArray();
 
   // elevation texture
   const elevTex = gl.createTexture();
@@ -388,13 +366,6 @@ function main() {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.BLEND);
-
-    gl.useProgram(bg.prog);
-    gl.bindVertexArray(bgVao);
-    gl.uniform2f(bg.u.uViewport, canvas.width, canvas.height);
-    gl.uniform1f(bg.u.uR, view.s * DEG_R * dpr);
-    gl.uniform1f(bg.u.uMorph, t);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     if (!data) return;
 
