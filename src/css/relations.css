@@ -13,6 +13,7 @@
     content: '';
     opacity: var(--opacity-10);
     pointer-events: none;
+    filter: var(--img-filter);
 }
 #influence-graph-container svg {
     position: relative;

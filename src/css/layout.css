@@ -94,7 +94,7 @@
     padding: 0px var(--px-20) 0px var(--px-20);
     border: 0 solid var(--clr-border);
     border-left-width: var(--border-left);
-    max-height: calc(100vh - 96px);
+    max-height: 666px;
     overflow-y: auto;
 }
 .div-desc.has-background {

@@ -36,7 +36,7 @@
 .scenario-chart-plot .chart-year-tick { stroke: var(--clr-border); stroke-width: 1; }
 .scenario-chart-plot .chart-event-line { stroke: var(--clr-negative); stroke-width: 1.5; stroke-dasharray: 4 4; }
 .scenario-chart-plot .chart-event-tag { fill: color-mix(in srgb, var(--clr-negative) 20%, var(--clr)); stroke: var(--clr-negative); stroke-width: 0.8; }
-.scenario-chart-plot .chart-era-band { fill: var(--clr-negative); fill-opacity: 0.09; }
+.scenario-chart-plot .chart-era-band { fill: var(--clr-negative); fill-opacity: var(--opacity-10); }
 .scenario-chart-plot .chart-era-boundary { stroke: var(--clr-negative); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.75; }
 .scenario-chart-plot text.chart-era-label {
     fill: color-mix(in srgb, var(--clr-negative) 80%, transparent);
