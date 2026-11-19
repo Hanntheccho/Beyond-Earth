@@ -1,9 +1,8 @@
 const legacyFiles = {
-    beLegacy01: "data/legacy/be-legacy-countries.txt",
-    beLegacy02: "data/legacy/be-legacy-victory-points.txt",
-    beLegacy03: "data/legacy/be-legacy-strategic-regions.txt",
-    beLegacy04: "data/legacy/be-legacy-states.txt",
-    beLegacy05: "data/legacy/be-legacy-parties.txt"
+    beLegacy01: "data/legacy/be-legacy-victory-points.txt",
+    beLegacy02: "data/legacy/be-legacy-strategic-regions.txt",
+    beLegacy03: "data/legacy/be-legacy-states.txt",
+    beLegacy04: "data/legacy/be-legacy-parties.txt"
 };
 
 // Combine legacy file fetches into one request
