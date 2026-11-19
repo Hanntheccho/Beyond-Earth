@@ -24,9 +24,9 @@
     flex: none;
     will-change: transform;
 }
-.positive { color: var(--clr-positive); filter: drop-shadow(var(--drop-shadow-60)); }
-.negative { color: var(--clr-negative); filter: drop-shadow(var(--drop-shadow-60)); }
-.neutrale { color: var(--clr-neutrale); filter: drop-shadow(var(--drop-shadow-60)); }
+.positive { color: var(--clr-positive); }
+.negative { color: var(--clr-negative); }
+.neutrale { color: var(--clr-neutrale); }
 
 .market-text { animation: ticker-enter 650ms cubic-bezier(.2, .7, .2, 1) both; }
 @keyframes ticker-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }

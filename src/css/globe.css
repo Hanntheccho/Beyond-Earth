@@ -99,7 +99,7 @@
 }
 .globe-marker img:hover {
     opacity: 1;
-    filter: var(--img-filter) drop-shadow(var(--drop-shadow-60));
+    filter: var(--img-filter);
 }
 .globe-marker:hover,
 .globe-marker:focus-visible {

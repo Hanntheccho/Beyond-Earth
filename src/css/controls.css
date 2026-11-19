@@ -63,13 +63,11 @@ button[aria-pressed="true"] {
     border-color: color-mix(in srgb, var(--clr-border), var(--clr-color-mix-60));
     background-color: color-mix(in srgb, var(--clr-background), var(--clr-color-mix-20));
     color: var(--clr-ph1);
-    filter: drop-shadow(var(--drop-shadow-20));
 }
 button img {
     display: block;
     width: 100%;
     height: auto;
-    filter: drop-shadow(var(--drop-shadow-20));
 }
 
 .main-visibility-toggle,

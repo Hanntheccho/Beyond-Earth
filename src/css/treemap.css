@@ -23,12 +23,10 @@
     fill-opacity: var(--opacity-10);
     stroke: var(--treemap-color, var(--clr-neutrale));
     stroke-width: 1px;
-    filter: drop-shadow(var(--drop-shadow-60));
-    transition: filter var(--transition-time) ease;
 }
 .treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
 .treemap-tile:focus { outline: none; }
-.treemap-label { font-weight: 900; text-shadow: var(--drop-shadow-20); fill: var(--treemap-color); pointer-events: none; }
+.treemap-label { font-weight: 900; fill: var(--treemap-color); pointer-events: none; }
 .treemap-label-name { text-transform: uppercase; }
 .treemap-label-value { filter: brightness(0.4); }
 .treemap-label-change { filter: brightness(0.6); }
