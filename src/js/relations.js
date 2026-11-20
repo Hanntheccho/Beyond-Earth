@@ -64,8 +64,8 @@
 
         const nodes = data.nodes.map(n => {
             const radius = n.hasData === false
-                ? 10
-                : 10 + 101 * (
+                ? 5
+                : 5 + 51 * (
                     Math.exp(3 * Math.log10(Math.max(0, Number(n.value) || 0) + 1) / maxLogValue) - 1
                 ) / exponentialScale;
             const availableWidth = Math.max(0, radius * 2 - 8);
