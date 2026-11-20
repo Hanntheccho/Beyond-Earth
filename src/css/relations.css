@@ -56,7 +56,7 @@
 #influence-graph-container .link.is-positive,
 #influence-graph-container .link.is-negative {
     fill: none;
-    opacity: calc(var(--opacity-10) * 3);
+    opacity: 0;
     transition: stroke var(--transition-time-clr) ease, stroke-width var(--transition-time-clr) ease;
 }
 #influence-graph-container .link.is-positive {

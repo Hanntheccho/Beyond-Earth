@@ -1,5 +1,5 @@
 /**
- * influence-graph.js - Force-directed graph visualization for weighted relations.
+ * relations.js - Force-directed graph visualization for weighted relations.
  */
 (function () {
     const container = document.getElementById('influence-graph-container');

@@ -24,5 +24,5 @@
 }
 @keyframes legacy-scroll {
     from { transform: translateY(0); }
-    to   { transform: translateY(-400vh); }
+    to   { transform: translateY(-300vh); }
 }
