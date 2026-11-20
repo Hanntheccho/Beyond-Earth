@@ -1,7 +1,6 @@
 [
     "pois/pois.json",
     "pois/GPGP.json",
-    "pois/affy.json",
     "pois/FRA.json",
     "pois/GER.json",
     "pois/NAU.json",
@@ -11,5 +10,7 @@
     "pois/ANC.json",
     "pois/CHI.json",
     "pois/PAU.json",
+    "pois/HYD.json",
+    "pois/affy.json",
     "quotes.json"
 ]

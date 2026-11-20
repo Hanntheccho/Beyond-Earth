@@ -71,7 +71,7 @@ Müninstek Freunde | (+OIL +GAS, 0.03 each: fossil price spikes feed the case fo
 INCOM International | -REE -SILICA
 Pioneer Habitat Works | -IRON -SILICA
 LysCore |
-Lithiumaniac | +++LITHIUM
+Bharat Blackrock | ++++COAL
 Permafrost Reconstruction | -IRON -GAS
 Ark Initiative |
 ABTBIA | -IRON -COPPER
@@ -103,7 +103,7 @@ Names in relations.json follow data/gdp-data.json and data/mkt-data.json exactly
 - Permafrost Reconstruction: Siberian and Arctic rebuilding, so Slavic Federation and North Sea Alliance. Pays for iron and heating gas.
 - Ark Initiative: biodiversity and seed preservation, tied to Müninstek Freunde and Antarctica Trust (ice vaults). Change this if its lore turns out to be about space arks.
 - Pacific Patch Market: the Great Pacific Garbage Patch salvage trade. Scrap metal and old electronics make it earn more when iron, copper and REE rise.
-- Lithiumaniac: read as a lithium producer and trader (like Cooperativa Minera de Lima, but smaller), not a battery maker.
+- Bharat Blackrock: read as a coal producer and trader based on Bharat.
 - LysCore, INTRCD, University of Eurasia Fund: no extra source links, only the country links in relations.json.
 
 ## Pairs worth knowing

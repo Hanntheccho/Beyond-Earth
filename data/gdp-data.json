@@ -81,7 +81,7 @@
           "value": 60
         },
         {
-          "name": "Oriental League",
+          "name": "Oriental",
           "value": 300
         }
       ]
@@ -267,7 +267,24 @@
       "children": [
         {
           "name": "Eurasian Union",
-          "value": 3000
+          "children": [
+            {
+              "name": "Eurasia",
+              "value": 3000
+            },
+            {
+              "name": "Karelia",
+              "value": 30
+            },
+            {
+              "name": "Trans-Urals",
+              "value": 120
+            },
+            {
+              "name": "Republic of Siberia",
+              "value": 280
+            }
+          ]
         },
         {
           "name": "Ukraine",
@@ -287,6 +304,10 @@
             {
               "name": "Bulgaria",
               "value": 150
+            },
+            {
+              "name": "Albania-Dardania",
+              "value": 40
             }
           ]
         }
@@ -390,7 +411,7 @@
             },
             {
               "name": "Zambezia",
-              "value": 150
+              "value": 390
             },
             {
               "name": "Madagascar",
@@ -426,7 +447,7 @@
       "children": [
         {
           "name": "Republic of the Kongo",
-          "value": 200
+          "value": 700
         },
         {
           "name": "Angola",
@@ -434,7 +455,7 @@
         },
         {
           "name": "South Africa",
-          "value": 700
+          "value": 300
         }
       ]
     },
@@ -444,23 +465,31 @@
       "children": [
         {
           "name": "Turkiye",
-          "value": 1700
+          "value": 1200
         },
         {
           "name": "Mashriq",
           "value": 800
         },
         {
-          "name": "Arabia",
-          "value": 900
+          "name": "Al-Hasa",
+          "value": 120
         },
         {
           "name": "United Emirates of Oman",
-          "value": 500
+          "value": 380
         },
         {
           "name": "Yemen",
           "value": 60
+        },
+        {
+          "name": "Hejaz",
+          "value": 30
+        },
+        {
+          "name": "Al-Hilal",
+          "value": 40
         }
       ]
     },
@@ -565,6 +594,10 @@
         {
           "name": "East Bengal",
           "value": 150
+        },
+        {
+          "name": "Sri Lanka",
+          "value": 20
         }
       ]
     },
@@ -704,6 +737,10 @@
         {
           "name": "Japan",
           "value": 2000
+        },
+        {
+          "name": "Jeju Autonomous Zone",
+          "value": 20
         }
       ]
     },

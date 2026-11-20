@@ -126,9 +126,9 @@
     "size": 50
   },
   {
-    "id": "poiIND",
+    "id": "poiHYD",
     "label": "Pact of Hyderabad",
-    "icon": "../../assets/IND.svg",
+    "icon": "../../assets/HYD.svg",
     "lat": 24,
     "lon": 79,
     "altitudeKm": 300,
