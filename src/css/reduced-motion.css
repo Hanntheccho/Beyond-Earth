@@ -1,12 +1,6 @@
 /* reduced-motion.css - prefers-reduced-motion overrides. Must load last. */
 
 @media (prefers-reduced-motion: reduce) {
-    .scroll-reveal-ready .scroll-reveal,
-    .scroll-reveal-ready .scroll-copy {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-    }
     .div-desc-win,
     .tooltip-popup,
     body::before,
@@ -16,8 +10,6 @@
     .div-desc-win,
     .market-text,
     .market-text-line,
-    .scenario-chart-plot .chart-reveal,
-    .scenario-chart-plot .chart-event-group,
     .loading-spinner {
         animation: none !important;
         transition: none !important;
