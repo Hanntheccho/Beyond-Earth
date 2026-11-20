@@ -24,7 +24,7 @@
     stroke: var(--treemap-color, var(--clr-neutrale));
     stroke-width: 1px;
 }
-.treemap-tile:hover .treemap-surface, .treemap-tile:focus .treemap-surface { filter: brightness(0.6); }
+.treemap-tile:hover { filter: var(--brightness-50); }
 .treemap-tile:focus { outline: none; }
 .treemap-label { font-weight: 900; fill: var(--treemap-color); pointer-events: none; }
 .treemap-label-name { text-transform: uppercase; }

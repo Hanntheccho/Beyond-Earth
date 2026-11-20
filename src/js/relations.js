@@ -7,6 +7,7 @@
 
     let simulation, svg;
     let simulationNodes = new Map();
+    const draggedNodeIds = new Set();
     let layoutInitialized = false;
     let inViewport = false;
     let latestData = null;
@@ -144,7 +145,8 @@
         nodeMerge
             .classed('is-unavailable', d => d.hasData === false)
             .classed('is-down', d => d.hasData !== false && d.changePercent < 0)
-            .classed('is-up', d => d.hasData !== false && d.changePercent >= 0);
+            .classed('is-up', d => d.hasData !== false && d.changePercent >= 0)
+            .classed('is-dragging', d => draggedNodeIds.has(d.id));
         nodeMerge.select('circle')
             .interrupt()
             .transition()
@@ -168,6 +170,7 @@
             .classed('is-positive', d => d.weight >= 0)
             .classed('is-negative', d => d.weight < 0)
             .attr('marker-end', d => `url(#relationship-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
+        updateDraggedLinks();
         linkMerge.select('title').text(d => {
             const source = nodesById.get(d.sourceKey);
             const target = nodesById.get(d.targetKey);
@@ -211,6 +214,18 @@
         render(data);
     }
 
+    function updateDraggedLinks() {
+        svg.selectAll('.link')
+            .classed('is-node-dragged-related', d =>
+                draggedNodeIds.has(d.sourceKey) || draggedNodeIds.has(d.targetKey)
+            );
+    }
+
+    function updateDraggedNodes() {
+        svg.selectAll('.node-group')
+            .classed('is-dragging', d => draggedNodeIds.has(d.id));
+    }
+
     window.viewportVisibility.observe(container, isVisible => {
         inViewport = isVisible;
         if (inViewport && !document.hidden && !container.closest('[hidden]') && latestData) {
@@ -225,7 +240,12 @@
     });
 
     function dragstarted(event) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
+        if (!event.active) {
+            simulation.alphaTarget(0.3).restart();
+        }
+        draggedNodeIds.add(event.subject.id);
+        updateDraggedNodes();
+        updateDraggedLinks();
         event.subject.fx = event.subject.x;
         event.subject.fy = event.subject.y;
     }
@@ -236,7 +256,12 @@
     }
 
     function dragended(event) {
-        if (!event.active) simulation.alphaTarget(0);
+        if (!event.active) {
+            simulation.alphaTarget(0);
+        }
+        draggedNodeIds.delete(event.subject.id);
+        updateDraggedNodes();
+        updateDraggedLinks();
         event.subject.fx = null;
         event.subject.fy = null;
     }
