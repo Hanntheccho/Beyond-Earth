@@ -13,10 +13,9 @@ body::before,
 body::after {
     content: "";
     position: fixed;
-    inset: -70px;
+    inset: 0;
     z-index: -1;
     pointer-events: none;
-    background-repeat: repeat;
 }
 body::before {
     background: var(--img-url) center calc(50% - 30px) / 240px repeat;
