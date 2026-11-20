@@ -1,0 +1,21 @@
+/* scroll-reveal.css - Scroll-reveal entrance states (see src/js/scroll-reveal.js). */
+
+.scroll-reveal-ready .scroll-reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .2, 1);
+}
+.scroll-reveal-ready .scroll-reveal.is-inview {
+    opacity: 1;
+    transform: translateY(0);
+}
+.scroll-reveal-ready .scroll-copy {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 400ms ease, transform 400ms ease;
+}
+.scroll-reveal-ready .scroll-reveal.is-inview .scroll-copy {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(var(--copy-order, 0) * 45ms);
+}
