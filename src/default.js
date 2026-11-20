@@ -27,7 +27,6 @@ import './js/theme-toggle.js';
 import './js/main-visibility.js';
 import './js/tooltips.js';
 import './js/cursor-glow.js';
-import './js/legacy.js';
 import './js/market-text.js';
 import './js/scroll-reveal.js';
 import './js/loading-screen.js';

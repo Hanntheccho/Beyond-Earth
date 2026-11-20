@@ -22,13 +22,9 @@
 }
 .market-text-line {
     flex: none;
-    will-change: transform;
 }
 .positive { color: var(--clr-positive); }
 .negative { color: var(--clr-negative); }
 .neutrale { color: var(--clr-neutrale); }
-
-.market-text { animation: ticker-enter 650ms cubic-bezier(.2, .7, .2, 1) both; }
-@keyframes ticker-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
 .market-text-val { transition: color var(--transition-time-clr) ease; }

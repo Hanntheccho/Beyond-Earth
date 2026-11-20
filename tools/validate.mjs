@@ -367,13 +367,6 @@ function checkHtmlAndAssets(loc) {
         }
     }
 
-    for (const file of listJs('src/js')) {
-        for (const match of read(abs(file)).matchAll(/(beLegacy\d+):\s*"([^"]+)"/g)) {
-            if (!exists(abs(match[2]))) error('assets', `${file} loads "${match[2]}" which does not exist`);
-            if (!ids.includes(match[1])) error('html', `${file} fills #${match[1]} but index.html has no such element`);
-        }
-    }
-
     if (exists(abs('src/js/globe.js'))) {
         // globe.js resolves this against its own location, src/js/.
         const match = /decodeElevation\(\s*'([^']+)'\s*\)/.exec(read(abs('src/js/globe.js')));

@@ -21,20 +21,10 @@ body::after {
 body::before {
     background: var(--img-url) center calc(50% - 30px) / 240px repeat;
     opacity: 0.02;
-    animation: background-drift-large 36s linear infinite alternate;
     filter: var(--img-filter);
 }
 body::after {
     background: var(--img-url) center calc(50% - 30px) / 160px repeat;
     opacity: 0.01;
-    animation: background-drift-small 29s linear infinite alternate;
     filter: var(--img-filter);
-}
-@keyframes background-drift-large {
-    from { transform: translate3d(-60px, -50px, 0); }
-    to { transform: translate3d(60px, 10px, 0); }
-}
-@keyframes background-drift-small {
-    from { transform: translate3d(45px, 40px, 0); }
-    to { transform: translate3d(-45px, -35px, 0); }
 }
