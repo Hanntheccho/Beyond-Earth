@@ -32,4 +32,7 @@ import './js/market-text.js';
 import './js/scroll-reveal.js';
 import './js/loading-screen.js';
 
+// Load and register market data after its consumers have initialized.
+import './js/market-data.js';
+
 console.log('[BYOND UNiTY HTML] System initialized.');

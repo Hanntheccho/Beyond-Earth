@@ -307,92 +307,53 @@
         return { update: render };
     }
 
-    function normalizeNode(source, useTags) {
-        const node = { ...source };
-        node.name = String(source.name || source.tag || 'Unnamed');
-        node.label = useTags && source.tag ? String(source.tag) : node.name;
-        node.value = Number(source.value) || 0;
-        node.children = Array.isArray(source.children) ? source.children.map(child => normalizeNode(child, useTags)) : [];
-        return node;
-    }
-
-    function findParentValues(node, path = []) {
-        const name = String(node.name || node.tag || 'Unnamed');
-        const currentPath = path.concat(name);
-        const children = Array.isArray(node.children) ? node.children : [];
-        const warnings = children.length && Object.prototype.hasOwnProperty.call(node, 'value')
-            ? [currentPath.join(' > ')]
-            : [];
-        return warnings.concat(children.flatMap(child => findParentValues(child, currentPath)));
-    }
-
-    let loadedSources = 0;
-
-    async function loadRelations() {
-        try {
-            const response = await fetch('data/relations.json');
-            const data = await response.json();
-            window.valueChanges.setRelations(data);
-        } catch (e) {
-            console.error('Failed to load relations', e);
-        }
-    }
-
-    async function loadSource(host) {
+    function mountSource(host, root) {
         const panel = host.closest('[treemap-panel]');
         const status = panel && panel.querySelector('.data-status');
-        try {
-            const response = await fetch(host.dataset.source);
-            if (!response.ok) throw new Error('Treemap data could not be loaded.');
-            const rawRoot = await response.json();
-            const parentValues = findParentValues(rawRoot);
-            if (parentValues.length) {
-                const message = `Explicit values on parent nodes are ignored; parent values are calculated from their children. Found in ${host.dataset.source}: ${parentValues.join(', ')}.`;
-                console.error(`[Treemap] ${message}`);
-            }
-            const useTags = host.dataset.useTags === 'true';
-            const root = normalizeNode(rawRoot, useTags);
-            let chart;
-            let inViewport = false;
+        let chart;
+        let inViewport = false;
 
-            function updateChart() {
-                if (!inViewport || document.hidden) return;
-                const wrapper = host.closest('[data-panel-group]');
-                if (wrapper && wrapper.hidden) return;
-                if (chart) {
-                    chart.update();
-                } else {
-                    chart = mount(host, {
-                        root,
-                        marketId: host.dataset.treemap,
-                        rootLabel: root.name,
-                        breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
-                        status,
-                        accessible: true
-                    });
-                }
+        function updateChart() {
+            if (!inViewport || document.hidden) return;
+            const wrapper = host.closest('[data-panel-group]');
+            if (wrapper && wrapper.hidden) return;
+            if (chart) {
+                chart.update();
+            } else {
+                chart = mount(host, {
+                    root,
+                    marketId: host.dataset.treemap,
+                    rootLabel: root.name,
+                    breadcrumbs: panel && panel.querySelector('.treemap-breadcrumbs'),
+                    status,
+                    accessible: true
+                });
             }
-
-            function setViewportVisibility(isVisible) {
-                const changed = inViewport !== isVisible;
-                inViewport = isVisible;
-                if (inViewport && changed) updateChart();
-            }
-
-            window.viewportVisibility.observe(host, setViewportVisibility);
-            window.valueChanges.registerSource(host.dataset.treemap, root, updateChart);
-            loadedSources += 1;
-        } catch (error) {
-            if (status) status.textContent = `${host.dataset.treemap || 'Treemap'} data could not be loaded. Check ${host.dataset.source}.`;
         }
+
+        function setViewportVisibility(isVisible) {
+            const changed = inViewport !== isVisible;
+            inViewport = isVisible;
+            if (inViewport && changed) updateChart();
+        }
+
+        window.viewportVisibility.observe(host, setViewportVisibility);
+        window.valueChanges.getMarket(host.dataset.treemap).subscribe(updateChart, { immediate: false });
     }
 
     window.defaultTreemap = { mount };
-    const boot = async () => {
-        await loadRelations();
-        await Promise.all(Array.from(document.querySelectorAll('.treemap[data-source]'), loadSource));
-        if (loadedSources) window.valueChanges.start();
-    };
-    if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 1500 });
-    else setTimeout(boot, 300);
+    window.addEventListener('market-data:loaded', event => {
+        const { id, root } = event.detail || {};
+        const host = Array.from(document.querySelectorAll('.treemap[data-treemap]'))
+            .find(element => element.dataset.treemap === id);
+        if (host && root) mountSource(host, root);
+    });
+    window.addEventListener('market-data:error', event => {
+        const { id, source } = event.detail || {};
+        const host = Array.from(document.querySelectorAll('.treemap[data-treemap]'))
+            .find(element => element.dataset.treemap === id);
+        const panel = host && host.closest('[treemap-panel]');
+        const status = panel && panel.querySelector('.data-status');
+        if (status) status.textContent = `${id || 'Treemap'} data could not be loaded. Check ${source || 'the data source'}.`;
+    });
 })();

@@ -241,5 +241,5 @@
         event.subject.fy = null;
     }
 
-    window.influenceGraph = { update };
+    window.valueChanges.subscribeInfluence(update);
 })();

@@ -1,14 +1,14 @@
 // data-calc.js - the "MondayMarket" simulation engine.
 //
 // OVERVIEW
-// The page has several treemap datasets (GDP, market, resources). treemap.js
-// loads each JSON file and hands its tree to registerSource(). This file then
+// The market data modules load and register the treemap datasets (GDP, market,
+// resources). This file then
 // simulates a live market on top of those trees: every tick (10 s by default)
 // each leaf value moves randomly, linked entities push each other around, and
 // parent values are re-summed. Afterwards every subscriber (treemaps, data
 // grids, the ticker) is notified so it can animate to the new numbers.
 //
-// DATA SHAPE (after treemap.js normalizes it)
+// DATA SHAPE (after data-loader.js normalizes it)
 //   node = { name, tag?, value, children: [...] }
 // Leaves carry a value; parents are always the sum of their children.
 // prepareValues() adds these simulation fields to every node:
@@ -19,12 +19,13 @@
 //
 // PUBLIC API: window.valueChanges (assigned at the bottom of the file)
 //   getMarket(id)  -> market object with getSnapshot/getQuote/subscribe/...
-//   registerSource(id, root, update)  register a tree to simulate
+//   registerSource(id, root)          register a tree to simulate
 //   setRelations(data)                load data/relations.json
 //   start / stop / tick / render      control the ticker manually
 (function () {
-    // All registered trees: { root, update } where update() redraws its treemap.
+    // All registered trees used by the market simulation and derived views.
     const sources = [];
+    const influenceListeners = new Set();
     // Global sentiment that drifts slowly and nudges every leaf in the same direction.
     let marketMood = 0;
     // Relations from relations.json: a source's movement pushes a target
@@ -131,11 +132,10 @@
         return markets.get(id);
     }
 
-    // Called by treemap.js once per loaded JSON file. `update` redraws that
-    // treemap; `key` links the tree to a market so subscribers can read it.
-    function registerSource(key, root, update) {
+    // Called by the market data loader once per normalized source tree.
+    function registerSource(key, root) {
         prepareValues(root);
-        sources.push({ root, update });
+        sources.push({ root });
 
         if (key) {
             const market = getMarket(key);
@@ -212,11 +212,18 @@
         };
     }
 
-    // Refresh the influence graph with current values.
-    function renderInfluenceGraph() {
-        if (window.influenceGraph && window.influenceGraph.update) {
-            window.influenceGraph.update(getInfluenceData());
-        }
+    // Publish current influence data to interested view subscribers.
+    function publishInfluenceData() {
+        if (!influenceListeners.size) return;
+        const data = getInfluenceData();
+        influenceListeners.forEach(listener => listener(data));
+    }
+
+    function subscribeInfluence(listener, options = {}) {
+        if (typeof listener !== 'function') throw new TypeError('Influence subscriber must be a function');
+        influenceListeners.add(listener);
+        if (options.immediate !== false) listener(getInfluenceData());
+        return () => influenceListeners.delete(listener);
     }
 
     // One simulation step. Runs in four passes over all registered trees:
@@ -341,12 +348,10 @@
         sources.forEach(source => finalize(source.root));
     }
 
-    // Push the latest numbers to the UI: redraw every treemap, notify every
-    // market's subscribers (grids, ticker), then refresh the debug panel.
+    // Publish the latest numbers to market subscribers, then refresh the graph.
     function publishMarkets() {
-        sources.forEach(source => source.update());
         markets.forEach(market => market.publish());
-        renderInfluenceGraph();
+        publishInfluenceData();
     }
 
     // Start the simulation. Ticks once immediately (so the page has movement
@@ -360,7 +365,7 @@
         timer = setInterval(() => {
             computeValues();
             publishMarkets();
-        }, Math.max(250, Number(options.intervalMs) || 10000));
+        }, Math.max(250, Number(options.intervalMs) || 1000));
     }
 
     function stopTicker() {
@@ -368,12 +373,13 @@
         timer = null;
     }
 
-    // Public API used by treemap.js, data-grid.js, market-text.js and others.
+    // Public API used by the market data loader and view components.
     window.valueChanges = {
         getMarket,
         registerSource,
         setRelations,
         getInfluenceData,
+        subscribeInfluence,
         tick: computeValues,
         render: publishMarkets,
         start: startTicker,
