@@ -25,8 +25,18 @@
     transition: fill var(--transition-time-clr) ease, stroke var(--transition-time-clr) ease;
     cursor: grab;
 }
+#influence-graph-container .node-group {
+    transition: opacity var(--transition-time) ease;
+}
 #influence-graph-container .node-group.is-dragging circle {
     cursor: grabbing;
+}
+#influence-graph-container .node-group.is-unrelated-to-dragged-node {
+    opacity: .2;
+    transition: opacity var(--transition-time) ease;
+}
+#influence-graph-container .node-group.is-dragging:hover {
+    filter: none;
 }
 #influence-graph-container .node-group:hover {
     filter: var(--brightness-50);
@@ -67,7 +77,7 @@
     transition: opacity var(--transition-time) ease, stroke var(--transition-time-clr) ease;
 }
 #influence-graph-container .link.is-node-dragged-related {
-    opacity: 0.4;
+    opacity: .5;
 }
 #influence-graph-container .link.is-positive {
     stroke: var(--clr-positive);

@@ -64,8 +64,8 @@
 
         const nodes = data.nodes.map(n => {
             const radius = n.hasData === false
-                ? 5
-                : 5 + 51 * (
+                ? 10
+                : 10 + 101 * (
                     Math.exp(3 * Math.log10(Math.max(0, Number(n.value) || 0) + 1) / maxLogValue) - 1
                 ) / exponentialScale;
             const availableWidth = Math.max(0, radius * 2 - 8);
@@ -145,8 +145,7 @@
         nodeMerge
             .classed('is-unavailable', d => d.hasData === false)
             .classed('is-down', d => d.hasData !== false && d.changePercent < 0)
-            .classed('is-up', d => d.hasData !== false && d.changePercent >= 0)
-            .classed('is-dragging', d => draggedNodeIds.has(d.id));
+            .classed('is-up', d => d.hasData !== false && d.changePercent >= 0);
         nodeMerge.select('circle')
             .interrupt()
             .transition()
@@ -171,6 +170,7 @@
             .classed('is-negative', d => d.weight < 0)
             .attr('marker-end', d => `url(#relationship-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
         updateDraggedLinks();
+        updateDraggedNodes();
         linkMerge.select('title').text(d => {
             const source = nodesById.get(d.sourceKey);
             const target = nodesById.get(d.targetKey);
@@ -222,8 +222,16 @@
     }
 
     function updateDraggedNodes() {
+        const relatedNodeIds = new Set(draggedNodeIds);
+        svg.selectAll('.link').each(d => {
+            if (draggedNodeIds.has(d.sourceKey)) relatedNodeIds.add(d.targetKey);
+            if (draggedNodeIds.has(d.targetKey)) relatedNodeIds.add(d.sourceKey);
+        });
         svg.selectAll('.node-group')
-            .classed('is-dragging', d => draggedNodeIds.has(d.id));
+            .classed('is-dragging', d => draggedNodeIds.has(d.id))
+            .classed('is-unrelated-to-dragged-node', d =>
+                draggedNodeIds.size > 0 && !relatedNodeIds.has(d.id)
+            );
     }
 
     window.viewportVisibility.observe(container, isVisible => {
