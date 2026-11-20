@@ -365,7 +365,7 @@
         timer = setInterval(() => {
             computeValues();
             publishMarkets();
-        }, Math.max(250, Number(options.intervalMs) || 1000));
+        }, Math.max(250, Number(options.intervalMs) || 10000));
     }
 
     function stopTicker() {
