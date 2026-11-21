@@ -95,6 +95,27 @@ button img {
     top: calc(var(--px-10) * 3 + var(--btn-size) * 2);
 }
 
+/* Data category tabs: a smaller column under the data view toggle, centred on the
+   column above, with a wider gap to separate them from the global controls.
+   Shown only while the data view is open and the main content is visible. */
+.data-tabs {
+    position: fixed;
+    z-index: 1200;
+    top: calc(var(--px-10) * 3 + var(--btn-size) * 3 + var(--px-10));
+    right: calc(var(--px-10) + (var(--btn-size) - var(--btn-size-sub)) / 2);
+    display: none;
+    flex-direction: column;
+    gap: 2px; /* plus the 4px button margins: 10px between buttons */
+}
+.app-header:has(.data-view-toggle[aria-pressed="true"]):has(.main-visibility-toggle[aria-expanded="true"]) .data-tabs {
+    display: flex;
+}
+.data-tabs button {
+    width: var(--btn-size-sub);
+    height: var(--btn-size-sub);
+    padding: 10px;
+}
+
 /* Options menu: opens to the left of the options toggle, styled like the globe readouts. */
 .options-menu {
     position: fixed;
