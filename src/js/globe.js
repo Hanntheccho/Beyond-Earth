@@ -23,7 +23,7 @@ import { holdLoadingScreen } from './loading-screen.js';
 
 'use strict';
 
-const DEFAULT_SEA_LEVEL = 50; // 2200 value, keeps today's look as the fallback
+const DEFAULT_SEA_LEVEL = 50; // the present-day value, keeps today's look as the fallback
 
 // Resolved from src/js/. The WebP is the shipped file; the PNG is the untouched
 // original, only fetched if the WebP cannot be decoded.
@@ -183,8 +183,8 @@ function main() {
   // While content covers the globe it is only a faint backdrop (see .globe-canvas.is-loaded
   // in globe.css), so it redraws less often. It runs at the full rate while the globe is the
   // focus or an animation is playing. The spin uses real elapsed time, so its speed is the same.
-  const FRAME_MS_FOCUSED = 33;  // about 30 fps
-  const FRAME_MS_BACKDROP = 80; // about 12 fps
+  const FRAME_MS_FOCUSED = 33;  // ms per frame while the globe is the focus
+  const FRAME_MS_BACKDROP = 80; // ms per frame while it is a backdrop
 
   const sMax = 7;
   const sMin = () => 240 / DEG_R;

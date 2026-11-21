@@ -1,5 +1,5 @@
 // Fictional interpretation of the scenario's global indicators.
-// Pre-modern values are especially approximate. The dip after 2070 represents
+// Pre-modern values are especially approximate. The dip after the Great Mistake represents
 // temporary nuclear-winter cooling, followed by recovery as ash settles.
 // These are narrative estimates, not model output.
 //
@@ -66,7 +66,7 @@ window.scenarioChartData = {
         { year: 2071, value: 16.8 },
         { year: 2072, value: 16.1 },
         { year: 2073, value: 15.6 },
-        { year: 2075, value: 15.2 }, // Nuclear Ashfall: ash cools the planet for a decade
+        { year: 2075, value: 15.2 }, // Nuclear Ashfall: ash cools the planet for years
         { year: 2080, value: 15.5 },
         { year: 2085, value: 15.6 },
         { year: 2090, value: 15.0 },
@@ -90,19 +90,19 @@ window.scenarioChartData = {
         { year: 2072, value: 9.2 },
         { year: 2075, value: 8.7 },
         { year: 2080, value: 8.1 },
-        { year: 2085, value: 7.7 }, // after the Siege of Washington (2084)
+        { year: 2085, value: 7.7 }, // after the Siege of Washington
         { year: 2088, value: 7.5 }, // Hamburg Flood
         { year: 2095, value: 7.4 },
         { year: 2100, value: 7.5 },
         { year: 2120, value: 7.8 },
         { year: 2133, value: 8.02 },
-        { year: 2136, value: 7.96 }, // Congo Crisis (2134): the African Union collapses
+        { year: 2136, value: 7.96 }, // Congo Crisis: the African Union collapses
         { year: 2140, value: 8.05 },
         { year: 2150, value: 8.3 },
         { year: 2170, value: 8.1 }, // War of Unification
         { year: 2180, value: 8.3 },
         { year: 2187, value: 8.26 },
-        { year: 2190, value: 8.14 }, // Arabian War (2188)
+        { year: 2190, value: 8.14 }, // Arabian War
         { year: 2198, value: 8.0 }, // Coup of '98
         { year: 2200, value: 8.1 }
     ],
@@ -114,8 +114,8 @@ window.scenarioChartData = {
         { year: 2088, value: 5.4 }, // Hamburg Flood
         { year: 2089, value: 5.6 },
         { year: 2090, value: 9.6 }, // Antarctic Collapse: the West Antarctic ice sheet gives way
-        // From the collapse on, sea level follows the ice lost since 2090 (about 3.3 m per
-        // Mkm³ of iceVolume), so it slows and settles as the ice sheets do.
+        // From the collapse on, sea level follows the ice lost since then (in proportion
+        // to the drop in iceVolume), so it slows and settles as the ice sheets do.
         { year: 2092, value: 11.2 },
         { year: 2095, value: 13.6 },
         { year: 2100, value: 20.6 },

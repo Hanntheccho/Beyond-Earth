@@ -5,7 +5,7 @@ Run from anywhere:  python3 tools/make-elevation-webp.py
 Needs Python 3 with Pillow (built with WebP support) and NumPy.
 
 The PNG stays the untouched original. Elevation is 16-bit, packed as
-R * 256 + G - 11000 metres, so the WebP must be lossless.
+R * 256 + G - OFFSET_M metres, so the WebP must be lossless.
 
 What changes: ocean deeper than COAST_BAND_M that is not in a 2x2 sampling
 cell with shallower water or land is set to one flat value (R=G=B=0). The

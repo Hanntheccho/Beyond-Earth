@@ -120,7 +120,7 @@ button img {
     right: var(--px-10);
     display: none;
     flex-direction: column;
-    gap: 2px; /* plus the 4px button margins: 10px between buttons */
+    gap: 2px; /* adds to the button margins for the space between buttons */
 }
 .app-header:has(.data-view-toggle[aria-pressed="true"]):has(.main-visibility-toggle[aria-expanded="true"]) .data-tabs {
     display: flex;

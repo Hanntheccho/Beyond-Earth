@@ -10,13 +10,14 @@
 
 const MAX_WAIT_MS = 10000;
 
-// Rough share of the loading work per task, by download size, so the bar moves by how
-// much is left rather than by how many tasks are left. Other tasks count 1.
-//   pages       ~310 KB of scripts and styles, plus the icons
-//   fonts       ~40 KB
-//   text        ~120 KB in 18 files
-//   data        ~50 KB of dataset files (feed-loader.js)
-//   terrain     330 KB, then decoding and the upload to the graphics card
+// Rough share of the loading work per task, by relative download size, so the bar moves
+// by how much is left rather than by how many tasks are left. Tasks not listed here get
+// the default weight in holdLoadingScreen().
+//   pages       scripts and styles, plus the icons
+//   fonts       the web fonts
+//   text        the localization and POI files (loc.js)
+//   data        the dataset files (feed-loader.js)
+//   terrain     the heightmap, then decoding and the upload to the graphics card
 const TASK_WEIGHTS = { pages: 3, fonts: 1, text: 2, data: 1, terrain: 3 };
 
 const loadingScreen = document.getElementById('loading-screen');

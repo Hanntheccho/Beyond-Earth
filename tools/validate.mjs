@@ -453,7 +453,7 @@ function checkHtmlAndAssets(loc) {
 
 function checkRelations() {
     // Relations larger than this are probably a typo (the guide in data/relations.md
-    // suggests steps of 0.05 and the existing data tops out at 0.2).
+    // suggests small fixed steps, and the existing data stays below this).
     const MAX_RELATION_WEIGHT = 0.25;
 
     // Index every node of the database files by its tag and by its name, the two keys
