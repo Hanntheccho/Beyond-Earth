@@ -72,7 +72,7 @@ button img {
 }
 
 .main-visibility-toggle,
-.theme-toggle,
+.options-toggle,
 .data-view-toggle {
     position: fixed;
     z-index: 1200;
@@ -84,39 +84,89 @@ button img {
 .main-visibility-toggle {
     top: var(--px-10);
 }
-.theme-toggle {
+.options-toggle {
     top: calc(var(--px-10) * 2 + var(--btn-size));
+}
+.options-toggle[aria-expanded="true"] {
+    border-color: color-mix(in srgb, var(--clr-border), var(--clr-color-mix-60));
+    background-color: color-mix(in srgb, var(--clr-background), var(--clr-color-mix-20));
 }
 .data-view-toggle {
     top: calc(var(--px-10) * 3 + var(--btn-size) * 2);
 }
 
-/* Music controls: bottom-right corner above the ticker, styled like the globe readouts. */
-.music-controls {
+/* Options menu: opens to the left of the options toggle, styled like the globe readouts. */
+.options-menu {
     position: fixed;
-    right: var(--px-10);
-    bottom: calc(40px + var(--px-10));
+    top: calc(var(--px-10) * 2 + var(--btn-size));
+    right: calc(var(--px-10) * 2 + var(--btn-size));
     z-index: 1200;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 9px;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 10px;
     border: 1px solid var(--clr-border);
     background: var(--clr-background);
     color: var(--clr-data);
     font-size: var(--fnt-size-data);
 }
-.music-controls .music-toggle {
-    width: 28px;
-    height: 28px;
-    margin: 0;
-    padding: 5px;
+.options-menu[hidden] {
+    display: none;
 }
-.music-controls input[type="range"] {
+.options-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.options-label {
+    min-width: 6ch;
+}
+
+/* Checkbox toggles: square box, filled with an inner square when checked. */
+.options-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+.options-check input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    border: 2px solid var(--clr-border);
+    border-radius: 0;
+    background: var(--clr-background);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+}
+.options-check input[type="checkbox"]::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: var(--clr-ph1);
+    transform: scale(0);
+    transition: transform var(--transition-time) ease;
+}
+.options-check input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+.options-check input[type="checkbox"]:focus-visible {
+    outline: 1px solid var(--clr-ph1);
+    outline-offset: 2px;
+}
+.options-check:hover input[type="checkbox"] {
+    border-color: var(--clr-data);
+}
+.options-row input[type="range"] {
     width: 120px;
     accent-color: var(--clr-border);
 }
-.music-volume-readout {
-    min-width: 4ch;
+.options-readout {
+    min-width: 5ch;
     text-align: right;
 }

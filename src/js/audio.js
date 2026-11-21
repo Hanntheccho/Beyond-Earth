@@ -25,7 +25,8 @@ function saveMusicPreference(isOn) {
 let musicWanted = readMusicPreference();
 
 function syncMusicToggle() {
-    if (musicToggle) musicToggle.setAttribute("aria-pressed", String(musicWanted));
+    // The toggle is a checkbox: checked means music on.
+    if (musicToggle) musicToggle.checked = musicWanted;
 }
 
 syncMusicToggle();
@@ -72,8 +73,8 @@ document.addEventListener("click", resumeMusic, { once: true });
 document.addEventListener("keydown", resumeMusic, { once: true });
 
 if (musicToggle) {
-    musicToggle.addEventListener("click", function() {
-        musicWanted = !musicWanted;
+    musicToggle.addEventListener("change", function() {
+        musicWanted = musicToggle.checked;
         saveMusicPreference(musicWanted);
         syncMusicToggle();
         if (!backgroundMusic) return;
@@ -91,7 +92,7 @@ if (musicToggle) {
 }
 
 document.body.addEventListener('click', function(event) {
-    const btn = event.target.closest && event.target.closest('button, .treemap-tile.has-children, .globe-marker img');
+    const btn = event.target.closest && event.target.closest('button, input[type="checkbox"], .treemap-tile.has-children, .globe-marker img');
     if (!btn || !clickSound) return;
     try {
         clickSound.currentTime = 0;

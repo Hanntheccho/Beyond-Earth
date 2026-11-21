@@ -45,24 +45,38 @@
     <!-- Header -->
     <header class="app-header">
         <button class="main-visibility-toggle" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true">
-            <img src="assets/circle.svg" alt="">
+            <img src="btn01.svg" alt="">
         </button>
-        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light theme" aria-pressed="false">
-            <img src="assets/circle-half.svg" alt="">
+        <button id="options-toggle" class="options-toggle" type="button" aria-label="Open options" aria-controls="options-menu" aria-expanded="false">
+            <img src="btn05.svg" alt="">
         </button>
         <button id="data-view-toggle" class="data-view-toggle" type="button" aria-label="Show data view" aria-controls="data-view" aria-pressed="false">
-            <img src="be-icon-alt.svg" alt="">
+            <img src="btn02.svg" alt="">
         </button>
         <div class="back-title"><span>BYOND UNiTY :HTML</span></div>
     </header>
 
-    <!-- Music -->
-    <div class="music-controls" role="group" aria-label="Background music">
-        <button id="music-toggle" class="music-toggle" type="button" aria-label="Toggle background music" aria-pressed="false">
-            <img src="assets/music.svg" alt="">
-        </button>
-        <input id="music-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Music volume">
-        <span id="music-volume-readout" class="music-volume-readout">100%</span>
+    <!-- Options Menu -->
+    <div id="options-menu" class="options-menu" role="dialog" aria-label="Options" hidden>
+        <span class="data-status">OPTIONS</span>
+
+        <!-- Theme -->
+        <div class="options-row">
+            <label class="options-check">
+                <input id="theme-toggle" type="checkbox">
+                <span class="options-label">LIGHT THEME</span>
+            </label>
+        </div>
+
+        <!-- Music -->
+        <div class="options-row music-controls" role="group" aria-label="Background music">
+            <label class="options-check">
+                <input id="music-toggle" type="checkbox">
+                <span class="options-label">MUSIC</span>
+            </label>
+            <input id="music-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Music volume">
+            <span id="music-volume-readout" class="options-readout music-volume-readout">100%</span>
+        </div>
     </div>
 
     <!-- Main View -->
