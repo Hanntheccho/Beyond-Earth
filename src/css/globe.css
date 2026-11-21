@@ -1,4 +1,4 @@
-/* globe.css - Globe preview, markers, sea-level control (see src/js/globe.js). */
+/* globe.css - Globe preview, markers, sea-level control (see src/js/globe.js, globe-markers.js). */
 
 .globe-preview {
     position: fixed;
@@ -39,7 +39,7 @@
 }
 .globe-canvas.is-loaded + .globe-marker-layer { opacity: 0; }
 .globe-canvas.is-emphasized + .globe-marker-layer { opacity: 1; }
-/* While the globe is grabbed the markers fade out; globe.js repositions them on release. */
+/* While the globe is grabbed the markers fade out; globe-markers.js repositions them on release. */
 .globe-canvas.dragging + .globe-marker-layer { opacity: 0; transition-duration: 120ms; }
 .globe-marker {
     position: absolute;
@@ -62,7 +62,7 @@
     text-indent: 0;
     opacity: var(--marker-opacity, 1);
     pointer-events: none;
-    /* globe.js replaces this with an inline transform that also moves the marker to its position. */
+    /* globe-markers.js replaces this with an inline transform that also moves the marker to its position. */
     transform: translate(-50%, -50%);
 }
 .globe-marker[hidden] { display: none; }

@@ -203,7 +203,7 @@ function checkPois(loc) {
 // --------------------------------------------------------------------- markers
 
 function checkMarkers(poiIds) {
-    // globe.js throws on the first invalid marker and then shows none at all,
+    // globe-markers.js throws on the first invalid marker and then shows none at all,
     // so every problem here is an error.
     const markers = readJson('data/globe-markers.json');
     if (!markers) return;
@@ -228,7 +228,7 @@ function checkMarkers(poiIds) {
         if (typeof marker.icon !== 'string' || !marker.icon) {
             error('markers', `${where}: missing icon`);
         } else if (!exists(path.resolve(abs('src/js'), marker.icon))) {
-            // globe.js resolves icons against its own location, src/js/.
+            // globe-markers.js resolves icons against its own location, src/js/.
             error('markers', `${where}: icon "${marker.icon}" not found (resolved from src/js/)`);
         }
 
@@ -426,10 +426,13 @@ function checkHtmlAndAssets(loc) {
 
         // The shader clamp and the generator must agree on the coast band.
         const script = abs('tools/make-elevation-webp.py');
-        const jsBand = /const\s+COAST_BAND_M\s*=\s*([\d.]+)/.exec(globeSource);
+        const shaderPath = abs('src/js/globe-shaders.js');
+        const jsBand = exists(shaderPath) && /const\s+COAST_BAND_M\s*=\s*([\d.]+)/.exec(read(shaderPath));
         const pyBand = exists(script) && /^COAST_BAND_M\s*=\s*([\d.]+)/m.exec(read(script));
+        if (!jsBand) warn('globe', 'COAST_BAND_M was not found in src/js/globe-shaders.js, so the coast band was not checked against tools/make-elevation-webp.py');
+        else if (!pyBand) warn('globe', 'COAST_BAND_M was not found in tools/make-elevation-webp.py, so the coast band was not checked');
         if (jsBand && pyBand && Number(jsBand[1]) !== Number(pyBand[1])) {
-            error('globe', `COAST_BAND_M is ${jsBand[1]} in globe.js but ${pyBand[1]} in tools/make-elevation-webp.py; deep ocean edits would show on the coastline`);
+            error('globe', `COAST_BAND_M is ${jsBand[1]} in globe-shaders.js but ${pyBand[1]} in tools/make-elevation-webp.py; deep ocean edits would show on the coastline`);
         }
     }
 

@@ -3,8 +3,8 @@ import { motionPreference } from './motion.js';
 // the same id (for example the "poiFRA" marker opens the "poiFRA" panel).
 // Markers without a matching panel (poiANTT, poiNSA, poiCOOP, poiPLY...) do nothing.
 //
-// Uses event delegation, so it works for the markers globe.js creates later.
-// Needs data-id on each marker button (set in createMarkerButton in globe.js).
+// Uses event delegation, so it works for the markers globe-markers.js creates later.
+// Needs data-id on each marker button (set in createButton in globe-markers.js).
 (function () {
     const PANEL_GROUP = 'lys-pois';
     const toggle = document.querySelector('.main-visibility-toggle');

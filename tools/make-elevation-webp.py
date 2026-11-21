@@ -10,7 +10,7 @@ R * 256 + G - 11000 metres, so the WebP must be lossless.
 What changes: ocean deeper than COAST_BAND_M that is not in a 2x2 sampling
 cell with shallower water or land is set to one flat value (R=G=B=0). The
 globe never shows those pixels. Water is fully transparent, the land
-contours ignore it, and the coastline term in globe.js clamps water depth
+contours ignore it, and the coastline term in globe-shaders.js clamps water depth
 at COAST_BAND_M. That clamp is what makes the change invisible, so keep the
 two constants equal. This only holds while the sea level is 0 m or higher.
 """
@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-COAST_BAND_M = 2000  # must match COAST_BAND_M in src/js/globe.js
+COAST_BAND_M = 2000  # must match COAST_BAND_M in src/js/globe-shaders.js
 OFFSET_M = 11000
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / 'data' / 'elev-1080.png'

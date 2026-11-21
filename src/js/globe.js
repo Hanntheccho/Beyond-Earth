@@ -1,4 +1,7 @@
 import { motionPreference } from './motion.js';
+import { DEG_R, makeProgram, decodeElevation } from './globe-gl.js';
+import { MESH_VS, MESH_FS } from './globe-shaders.js';
+import { createGlobeMarkers } from './globe-markers.js';
 /*
  * Interactive Earth sea-level globe renderer.
  * Adapted from MIT-licensed source.
@@ -9,18 +12,14 @@ import { motionPreference } from './motion.js';
  * zooming out "rolls" the map onto a sphere. The fragment shader decodes a
  * 16-bit elevation heightmap packed into the R/G channels of a PNG, colors
  * ocean and land, and draws screen-space contour lines, coastline, and hillshade.
+ *
+ * Split across: globe-shaders.js (GLSL), globe-gl.js (GL and elevation helpers),
+ * globe-markers.js (hotspot buttons). This file owns the view, render loop and input.
  */
 
 'use strict';
 
-const DEG_R = 57.29577951308232; // 180/pi: globe radius = scale(px/deg) * DEG_R
-const EARTH_RADIUS_KM = 6371;
 const DEFAULT_SEA_LEVEL = 50; // 2200 value, keeps today's look as the fallback
-
-// Water deeper than this (below the current sea level) does not affect the
-// coastline. elev-1080.webp flattens deep ocean on that assumption, so keep it
-// equal to COAST_BAND_M in tools/make-elevation-webp.py. Requires sea level >= 0.
-const COAST_BAND_M = 2000;
 
 // Resolved from src/js/. The WebP is the shipped file; the PNG is the untouched
 // source, only fetched if the WebP cannot be decoded.
@@ -30,188 +29,6 @@ const GLOBE_COLORS = {
   dark: { ocean: [0.1, 0.1, 0.1], land: [0.4, 0.4, 0.4], contour: [1,1,1], grid: [0.2,0.2,0.2], coast: [0.9,0.9,0.9] },
   light: { ocean: [0.8, 0.8, 0.8], land: [0.6, 0.6, 0.6], contour: [0,0,0], grid: [0.7,0.7,0.7], coast: [0.1,0.1,0.1] }
 };
-
-// ---------------------------------------------------------------- shaders
-
-const MESH_VS = `#version 300 es
-precision highp float;
-layout(location=0) in vec2 aLonLat;
-uniform vec2 uCenter;
-uniform float uScale;
-uniform float uMorph;
-uniform vec2 uViewport;
-uniform float uCopyOffset;
-out vec2 vLonLat;
-void main() {
-  float lon = aLonLat.x + uCopyOffset;
-  float lat = aLonLat.y;
-  vLonLat = vec2(lon, lat);
-  float dlon = lon - uCenter.x;
-  vec2 flatPos = vec2(dlon, lat - uCenter.y) * uScale;
-  float R = uScale * ${DEG_R};
-  float lam = radians(dlon);
-  float phi = radians(lat);
-  float phi0 = radians(uCenter.y);
-  vec3 p = vec3(cos(phi) * sin(lam), sin(phi), cos(phi) * cos(lam));
-  float y2 = p.y * cos(phi0) - p.z * sin(phi0);
-  float z2 = p.y * sin(phi0) + p.z * cos(phi0);
-  vec2 globePos = vec2(p.x, y2) * R;
-  vec2 pos = mix(flatPos, globePos, uMorph);
-  gl_Position = vec4(pos * 2.0 / uViewport, -z2 * uMorph * 0.5, 1.0);
-}`;
-
-const MESH_FS = `#version 300 es
-precision highp float;
-in vec2 vLonLat;
-uniform sampler2D uTex;
-uniform vec2 uTexSize;
-uniform float uSeaLevel;
-uniform float uInterval;
-uniform float uAlpha;
-uniform float uMetersPerPx;
-out vec4 fragColor;
-
-uniform vec3 uOceanColor;
-uniform vec3 uLandColor;
-uniform vec3 uContourColor;
-uniform vec3 uGridColor;
-uniform vec3 uCoastColor;
-
-float decode(vec4 c) { return c.r * 65280.0 + c.g * 255.0 - 11000.0; }
-
-float elevAt(vec2 ll) {
-  float W = uTexSize.x, H = uTexSize.y;
-  float fx = (ll.x + 180.0) / 360.0 * W;
-  float fy = (90.0 - ll.y) / 180.0 * H;
-  fx -= W * floor(fx / W);
-  fy = clamp(fy, 0.0, H - 1.0001);
-  float x0 = floor(fx), y0 = floor(fy);
-  vec2 f = vec2(fx - x0, fy - y0);
-  int ix0 = int(x0), iy0 = int(y0);
-  int ix1 = ix0 + 1 == int(W) ? 0 : ix0 + 1;
-  int iy1 = min(iy0 + 1, int(H) - 1);
-  float e00 = decode(texelFetch(uTex, ivec2(ix0, iy0), 0));
-  float e10 = decode(texelFetch(uTex, ivec2(ix1, iy0), 0));
-  float e01 = decode(texelFetch(uTex, ivec2(ix0, iy1), 0));
-  float e11 = decode(texelFetch(uTex, ivec2(ix1, iy1), 0));
-  return mix(mix(e00, e10, f.x), mix(e01, e11, f.x), f.y);
-}
-
-float lineAA(float f, float w) {
-  float d = abs(fract(f + 0.5) - 0.5) / max(fwidth(f), 1e-7);
-  return 1.0 - smoothstep(0.0, w, d);
-}
-
-void main() {
-  float e = elevAt(vLonLat);
-  float rel = e - uSeaLevel;
-  bool water = rel < 0.0;
-
-  vec3 col = water ? uOceanColor : uLandColor;
-
-  if (!water) {
-    vec2 g = vec2(dFdx(e), dFdy(e)) / max(uMetersPerPx, 1.0);
-    vec3 n = normalize(vec3(-g.x, -g.y, 1.8));
-    float lit = clamp(dot(n, normalize(vec3(-0.55, 0.62, 0.72))), 0.0, 1.0);
-    col *= 0.68 + 0.32 * (0.35 + 1.15 * lit);
-
-    float f = rel / uInterval;
-    float fadeMinor = 1.0 - smoothstep(0.30, 0.65, fwidth(f));
-    float fadeMajor = 1.0 - smoothstep(0.30, 0.65, fwidth(f) / 5.0);
-    col = mix(col, uContourColor, lineAA(f, 1.0) * 0.78 * fadeMinor);
-    col = mix(col, uContourColor, lineAA(f / 5.0, 1.25) * 0.95 * fadeMajor);
-  }
-
-  // Clamp the water side so deep (flattened) ocean cannot add offshore lines.
-  float relCoast = max(rel, -${COAST_BAND_M.toFixed(1)});
-  float coast = 1.0 - smoothstep(0.0, 1.0, abs(relCoast) / max(fwidth(relCoast), 1e-7));
-
-  vec2 gf = vLonLat / 15.0;
-  vec2 gg = abs(fract(gf + 0.5) - 0.5) / max(fwidth(gf), vec2(1e-7));
-  float grat = 1.0 - smoothstep(0.0, 1.0, min(gg.x, gg.y));
-  float gridAlpha = grat * 1.0;
-  vec3 gridColor = uGridColor;
-
-  float surfaceAlpha = water ? 0.0 : 0.1;
-  float baseAlpha = gridAlpha + surfaceAlpha * (1.0 - gridAlpha);
-  vec3 baseColor = (
-    gridColor * gridAlpha + col * surfaceAlpha * (1.0 - gridAlpha)
-  ) / max(baseAlpha, 1e-6);
-  float coastCoverage = coast * 1.0;
-  vec3 coastColor = uCoastColor;
-  float finalAlpha = coastCoverage + baseAlpha * (1.0 - coastCoverage);
-  vec3 finalColor = (
-    coastColor * coastCoverage + baseColor * baseAlpha * (1.0 - coastCoverage)
-  ) / max(finalAlpha, 1e-6);
-  fragColor = vec4(finalColor, finalAlpha * uAlpha);
-}`;
-
-
-
-// ----------------------------------------------------------- GL utilities
-
-function compile(gl, type, src) {
-  const sh = gl.createShader(type);
-  gl.shaderSource(sh, src);
-  gl.compileShader(sh);
-  if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-    throw new Error('Shader error: ' + gl.getShaderInfoLog(sh));
-  }
-  return sh;
-}
-
-function makeProgram(gl, vs, fs) {
-  const p = gl.createProgram();
-  gl.attachShader(p, compile(gl, gl.VERTEX_SHADER, vs));
-  gl.attachShader(p, compile(gl, gl.FRAGMENT_SHADER, fs));
-  gl.linkProgram(p);
-  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
-    throw new Error('Link error: ' + gl.getProgramInfoLog(p));
-  }
-  const uniforms = {};
-  const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
-  for (let i = 0; i < n; i++) {
-    const name = gl.getActiveUniform(p, i).name;
-    uniforms[name] = gl.getUniformLocation(p, name);
-  }
-  return { prog: p, u: uniforms };
-}
-
-// ------------------------------------------------------------- data load
-
-async function decodeElevation(url) {
-  // Load through an image element so the globe also works when the site is
-  // opened directly from disk, where fetch() cannot read file:// URLs.
-  const img = new Image();
-  img.src = new URL(url, import.meta.url);
-  try {
-    await img.decode();
-  } catch (err) {
-    throw new Error(`Could not decode elevation image ${img.src}: ${err.message}`);
-  }
-  let bmp;
-  if (typeof createImageBitmap === 'function') {
-    try {
-      bmp = await createImageBitmap(img, {
-        premultiplyAlpha: 'none',
-        colorSpaceConversion: 'none',
-      });
-    } catch (_) {
-      // Safari versions that reject these options use the canvas fallback.
-    }
-  }
-  const W = bmp ? bmp.width : img.naturalWidth;
-  const H = bmp ? bmp.height : img.naturalHeight;
-  if (bmp) return { W, H, bmp };
-
-  const cnv = typeof OffscreenCanvas !== 'undefined'
-    ? new OffscreenCanvas(W, H)
-    : Object.assign(document.createElement('canvas'), { width: W, height: H });
-  const ctx = cnv.getContext('2d', { willReadFrequently: true });
-  ctx.drawImage(img, 0, 0);
-  const px = ctx.getImageData(0, 0, W, H).data;
-  return { W, H, px };
-}
 
 // ------------------------------------------------------------------ main
 
@@ -300,7 +117,7 @@ function main() {
   const params = new URLSearchParams(canvas.dataset.view || location.search);
   const num = (k, d) => (params.has(k) && isFinite(+params.get(k)) ? +params.get(k) : d);
 
-  const markerInstances = [];
+  const markers = createGlobeMarkers(markerLayer, canvas);
   const coordinateReadout = document.createElement('output');
   coordinateReadout.className = 'globe-coordinates';
   coordinateReadout.setAttribute('aria-label', 'Cursor coordinates');
@@ -426,123 +243,7 @@ function main() {
       gl.uniform1f(mesh.u.uAlpha, k === 0 ? 1 : 1 - t);
       gl.drawElements(gl.TRIANGLES, MESH_COUNT, gl.UNSIGNED_INT, 0);
     }
-    renderMarkers(t, halfW);
-  }
-
-  function createMarkerButton(entry, copy) {
-    const button = document.createElement('button');
-    button.className = 'globe-marker';
-    button.type = 'button';
-    button.hidden = true;
-    button.style.setProperty('--marker-size', `${entry.size}px`);
-    button.setAttribute('aria-label', entry.label);
-    button.dataset.label = entry.label;
-    button.dataset.id = entry.id;
-    button.title = entry.label;
-    const image = document.createElement('img');
-    image.src = new URL(entry.icon, import.meta.url);
-    image.alt = '';
-    image.draggable = false;
-    image.addEventListener('error', () => {
-      console.error(`Could not load globe marker icon for "${entry.id}": ${image.src}`);
-    }, { once: true });
-    button.append(image);
-    markerLayer.append(button);
-    return button;
-  }
-
-  function addMarkers(definitions) {
-    if (!Array.isArray(definitions)) {
-      throw new TypeError('Globe marker JSON must contain an array.');
-    }
-    const ids = new Set();
-    definitions.forEach((marker, index) => {
-      if (!marker || typeof marker.id !== 'string' || !marker.id
-        || ids.has(marker.id)
-        || typeof marker.label !== 'string' || !marker.label
-        || typeof marker.icon !== 'string' || !marker.icon
-        || !Number.isFinite(marker.lon) || marker.lon < -180 || marker.lon > 180
-        || !Number.isFinite(marker.lat) || marker.lat < -90 || marker.lat > 90
-        || !Number.isFinite(marker.altitudeKm) || marker.altitudeKm < 0 || marker.altitudeKm > 100000
-        || !Number.isFinite(marker.size) || marker.size <= 0 || marker.size > 256) {
-        throw new TypeError(`Invalid globe marker at JSON index ${index}.`);
-      }
-      ids.add(marker.id);
-      const entry = { ...marker };
-      // The wrap-around copies only matter on the flat map, so every copy except the
-      // main one is created the first time it is on screen.
-      const copies = [];
-      for (let copy = -3; copy <= 3; copy++) {
-        copies.push({ copy, button: copy === 0 ? createMarkerButton(entry, copy) : null });
-      }
-      markerInstances.push({ entry, copies });
-    });
-    dirty = true;
-  }
-
-  function renderMarkers(t, halfW) {
-    if (!canvas.classList.contains('is-emphasized')) return;
-    // Markers are hidden by CSS while the globe is grabbed; they update once it is released.
-    if (canvas.classList.contains('dragging')) return;
-    const phi0 = view.lat / DEG_R;
-    const cosPhi0 = Math.cos(phi0), sinPhi0 = Math.sin(phi0);
-    const globeRadius = view.s * DEG_R;
-
-    markerInstances.forEach(({ entry, copies }) => {
-      const phi = entry.lat / DEG_R;
-      const cosPhi = Math.cos(phi), sinPhi = Math.sin(phi);
-      const radialScale = 1 + entry.altitudeKm / EARTH_RADIUS_KM;
-      const visibleHorizon = -Math.sqrt(Math.max(0, 1 - 1 / (radialScale * radialScale)));
-
-      copies.forEach((instance) => {
-        const { copy } = instance;
-        const dlon = entry.lon + copy * 360 - view.lon;
-        const lam = dlon / DEG_R;
-        const px = cosPhi * Math.sin(lam);
-        const py = sinPhi;
-        const pz = cosPhi * Math.cos(lam);
-        const y2 = py * cosPhi0 - pz * sinPhi0;
-        const z2 = py * sinPhi0 + pz * cosPhi0;
-        const flatX = dlon * view.s;
-        const flatY = (entry.lat - view.lat) * view.s;
-        const globeX = px * globeRadius * radialScale;
-        const globeY = y2 * globeRadius * radialScale;
-        const x = vw / 2 + flatX * (1 - t) + globeX * t;
-        const y = vh / 2 - (flatY * (1 - t) + globeY * t);
-        const mapLeft = copy * 360 - 180 - view.lon;
-        const mapRight = copy * 360 + 180 - view.lon;
-        const mapCopyVisible = !(mapRight < -halfW || mapLeft > halfW);
-        const backVisibility = Math.min(1, Math.max(0,
-          (z2 - visibleHorizon + 0.025) / 0.05));
-        const visibility = 1 - t * (1 - backVisibility);
-        const copyAlpha = copy === 0 ? 1 : 1 - t;
-        const visible = mapCopyVisible && (copy === 0 || t <= 0.95)
-          && visibility > 0.01
-          && x > -entry.size && x < vw + entry.size
-          && y > -entry.size && y < vh + entry.size;
-
-        let { button } = instance;
-        if (!visible) {
-          if (button && !button.hidden) button.hidden = true;
-          return;
-        }
-        if (!button) button = instance.button = createMarkerButton(entry, copy);
-        if (button.hidden) button.hidden = false;
-
-        // transform moves the button without a layout pass; left/top are 0 in globe.css.
-        // Only write what changed, so steady markers cost nothing.
-        const transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) translate(-50%, -50%)`;
-        if (instance.transform !== transform) {
-          button.style.transform = transform;
-          instance.transform = transform;
-        }
-        const opacity = String(copyAlpha * visibility);
-        if (instance.opacity !== opacity) {
-          button.style.opacity = opacity;
-          instance.opacity = opacity;
-        }
-      });
-    });
+    markers.render(view, vw, vh, t, halfW);
   }
 
   // ---------------------------------------------------------- animation
@@ -748,10 +449,11 @@ function main() {
   // ------------------------------------------------------------ terrain load
   (async () => {
     try {
-      const { default: markers } = await import('../../data/globe-markers.json', {
+      const { default: definitions } = await import('../../data/globe-markers.json', {
         with: { type: 'json' },
       });
-      addMarkers(markers);
+      markers.add(definitions);
+      dirty = true;
     } catch (err) {
       console.error('Failed to load globe marker data.', err);
     }
