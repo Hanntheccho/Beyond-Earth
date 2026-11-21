@@ -12,7 +12,7 @@
 // that grows left to right (see .chart-reveal in src/css/chart.css). Event tags fade
 // in as the reveal passes them, using the --p custom property (0 to 1 across
 // the chart width). The delay and duration are set in src/css/chart.css;
-// keep the two rules there in sync..
+// keep the two rules there in sync.
 (function () {
     const datasets = window.scenarioChartData || {};
     const seriesMeta = window.scenarioSeries || {};

@@ -1,6 +1,6 @@
 /*
  * Interactive Earth sea-level globe renderer.
- * Adapted from MIT-licensed source; see LICENSE for the required notice.
+ * Adapted from MIT-licensed source.
  *
  * Rendering: a lon/lat grid mesh is projected either as an equirectangular
  * flat map (drawn in wrapping copies for seamless horizontal panning) or as

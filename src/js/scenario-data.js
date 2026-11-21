@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------
 // Per-series metadata. The chart renderer reads everything about a series from
 // here (label, unit, axis bounds, trend direction). HTML panels
-// only need data-series; they no longer carry data-unit/min/max/trend.
+// only need data-series.
 //
 //   name   : label shown in the summary grid
 //   unit   : unit shown in tooltips and the summary grid
@@ -219,8 +219,3 @@ window.scenarioChartData = {
         { year: 2200, value: 3.9 }
     ]
 };
-
-// Backwards compatibility for any code still reading the old name map.
-window.scenarioSeriesNames = Object.fromEntries(
-    Object.entries(window.scenarioSeries).map(([key, meta]) => [key, meta.name])
-);

@@ -112,4 +112,4 @@ Names in relations.json follow data/gdp-data.json and data/mkt-data.json exactly
 - Conosur and Antarctica Trust (Patagonian gateway) share a small positive link.
 
 ## Keys
-- data/relations.json uses a single "relations" array. tools/validate.mjs currently reads "dependencies" and "influences", so these relations are not being checked by it.
+- data/relations.json uses a single "relations" array. tools/validate.mjs reads that array, checks each relation's keys and weight, and enforces the source and target rules at the top of this file.

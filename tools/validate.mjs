@@ -48,6 +48,36 @@ function readJson(rel) {
     }
 }
 
+// Every top-level key of a JSON object, in file order and however the file is laid
+// out (one key per line, several on one line, any indentation). JSON.parse keeps only
+// the last duplicate, so duplicates can only be found by walking the raw text.
+function topLevelKeys(text) {
+    const keys = [];
+    const isObject = text.trimStart().startsWith('{');
+    let depth = 0;
+    let expectKey = false;
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === '"') {
+            let end = i + 1;
+            while (end < text.length && text[end] !== '"') end += text[end] === '\\' ? 2 : 1;
+            if (depth === 1 && expectKey) {
+                keys.push(JSON.parse(text.slice(i, end + 1)));
+                expectKey = false;
+            }
+            i = end;
+        } else if (ch === '{' || ch === '[') {
+            depth++;
+            if (depth === 1) expectKey = isObject;
+        } else if (ch === '}' || ch === ']') {
+            depth--;
+        } else if (ch === ',' && depth === 1) {
+            expectKey = isObject;
+        }
+    }
+    return keys;
+}
+
 // ---------------------------------------------------------------- localization
 
 function checkLocalization() {
@@ -73,9 +103,9 @@ function checkLocalization() {
 
         // JSON.parse silently keeps the last duplicate, so scan the raw text.
         const seen = new Set();
-        for (const match of text.matchAll(/^ {4}"((?:[^"\\]|\\.)*)"\s*:/gm)) {
-            if (seen.has(match[1])) error('loc', `${rel}: duplicate key "${match[1]}"`);
-            seen.add(match[1]);
+        for (const key of topLevelKeys(text)) {
+            if (seen.has(key)) error('loc', `${rel}: duplicate key "${key}"`);
+            seen.add(key);
         }
 
         Object.keys(data).forEach(key => {
@@ -381,36 +411,31 @@ function checkHtmlAndAssets(loc) {
 // ------------------------------------------------------------- economic relations
 
 function checkEconomicRelations() {
-    // Collect every valid tag and name from the database files so that a
-    // sourceKey/targetKey in relations.json can be checked against them.
-    const validKeys = new Set();
+    // Relations larger than this are probably a typo (the guide in data/relations.md
+    // suggests steps of 0.05 and the existing data tops out at 0.2).
+    const MAX_RELATION_WEIGHT = 0.25;
 
-    const srcData = readJson('data/src-data.json');
-    if (srcData) {
-        (function walk(node) {
-            if (node.tag) validKeys.add(node.tag);
-            if (node.name) validKeys.add(node.name);
-            (node.children || []).forEach(walk);
-        })(srcData);
-    }
-
-    const mktData = readJson('data/mkt-data.json');
-    if (mktData) {
-        (function walk(node) {
-            if (node.tag) validKeys.add(node.tag);
-            if (node.name) validKeys.add(node.name);
-            (node.children || []).forEach(walk);
-        })(mktData);
-    }
-
-    const gdpData = readJson('data/gdp-data.json');
-    if (gdpData) {
-        (function walk(node) {
-            if (node.tag) validKeys.add(node.tag);
-            if (node.name) validKeys.add(node.name);
-            (node.children || []).forEach(walk);
-        })(gdpData);
-    }
+    // Index every node of the database files by its tag and by its name, the two keys
+    // data-calc.js uses to resolve a sourceKey/targetKey. depth 1 is a top-level
+    // entity (a direct child of the root); the root itself is not a valid key.
+    const nodesByKey = new Map();
+    let nodeCount = 0;
+    ['data/src-data.json', 'data/mkt-data.json', 'data/gdp-data.json'].forEach(file => {
+        const data = readJson(file);
+        if (!data) return;
+        const isResource = file === 'data/src-data.json';
+        (function walk(node, depth) {
+            if (!node || typeof node !== 'object') return;
+            const id = ++nodeCount;
+            if (depth > 0) {
+                new Set([node.tag, node.name].filter(key => typeof key === 'string' && key)).forEach(key => {
+                    if (!nodesByKey.has(key)) nodesByKey.set(key, []);
+                    nodesByKey.get(key).push({ id, resource: isResource, topLevel: depth === 1, byTag: key === node.tag });
+                });
+            }
+            (node.children || []).forEach(child => walk(child, depth + 1));
+        })(data, 0);
+    });
 
     const rel = readJson('data/relations.json');
     if (!rel) return;
@@ -420,22 +445,63 @@ function checkEconomicRelations() {
         return;
     }
 
+    const seenPairs = new Map();
     rel.relations.forEach((entry, index) => {
         const where = `relations.json relations[${index}]`;
         if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
             error('relations', `${where}: expected an object`);
             return;
         }
+
+        const matches = {};
         ['sourceKey', 'targetKey'].forEach(field => {
             const value = entry[field];
             if (typeof value !== 'string' || !value) {
                 error('relations', `${where}: missing ${field}`);
-            } else if (!validKeys.has(value)) {
+                return;
+            }
+            const records = nodesByKey.get(value);
+            if (!records) {
                 error('relations', `${where}: ${field} "${value}" is not a known name or tag in src-data.json, mkt-data.json, or gdp-data.json`);
+                return;
+            }
+            matches[field] = records;
+            if (new Set(records.map(record => record.id)).size > 1) {
+                warn('relations', `${where}: ${field} "${value}" matches more than one entry in the data files, so it is ambiguous`);
             }
         });
+
+        // Rules from data/relations.md.
+        const { sourceKey: from, targetKey: to } = matches;
+        if (to) {
+            if (to.some(record => record.resource)) {
+                error('relations', `${where}: targetKey "${entry.targetKey}" is a resource; resources can only be a sourceKey`);
+            } else if (!to.some(record => record.topLevel)) {
+                error('relations', `${where}: targetKey "${entry.targetKey}" is a child entity; a targetKey must be a top-level parent entity`);
+            }
+        }
+        if (from && from.some(record => record.resource) && !from.some(record => record.resource && record.byTag)) {
+            warn('relations', `${where}: resource sourceKey "${entry.sourceKey}" is a name; use the resource's tag`);
+        }
+
+        if (from && to) {
+            if (entry.sourceKey === entry.targetKey) {
+                error('relations', `${where}: sourceKey and targetKey are both "${entry.sourceKey}"`);
+            }
+            const pair = `${entry.sourceKey}\u0000${entry.targetKey}`;
+            if (seenPairs.has(pair)) {
+                warn('relations', `${where}: repeats relations[${seenPairs.get(pair)}] (${entry.sourceKey} -> ${entry.targetKey})`);
+            } else {
+                seenPairs.set(pair, index);
+            }
+        }
+
         if (typeof entry.weight !== 'number' || !Number.isFinite(entry.weight)) {
             error('relations', `${where}: weight must be a finite JSON number`);
+        } else if (entry.weight === 0) {
+            warn('relations', `${where}: weight is 0, so this relation has no effect`);
+        } else if (Math.abs(entry.weight) > MAX_RELATION_WEIGHT) {
+            warn('relations', `${where}: weight ${entry.weight} is larger than ${MAX_RELATION_WEIGHT}`);
         }
     });
 }
