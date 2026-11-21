@@ -9,6 +9,10 @@
 //   localizationData             that data once the page is localized, null before
 //   localizeAfter(promise)       wait for a promise (pois.js building its panels)
 //                                before localizing the page
+//
+// The loading screen waits until the page is localized and the open POI panel's
+// keywords are highlighted, so no text changes after it lifts.
+import { holdLoadingScreen } from './loading-screen.js';
 
 const MANIFEST_PATH = 'data/loc/manifest.json';
 const POI_PANEL_GROUP = 'lys-pois';
@@ -223,10 +227,10 @@ async function loadLocalization() {
         function formatPoiPanel(button) {
             const key = `${button.dataset.panelTarget}-desc`;
             const elements = elementsByClass.get(key);
-            if (!elements || !Object.hasOwn(data, key) || formattedPoiDescriptions.has(key)) return;
+            if (!elements || !Object.hasOwn(data, key) || formattedPoiDescriptions.has(key)) return Promise.resolve();
 
             formattedPoiDescriptions.add(key);
-            formatLocalizationValue(key).then(value => {
+            return formatLocalizationValue(key).then(value => {
                 elements.forEach(element => {
                     element.innerHTML = value;
                 });
@@ -242,18 +246,16 @@ async function loadLocalization() {
             if (button) formatPoiPanel(button);
         });
 
-        const initialPoiButton = document.querySelector(`${poiButtonSelector}[aria-pressed="true"]`);
-        if (initialPoiButton) {
-            requestAnimationFrame(() => {
-                const initialPanel = document.getElementById(initialPoiButton.dataset.panelTarget);
-                if (initialPanel && !initialPanel.hidden) formatPoiPanel(initialPoiButton);
-            });
-        }
-
         bindLoadingTips(data);
+
+        // The open POI panel is on screen from the start, so its highlights are done
+        // before the loading screen lifts.
+        const initialPoiButton = document.querySelector(`${poiButtonSelector}[aria-pressed="true"]`);
+        const initialPanel = initialPoiButton && document.getElementById(initialPoiButton.dataset.panelTarget);
+        if (initialPanel && !initialPanel.hidden) await formatPoiPanel(initialPoiButton);
     } catch (error) {
         console.error('Error loading localization:', error);
     }
 }
 
-loadLocalization();
+holdLoadingScreen('text', loadLocalization());

@@ -2,6 +2,7 @@ import { motionPreference } from './motion.js';
 import { DEG_R, makeProgram, decodeElevation } from './globe-gl.js';
 import { MESH_VS, MESH_FS } from './globe-shaders.js';
 import { createGlobeMarkers } from './globe-markers.js';
+import { holdLoadingScreen } from './loading-screen.js';
 /*
  * Interactive Earth sea-level globe renderer.
  * Adapted from MIT-licensed source.
@@ -15,6 +16,9 @@ import { createGlobeMarkers } from './globe-markers.js';
  *
  * Split across: globe-shaders.js (GLSL), globe-gl.js (GL and elevation helpers),
  * globe-markers.js (hotspot buttons). This file owns the view, render loop and input.
+ *
+ * The terrain is the largest file the page needs, so it starts downloading as soon
+ * as this module runs, and the loading screen waits until it is ready to draw.
  */
 
 'use strict';
@@ -30,6 +34,33 @@ const GLOBE_COLORS = {
   light: { ocean: [0.8, 0.8, 0.8], land: [0.6, 0.6, 0.6], contour: [0,0,0], grid: [0.7,0.7,0.7], coast: [0.1,0.1,0.1] }
 };
 
+// ---------------------------------------------------------- terrain load
+
+// The decoded heightmap, or null when every source failed (already logged).
+async function loadElevation() {
+  for (const [index, url] of ELEVATION_SOURCES.entries()) {
+    try {
+      return await decodeElevation(url);
+    } catch (err) {
+      const last = index === ELEVATION_SOURCES.length - 1;
+      if (last) console.error('Failed to load globe elevation data.', err);
+      else console.warn(`Globe elevation ${url} failed; trying the next source.`, err);
+    }
+  }
+  return null;
+}
+
+const elevationReady = loadElevation();
+
+// Ends the loading screen's wait once the terrain is on the GPU, or once it cannot be.
+let terrainShown;
+holdLoadingScreen('terrain', new Promise(resolve => { terrainShown = resolve; }));
+
+function giveUpTerrain() {
+  terrainShown();
+  elevationReady.then(decoded => decoded?.bmp?.close());
+}
+
 // ------------------------------------------------------------------ main
 
 function main() {
@@ -37,6 +68,7 @@ function main() {
   const markerLayer = document.getElementById('globe-markers');
   if (!markerLayer) {
     console.error('The globe marker layer is missing; markers cannot be displayed.');
+    giveUpTerrain();
     return;
   }
   const gl = canvas.getContext('webgl2', {
@@ -47,6 +79,7 @@ function main() {
   });
   if (!gl) {
     console.error('WebGL2 is not available; the globe cannot render.');
+    giveUpTerrain();
     return;
   }
 
@@ -446,7 +479,7 @@ function main() {
     }, 500);
   }
 
-  // ------------------------------------------------------------ terrain load
+  // ---------------------------------------------------------- markers, terrain
   (async () => {
     try {
       const { default: definitions } = await import('../../data/globe-markers.json', {
@@ -459,19 +492,21 @@ function main() {
     }
   })();
 
-  (async () => {
-    for (const [index, url] of ELEVATION_SOURCES.entries()) {
+  // Uploading marks the view dirty, so the next frame draws the terrain. The wait ends
+  // at the upload rather than that frame, which a background tab would never run.
+  elevationReady.then(decoded => {
+    if (!decoded) {
+      dataError = true;
+    } else {
       try {
-        uploadElevation(await decodeElevation(url));
-        return;
+        uploadElevation(decoded);
       } catch (err) {
-        const last = index === ELEVATION_SOURCES.length - 1;
-        if (last) console.error('Failed to load globe elevation data.', err);
-        else console.warn(`Globe elevation ${url} failed; trying the next source.`, err);
+        console.error('Failed to upload globe elevation data.', err);
+        dataError = true;
       }
     }
-    dataError = true;
-  })();
+    terrainShown();
+  });
 
   canvas.addEventListener('webglcontextlost', (ev) => {
     ev.preventDefault();
@@ -481,8 +516,15 @@ function main() {
   requestAnimationFrame(frame);
 }
 
-const start = () => ('requestIdleCallback' in window
-    ? requestIdleCallback(main, { timeout: 2500 })
-    : setTimeout(main, 300));
-if (document.readyState === 'complete') start();
-else window.addEventListener('load', start, { once: true });
+// Start as soon as the other modules have run: the loading screen is waiting on the
+// globe, so there is no reason to hold it back until every other file has loaded.
+function start() {
+  try {
+    main();
+  } catch (err) {
+    console.error('The globe could not start.', err);
+    giveUpTerrain();
+  }
+}
+if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 500 });
+else setTimeout(start, 0);

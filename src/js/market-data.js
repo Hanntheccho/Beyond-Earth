@@ -1,8 +1,10 @@
 // market-data.js - Loads the static market data and registers it with the simulation.
-// Imported last by default.js, so the treemaps and grids are already listening for
-// the market-data:loaded / market-data:error events it dispatches.
+// It starts right away because the loading screen waits for it (the ticker shows from
+// the start). Every module has run by the time a file arrives, so the treemaps and grids
+// are already listening for the market-data:loaded / market-data:error events.
 import { loadRelations, loadTreemapSource } from './data-loader.js';
 import { valueChanges } from './data-calc.js';
+import { holdLoadingScreen } from './loading-screen.js';
 
 async function loadMarketData() {
     try {
@@ -33,5 +35,4 @@ async function loadMarketData() {
     if (loaded.some(Boolean)) valueChanges.start();
 }
 
-if ('requestIdleCallback' in window) requestIdleCallback(loadMarketData, { timeout: 1500 });
-else setTimeout(loadMarketData, 300);
+holdLoadingScreen('market data', loadMarketData());

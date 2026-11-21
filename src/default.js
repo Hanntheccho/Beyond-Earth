@@ -3,7 +3,9 @@
  * Consolidates all interactive components and initialization.
  */
 
-// 1. Core Services (Localization & Data)
+// 1. Core Services (Loading, Localization & Data)
+// The loading screen goes first: the other modules tell it what to wait for.
+import './js/loading-screen.js';
 import './js/loc.js';
 import './js/viewport-visibility.js';
 import './js/data-calc.js';
@@ -30,7 +32,6 @@ import './js/data-view.js';
 import './js/tooltips.js';
 import './js/market-text.js';
 import './js/scroll-reveal.js';
-import './js/loading-screen.js';
 
 // Load and register market data after its consumers have initialized.
 import './js/market-data.js';

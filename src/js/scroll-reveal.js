@@ -1,7 +1,10 @@
 // scroll-reveal.js - Fades the content windows (.div-desc-win) in as they scroll into
 // view, with their text (.scroll-copy) staggered by --copy-order. Windows and text
 // added later (POI panels, charts, localized copy) are picked up automatically.
+// Nothing is revealed before the loading screen lifts, so the windows already in view
+// make their entrance as it fades instead of behind it.
 import { observeVisibility } from './viewport-visibility.js';
+import { pageShown } from './loading-screen.js';
 
 const REVEAL_SELECTOR = '.div-desc-win';
 const COPY_SELECTOR = 'p, h1, h2, .ph1, .ph2, .ph3';
@@ -23,8 +26,10 @@ function observeReveal(element) {
     observed.add(element);
     element.classList.add('scroll-reveal');
     prepareCopy(element);
-    observeVisibility(element, isVisible => {
-        element.classList.toggle('is-inview', isVisible);
+    pageShown.then(() => {
+        observeVisibility(element, isVisible => {
+            element.classList.toggle('is-inview', isVisible);
+        });
     });
 }
 
