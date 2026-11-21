@@ -3,7 +3,7 @@
 // px/s, so changes in text width never make it jump. It pauses while the ticker is
 // off screen or hidden (for example while the globe is explored on its own).
 import { motionPreference } from './motion.js';
-import { valueChanges } from './data-calc.js';
+import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
 
 (function () {
@@ -11,7 +11,7 @@ import { observeVisibility } from './viewport-visibility.js';
     if (!ticker) return;
     const line = ticker.closest('.ticker-line') || ticker;
     const bar = ticker.closest('.ticker') || line.parentElement;
-    const feed = valueChanges.getFeed('goods');
+    const feed = simulation.getFeed('goods');
 
     const SPEED = 50;      // marquee speed in px per second
     const DURATION = 700;  // number tween; keep well below the feed tick interval

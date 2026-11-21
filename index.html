@@ -177,7 +177,7 @@
                 <section id="data-view-panel">
                     <!-- Feed panels (blocs, corps, goods) -->
                     <div id="data-blocs" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
-                        <div class="div-desc-win" treemap-panel>
+                        <div class="div-desc-win" data-treemap-panel>
                             <span class="data-status" role="status" aria-live="polite">Loading data…</span>
                             <nav class="treemap-breadcrumbs" aria-label="Blocs treemap location"></nav>
                             <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"></div>
@@ -188,7 +188,7 @@
                     </div>
 
                     <div id="data-corps" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
-                        <div class="div-desc-win" treemap-panel>
+                        <div class="div-desc-win" data-treemap-panel>
                             <span class="data-status" role="status" aria-live="polite">Loading data…</span>
                             <nav class="treemap-breadcrumbs" aria-label="Corps treemap location"></nav>
                             <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="true" role="group" aria-label="Corps treemap"></div>
@@ -199,7 +199,7 @@
                     </div>
 
                     <div id="data-goods" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
-                        <div class="div-desc-win" treemap-panel>
+                        <div class="div-desc-win" data-treemap-panel>
                             <span class="data-status" role="status" aria-live="polite">Loading data…</span>
                             <nav class="treemap-breadcrumbs" aria-label="Goods treemap location"></nav>
                             <div class="treemap" data-treemap="goods" data-url="data/good-data.json" data-use-tags="false" role="group" aria-label="Goods treemap"></div>
@@ -210,7 +210,7 @@
                     </div>
 
                     <div class="div-desc-win">
-                        <div id="influence-graph-container"></div>
+                        <div id="relations-graph"></div>
                     </div>
                 </section>
             </div>

@@ -2,7 +2,7 @@
 // Tiles are persistent (keyed by tag/name) and tweened between feed ticks, so
 // geometry, value, and change numbers animate instead of being rebuilt each tick.
 import { motionPreference } from './motion.js';
-import { valueChanges } from './data-calc.js';
+import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
 import { appendSvg as add } from './svg.js';
 
@@ -345,12 +345,12 @@ import { appendSvg as add } from './svg.js';
     }
 
     function statusFor(host) {
-        return host?.closest('[treemap-panel]')?.querySelector('.data-status') || null;
+        return host?.closest('[data-treemap-panel]')?.querySelector('.data-status') || null;
     }
 
     // Draws the treemap the first time it is on screen, then follows its feed.
     function mountTree(host, root) {
-        const panel = host.closest('[treemap-panel]');
+        const panel = host.closest('[data-treemap-panel]');
         const wrapper = host.closest('[data-panel-group]');
         let chart = null;
         let inViewport = false;
@@ -376,7 +376,7 @@ import { appendSvg as add } from './svg.js';
             inViewport = isVisible;
             if (inViewport && changed) updateChart();
         });
-        valueChanges.getFeed(host.dataset.treemap).subscribe(updateChart, { immediate: false });
+        simulation.getFeed(host.dataset.treemap).subscribe(updateChart, { immediate: false });
     }
 
     window.addEventListener('feeds:loaded', event => {

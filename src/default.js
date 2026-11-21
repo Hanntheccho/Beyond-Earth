@@ -8,7 +8,7 @@
 import './js/loading-screen.js';
 import './js/loc.js';
 import './js/viewport-visibility.js';
-import './js/data-calc.js';
+import './js/simulation.js';
 import './js/scenario-data.js';
 
 // 2. Visualization Components
@@ -33,7 +33,7 @@ import './js/tooltips.js';
 import './js/ticker.js';
 import './js/scroll-reveal.js';
 
-// Load and register the dataset feeds after its consumers have initialized.
+// Load and register the dataset feeds after their consumers have initialized.
 import './js/feed-loader.js';
 
 console.log('[BYOND UNiTY HTML] System initialized.');

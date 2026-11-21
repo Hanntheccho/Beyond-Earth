@@ -5,11 +5,11 @@
  * of from index.html: the download starts when the graph nears the viewport
  * and nothing is drawn until it has arrived.
  */
-import { valueChanges } from './data-calc.js';
+import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
 
 (function () {
-    const container = document.getElementById('influence-graph-container');
+    const container = document.getElementById('relations-graph');
     if (!container) return;
 
     // Pinned full ESM build. One module keeps d3-transition patched onto the
@@ -38,11 +38,11 @@ import { observeVisibility } from './viewport-visibility.js';
     }, { rootMargin: D3_PREFETCH_MARGIN });
     prefetch.observe(container);
 
-    let simulation, svg;
-    let simulationNodes = new Map();
+    let forceLayout, svg;
+    let layoutNodes = new Map();
     const draggedNodeIds = new Set();
     let selectedNodeId = null;
-    let dragSimulationActive = false;
+    let dragLayoutActive = false;
     let layoutInitialized = false;
     let inViewport = false;
     let latestData = null;
@@ -62,8 +62,8 @@ import { observeVisibility } from './viewport-visibility.js';
 
         const markers = svg.append('defs');
         [
-            { id: 'relationship-arrow-positive', className: 'relationship-arrow-positive' },
-            { id: 'relationship-arrow-negative', className: 'relationship-arrow-negative' }
+            { id: 'relation-arrow-positive', className: 'relation-arrow-positive' },
+            { id: 'relation-arrow-negative', className: 'relation-arrow-negative' }
         ].forEach(marker => {
             markers.append('marker')
                 .attr('id', marker.id)
@@ -79,12 +79,12 @@ import { observeVisibility } from './viewport-visibility.js';
                 .attr('d', 'M0,-5L10,0L0,5');
         });
 
-        simulation = d3.forceSimulation()
+        forceLayout = d3.forceSimulation()
             .force('link', d3.forceLink().id(d => d.id).distance(60))
             .force('charge', d3.forceManyBody().strength(-200))
             .force('collide', d3.forceCollide().strength(0.85).iterations(2))
             .force('center', d3.forceCenter(graphWidth / 2, graphHeight / 2))
-            .force('bounds', () => constrainNodesToBounds(simulation.nodes()))
+            .force('bounds', () => constrainNodesToBounds(forceLayout.nodes()))
             .stop();
 
         new ResizeObserver(() => {
@@ -96,11 +96,11 @@ import { observeVisibility } from './viewport-visibility.js';
             graphWidth = width;
             graphHeight = height;
             svg.attr('width', graphWidth).attr('height', graphHeight);
-            simulation.force('center')
+            forceLayout.force('center')
                 .x(graphWidth / 2)
                 .y(graphHeight / 2);
-            constrainNodesToBounds(simulation.nodes());
-            simulation.alpha(0.1).restart();
+            constrainNodesToBounds(forceLayout.nodes());
+            forceLayout.alpha(0.1).restart();
         }).observe(container);
     }
 
@@ -132,7 +132,7 @@ import { observeVisibility } from './viewport-visibility.js';
     }
 
     function render(data) {
-        if (!simulation) initGraph();
+        if (!forceLayout) initGraph();
 
         let maxLogValue = 0.001;
         data.nodes.forEach(node => {
@@ -154,14 +154,14 @@ import { observeVisibility } from './viewport-visibility.js';
             const widthBasedFontSize = availableWidth / (String(label || '').length * 0.65);
             const labelFontSize = Math.min(radius * 0.5, widthBasedFontSize);
 
-            const node = simulationNodes.get(n.id) || {};
+            const node = layoutNodes.get(n.id) || {};
             Object.assign(node, n, {
                 radius,
                 labelFontSize
             });
             return node;
         });
-        simulationNodes = new Map(nodes.map(node => [node.id, node]));
+        layoutNodes = new Map(nodes.map(node => [node.id, node]));
 
         const links = data.relations.map(relation => ({
             ...relation,
@@ -188,9 +188,9 @@ import { observeVisibility } from './viewport-visibility.js';
             });
         });
 
-        simulation.nodes(nodes);
-        simulation.force('link').links(links);
-        simulation.force('collide').radius(node => node.radius + 8);
+        forceLayout.nodes(nodes);
+        forceLayout.force('link').links(links);
+        forceLayout.force('collide').radius(node => node.radius + 8);
 
         const link = svg.selectAll('.link').data(links, d => linkKey(d.fromKey, d.toKey));
         link.exit().remove();
@@ -259,11 +259,11 @@ import { observeVisibility } from './viewport-visibility.js';
             .attr('stroke-width', d => Math.min(4, 0.75 + Math.abs(d.weight) * 12))
             .classed('is-positive', d => d.weight >= 0)
             .classed('is-negative', d => d.weight < 0)
-            .attr('marker-end', d => `url(#relationship-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
+            .attr('marker-end', d => `url(#relation-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
         updateHighlight();
         linkMerge.select('title').text(d => {
-            const from = simulationNodes.get(d.fromKey);
-            const to = simulationNodes.get(d.toKey);
+            const from = layoutNodes.get(d.fromKey);
+            const to = layoutNodes.get(d.toKey);
             return `${from.label || from.name} -> ${to.label || to.name}\nWeight: ${numberFormat.format(d.weight)}`;
         });
 
@@ -289,9 +289,9 @@ import { observeVisibility } from './viewport-visibility.js';
             nodeMerge.attr('transform', d => `translate(${d.x},${d.y})`);
         }
 
-        simulation.on('tick', updatePositions);
+        forceLayout.on('tick', updatePositions);
         if (!layoutInitialized && nodes.length) {
-            simulation.tick(300);
+            forceLayout.tick(300);
             layoutInitialized = true;
             updatePositions();
         } else {
@@ -327,7 +327,7 @@ import { observeVisibility } from './viewport-visibility.js';
         const activeNodeIds = new Set(draggedNodeIds);
         if (selectedNodeId !== null) activeNodeIds.add(selectedNodeId);
         const relatedNodeIds = new Set(activeNodeIds);
-        svg.selectAll('.link').classed('is-node-dragged-related', d => {
+        svg.selectAll('.link').classed('is-related', d => {
             const fromActive = activeNodeIds.has(d.fromKey);
             const toActive = activeNodeIds.has(d.toKey);
             if (fromActive) relatedNodeIds.add(d.toKey);
@@ -338,7 +338,7 @@ import { observeVisibility } from './viewport-visibility.js';
             .classed('is-dragging', d => draggedNodeIds.has(d.id))
             .classed('is-selected', d => selectedNodeId === d.id)
             .attr('aria-pressed', d => String(selectedNodeId === d.id))
-            .classed('is-unrelated-to-dragged-node', d =>
+            .classed('is-dimmed', d =>
                 activeNodeIds.size > 0 && !relatedNodeIds.has(d.id)
             );
     }
@@ -350,7 +350,7 @@ import { observeVisibility } from './viewport-visibility.js';
 
     // Clicking anywhere outside the graph's nodes clears the selection.
     document.addEventListener('click', event => {
-        if (selectedNodeId === null || event.target.closest?.('#influence-graph-container .node-group')) return;
+        if (selectedNodeId === null || event.target.closest?.('#relations-graph .node-group')) return;
         selectedNodeId = null;
         updateHighlight();
     });
@@ -371,9 +371,9 @@ import { observeVisibility } from './viewport-visibility.js';
     }
 
     function dragged(event) {
-        if (!dragSimulationActive) {
-            simulation.alphaTarget(0.3).restart();
-            dragSimulationActive = true;
+        if (!dragLayoutActive) {
+            forceLayout.alphaTarget(0.3).restart();
+            dragLayoutActive = true;
         }
         const radius = Number(event.subject.radius) || 0;
         event.subject.fx = clamp(event.x, radius, Math.max(radius, graphWidth - radius));
@@ -382,14 +382,14 @@ import { observeVisibility } from './viewport-visibility.js';
 
     function dragended(event) {
         draggedNodeIds.delete(event.subject.id);
-        if (dragSimulationActive && draggedNodeIds.size === 0) {
-            simulation.alphaTarget(0);
-            dragSimulationActive = false;
+        if (dragLayoutActive && draggedNodeIds.size === 0) {
+            forceLayout.alphaTarget(0);
+            dragLayoutActive = false;
         }
         updateHighlight();
         event.subject.fx = null;
         event.subject.fy = null;
     }
 
-    valueChanges.subscribeInfluence(update);
+    simulation.subscribeRelations(update);
 })();

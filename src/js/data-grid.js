@@ -2,7 +2,7 @@
 // change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
 import { motionPreference } from './motion.js';
-import { valueChanges } from './data-calc.js';
+import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
 
 (function () {
@@ -20,7 +20,7 @@ import { observeVisibility } from './viewport-visibility.js';
         const feedId = host.dataset.feedGrid;
         if (!feedId) return;
         const wrapper = host.closest('[data-panel-group]');
-        const feed = valueChanges.getFeed(feedId);
+        const feed = simulation.getFeed(feedId);
         const rows = new Map();
         let displayedItems = null;
         let raf = 0;

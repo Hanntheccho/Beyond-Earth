@@ -2,13 +2,13 @@
 // It starts right away because the loading screen waits for it (the ticker shows from
 // the start). Every module has run by the time a file arrives, so the treemaps and grids
 // are already listening for the feeds:loaded / feeds:error events.
-import { loadRelations, loadTreemapTree } from './data-loader.js';
-import { valueChanges } from './data-calc.js';
+import { loadRelations, loadTree } from './data-loader.js';
+import { simulation } from './simulation.js';
 import { holdLoadingScreen } from './loading-screen.js';
 
 async function loadFeeds() {
     try {
-        valueChanges.setRelations(await loadRelations());
+        simulation.setRelations(await loadRelations());
     } catch (error) {
         console.error('[Feeds] Failed to load relations.', error);
     }
@@ -18,11 +18,11 @@ async function loadFeeds() {
         const id = host.dataset.treemap;
         const url = host.dataset.url;
         try {
-            const { root, parentValues } = await loadTreemapTree(url, host.dataset.useTags === 'true');
+            const { root, parentValues } = await loadTree(url, host.dataset.useTags === 'true');
             if (parentValues.length) {
                 console.warn(`[Feeds] Explicit parent values are ignored in ${url}: ${parentValues.join(', ')}.`);
             }
-            valueChanges.registerTree(id, root);
+            simulation.registerTree(id, root);
             window.dispatchEvent(new CustomEvent('feeds:loaded', { detail: { id, root, url } }));
             return true;
         } catch (error) {
@@ -32,7 +32,7 @@ async function loadFeeds() {
         }
     }));
 
-    if (loaded.some(Boolean)) valueChanges.start();
+    if (loaded.some(Boolean)) simulation.start();
 }
 
 // The label is announced to screen readers while loading, so it stays plain wording.

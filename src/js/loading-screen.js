@@ -12,12 +12,12 @@ const MAX_WAIT_MS = 10000;
 
 // Rough share of the loading work per task, by download size, so the bar moves by how
 // much is left rather than by how many tasks are left. Other tasks count 1.
-//   page files  ~310 KB of scripts and styles, plus the icons
+//   pages       ~310 KB of scripts and styles, plus the icons
 //   fonts       ~40 KB
 //   text        ~120 KB in 18 files
 //   data        ~50 KB of dataset files (feed-loader.js)
 //   terrain     330 KB, then decoding and the upload to the graphics card
-const TASK_WEIGHTS = { 'page files': 3, fonts: 1, text: 2, 'data': 1, terrain: 3 };
+const TASK_WEIGHTS = { pages: 3, fonts: 1, text: 2, data: 1, terrain: 3 };
 
 const loadingScreen = document.getElementById('loading-screen');
 const bar = loadingScreen?.querySelector('.loading-bar');
@@ -95,7 +95,7 @@ const pageLoaded = new Promise(resolve => {
     else window.addEventListener('load', resolve, { once: true });
 });
 // Stylesheets, scripts, images and background art all hold up the load event.
-holdLoadingScreen('page files', pageLoaded);
+holdLoadingScreen('pages', pageLoaded);
 // A font only starts loading once text that uses it is laid out, so ask after the load event.
 holdLoadingScreen('fonts', pageLoaded.then(() => document.fonts?.ready));
 

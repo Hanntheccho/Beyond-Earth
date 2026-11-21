@@ -1,12 +1,12 @@
-// data-calc.js - the live data simulation engine.
+// simulation.js - the live data simulation engine.
 //
 // OVERVIEW
-// feed-loader.js loads and registers the treemap datasets (blocs, corps,
-// goods). This file then
-// simulates live movement on top of those trees: every tick (10 s by default)
-// each leaf value moves randomly, linked entities push each other around, and
-// parent values are re-summed. Afterwards every subscriber (treemaps, data
-// grids, the ticker) is notified so it can animate to the new numbers.
+// feed-loader.js loads and registers the treemap datasets (blocs, corps, goods).
+// This file then simulates live movement on top of those trees: on every tick
+// (interval set in startClock) each leaf value moves randomly, linked entities
+// push each other around, and parent values are re-summed. Afterwards every
+// subscriber (treemaps, data grids, the ticker) is notified so it can animate
+// to the new numbers.
 //
 // DATA SHAPE (after data-loader.js normalizes it)
 //   node = { name, tag?, value, children: [...] }
@@ -17,15 +17,16 @@
 //   volatility            : max random shock per tick (leaves only)
 //   momentum              : smoothed recent % change (leaves only)
 //
-// PUBLIC API: import { valueChanges } from './data-calc.js'
-//   getFeed(id)    -> feed object with getSnapshot/getQuote/subscribe/...
+// PUBLIC API: import { simulation } from './simulation.js'
+//   getFeed(id)    -> feed object with getSnapshot/subscribe/publish
 //   registerTree(id, root)            register a tree to simulate
 //   setRelations(data)                load data/relations.json
-//   start / stop / tick / render      control the ticker manually
-export const valueChanges = (function () {
+//   subscribeRelations(listener)      relations graph data after every tick
+//   start / stop / tick / render      control the clock manually
+export const simulation = (function () {
     // All registered trees used by the simulation and derived views.
     const trees = [];
-    const influenceListeners = new Set();
+    const relationsListeners = new Set();
     // Global sentiment that drifts slowly and nudges every leaf in the same direction.
     let sentiment = 0;
     // Relations from relations.json: the "from" item's movement pushes the "to" item
@@ -37,13 +38,13 @@ export const valueChanges = (function () {
     // move), so this is rebuilt only when a tree or the relations change.
     let resolved = null;
 
-    // Safety rails so a value can never collapse to zero or explode.
-    // Values stay within 5% to 1000% of their starting value.
+    // Safety rails so a value can never collapse to zero or explode: values stay
+    // between MIN_VALUE_RATIO and MAX_VALUE_RATIO times their starting value.
     const MIN_VALUE_RATIO = 0.05;
     const MAX_VALUE_RATIO = 100;
-    // Momentum is a smoothed % change, capped at +/-5 (percent).
+    // Momentum is a smoothed % change, capped at +/-MAX_MOMENTUM (in percent).
     const MAX_MOMENTUM = 5;
-    // The momentum boost applied to a value per tick is capped at +/-0.5%.
+    // Cap on the momentum boost applied to a value per tick (a fraction, not a percent).
     const MAX_MOMENTUM_BOOST = 0.005;
 
     // Items are identified by tag when they have one, otherwise by name.
@@ -58,7 +59,7 @@ export const valueChanges = (function () {
         node.children.forEach(child => walk(child, callback));
     }
 
-    // Keep a value inside [5%, 1000%] of the node's starting value.
+    // Keep a value within the MIN_VALUE_RATIO..MAX_VALUE_RATIO range of the node's starting value.
     function clampValue(node, value) {
         return Math.max(
             node.baseValue * MIN_VALUE_RATIO,
@@ -76,8 +77,8 @@ export const valueChanges = (function () {
         node.change = 0;
         node.changePercent = 0;
         node.baseValue = node.value;
-        // Volatility only applies to leaves. Bigger items move less:
-        // roughly 0.014 / sqrt(value / 100), limited to the range 0.35% to 1.6%.
+        // Volatility only applies to leaves. Bigger items move less (it scales with
+        // 1 / sqrt(value)), kept between a fixed minimum and maximum.
         node.volatility = node.children.length
             ? 0
             : Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(Math.max(node.value, 1) / 100)));
@@ -97,11 +98,6 @@ export const valueChanges = (function () {
             getSnapshot() {
                 return feed.root ? feed.root.children.map(item => ({ ...item, unit: item.unit || feed.root.unit })) : [];
             },
-            // Copy of one top-level item by tag/name, or null.
-            getQuote(tag) {
-                const item = feed.root && feed.root.children.find(child => itemKey(child) === tag);
-                return item ? { ...item } : null;
-            },
             // Register a listener. By default it is called once immediately with
             // the current snapshot. Returns an unsubscribe function.
             subscribe(listener, options = {}) {
@@ -115,11 +111,7 @@ export const valueChanges = (function () {
                 if (!feed.root) return;
                 const current = feed.getSnapshot();
                 feed.listeners.forEach(listener => listener(current));
-            },
-            // Shortcuts to the shared engine (all feeds tick together).
-            tick: computeValues,
-            start(options) { startTicker(options); return feed; },
-            stop() { stopTicker(); return feed; }
+            }
         };
         return feed;
     }
@@ -190,7 +182,7 @@ export const valueChanges = (function () {
         return resolved;
     }
 
-    function getInfluenceData() {
+    function getRelationsData() {
         // Copies, so a subscriber can never alter the cached relations.
         const graphRelations = getResolvedRelations().list.map(relation => ({ ...relation }));
         const nodes = new Map();
@@ -227,18 +219,18 @@ export const valueChanges = (function () {
         };
     }
 
-    // Publish current influence data to interested view subscribers.
-    function publishInfluenceData() {
-        if (!influenceListeners.size) return;
-        const data = getInfluenceData();
-        influenceListeners.forEach(listener => listener(data));
+    // Publish current relations data to the graph's subscribers.
+    function publishRelationsData() {
+        if (!relationsListeners.size) return;
+        const data = getRelationsData();
+        relationsListeners.forEach(listener => listener(data));
     }
 
-    function subscribeInfluence(listener, options = {}) {
-        if (typeof listener !== 'function') throw new TypeError('Influence subscriber must be a function');
-        influenceListeners.add(listener);
-        if (options.immediate !== false) listener(getInfluenceData());
-        return () => influenceListeners.delete(listener);
+    function subscribeRelations(listener, options = {}) {
+        if (typeof listener !== 'function') throw new TypeError('Relations subscriber must be a function');
+        relationsListeners.add(listener);
+        if (options.immediate !== false) listener(getRelationsData());
+        return () => relationsListeners.delete(listener);
     }
 
     // One simulation step. Runs in four passes over all registered trees:
@@ -260,12 +252,12 @@ export const valueChanges = (function () {
             previousKeyMap.set(itemKey(node), node.value);
         }));
 
-        // Sentiment: decays 14% per tick toward 0 and gets a small random kick,
-        // limited to +/-2%. It is applied (at 20% strength) to every leaf below.
+        // Sentiment: decays toward 0 every tick and gets a small random kick, within
+        // a fixed limit. A fraction of it is applied to every leaf below.
         sentiment = Math.max(-0.02, Math.min(0.02, sentiment * 0.86 + (Math.random() - 0.5) * 0.006));
 
         // Pass 1: apply normal stochastic movement to every leaf.
-        // Each leaf changes by mood + a tiny random drift + a random shock whose
+        // Each leaf changes by sentiment + a tiny random drift + a random shock whose
         // size is limited by the leaf's volatility. Parents are re-summed as the
         // recursion unwinds.
         function updateLeaf(node) {
@@ -321,7 +313,7 @@ export const valueChanges = (function () {
 
         // Pass 3: speculative momentum (leaves only; parents are re-aggregated in finalize)
         // Momentum is an exponential moving average of the leaf's % change so far
-        // this tick (90% old momentum, 10% new change). The leaf then gets a small
+        // this tick, weighted mostly toward the old momentum. The leaf then gets a small
         // extra push in the same direction, so trends tend to continue briefly.
         trees.forEach(tree => walk(tree.root, node => {
             if (node.children.length) return;
@@ -359,14 +351,15 @@ export const valueChanges = (function () {
     // Publish the latest numbers to feed subscribers, then refresh the graph.
     function publishFeeds() {
         feeds.forEach(feed => feed.publish());
-        publishInfluenceData();
+        publishRelationsData();
     }
 
     // Start the simulation. Ticks once immediately (so the page has movement
-    // data right away), then every intervalMs (default 10000, minimum 250).
+    // data right away), then every intervalMs; the default and the minimum are
+    // in the setInterval call below.
     // Restarting replaces any running timer. Keep UI tween durations well below
     // this interval so animations finish before the next tick.
-    function startTicker(options = {}) {
+    function startClock(options = {}) {
         if (timer) clearInterval(timer);
         computeValues();
         publishFeeds();
@@ -376,7 +369,7 @@ export const valueChanges = (function () {
         }, Math.max(250, Number(options.intervalMs) || 2000));
     }
 
-    function stopTicker() {
+    function stopClock() {
         if (timer) clearInterval(timer);
         timer = null;
     }
@@ -405,11 +398,11 @@ export const valueChanges = (function () {
         getFeed,
         registerTree,
         setRelations,
-        getInfluenceData,
-        subscribeInfluence,
+        getRelationsData,
+        subscribeRelations,
         tick: computeValues,
         render: publishFeeds,
-        start: startTicker,
-        stop: stopTicker
+        start: startClock,
+        stop: stopClock
     };
 })();

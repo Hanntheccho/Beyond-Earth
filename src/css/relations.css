@@ -1,6 +1,6 @@
-/* relations.css - Influence graph node and link styling (see src/js/relations.js). */
+/* relations.css - Relations graph node and link styling (see src/js/relations.js). */
 
-#influence-graph-container {
+#relations-graph {
     position: relative;
     display: block;
     width: 100%;
@@ -10,7 +10,7 @@
     aspect-ratio: 1 / 1;
     overflow: visible;
 }
-#influence-graph-container::before {
+#relations-graph::before {
     position: absolute;
     inset: 0;
     background: var(--img-url-alt) center / 80% no-repeat;
@@ -19,7 +19,7 @@
     pointer-events: none;
     filter: var(--img-filter);
 }
-#influence-graph-container svg {
+#relations-graph svg {
     position: relative;
     display: block;
     overflow: visible;
@@ -27,63 +27,63 @@
 
 /* Nodes: the state class sets the color, and the circle and label paint with it
    (currentColor), so a change fades through the group's color transition. */
-#influence-graph-container .node-group {
+#relations-graph .node-group {
     transition: opacity var(--transition-time) ease, color var(--transition-time-clr) ease;
 }
-#influence-graph-container .node-group.is-up { color: var(--clr-positive); }
-#influence-graph-container .node-group.is-down { color: var(--clr-negative); }
-#influence-graph-container .node-group.is-unavailable { color: var(--clr-neutrale); }
-#influence-graph-container .node-group circle {
+#relations-graph .node-group.is-up { color: var(--clr-positive); }
+#relations-graph .node-group.is-down { color: var(--clr-negative); }
+#relations-graph .node-group.is-unavailable { color: var(--clr-neutrale); }
+#relations-graph .node-group circle {
     fill: currentColor;
     fill-opacity: var(--opacity-10);
     stroke: currentColor;
     stroke-width: var(--stroke-width-1);
     cursor: grab;
 }
-#influence-graph-container .node-group.is-dragging circle {
+#relations-graph .node-group.is-dragging circle {
     cursor: grabbing;
 }
-#influence-graph-container .node-label {
+#relations-graph .node-label {
     fill: currentColor;
     font-family: var(--fnt);
     font-weight: bold;
     text-transform: uppercase;
     pointer-events: none;
 }
-#influence-graph-container .node-group:focus {
+#relations-graph .node-group:focus {
     outline: none;
 }
-#influence-graph-container .node-group:hover,
-#influence-graph-container .node-group:focus-visible {
+#relations-graph .node-group:hover,
+#relations-graph .node-group:focus-visible {
     filter: var(--brightness-50);
 }
-#influence-graph-container .node-group.is-dragging:hover {
+#relations-graph .node-group.is-dragging:hover {
     filter: none;
 }
-#influence-graph-container .node-group.is-unrelated-to-dragged-node {
+#relations-graph .node-group.is-dimmed {
     opacity: 0;
 }
 
 /* Links stay hidden until a node they touch is dragged or selected. */
-#influence-graph-container .link.is-positive,
-#influence-graph-container .link.is-negative {
+#relations-graph .link.is-positive,
+#relations-graph .link.is-negative {
     fill: none;
     opacity: 0;
     transition: opacity var(--transition-time) ease, stroke var(--transition-time-clr) ease;
     cursor: help;
 }
-#influence-graph-container .link.is-node-dragged-related {
+#relations-graph .link.is-related {
     opacity: .5;
 }
-#influence-graph-container .link.is-positive {
+#relations-graph .link.is-positive {
     stroke: var(--clr-positive);
 }
-#influence-graph-container .link.is-negative {
+#relations-graph .link.is-negative {
     stroke: var(--clr-negative);
 }
-#influence-graph-container .relationship-arrow-positive path {
+#relations-graph .relation-arrow-positive path {
     fill: var(--clr-positive);
 }
-#influence-graph-container .relationship-arrow-negative path {
+#relations-graph .relation-arrow-negative path {
     fill: var(--clr-negative);
 }

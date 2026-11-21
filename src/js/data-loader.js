@@ -1,6 +1,6 @@
 // Reads and normalizes the static data files behind the live data views.
-// Simulation and presentation stay in data-calc.js and the view components.
-export async function loadTreemapTree(path, useTags = false) {
+// Simulation and presentation stay in simulation.js and the view components.
+export async function loadTree(path, useTags = false) {
     const response = await fetch(path);
     if (!response.ok) throw new Error(`Treemap data could not be loaded: ${path} (${response.status})`);
     const raw = await response.json();

@@ -449,15 +449,15 @@ function checkHtmlAndAssets(loc) {
     return html;
 }
 
-// ------------------------------------------------------------- economic relations
+// ---------------------------------------------------------------------- relations
 
-function checkEconomicRelations() {
+function checkRelations() {
     // Relations larger than this are probably a typo (the guide in data/relations.md
     // suggests steps of 0.05 and the existing data tops out at 0.2).
     const MAX_RELATION_WEIGHT = 0.25;
 
     // Index every node of the database files by its tag and by its name, the two keys
-    // data-calc.js uses to resolve a fromKey/toKey. depth 1 is a top-level
+    // simulation.js uses to resolve a fromKey/toKey. depth 1 is a top-level
     // entity (a direct child of the root); the root itself is not a valid key.
     const nodesByKey = new Map();
     let nodeCount = 0;
@@ -768,7 +768,7 @@ checkTreemaps(html);
 checkDataFileDuplicates('data/good-data.json');
 checkDataFileDuplicates('data/corp-data.json');
 checkDataFileDuplicates('data/bloc-data.json');
-checkEconomicRelations();
+checkRelations();
 checkScenario();
 checkModules();
 checkSyntax();
