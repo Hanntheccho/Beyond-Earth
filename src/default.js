@@ -30,10 +30,10 @@ import './js/display-options.js';
 import './js/main-visibility.js';
 import './js/data-view.js';
 import './js/tooltips.js';
-import './js/market-text.js';
+import './js/ticker.js';
 import './js/scroll-reveal.js';
 
-// Load and register market data after its consumers have initialized.
-import './js/market-data.js';
+// Load and register the dataset feeds after its consumers have initialized.
+import './js/feed-loader.js';
 
 console.log('[BYOND UNiTY HTML] System initialized.');

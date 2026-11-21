@@ -1,9 +1,9 @@
-// data-calc.js - the "MondayMarket" simulation engine.
+// data-calc.js - the live data simulation engine.
 //
 // OVERVIEW
-// The market data modules load and register the treemap datasets (GDP, market,
-// resources). This file then
-// simulates a live market on top of those trees: every tick (10 s by default)
+// feed-loader.js loads and registers the treemap datasets (blocs, corps,
+// goods). This file then
+// simulates live movement on top of those trees: every tick (10 s by default)
 // each leaf value moves randomly, linked entities push each other around, and
 // parent values are re-summed. Afterwards every subscriber (treemaps, data
 // grids, the ticker) is notified so it can animate to the new numbers.
@@ -18,17 +18,17 @@
 //   momentum              : smoothed recent % change (leaves only)
 //
 // PUBLIC API: import { valueChanges } from './data-calc.js'
-//   getMarket(id)  -> market object with getSnapshot/getQuote/subscribe/...
-//   registerSource(id, root)          register a tree to simulate
+//   getFeed(id)    -> feed object with getSnapshot/getQuote/subscribe/...
+//   registerTree(id, root)            register a tree to simulate
 //   setRelations(data)                load data/relations.json
 //   start / stop / tick / render      control the ticker manually
 export const valueChanges = (function () {
-    // All registered trees used by the market simulation and derived views.
-    const sources = [];
+    // All registered trees used by the simulation and derived views.
+    const trees = [];
     const influenceListeners = new Set();
     // Global sentiment that drifts slowly and nudges every leaf in the same direction.
-    let marketMood = 0;
-    // Relations from relations.json: a source's movement pushes a target
+    let sentiment = 0;
+    // Relations from relations.json: the "from" item's movement pushes the "to" item
     // (e.g. oil price -> an energy company).
     let relations = [];
     let timer = null;
@@ -84,68 +84,68 @@ export const valueChanges = (function () {
         node.momentum = 0;  // Initialize momentum tracking
     }
 
-    // A "market" is a named view onto one registered tree (for example
-    // "gdp", "market" or "resources"). Other scripts subscribe to it to get
+    // A "feed" is a named view onto one registered tree (for example
+    // "blocs", "corps" or "goods"). Other scripts subscribe to it to get
     // a snapshot of the top-level items after every tick.
-    function createMarket(key) {
-        const market = {
+    function createFeed(key) {
+        const feed = {
             key,
             root: null,
             listeners: new Set(),
             // Shallow copies of the root's direct children, with the root's unit
             // supplied when an item does not have one of its own.
             getSnapshot() {
-                return market.root ? market.root.children.map(item => ({ ...item, unit: item.unit || market.root.unit })) : [];
+                return feed.root ? feed.root.children.map(item => ({ ...item, unit: item.unit || feed.root.unit })) : [];
             },
             // Copy of one top-level item by tag/name, or null.
             getQuote(tag) {
-                const item = market.root && market.root.children.find(child => itemKey(child) === tag);
+                const item = feed.root && feed.root.children.find(child => itemKey(child) === tag);
                 return item ? { ...item } : null;
             },
             // Register a listener. By default it is called once immediately with
             // the current snapshot. Returns an unsubscribe function.
             subscribe(listener, options = {}) {
-                if (typeof listener !== 'function') throw new TypeError('Market subscriber must be a function');
-                market.listeners.add(listener);
-                if (options.immediate !== false) listener(market.getSnapshot());
-                return () => market.listeners.delete(listener);
+                if (typeof listener !== 'function') throw new TypeError('Feed subscriber must be a function');
+                feed.listeners.add(listener);
+                if (options.immediate !== false) listener(feed.getSnapshot());
+                return () => feed.listeners.delete(listener);
             },
             // Send the current snapshot to every listener.
             publish() {
-                if (!market.root) return;
-                const current = market.getSnapshot();
-                market.listeners.forEach(listener => listener(current));
+                if (!feed.root) return;
+                const current = feed.getSnapshot();
+                feed.listeners.forEach(listener => listener(current));
             },
-            // Shortcuts to the shared engine (all markets tick together).
+            // Shortcuts to the shared engine (all feeds tick together).
             tick: computeValues,
-            start(options) { startTicker(options); return market; },
-            stop() { stopTicker(); return market; }
+            start(options) { startTicker(options); return feed; },
+            stop() { stopTicker(); return feed; }
         };
-        return market;
+        return feed;
     }
 
-    // All markets by id, created lazily on first request.
-    const markets = new Map();
+    // All feeds by id, created lazily on first request.
+    const feeds = new Map();
 
-    function getMarket(key) {
+    function getFeed(key) {
         if (typeof key !== 'string' || !key.trim()) {
-            throw new TypeError('Market ID must be a non-empty string');
+            throw new TypeError('Feed ID must be a non-empty string');
         }
         const id = key.trim();
-        if (!markets.has(id)) markets.set(id, createMarket(id));
-        return markets.get(id);
+        if (!feeds.has(id)) feeds.set(id, createFeed(id));
+        return feeds.get(id);
     }
 
-    // Called by the market data loader once per normalized source tree.
-    function registerSource(key, root) {
+    // Called by feed-loader.js once per normalized tree.
+    function registerTree(key, root) {
         prepareValues(root);
-        sources.push({ root });
+        trees.push({ root });
         resolved = null;
 
         if (key) {
-            const market = getMarket(key);
-            market.root = root;
-            market.publish();
+            const feed = getFeed(key);
+            feed.root = root;
+            feed.publish();
         }
     }
 
@@ -158,33 +158,33 @@ export const valueChanges = (function () {
     function createNodeIndex() {
         const byTag = new Map();
         const byName = new Map();
-        sources.forEach(source => walk(source.root, node => {
+        trees.forEach(tree => walk(tree.root, node => {
             if (node.tag && !byTag.has(node.tag)) byTag.set(node.tag, node);
             if (node.name && !byName.has(node.name)) byName.set(node.name, node);
         }));
         return { byTag, byName };
     }
 
-    function findNodeByKey(targetKey, nodeIndex) {
-        return nodeIndex.byTag.get(targetKey) || nodeIndex.byName.get(targetKey) || null;
+    function findNodeByKey(toKey, nodeIndex) {
+        return nodeIndex.byTag.get(toKey) || nodeIndex.byName.get(toKey) || null;
     }
 
     function getResolvedRelations() {
         if (resolved) return resolved;
         const nodeIndex = createNodeIndex();
         const list = relations.map(relation => {
-            const source = findNodeByKey(relation.sourceKey, nodeIndex);
-            const target = findNodeByKey(relation.targetKey, nodeIndex);
+            const from = findNodeByKey(relation.fromKey, nodeIndex);
+            const to = findNodeByKey(relation.toKey, nodeIndex);
             return {
                 ...relation,
-                sourceKey: source ? itemKey(source) : relation.sourceKey,
-                targetKey: target ? itemKey(target) : relation.targetKey
+                fromKey: from ? itemKey(from) : relation.fromKey,
+                toKey: to ? itemKey(to) : relation.toKey
             };
         });
         const byTarget = new Map();
         list.forEach(relation => {
-            if (!byTarget.has(relation.targetKey)) byTarget.set(relation.targetKey, []);
-            byTarget.get(relation.targetKey).push(relation);
+            if (!byTarget.has(relation.toKey)) byTarget.set(relation.toKey, []);
+            byTarget.get(relation.toKey).push(relation);
         });
         resolved = { list, byTarget };
         return resolved;
@@ -195,7 +195,7 @@ export const valueChanges = (function () {
         const graphRelations = getResolvedRelations().list.map(relation => ({ ...relation }));
         const nodes = new Map();
         graphRelations.forEach(relation => {
-            [relation.sourceKey, relation.targetKey].forEach(key => {
+            [relation.fromKey, relation.toKey].forEach(key => {
                 if (typeof key !== 'string' || !key) return;
                 nodes.set(key, {
                     id: key,
@@ -208,7 +208,7 @@ export const valueChanges = (function () {
             });
         });
 
-        sources.forEach(source => walk(source.root, node => {
+        trees.forEach(tree => walk(tree.root, node => {
             const key = itemKey(node);
             if (!nodes.has(key)) return;
             nodes.set(key, {
@@ -246,23 +246,23 @@ export const valueChanges = (function () {
     //   2. incoming relations push their targets
     //   3. momentum: recent movement slightly extends itself
     //   4. roll parent values up from their children and record change/changePercent
-    // Incoming relations are measured by how much the SOURCE changed during pass 1,
+    // Incoming relations are measured by how much the FROM item changed during pass 1,
     // so they react to the random move, not to other relations.
     function computeValues() {
         // Snapshot of every value before this tick, by node and by key.
-        // Used to measure change and to compute each relation's source movement.
+        // Used to measure change and to compute each relation's "from" movement.
         const previous = new Map();
         const previousKeyMap = new Map();
         const relationsByTarget = getResolvedRelations().byTarget;
 
-        sources.forEach(source => walk(source.root, node => {
+        trees.forEach(tree => walk(tree.root, node => {
             previous.set(node, node.value);
             previousKeyMap.set(itemKey(node), node.value);
         }));
 
-        // Market mood: decays 14% per tick toward 0 and gets a small random kick,
+        // Sentiment: decays 14% per tick toward 0 and gets a small random kick,
         // limited to +/-2%. It is applied (at 20% strength) to every leaf below.
-        marketMood = Math.max(-0.02, Math.min(0.02, marketMood * 0.86 + (Math.random() - 0.5) * 0.006));
+        sentiment = Math.max(-0.02, Math.min(0.02, sentiment * 0.86 + (Math.random() - 0.5) * 0.006));
 
         // Pass 1: apply normal stochastic movement to every leaf.
         // Each leaf changes by mood + a tiny random drift + a random shock whose
@@ -275,31 +275,31 @@ export const valueChanges = (function () {
             } else {
                 const drift = (Math.random() - 0.5) * 0.0012;
                 const shock = (Math.random() * 2 - 1) * node.volatility;
-                node.value = clampValue(node, node.value * (1 + marketMood * 0.2 + drift + shock));
+                node.value = clampValue(node, node.value * (1 + sentiment * 0.2 + drift + shock));
             }
         }
-        sources.forEach(source => updateLeaf(source.root));
+        trees.forEach(tree => updateLeaf(tree.root));
 
         // Pass 2: sum all incoming relation effects per target before applying them.
         if (relationsByTarget.size) {
             // Snapshot the freshly updated values so relations can compare against the last tick.
             const currentKeyMap = new Map();
-            sources.forEach(source => walk(source.root, node => {
+            trees.forEach(tree => walk(tree.root, node => {
                 currentKeyMap.set(itemKey(node), node.value);
             }));
 
-            sources.forEach(source => walk(source.root, node => {
+            trees.forEach(tree => walk(tree.root, node => {
                 const relevantRelations = relationsByTarget.get(itemKey(node));
                 if (!relevantRelations) return;
 
                 const applyToLeaf = (leaf) => {
                     let impact = 0;
                     relevantRelations.forEach(rel => {
-                        const prevSourceVal = previousKeyMap.get(rel.sourceKey);
-                        const currentSourceVal = currentKeyMap.get(rel.sourceKey);
-                        if (prevSourceVal && currentSourceVal) {
-                            const sourceChange = (currentSourceVal - prevSourceVal) / prevSourceVal;
-                            impact += sourceChange * rel.weight * leaf.value;
+                        const prevFromVal = previousKeyMap.get(rel.fromKey);
+                        const currentFromVal = currentKeyMap.get(rel.fromKey);
+                        if (prevFromVal && currentFromVal) {
+                            const fromChange = (currentFromVal - prevFromVal) / prevFromVal;
+                            impact += fromChange * rel.weight * leaf.value;
                         }
                     });
                     leaf.value = clampValue(leaf, leaf.value + impact);
@@ -323,7 +323,7 @@ export const valueChanges = (function () {
         // Momentum is an exponential moving average of the leaf's % change so far
         // this tick (90% old momentum, 10% new change). The leaf then gets a small
         // extra push in the same direction, so trends tend to continue briefly.
-        sources.forEach(source => walk(source.root, node => {
+        trees.forEach(tree => walk(tree.root, node => {
             if (node.children.length) return;
             const oldValue = previous.get(node) || 0;
             const rawChange = node.value - oldValue;
@@ -353,12 +353,12 @@ export const valueChanges = (function () {
             node.change = node.value - oldValue;
             node.changePercent = oldValue ? node.change / oldValue * 100 : 0;
         }
-        sources.forEach(source => finalize(source.root));
+        trees.forEach(tree => finalize(tree.root));
     }
 
-    // Publish the latest numbers to market subscribers, then refresh the graph.
-    function publishMarkets() {
-        markets.forEach(market => market.publish());
+    // Publish the latest numbers to feed subscribers, then refresh the graph.
+    function publishFeeds() {
+        feeds.forEach(feed => feed.publish());
         publishInfluenceData();
     }
 
@@ -369,10 +369,10 @@ export const valueChanges = (function () {
     function startTicker(options = {}) {
         if (timer) clearInterval(timer);
         computeValues();
-        publishMarkets();
+        publishFeeds();
         timer = setInterval(() => {
             computeValues();
-            publishMarkets();
+            publishFeeds();
         }, Math.max(250, Number(options.intervalMs) || 2000));
     }
 
@@ -387,7 +387,7 @@ export const valueChanges = (function () {
     // immediately gets current data instead of waiting for the next tick.
     const panelObserver = new MutationObserver(records => {
         if (records.some(record => record.target.matches('[data-panel-group]:not([data-panel-target])'))) {
-            publishMarkets();
+            publishFeeds();
         }
     });
     panelObserver.observe(document.body, {
@@ -397,18 +397,18 @@ export const valueChanges = (function () {
     });
     // Catch up when the browser tab becomes visible again.
     document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) publishMarkets();
+        if (!document.hidden) publishFeeds();
     });
 
-    // Public API used by the market data loader and view components.
+    // Public API used by feed-loader.js and view components.
     return {
-        getMarket,
-        registerSource,
+        getFeed,
+        registerTree,
         setRelations,
         getInfluenceData,
         subscribeInfluence,
         tick: computeValues,
-        render: publishMarkets,
+        render: publishFeeds,
         start: startTicker,
         stop: stopTicker
     };

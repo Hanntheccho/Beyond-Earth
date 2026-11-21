@@ -26,8 +26,8 @@ import { holdLoadingScreen } from './loading-screen.js';
 const DEFAULT_SEA_LEVEL = 50; // 2200 value, keeps today's look as the fallback
 
 // Resolved from src/js/. The WebP is the shipped file; the PNG is the untouched
-// source, only fetched if the WebP cannot be decoded.
-const ELEVATION_SOURCES = ['../../data/elev-1080.webp', '../../data/elev-1080.png'];
+// original, only fetched if the WebP cannot be decoded.
+const ELEVATION_URLS = ['../../data/elev-1080.webp', '../../data/elev-1080.png'];
 
 const GLOBE_COLORS = {
   dark: { ocean: [0.1, 0.1, 0.1], land: [0.4, 0.4, 0.4], contour: [1,1,1], grid: [0.2,0.2,0.2], coast: [0.9,0.9,0.9] },
@@ -36,15 +36,15 @@ const GLOBE_COLORS = {
 
 // ---------------------------------------------------------- terrain load
 
-// The decoded heightmap, or null when every source failed (already logged).
+// The decoded heightmap, or null when every file failed (already logged).
 async function loadElevation() {
-  for (const [index, url] of ELEVATION_SOURCES.entries()) {
+  for (const [index, url] of ELEVATION_URLS.entries()) {
     try {
       return await decodeElevation(url);
     } catch (err) {
-      const last = index === ELEVATION_SOURCES.length - 1;
+      const last = index === ELEVATION_URLS.length - 1;
       if (last) console.error('Failed to load globe elevation data.', err);
-      else console.warn(`Globe elevation ${url} failed; trying the next source.`, err);
+      else console.warn(`Globe elevation ${url} failed; trying the next file.`, err);
     }
   }
   return null;

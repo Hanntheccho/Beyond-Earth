@@ -1,14 +1,14 @@
-Relations in `data/relations.json` are directed. Each relation has a `sourceKey` and a `targetKey`; the direction matters.
+Relations in `data/relations.json` are directed. Each relation has a `fromKey` and a `toKey`; the direction matters.
 
-For resource relations, use the resource’s tag from `data/src-data.json` as `sourceKey`. Never use a resource name or tag as `targetKey`. A `targetKey` must identify a top-level parent entity; do not target a child entity.
+For good relations, use the good’s tag from `data/good-data.json` as `fromKey`. Never use a good name or tag as `toKey`. A `toKey` must identify a top-level parent entity; do not target a child entity.
 
 In the guide below, each `+` represents a suggested weight of `+0.05`, and each `-` represents `-0.05`. For example, `+++OIL` suggests a weight of `0.15`, while `--GAS` suggests `-0.10`. These are guidelines, not strict requirements; use judgment when choosing weights.
 
-You may add relations that are not listed in the guide. For additional resource relations, consider each faction’s country list and real-world resource availability in those regions.
+You may add relations that are not listed in the guide. For additional good relations, consider each bloc’s country list and the real-world availability of those goods in those regions.
 
-For relations between countries and companies, consider their names, lore, and worldbuilding when deciding whether a relation makes sense and what its weight should be.
+For relations between blocs and corps, consider their names, lore, and worldbuilding when deciding whether a relation makes sense and what its weight should be.
 
-# CURRENT SOURCE LIST IS (BY TAG)
+# CURRENT GOOD LIST IS (BY TAG)
 OIL
 GAS
 URANIUM
@@ -30,7 +30,7 @@ SILICA
 HELIUM
 COAL
 
-# COUNTRY | (WEIGHT)SOURCE
+# BLOC | (WEIGHT)GOOD
 Al-Falah | +++OIL +++GAS ++SULFUR ++PHOSPHA ++CHROM +BAUX ++HELIUM
 Central Asian Federation | ++OIL +++GAS ++URANIUM +++CHROM +SULFUR +COPPER +IRON +COAL
 North Sea Alliance | +OIL ++GAS +URANIUM ++IRON +COPPER +++REE ++++COAL ++TITAN +GRAPH
@@ -48,7 +48,7 @@ People's African Union | +OIL +GAS +URANIUM ++COPPER +COBALT ++GRAPH +COAL +REE 
 Andean Compact | +IRON ++LITHIUM +REE +COAL ++COPPER +TUNG +PHOSPHA
 Bamako Compact | ++OIL +GAS +URANIUM +++IRON ++BAUX ++MANGA +LITHIUM
 
-# COMPANY | (WEIGHT)SOURCE
+# CORP | (WEIGHT)GOOD
 ARC International | ---OIL ---GAS -URANIUM -IRON --LITHIUM ---REE -COBALT
 Pavlov Energy | --OIL --GAS ---URANIUM --LITHIUM
 Westralian Logistics | --OIL -GAS -IRON ---LITHIUM
@@ -76,14 +76,14 @@ ABTBIA | -IRON -COPPER
 University of Eurasia Fund |
 
 # INTERPRETATIONS (added with the extra relations)
-Names in relations.json follow data/gdp-data.json and data/mkt-data.json exactly (Al-Falah, LOW Artillery Foundries, ...). The lists above were typed with older spellings in places.
+Names in relations.json follow data/bloc-data.json and data/corp-data.json exactly (Al-Falah, LOW Artillery Foundries, ...). The lists above were typed with older spellings in places.
 
 ## Sign and size
-- A source price move pushes the target in the same direction when the weight is positive (the target earns from that source) and the opposite direction when negative (the target pays for it). Producers get +, heavy consumers and importers get -.
-- Source to country/company weights use the +/- steps above (0.05 each). Country/company links use free values between 0.02 and 0.12.
-- The country to company link is usually a bit larger than the company back to the country (the state backs the firm more than the firm moves the state). Rivalries are negative and small (-0.02 to -0.03).
+- A "from" price move pushes the "to" item in the same direction when the weight is positive (it earns from that good) and the opposite direction when negative (it pays for it). Producers get +, heavy consumers and importers get -.
+- Good to bloc/corp weights use the +/- steps above (0.05 each). Bloc/corp links use free values between 0.02 and 0.12.
+- The bloc to corp link is usually a bit larger than the corp back to the bloc (the state backs the firm more than the firm moves the state). Rivalries are negative and small (-0.02 to -0.03).
 
-## Added country lists (real world source availability)
+## Added country lists (real-world availability of goods)
 - Brasilia: Brazil (iron, bauxite, manganese, graphite, phosphate, nickel), Bolivaria and Guiana (oil), Caribbean Union (Cuban nickel).
 - People's African Union: Zambezia (copper, cobalt), Tanzania/Mozambique/Madagascar (graphite, gas, titanium, nickel), Ethiopia/South Sudan (oil).
 - Bamako Compact: Mauritania/Liberia/Burkina (iron), Ghana/Ogowe (manganese, bauxite), Biafra/Sokoto (oil, gas), Mali (lithium).
@@ -94,7 +94,7 @@ Names in relations.json follow data/gdp-data.json and data/mkt-data.json exactly
 - Polystralia: the Nusantaran Association, Australasia and Westralia (Australian and Indonesian iron, bauxite, nickel, coal, lithium).
 - Conosur: Argentina and Chile (copper above all, some lithium, little oil or gas).
 - Kimpwanza League: Republic of the Kongo (cobalt, copper), South Africa (chromium, manganese, titanium, coal), Angola (oil).
-- Others (Slavic, Pan-Asian, ...) were extended with the new source tags using the same logic: China for graphite, tungsten, phosphate, titanium; Australia/Indonesia for iron, bauxite, nickel; India for coal, iron, bauxite; Norway for titanium.
+- Others (Slavic, Pan-Asian, ...) were extended with the new good tags using the same logic: China for graphite, tungsten, phosphate, titanium; Australia/Indonesia for iron, bauxite, nickel; India for coal, iron, bauxite; Norway for titanium.
 
 ## Company readings
 Readings marked (lore) follow the POI text in data/loc/pois, and readings marked (mod) follow the company descriptions in the original Beyond Earth mod. The others are still assumptions, because neither source says anything about them.
@@ -106,7 +106,7 @@ Readings marked (lore) follow the POI text in data/loc/pois, and readings marked
 - Antarctica Trust (lore, ANTT panel): the trust that governs Antarctica and licenses its mines. It earns from rare earths and helium (White Lua Mines), gas (Mann's Sea) and the rest, with Conosur as its Patagonian gateway, Polystralia as its supplier, and the Ark Initiative's Ice Vaults on its land.
 - Cooperativa Minera de Lima (lore, COOP panel): the member-owned lithium cooperative at the heart of the Andean Compact. It and the Compact depend on each other, and it is wary of the corporations that also run the Compact (a small negative with Compact Corporation).
 - North Sea Construction (lore, NSA panel): read as the builder of Scotland's ARKs and sea walls, which is why it pays for iron, copper, manganese and silica and moves with the North Sea Alliance.
-- LysCore (lore, FRA panel): Franco-Iberia's archive corporation, now an entry under the Mediterranean Bloc. It still has no source links.
+- LysCore (lore, FRA panel): Franco-Iberia's archive corporation, now an entry under the Mediterranean Bloc. It still has no good links.
 - ABTBIA: the board that regulates the African economy. It moves with the People's African Union and pays for infrastructure inputs (iron, copper).
 - Compact Corporation: read as the Andean Compact's corporate arm (the Compact is run by its corporations), so it tracks Andean Compact, copper and lithium.
 - INCOM International: electronics and tech from the Pan-Asian Cooperative. Pays for rare earths and silica.
@@ -115,7 +115,7 @@ Readings marked (lore) follow the POI text in data/loc/pois, and readings marked
 - Ark Initiative: biodiversity and seed preservation, tied to Müninstek Freunde and Antarctica Trust. The ANTT panel now confirms this: its seed and gene vaults are the Trust's Ice Vaults in the Grand Ice Canyon. It is unrelated to Scotland's ARK cities.
 - Pacific Patch Market: the Great Pacific Garbage Patch salvage trade. Scrap metal and old electronics make it earn more when iron, copper and REE rise.
 - Bharat Blackrock: read as a coal producer and trader based on Bharat.
-- INTRCD, University of Eurasia Fund: no extra source links, only the country links in relations.json. INTRCD's old link to the Union of Maghreb was folded into its Mediterranean Bloc link.
+- INTRCD, University of Eurasia Fund: no extra good links, only the bloc links in relations.json. INTRCD's old link to the Union of Maghreb was folded into its Mediterranean Bloc link.
 
 ## Pairs worth knowing
 Each pair is listed with the lore behind it.

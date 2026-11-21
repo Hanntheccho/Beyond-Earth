@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="src/css/treemap.css">
     <link rel="stylesheet" href="src/css/data-grid.css">
     <link rel="stylesheet" href="src/css/relations.css">
-    <link rel="stylesheet" href="src/css/market-text.css">
+    <link rel="stylesheet" href="src/css/ticker.css">
     <link rel="stylesheet" href="src/css/vfx.css">
     <link rel="stylesheet" href="src/css/loading-screen.css">
     <link rel="stylesheet" href="src/css/reduced-motion.css">
@@ -77,13 +77,13 @@
         </button>
         <!-- Data categories: shown under the data view toggle while the data view is open -->
         <div class="data-tabs" role="group" aria-label="Data categories">
-            <button type="button" aria-label="World values" data-panel-group="data-categories" data-panel-target="data-gdp" aria-pressed="true">
+            <button type="button" aria-label="World values" data-panel-group="data-categories" data-panel-target="data-blocs" aria-pressed="true">
                 <img src="assets/btn/btn03.svg" alt="">
             </button>
-            <button type="button" aria-label="Market values" data-panel-group="data-categories" data-panel-target="data-market" aria-pressed="false">
+            <button type="button" aria-label="Market values" data-panel-group="data-categories" data-panel-target="data-corps" aria-pressed="false">
                 <img src="assets/btn/btn04.svg" alt="">
             </button>
-            <button type="button" aria-label="Resource values" data-panel-group="data-categories" data-panel-target="data-resources" aria-pressed="false">
+            <button type="button" aria-label="Resource values" data-panel-group="data-categories" data-panel-target="data-goods" aria-pressed="false">
                 <img src="assets/btn/btn07.svg" alt="">
             </button>
         </div>
@@ -149,7 +149,7 @@
     <!-- Main -->
     <main class="div-main" id="main-content">
         <h1 class="main-title">[BYOND UNiTY :HTML]</h1>
-        <div class="market-text"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
+        <div class="ticker"><div class="ticker-line"><span class="ticker-txt"></span></div></div>
 
         <article class="scenario-briefing" id="briefing-view">
             <div class="div-submain">
@@ -175,45 +175,41 @@
         <article class="data-view" id="data-view" hidden>
             <div class="div-submain">
                 <section id="data-view-panel">
-                    <!-- Market Data Panels -->
-                    <div id="data-gdp" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
+                    <!-- Feed panels (blocs, corps, goods) -->
+                    <div id="data-blocs" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
                         <div class="div-desc-win" treemap-panel>
                             <span class="data-status" role="status" aria-live="polite">Loading data…</span>
-                            <nav class="treemap-breadcrumbs" aria-label="GDP treemap location"></nav>
-                            <div class="treemap" data-treemap="gdp" data-source="data/gdp-data.json" data-use-tags="false" role="group" aria-label="GDP treemap"></div>
+                            <nav class="treemap-breadcrumbs" aria-label="Blocs treemap location"></nav>
+                            <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"></div>
                         </div>
                         <div class="div-desc-win">
-                            <span class="data-status" data-market-status="gdp" aria-live="polite"></span>
-                            <div class="data-grid" data-market-grid="gdp"></div>
+                            <div class="data-grid" data-feed-grid="blocs"></div>
                         </div>
                     </div>
 
-                    <div id="data-market" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
+                    <div id="data-corps" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
                         <div class="div-desc-win" treemap-panel>
                             <span class="data-status" role="status" aria-live="polite">Loading data…</span>
-                            <nav class="treemap-breadcrumbs" aria-label="Market treemap location"></nav>
-                            <div class="treemap" data-treemap="market" data-source="data/mkt-data.json" data-use-tags="true" role="group" aria-label="Market treemap"></div>
+                            <nav class="treemap-breadcrumbs" aria-label="Corps treemap location"></nav>
+                            <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="true" role="group" aria-label="Corps treemap"></div>
                         </div>
                         <div class="div-desc-win">
-                            <span class="data-status" data-market-status="market" aria-live="polite"></span>
-                            <div class="data-grid" data-market-grid="market"></div>
+                            <div class="data-grid" data-feed-grid="corps"></div>
                         </div>
                     </div>
 
-                    <div id="data-resources" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
+                    <div id="data-goods" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
                         <div class="div-desc-win" treemap-panel>
                             <span class="data-status" role="status" aria-live="polite">Loading data…</span>
-                            <nav class="treemap-breadcrumbs" aria-label="Resource treemap location"></nav>
-                            <div class="treemap" data-treemap="resources" data-source="data/src-data.json" data-use-tags="false" role="group" aria-label="Resources treemap"></div>
+                            <nav class="treemap-breadcrumbs" aria-label="Goods treemap location"></nav>
+                            <div class="treemap" data-treemap="goods" data-url="data/good-data.json" data-use-tags="false" role="group" aria-label="Goods treemap"></div>
                         </div>
                         <div class="div-desc-win">
-                            <span class="data-status" data-market-status="resources" aria-live="polite"></span>
-                            <div class="data-grid" data-market-grid="resources"></div>
+                            <div class="data-grid" data-feed-grid="goods"></div>
                         </div>
                     </div>
 
-                    <div class="div-desc-win debug-influence-panel">
-                        <span class="data-status">MONDAYMARKET · liveData</span>
+                    <div class="div-desc-win">
                         <div id="influence-graph-container"></div>
                     </div>
                 </section>

@@ -1,6 +1,6 @@
-/* market-text.css - Market ticker (see src/js/market-text.js). */
+/* ticker.css - Live data ticker (see src/js/ticker.js). */
 
-.market-text {
+.ticker {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -19,10 +19,10 @@
     border-top: var(--border);
     z-index: 1000;
 }
-.market-text-line {
+.ticker-line {
     flex: none;
 }
-.market-text-val { transition: color var(--transition-time-clr) ease; }
-.market-text-val.positive { color: var(--clr-positive); }
-.market-text-val.negative { color: var(--clr-negative); }
-.market-text-val.neutrale { color: var(--clr-neutrale); }
+.ticker-val { transition: color var(--transition-time-clr) ease; }
+.ticker-val.positive { color: var(--clr-positive); }
+.ticker-val.negative { color: var(--clr-negative); }
+.ticker-val.neutrale { color: var(--clr-neutrale); }

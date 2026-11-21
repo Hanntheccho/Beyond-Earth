@@ -1,4 +1,4 @@
-// data-grid.js - Market data grids. Rows are persistent (keyed by tag/name): value and
+// data-grid.js - Live data grids. Rows are persistent (keyed by tag/name): value and
 // change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
 import { motionPreference } from './motion.js';
@@ -9,19 +9,18 @@ import { observeVisibility } from './viewport-visibility.js';
     const valueFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
-    // Keep both durations well below the market tick interval.
+    // Keep both durations well below the feed tick interval.
     const DURATION = 700;
     const REORDER_DURATION = 500;
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
 
-    function renderMarketGrid(host) {
-        const marketId = host.dataset.marketGrid;
-        if (!marketId) return;
-        const status = document.querySelector(`[data-market-status="${CSS.escape(marketId)}"]`);
+    function renderFeedGrid(host) {
+        const feedId = host.dataset.feedGrid;
+        if (!feedId) return;
         const wrapper = host.closest('[data-panel-group]');
-        const market = valueChanges.getMarket(marketId);
+        const feed = valueChanges.getFeed(feedId);
         const rows = new Map();
         let displayedItems = null;
         let raf = 0;
@@ -161,10 +160,9 @@ import { observeVisibility } from './viewport-visibility.js';
             }
 
             startLoop();
-            if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
         }
 
-        // A market tick reaches the grid twice: through its own subscription and
+        // A feed tick reaches the grid twice: through its own subscription and
         // through the treemap's treemap:items event. Both land in the same task, so
         // they are merged into one render with the latest items.
         function requestRender() {
@@ -173,7 +171,7 @@ import { observeVisibility } from './viewport-visibility.js';
             queueMicrotask(() => {
                 renderQueued = false;
                 if (document.hidden || !inViewport || wrapper?.hidden) return;
-                render(displayedItems || market.getSnapshot());
+                render(displayedItems || feed.getSnapshot());
             });
         }
 
@@ -193,13 +191,13 @@ import { observeVisibility } from './viewport-visibility.js';
         // The treemap reports which items it shows (it can be drilled into).
         document.addEventListener('treemap:items', event => {
             const detail = event.detail;
-            if (!detail || detail.marketId !== marketId) return;
+            if (!detail || detail.feedId !== feedId) return;
             displayedItems = detail.items;
             requestRender();
         });
 
-        market.subscribe(requestRender);
+        feed.subscribe(requestRender);
     }
 
-    document.querySelectorAll('[data-market-grid]').forEach(renderMarketGrid);
+    document.querySelectorAll('[data-feed-grid]').forEach(renderFeedGrid);
 })();

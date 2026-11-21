@@ -19,7 +19,7 @@ window.scenarioSeries = {
     population: { name: 'World Population', unit: 'billion', min: 0 },
     seaLevel: { name: 'Mean Sea Level', unit: 'meters', trend: 'negative', min: 0 },
     iceVolume: { name: 'Total Ice Volume', unit: 'Mkm³', min: 0 },
-    worldGDP: { name: 'Gross Domestic Product', unit: '%' }
+    worldOutput: { name: 'Gross Domestic Product', unit: '%' }
 };
 
 // ---------------------------------------------------------------------------
@@ -32,27 +32,27 @@ window.scenarioConfig = {
     baselineYear: 2070, // the summary grid shows % change since this year
     events: [
         { year: 2070, label: 'The Great Mistake' },
-        { year: 2074, label: 'Satellites Fall', y: 100, series: ['worldGDP'] },
+        { year: 2074, label: 'Satellites Fall', y: 100, series: ['worldOutput'] },
         { year: 2075, label: 'Nuclear Ashfall', y: 310, series: ['temperature'] },
-        { year: 2084, label: 'Siege of Washington', y: 310, series: ['worldGDP', 'population'] },
+        { year: 2084, label: 'Siege of Washington', y: 310, series: ['worldOutput', 'population'] },
         { year: 2088, label: 'Hamburg Flood', y: 140, series: ['seaLevel', 'population'] },
         { year: 2089, label: 'INTEGR Founded', y: 200, series: ['ecobalance'], positive: true },
         { year: 2090, label: 'Antarctic Collapse', y: 210, series: ['iceVolume', 'seaLevel'] },
-        { year: 2107, label: 'Swiss Plebiscite', y: 200, series: ['worldGDP'], positive: true },
-        { year: 2134, label: 'Congo Crisis', series: ['population', 'worldGDP'] },
-        { year: 2154, label: 'Great Betrayal', y: 160, series: ['worldGDP'] },
+        { year: 2107, label: 'Swiss Plebiscite', y: 200, series: ['worldOutput'], positive: true },
+        { year: 2134, label: 'Congo Crisis', series: ['population', 'worldOutput'] },
+        { year: 2154, label: 'Great Betrayal', y: 160, series: ['worldOutput'] },
         { year: 2154, label: 'Caspian Flood', series: ['seaLevel'] },
-        { year: 2159, label: 'Beijing Coup', series: ['worldGDP'] },
-        { year: 2170, label: 'War of Unification', y: 120, series: ['worldGDP', 'population'] },
-        { year: 2188, label: 'Arabian War', series: ['population', 'worldGDP'] },
+        { year: 2159, label: 'Beijing Coup', series: ['worldOutput'] },
+        { year: 2170, label: 'War of Unification', y: 120, series: ['worldOutput', 'population'] },
+        { year: 2188, label: 'Arabian War', series: ['population', 'worldOutput'] },
         { year: 2194, label: 'Green Soil', y: 60, series: ['ecobalance'], positive: true },
         { year: 2198, label: "Coup of '98", y: 180, series: ['population'] },
-        { year: 2199, label: 'Fu Zhong Dies', y: 40, series: ['worldGDP'] }
+        { year: 2199, label: 'Fu Zhong Dies', y: 40, series: ['worldOutput'] }
     ],
     eras: [
-        { start: 2070, end: 2100, label: 'Dark Age', series: ['temperature', 'ecobalance', 'population', 'worldGDP'] },
+        { start: 2070, end: 2100, label: 'Dark Age', series: ['temperature', 'ecobalance', 'population', 'worldOutput'] },
         { start: 2080, end: 2160, label: 'Ice Sheet Collapse', series: ['seaLevel', 'iceVolume'] },
-        { start: 2100, end: 2200, label: 'Reconstruction Era', series: ['worldGDP', 'ecobalance'], positive: true },
+        { start: 2100, end: 2200, label: 'Reconstruction Era', series: ['worldOutput', 'ecobalance'], positive: true },
         { start: 2050, end: 2070, label: 'AoP', positive: true } // Age of Plenty
     ]
 };
@@ -169,7 +169,7 @@ window.scenarioChartData = {
         { year: 2180, value: 12.4 },
         { year: 2200, value: 11.7 }
     ],
-    worldGDP: [
+    worldOutput: [
         { year: 2050, value: 11.4 },
         { year: 2060, value: 8.2 },
         { year: 2069, value: 9.4 },

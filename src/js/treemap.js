@@ -1,5 +1,5 @@
 // treemap.js - Shared treemap layout, labels, colors, and optional hierarchical navigation.
-// Tiles are persistent (keyed by tag/name) and tweened between market ticks, so
+// Tiles are persistent (keyed by tag/name) and tweened between feed ticks, so
 // geometry, value, and change numbers animate instead of being rebuilt each tick.
 import { motionPreference } from './motion.js';
 import { valueChanges } from './data-calc.js';
@@ -13,7 +13,7 @@ import { appendSvg as add } from './svg.js';
     const tooltipNumberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
-    // Tween settings. Keep DURATION well below the market tick interval.
+    // Tween settings. Keep DURATION well below the feed tick interval.
     const DURATION = 700;
     const TWEEN_PROPS = ['x', 'y', 'w', 'h', 'value', 'pct'];
     const ease = t => 1 - Math.pow(1 - t, 3);
@@ -278,15 +278,15 @@ import { appendSvg as add } from './svg.js';
             const children = getChildren(current.node);
             const items = children.length ? children : [current.node];
             const total = items.reduce((sum, node) => sum + getValue(node), 0);
-            if (options.marketId) {
+            if (options.feedId) {
                 host.dispatchEvent(new CustomEvent('treemap:items', {
                     bubbles: true,
-                    detail: { marketId: options.marketId, items }
+                    detail: { feedId: options.feedId, items }
                 }));
             }
 
             // Drilling in or out changes which tiles exist, so rebuild from scratch.
-            // Normal market ticks keep the same path and only update tile targets.
+            // Normal feed ticks keep the same path and only update tile targets.
             const signature = path.map(entry => getName(entry.node)).join('>');
             if (signature !== pathSignature || !svg) {
                 pathSignature = signature;
@@ -333,7 +333,7 @@ import { appendSvg as add } from './svg.js';
 
             if (status) {
                 const totalText = `€$${numberFormat.format(total)}B`;
-                status.textContent = `MONDAYMARKET · ${getName(current.node)} · ${totalText} · ${items.length} ${items.length === 1 ? 'A01' : 'A10'}`;
+                status.textContent = `${getName(current.node)} · ${totalText} · ${items.length} ${items.length === 1 ? 'A01' : 'A10'}`;
             }
         }
         render();
@@ -348,8 +348,8 @@ import { appendSvg as add } from './svg.js';
         return host?.closest('[treemap-panel]')?.querySelector('.data-status') || null;
     }
 
-    // Draws the treemap the first time it is on screen, then follows the market.
-    function mountSource(host, root) {
+    // Draws the treemap the first time it is on screen, then follows its feed.
+    function mountTree(host, root) {
         const panel = host.closest('[treemap-panel]');
         const wrapper = host.closest('[data-panel-group]');
         let chart = null;
@@ -363,7 +363,7 @@ import { appendSvg as add } from './svg.js';
             }
             chart = mount(host, {
                 root,
-                marketId: host.dataset.treemap,
+                feedId: host.dataset.treemap,
                 rootLabel: root.name,
                 breadcrumbs: panel?.querySelector('.treemap-breadcrumbs') || null,
                 status: statusFor(host),
@@ -376,17 +376,17 @@ import { appendSvg as add } from './svg.js';
             inViewport = isVisible;
             if (inViewport && changed) updateChart();
         });
-        valueChanges.getMarket(host.dataset.treemap).subscribe(updateChart, { immediate: false });
+        valueChanges.getFeed(host.dataset.treemap).subscribe(updateChart, { immediate: false });
     }
 
-    window.addEventListener('market-data:loaded', event => {
+    window.addEventListener('feeds:loaded', event => {
         const { id, root } = event.detail || {};
         const host = findHost(id);
-        if (host && root) mountSource(host, root);
+        if (host && root) mountTree(host, root);
     });
-    window.addEventListener('market-data:error', event => {
-        const { id, source } = event.detail || {};
+    window.addEventListener('feeds:error', event => {
+        const { id, url } = event.detail || {};
         const status = statusFor(findHost(id));
-        if (status) status.textContent = `${id || 'Treemap'} data could not be loaded. Check ${source || 'the data source'}.`;
+        if (status) status.textContent = `${id || 'Treemap'} data could not be loaded. Check ${url || 'the data url'}.`;
     });
 })();

@@ -109,8 +109,8 @@ import { observeVisibility } from './viewport-visibility.js';
     }
 
     // Identifies a directed link (keys never contain control characters).
-    function linkKey(sourceKey, targetKey) {
-        return `${sourceKey}\u0001${targetKey}`;
+    function linkKey(fromKey, toKey) {
+        return `${fromKey}\u0001${toKey}`;
     }
 
     function clampNodeToBounds(node) {
@@ -165,24 +165,25 @@ import { observeVisibility } from './viewport-visibility.js';
 
         const links = data.relations.map(relation => ({
             ...relation,
-            source: relation.sourceKey,
-            target: relation.targetKey,
+            // d3.forceLink requires the "source" and "target" field names.
+            source: relation.fromKey,
+            target: relation.toKey,
             weight: Number(relation.weight) || 0
         }));
 
         // Links between the same two nodes (either direction) bend apart.
         const linksByPair = new Map();
         links.forEach(link => {
-            const pairKey = link.sourceKey <= link.targetKey
-                ? linkKey(link.sourceKey, link.targetKey)
-                : linkKey(link.targetKey, link.sourceKey);
+            const pairKey = link.fromKey <= link.toKey
+                ? linkKey(link.fromKey, link.toKey)
+                : linkKey(link.toKey, link.fromKey);
             if (!linksByPair.has(pairKey)) linksByPair.set(pairKey, []);
             linksByPair.get(pairKey).push(link);
         });
         linksByPair.forEach(group => {
             group.forEach((link, index) => {
                 const sideOffset = (index - (group.length - 1) / 2) * 24;
-                const direction = link.sourceKey <= link.targetKey ? 1 : -1;
+                const direction = link.fromKey <= link.toKey ? 1 : -1;
                 link.curveOffset = sideOffset * direction;
             });
         });
@@ -191,7 +192,7 @@ import { observeVisibility } from './viewport-visibility.js';
         simulation.force('link').links(links);
         simulation.force('collide').radius(node => node.radius + 8);
 
-        const link = svg.selectAll('.link').data(links, d => linkKey(d.sourceKey, d.targetKey));
+        const link = svg.selectAll('.link').data(links, d => linkKey(d.fromKey, d.toKey));
         link.exit().remove();
         const linkEnter = link.enter().append('path')
             .attr('class', 'link')
@@ -261,9 +262,9 @@ import { observeVisibility } from './viewport-visibility.js';
             .attr('marker-end', d => `url(#relationship-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
         updateHighlight();
         linkMerge.select('title').text(d => {
-            const source = simulationNodes.get(d.sourceKey);
-            const target = simulationNodes.get(d.targetKey);
-            return `${source.label || source.name} -> ${target.label || target.name}\nWeight: ${numberFormat.format(d.weight)}`;
+            const from = simulationNodes.get(d.fromKey);
+            const to = simulationNodes.get(d.toKey);
+            return `${from.label || from.name} -> ${to.label || to.name}\nWeight: ${numberFormat.format(d.weight)}`;
         });
 
         function getLinkPath(d) {
@@ -327,10 +328,10 @@ import { observeVisibility } from './viewport-visibility.js';
         if (selectedNodeId !== null) activeNodeIds.add(selectedNodeId);
         const relatedNodeIds = new Set(activeNodeIds);
         svg.selectAll('.link').classed('is-node-dragged-related', d => {
-            const fromActive = activeNodeIds.has(d.sourceKey);
-            const toActive = activeNodeIds.has(d.targetKey);
-            if (fromActive) relatedNodeIds.add(d.targetKey);
-            if (toActive) relatedNodeIds.add(d.sourceKey);
+            const fromActive = activeNodeIds.has(d.fromKey);
+            const toActive = activeNodeIds.has(d.toKey);
+            if (fromActive) relatedNodeIds.add(d.toKey);
+            if (toActive) relatedNodeIds.add(d.fromKey);
             return fromActive || toActive;
         });
         svg.selectAll('.node-group')

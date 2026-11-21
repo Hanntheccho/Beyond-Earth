@@ -262,37 +262,37 @@ function checkMarkers(poiIds) {
 
 function checkTreemaps(html) {
     // The files and tag settings come from the treemap <div>s in index.html.
-    const sources = [...html.matchAll(/<div[^>]*\bclass="treemap"[^>]*>/g)]
+    const treemapFiles = [...html.matchAll(/<div[^>]*\bclass="treemap"[^>]*>/g)]
         .map(match => ({
-            source: (/data-source="([^"]+)"/.exec(match[0]) || [])[1],
+            file: (/data-url="([^"]+)"/.exec(match[0]) || [])[1],
             useTags: /data-use-tags="true"/.test(match[0])
         }))
-        .filter(entry => entry.source);
+        .filter(entry => entry.file);
 
-    sources.forEach(({ source, useTags }) => {
-        const root = readJson(source);
+    treemapFiles.forEach(({ file, useTags }) => {
+        const root = readJson(file);
         if (!root) return;
 
         const walk = (node, trail) => {
             const label = node.name || node.tag || '(unnamed)';
             const here = [...trail, label].join(' > ');
-            if (!node.name && !node.tag) warn(source, `${here}: node has no name or tag`);
+            if (!node.name && !node.tag) warn(file, `${here}: node has no name or tag`);
 
             const children = Array.isArray(node.children) ? node.children : [];
             if (children.length) {
                 if (Object.prototype.hasOwnProperty.call(node, 'value')) {
-                    error(source, `${here}: parent has an explicit "value"; it is ignored and computed from its children`);
+                    error(file, `${here}: parent has an explicit "value"; it is ignored and computed from its children`);
                 }
                 const seen = new Set();
                 children.forEach(child => {
                     const key = child.tag || child.name;
-                    if (seen.has(key)) error(source, `${here}: two children share the key "${key}"`);
+                    if (seen.has(key)) error(file, `${here}: two children share the key "${key}"`);
                     seen.add(key);
-                    if (useTags && !child.tag) warn(source, `${here} > ${child.name || '(unnamed)'}: no "tag" (tags are used as labels here)`);
+                    if (useTags && !child.tag) warn(file, `${here} > ${child.name || '(unnamed)'}: no "tag" (tags are used as labels here)`);
                     walk(child, [...trail, label]);
                 });
             } else if (!(Number(node.value) > 0)) {
-                warn(source, `${here}: leaf has no positive "value"`);
+                warn(file, `${here}: leaf has no positive "value"`);
             }
         };
         walk(root, []);
@@ -394,7 +394,7 @@ function checkHtmlAndAssets(loc) {
         error('html', `index.html: id "${id}" is used more than once`);
     });
 
-    for (const match of html.matchAll(/\b(?:src|href|data-source)="([^"]+)"/g)) {
+    for (const match of html.matchAll(/\b(?:src|href|data-url)="([^"]+)"/g)) {
         if (isExternal(match[1])) continue;
         if (!exists(abs(stripQuery(match[1])))) error('assets', `index.html references "${match[1]}" which does not exist`);
     }
@@ -416,13 +416,13 @@ function checkHtmlAndAssets(loc) {
 
     if (exists(abs('src/js/globe.js'))) {
         // globe.js resolves these against its own location, src/js/.
-        const globeSource = read(abs('src/js/globe.js'));
-        const list = /const\s+ELEVATION_SOURCES\s*=\s*\[([^\]]*)\]/.exec(globeSource);
-        const sources = list ? [...list[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : [];
-        if (!list) warn('globe', 'ELEVATION_SOURCES was not found in globe.js, so elevation files were not checked');
-        sources.forEach((source, index) => {
-            if (exists(path.resolve(abs('src/js'), source))) return;
-            const message = `globe.js loads "${source}" (resolved from src/js/) which does not exist`;
+        const globeCode = read(abs('src/js/globe.js'));
+        const list = /const\s+ELEVATION_URLS\s*=\s*\[([^\]]*)\]/.exec(globeCode);
+        const urls = list ? [...list[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : [];
+        if (!list) warn('globe', 'ELEVATION_URLS was not found in globe.js, so elevation files were not checked');
+        urls.forEach((url, index) => {
+            if (exists(path.resolve(abs('src/js'), url))) return;
+            const message = `globe.js loads "${url}" (resolved from src/js/) which does not exist`;
             if (index === 0) error('assets', message);
             else warn('assets', `${message}; it is only the fallback`);
         });
@@ -457,21 +457,21 @@ function checkEconomicRelations() {
     const MAX_RELATION_WEIGHT = 0.25;
 
     // Index every node of the database files by its tag and by its name, the two keys
-    // data-calc.js uses to resolve a sourceKey/targetKey. depth 1 is a top-level
+    // data-calc.js uses to resolve a fromKey/toKey. depth 1 is a top-level
     // entity (a direct child of the root); the root itself is not a valid key.
     const nodesByKey = new Map();
     let nodeCount = 0;
-    ['data/src-data.json', 'data/mkt-data.json', 'data/gdp-data.json'].forEach(file => {
+    ['data/good-data.json', 'data/corp-data.json', 'data/bloc-data.json'].forEach(file => {
         const data = readJson(file);
         if (!data) return;
-        const isResource = file === 'data/src-data.json';
+        const isGood = file === 'data/good-data.json';
         (function walk(node, depth) {
             if (!node || typeof node !== 'object') return;
             const id = ++nodeCount;
             if (depth > 0) {
                 new Set([node.tag, node.name].filter(key => typeof key === 'string' && key)).forEach(key => {
                     if (!nodesByKey.has(key)) nodesByKey.set(key, []);
-                    nodesByKey.get(key).push({ id, resource: isResource, topLevel: depth === 1, byTag: key === node.tag });
+                    nodesByKey.get(key).push({ id, good: isGood, topLevel: depth === 1, byTag: key === node.tag });
                 });
             }
             (node.children || []).forEach(child => walk(child, depth + 1));
@@ -495,7 +495,7 @@ function checkEconomicRelations() {
         }
 
         const matches = {};
-        ['sourceKey', 'targetKey'].forEach(field => {
+        ['fromKey', 'toKey'].forEach(field => {
             const value = entry[field];
             if (typeof value !== 'string' || !value) {
                 error('relations', `${where}: missing ${field}`);
@@ -503,7 +503,7 @@ function checkEconomicRelations() {
             }
             const records = nodesByKey.get(value);
             if (!records) {
-                error('relations', `${where}: ${field} "${value}" is not a known name or tag in src-data.json, mkt-data.json, or gdp-data.json`);
+                error('relations', `${where}: ${field} "${value}" is not a known name or tag in good-data.json, corp-data.json, or bloc-data.json`);
                 return;
             }
             matches[field] = records;
@@ -513,25 +513,25 @@ function checkEconomicRelations() {
         });
 
         // Rules from data/relations.md.
-        const { sourceKey: from, targetKey: to } = matches;
+        const { fromKey: from, toKey: to } = matches;
         if (to) {
-            if (to.some(record => record.resource)) {
-                error('relations', `${where}: targetKey "${entry.targetKey}" is a resource; resources can only be a sourceKey`);
+            if (to.some(record => record.good)) {
+                error('relations', `${where}: toKey "${entry.toKey}" is a good; goods can only be a fromKey`);
             } else if (!to.some(record => record.topLevel)) {
-                error('relations', `${where}: targetKey "${entry.targetKey}" is a child entity; a targetKey must be a top-level parent entity`);
+                error('relations', `${where}: toKey "${entry.toKey}" is a child entity; a toKey must be a top-level parent entity`);
             }
         }
-        if (from && from.some(record => record.resource) && !from.some(record => record.resource && record.byTag)) {
-            warn('relations', `${where}: resource sourceKey "${entry.sourceKey}" is a name; use the resource's tag`);
+        if (from && from.some(record => record.good) && !from.some(record => record.good && record.byTag)) {
+            warn('relations', `${where}: good fromKey "${entry.fromKey}" is a name; use the good's tag`);
         }
 
         if (from && to) {
-            if (entry.sourceKey === entry.targetKey) {
-                error('relations', `${where}: sourceKey and targetKey are both "${entry.sourceKey}"`);
+            if (entry.fromKey === entry.toKey) {
+                error('relations', `${where}: fromKey and toKey are both "${entry.fromKey}"`);
             }
-            const pair = `${entry.sourceKey}\u0000${entry.targetKey}`;
+            const pair = `${entry.fromKey}\u0000${entry.toKey}`;
             if (seenPairs.has(pair)) {
-                warn('relations', `${where}: repeats relations[${seenPairs.get(pair)}] (${entry.sourceKey} -> ${entry.targetKey})`);
+                warn('relations', `${where}: repeats relations[${seenPairs.get(pair)}] (${entry.fromKey} -> ${entry.toKey})`);
             } else {
                 seenPairs.set(pair, index);
             }
@@ -604,12 +604,12 @@ function checkSyntax() {
     const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'validate-'));
     try {
         files.forEach((rel, index) => {
-            const source = read(abs(rel));
+            const code = read(abs(rel));
             // Copy to a temp file with an explicit extension so a future package.json
             // "type" setting cannot change how the file is parsed.
-            const isModule = /\bimport\.meta\b|^\s*(?:import|export)\s/m.test(source);
+            const isModule = /\bimport\.meta\b|^\s*(?:import|export)\s/m.test(code);
             const target = path.join(temp, `${index}${isModule ? '.mjs' : '.cjs'}`);
-            fs.writeFileSync(target, source);
+            fs.writeFileSync(target, code);
             const result = spawnSync(process.execPath, ['--check', target], { encoding: 'utf8' });
             if (result.status !== 0) {
                 const detail = result.stderr.split('\n').filter(Boolean).slice(0, 4).join(' | ').replaceAll(target, rel);
@@ -657,9 +657,9 @@ function checkStylesheets(html) {
 
     // Custom properties are set in the stylesheets, registered with @property, or set
     // from the scripts (style.setProperty('--x', ...) or "--x:" in an inline style).
-    const sources = cssFiles.map(rel => [rel, read(abs(rel))]);
+    const cssTexts = cssFiles.map(rel => [rel, read(abs(rel))]);
     const defined = new Set();
-    sources.forEach(([, text]) => {
+    cssTexts.forEach(([, text]) => {
         for (const match of text.matchAll(/(--[\w-]+)\s*:/g)) defined.add(match[1]);
         for (const match of text.matchAll(/@property\s+(--[\w-]+)/g)) defined.add(match[1]);
     });
@@ -670,7 +670,7 @@ function checkStylesheets(html) {
     for (const match of scripts.matchAll(/setProperty\(\s*['"`](--[\w-]+)/g)) defined.add(match[1]);
     for (const match of scripts.matchAll(/(--[\w-]+)\s*:/g)) defined.add(match[1]);
 
-    sources.forEach(([rel, text]) => {
+    cssTexts.forEach(([rel, text]) => {
         const reported = new Set();
         for (const match of text.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)) {
             const name = match[1];
@@ -684,12 +684,12 @@ function checkStylesheets(html) {
 // --------------------------------------------------------------------- modules
 
 // Names a module exports: `export function/const/let/class name` and `export { a, b as c }`.
-function exportedNames(source) {
+function exportedNames(code) {
     const names = new Set();
-    for (const match of source.matchAll(/^\s*export\s+(?:async\s+)?(?:function\*?|class|const|let|var)\s+([A-Za-z_$][\w$]*)/gm)) {
+    for (const match of code.matchAll(/^\s*export\s+(?:async\s+)?(?:function\*?|class|const|let|var)\s+([A-Za-z_$][\w$]*)/gm)) {
         names.add(match[1]);
     }
-    for (const match of source.matchAll(/^\s*export\s*\{([^}]*)\}/gm)) {
+    for (const match of code.matchAll(/^\s*export\s*\{([^}]*)\}/gm)) {
         match[1].split(',').forEach(part => {
             const name = part.trim().split(/\s+as\s+/).pop().trim();
             if (name) names.add(name);
@@ -720,11 +720,11 @@ function checkModules() {
         if (reached.has(file)) continue;
         reached.add(file);
         const rel = path.relative(ROOT, file).replaceAll('\\', '/');
-        const source = read(file);
+        const code = read(file);
         const dir = path.dirname(file);
 
         // Static imports: import './x.js', import { a, b as c } from './x.js'
-        for (const match of source.matchAll(/^\s*import\s+(?:([^'";]+?)\s+from\s+)?['"]([^'"]+)['"]/gm)) {
+        for (const match of code.matchAll(/^\s*import\s+(?:([^'";]+?)\s+from\s+)?['"]([^'"]+)['"]/gm)) {
             const [, clause, spec] = match;
             if (!spec.startsWith('.')) continue;
             const target = path.resolve(dir, spec);
@@ -747,7 +747,7 @@ function checkModules() {
         }
 
         // Dynamic imports of local files (the globe's marker JSON, for example).
-        for (const match of source.matchAll(/\bimport\(\s*['"](\.[^'"]+)['"]/g)) {
+        for (const match of code.matchAll(/\bimport\(\s*['"](\.[^'"]+)['"]/g)) {
             if (!exists(path.resolve(dir, match[1]))) error('modules', `${rel} dynamically imports "${match[1]}" which does not exist`);
         }
     }
@@ -765,9 +765,9 @@ checkMarkers(poiIds);
 const html = checkHtmlAndAssets(loc);
 checkStylesheets(html);
 checkTreemaps(html);
-checkDataFileDuplicates('data/src-data.json');
-checkDataFileDuplicates('data/mkt-data.json');
-checkDataFileDuplicates('data/gdp-data.json');
+checkDataFileDuplicates('data/good-data.json');
+checkDataFileDuplicates('data/corp-data.json');
+checkDataFileDuplicates('data/bloc-data.json');
 checkEconomicRelations();
 checkScenario();
 checkModules();

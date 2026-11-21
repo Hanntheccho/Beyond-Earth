@@ -1,4 +1,4 @@
-// market-text.js - Scrolling market ticker. Items are persistent (keyed by tag/name):
+// ticker.js - Scrolling live data ticker. Items are persistent (keyed by tag/name):
 // percent values are tweened between ticks. The marquee is driven in JS at a constant
 // px/s, so changes in text width never make it jump. It pauses while the ticker is
 // off screen or hidden (for example while the globe is explored on its own).
@@ -7,14 +7,14 @@ import { valueChanges } from './data-calc.js';
 import { observeVisibility } from './viewport-visibility.js';
 
 (function () {
-    const ticker = document.querySelector('.market-text-txt');
+    const ticker = document.querySelector('.ticker-txt');
     if (!ticker) return;
-    const line = ticker.closest('.market-text-line') || ticker;
-    const bar = ticker.closest('.market-text') || line.parentElement;
-    const market = valueChanges.getMarket('resources');
+    const line = ticker.closest('.ticker-line') || ticker;
+    const bar = ticker.closest('.ticker') || line.parentElement;
+    const feed = valueChanges.getFeed('goods');
 
     const SPEED = 50;      // marquee speed in px per second
-    const DURATION = 700;  // number tween; keep well below the market tick interval
+    const DURATION = 700;  // number tween; keep well below the feed tick interval
     const DIRECTIONS = ['positive', 'negative', 'neutrale'];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
@@ -58,9 +58,9 @@ import { observeVisibility } from './viewport-visibility.js';
         current.forEach((item, index) => {
             if (index) ticker.append(' | ');
             const wrapper = document.createElement('span');
-            wrapper.className = 'market-text-item';
+            wrapper.className = 'ticker-item';
             const val = document.createElement('span');
-            val.className = 'market-text-val';
+            val.className = 'ticker-val';
             wrapper.append(val, ` ${item.name}`);
             ticker.append(wrapper);
 
@@ -137,5 +137,5 @@ import { observeVisibility } from './viewport-visibility.js';
         if (!document.hidden) startLoop();
     });
 
-    market.subscribe(render, { immediate: true });
+    feed.subscribe(render, { immediate: true });
 })();

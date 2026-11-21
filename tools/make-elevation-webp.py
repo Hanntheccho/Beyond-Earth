@@ -4,7 +4,7 @@
 Run from anywhere:  python3 tools/make-elevation-webp.py
 Needs Python 3 with Pillow (built with WebP support) and NumPy.
 
-The PNG stays the untouched source. Elevation is 16-bit, packed as
+The PNG stays the untouched original. Elevation is 16-bit, packed as
 R * 256 + G - 11000 metres, so the WebP must be lossless.
 
 What changes: ocean deeper than COAST_BAND_M that is not in a 2x2 sampling
@@ -23,7 +23,7 @@ from PIL import Image
 COAST_BAND_M = 2000  # must match COAST_BAND_M in src/js/globe-shaders.js
 OFFSET_M = 11000
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / 'data' / 'elev-1080.png'
+PNG = ROOT / 'data' / 'elev-1080.png'
 OUT = ROOT / 'data' / 'elev-1080.webp'
 
 
@@ -46,7 +46,7 @@ def dilate_cells(mask):
 
 
 def main():
-    rgb = np.array(Image.open(SRC).convert('RGB'))
+    rgb = np.array(Image.open(PNG).convert('RGB'))
     elev = rgb[..., 0].astype(np.int32) * 256 + rgb[..., 1] - OFFSET_M
     keep = dilate_cells(elev > -COAST_BAND_M)
 
@@ -60,7 +60,7 @@ def main():
     if not np.array_equal(back, flat):
         raise SystemExit(f'{OUT.name} did not round-trip exactly; is Pillow encoding lossless WebP?')
 
-    print(f'{SRC.name}: {SRC.stat().st_size / 1024:.0f} KB -> {OUT.name}: {OUT.stat().st_size / 1024:.0f} KB')
+    print(f'{PNG.name}: {PNG.stat().st_size / 1024:.0f} KB -> {OUT.name}: {OUT.stat().st_size / 1024:.0f} KB')
     print(f'kept {keep.mean() * 100:.1f}% of pixels exactly, flattened {(~keep).mean() * 100:.1f}% (deep ocean)')
 
 

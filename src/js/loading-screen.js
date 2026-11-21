@@ -1,7 +1,7 @@
 // loading-screen.js - Keeps the loading screen up until the page is ready, then fades it
 // out. Ready means every task handed to holdLoadingScreen() has settled, loaded or
 // failed: the page's own files and fonts (below), the text and POI panels (loc.js), the
-// market data (market-data.js) and the globe's terrain (globe.js). MAX_WAIT_MS caps the
+// dataset files (feed-loader.js) and the globe's terrain (globe.js). MAX_WAIT_MS caps the
 // wait, so one stuck request cannot keep the page covered.
 //
 // The bar under the title fills by the share of the work that is done; screen readers
@@ -15,9 +15,9 @@ const MAX_WAIT_MS = 10000;
 //   page files  ~310 KB of scripts and styles, plus the icons
 //   fonts       ~40 KB
 //   text        ~120 KB in 18 files
-//   market data ~50 KB
+//   data        ~50 KB of dataset files (feed-loader.js)
 //   terrain     330 KB, then decoding and the upload to the graphics card
-const TASK_WEIGHTS = { 'page files': 3, fonts: 1, text: 2, 'market data': 1, terrain: 3 };
+const TASK_WEIGHTS = { 'page files': 3, fonts: 1, text: 2, 'data': 1, terrain: 3 };
 
 const loadingScreen = document.getElementById('loading-screen');
 const bar = loadingScreen?.querySelector('.loading-bar');

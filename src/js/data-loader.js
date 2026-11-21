@@ -1,12 +1,12 @@
-// Reads and normalizes the static data files used by the market visualizations.
+// Reads and normalizes the static data files behind the live data views.
 // Simulation and presentation stay in data-calc.js and the view components.
-export async function loadTreemapSource(path, useTags = false) {
+export async function loadTreemapTree(path, useTags = false) {
     const response = await fetch(path);
     if (!response.ok) throw new Error(`Treemap data could not be loaded: ${path} (${response.status})`);
-    const source = await response.json();
-    const parentValues = findParentValues(source);
+    const raw = await response.json();
+    const parentValues = findParentValues(raw);
     return {
-        root: normalizeNode(source, useTags),
+        root: normalizeNode(raw, useTags),
         parentValues
     };
 }
@@ -17,13 +17,13 @@ export async function loadRelations() {
     return response.json();
 }
 
-function normalizeNode(source, useTags) {
-    const node = { ...source };
-    node.name = String(source.name || source.tag || 'Unnamed');
-    node.label = useTags && source.tag ? String(source.tag) : node.name;
-    node.value = Number(source.value) || 0;
-    node.children = Array.isArray(source.children)
-        ? source.children.map(child => normalizeNode(child, useTags))
+function normalizeNode(raw, useTags) {
+    const node = { ...raw };
+    node.name = String(raw.name || raw.tag || 'Unnamed');
+    node.label = useTags && raw.tag ? String(raw.tag) : node.name;
+    node.value = Number(raw.value) || 0;
+    node.children = Array.isArray(raw.children)
+        ? raw.children.map(child => normalizeNode(child, useTags))
         : [];
     return node;
 }

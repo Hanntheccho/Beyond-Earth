@@ -14,7 +14,7 @@
 }
 .treemap svg { position: relative; overflow: visible; display: block; width: 100%; height: auto; }
 
-/* Each tile's color follows its direction and fades over a market tick. */
+/* Each tile's color follows its direction and fades over a feed tick. */
 @property --treemap-color {
     syntax: '<color>';
     inherits: true;

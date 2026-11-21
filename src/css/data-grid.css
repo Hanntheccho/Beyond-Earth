@@ -1,4 +1,4 @@
-/* data-grid.css - Data status bar and data grid (see src/js/data-grid.js). */
+/* data-grid.css - Treemap status bar (see src/js/treemap.js) and data grid (see src/js/data-grid.js). */
 
 .data-status {
     display: grid;
@@ -26,6 +26,8 @@
     min-height: 30px;
     border-bottom: var(--border);
 }
+/* The grid has no status bar above it, so the first line of rows draws the top edge. */
+.data-grid-row:nth-child(-n + 2) { border-top: var(--border); }
 .data-grid-unit { color: var(--clr-data); }
 .data-grid-value { text-align: right; white-space: nowrap; }
 .data-grid-change {
