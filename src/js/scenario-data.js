@@ -114,16 +114,22 @@ window.scenarioChartData = {
         { year: 2088, value: 5.4 }, // Hamburg Flood
         { year: 2089, value: 5.6 },
         { year: 2090, value: 9.6 }, // Antarctic Collapse: the West Antarctic ice sheet gives way
-        { year: 2092, value: 10.1 },
-        { year: 2095, value: 10.5 },
-        { year: 2100, value: 10.9 },
-        { year: 2110, value: 13.4 },
-        { year: 2120, value: 19.9 },
-        { year: 2150, value: 31.9 },
-        { year: 2153, value: 33.0 },
-        { year: 2154, value: 34.6 }, // Caspian Flood: the Great Betrayal is broken by the Caspian's sudden expansion
-        { year: 2157, value: 34.7 },
-        { year: 2180, value: 42.9 },
+        // From the collapse on, sea level follows the ice lost since 2090 (about 3.3 m per
+        // Mkm³ of iceVolume), so it slows and settles as the ice sheets do.
+        { year: 2092, value: 11.2 },
+        { year: 2095, value: 13.6 },
+        { year: 2100, value: 20.6 },
+        { year: 2105, value: 29.0 },
+        { year: 2110, value: 33.0 },
+        { year: 2120, value: 37.3 },
+        { year: 2135, value: 40.5 },
+        { year: 2150, value: 43.7 },
+        { year: 2153, value: 44.1 },
+        { year: 2154, value: 45.6 }, // Caspian Flood: the Great Betrayal is broken by the Caspian's sudden expansion
+        { year: 2157, value: 45.7 },
+        { year: 2170, value: 46.7 },
+        { year: 2180, value: 47.8 },
+        { year: 2190, value: 48.9 },
         { year: 2200, value: 50.0 }
     ],
     ecobalance: [
