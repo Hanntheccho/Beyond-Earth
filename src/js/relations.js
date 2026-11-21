@@ -13,17 +13,19 @@
     let layoutInitialized = false;
     let inViewport = false;
     let latestData = null;
+    let graphWidth = 0;
+    let graphHeight = 0;
     const NODE_TRANSITION_DURATION = 400;
     const numberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
 
     function initGraph() {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
+        graphWidth = container.clientWidth;
+        graphHeight = container.clientHeight;
 
         svg = d3.select('#influence-graph-container')
             .append('svg')
-            .attr('width', width)
-            .attr('height', height);
+            .attr('width', graphWidth)
+            .attr('height', graphHeight);
 
         const markers = svg.append('defs');
         [
@@ -48,8 +50,44 @@
             .force('link', d3.forceLink().id(d => d.id).distance(60))
             .force('charge', d3.forceManyBody().strength(-200))
             .force('collide', d3.forceCollide().strength(0.85).iterations(2))
-            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('center', d3.forceCenter(graphWidth / 2, graphHeight / 2))
+            .force('bounds', () => constrainNodesToBounds(simulation.nodes()))
             .stop();
+
+        if (typeof ResizeObserver !== 'undefined') {
+            new ResizeObserver(() => {
+                graphWidth = container.clientWidth;
+                graphHeight = container.clientHeight;
+                svg.attr('width', graphWidth).attr('height', graphHeight);
+                simulation.force('center')
+                    .x(graphWidth / 2)
+                    .y(graphHeight / 2);
+                constrainNodesToBounds(simulation.nodes());
+                simulation.alpha(0.1).restart();
+            }).observe(container);
+        }
+    }
+
+    function clamp(value, minimum, maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
+    }
+
+    function clampNodeToBounds(node) {
+        if (!Number.isFinite(node.x) || !Number.isFinite(node.y)) return;
+        const radius = Number(node.radius) || 0;
+        node.x = clamp(node.x, radius, Math.max(radius, graphWidth - radius));
+        node.y = clamp(node.y, radius, Math.max(radius, graphHeight - radius));
+
+        if (Number.isFinite(node.fx)) {
+            node.fx = clamp(node.fx, radius, Math.max(radius, graphWidth - radius));
+        }
+        if (Number.isFinite(node.fy)) {
+            node.fy = clamp(node.fy, radius, Math.max(radius, graphHeight - radius));
+        }
+    }
+
+    function constrainNodesToBounds(nodes) {
+        nodes.forEach(clampNodeToBounds);
     }
 
     function render(data) {
@@ -207,6 +245,7 @@
         }
 
         function updatePositions(animateLinks = false) {
+            nodes.forEach(clampNodeToBounds);
             const linkPosition = animateLinks
                 ? linkMerge.interrupt().transition().duration(NODE_TRANSITION_DURATION)
                 : linkMerge;
@@ -286,6 +325,7 @@
         draggedNodeIds.add(event.subject.id);
         updateDraggedNodes();
         updateDraggedLinks();
+        clampNodeToBounds(event.subject);
         event.subject.fx = event.subject.x;
         event.subject.fy = event.subject.y;
     }
@@ -295,8 +335,9 @@
             simulation.alphaTarget(0.3).restart();
             dragSimulationActive = true;
         }
-        event.subject.fx = event.x;
-        event.subject.fy = event.y;
+        const radius = Number(event.subject.radius) || 0;
+        event.subject.fx = clamp(event.x, radius, Math.max(radius, graphWidth - radius));
+        event.subject.fy = clamp(event.y, radius, Math.max(radius, graphHeight - radius));
     }
 
     function dragended(event) {

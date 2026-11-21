@@ -2,7 +2,7 @@
 
 .treemap-breadcrumbs { color: var(--clr-p); font-size: var(--fnt-size-bttn); }
 .treemap-breadcrumbs button { margin-right: 4px; }
-.treemap { position: relative; width: 100%; overflow: hidden; }
+.treemap { position: relative; width: 100%; overflow: visible; }
 .treemap::before {
     position: absolute;
     inset: 0;

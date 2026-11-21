@@ -147,6 +147,7 @@
             const valueText = numberFormat.format(value);
             const changeText = percentFormat.format(pct);
 
+            // Tile gap is defined here by the rectangle inset and dimensions.
             tile.rect.setAttribute('x', x + 2);
             tile.rect.setAttribute('y', y + 2);
             tile.rect.setAttribute('width', Math.max(0, w - 4));

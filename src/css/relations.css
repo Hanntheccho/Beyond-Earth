@@ -4,7 +4,11 @@
     position: relative;
     display: block;
     width: 100%;
+    max-width: 800px;
+    max-height: 800px;
+    margin-inline: auto;
     aspect-ratio: 1 / 1;
+    overflow: visible;
 }
 #influence-graph-container::before {
     position: absolute;
@@ -17,6 +21,8 @@
 }
 #influence-graph-container svg {
     position: relative;
+    display: block;
+    overflow: visible;
 }
 
 #influence-graph-container .node-group circle {
