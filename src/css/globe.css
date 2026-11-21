@@ -37,7 +37,7 @@
     pointer-events: none;
     transition: opacity 600ms ease;
 }
-.globe-canvas.is-loaded + .globe-marker-layer { opacity: 0.2; }
+.globe-canvas.is-loaded + .globe-marker-layer { opacity: 0; }
 .globe-canvas.is-emphasized + .globe-marker-layer { opacity: 1; }
 .globe-marker {
     position: absolute;
