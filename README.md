@@ -20,4 +20,4 @@ Interactive scenario briefing for the world after the Great Mistake of 2070. A s
 | `docs/legacy/` | Legacy worldbuilding text, not loaded by the site |
 | `tools/validate.mjs` | Data checks (`npm run validate`) |
 
-No build step. Dependencies are loaded from the page itself.
+No build step. Dependencies are loaded from the page itself; d3 (pinned, from jsDelivr) is imported on demand by `src/js/relations.js` when the relations graph nears the viewport.

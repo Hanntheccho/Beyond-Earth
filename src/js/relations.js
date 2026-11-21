@@ -1,9 +1,41 @@
 /**
  * relations.js - Force-directed graph visualization for weighted relations.
+ *
+ * d3 is the only consumer on the page, so it is loaded here on demand instead
+ * of from index.html: the download starts when the graph nears the viewport
+ * and nothing is drawn until it has arrived.
  */
 (function () {
     const container = document.getElementById('influence-graph-container');
     if (!container) return;
+
+    // Pinned full ESM build. One module keeps d3-transition patched onto the
+    // same d3-selection the graph uses.
+    const D3_URL = 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
+    const D3_PREFETCH_MARGIN = '600px 0px';
+    let d3 = null;
+    let d3Promise = null;
+
+    function loadD3() {
+        d3Promise ??= import(D3_URL)
+            .then(module => (d3 = module))
+            .catch(error => {
+                d3Promise = null; // allow a retry on the next visibility change
+                console.error(`[Relations] Failed to load d3 from ${D3_URL}.`, error);
+                throw error;
+            });
+        return d3Promise;
+    }
+
+    // Warm the download before the graph is actually on screen.
+    if (typeof IntersectionObserver !== 'undefined') {
+        const prefetch = new IntersectionObserver(entries => {
+            if (!entries.some(entry => entry.isIntersecting)) return;
+            prefetch.disconnect();
+            loadD3().catch(() => {});
+        }, { rootMargin: D3_PREFETCH_MARGIN });
+        prefetch.observe(container);
+    }
 
     let simulation, svg;
     let simulationNodes = new Map();
@@ -263,10 +295,26 @@
         }
     }
 
+    function canRender() {
+        return inViewport && !document.hidden && !container.closest('[hidden]') && latestData;
+    }
+
+    // Draws the latest data once d3 is available; re-checks visibility after
+    // the download because the graph may have scrolled away in the meantime.
+    function renderWhenReady() {
+        if (!canRender()) return;
+        if (d3) {
+            render(latestData);
+            return;
+        }
+        loadD3()
+            .then(() => { if (canRender()) render(latestData); })
+            .catch(() => {});
+    }
+
     function update(data) {
         latestData = data;
-        if (!inViewport || document.hidden || container.closest('[hidden]')) return;
-        render(data);
+        renderWhenReady();
     }
 
     function updateDraggedLinks() {
@@ -310,16 +358,10 @@
 
     window.viewportVisibility.observe(container, isVisible => {
         inViewport = isVisible;
-        if (inViewport && !document.hidden && !container.closest('[hidden]') && latestData) {
-            render(latestData);
-        }
+        renderWhenReady();
     });
 
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && inViewport && !container.closest('[hidden]') && latestData) {
-            render(latestData);
-        }
-    });
+    document.addEventListener('visibilitychange', renderWhenReady);
 
     function dragstarted(event) {
         draggedNodeIds.add(event.subject.id);

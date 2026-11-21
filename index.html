@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=800">
-    <meta name="description" content="Beyond Earth: an interactive scenario briefing on the world after the Great Mistake of 2070, with live markets, global data and faction profiles.">
+    <meta name="description" content="BYND UNiTY: an interactive scenario briefing on the world after the Great Mistake of 2070, with live markets, global data and faction profiles.">
     <title>BYOND UNiTY HTML</title>
 
     <link rel="icon" href="be-icon.svg" type="image/svg+xml">
@@ -14,6 +14,8 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- d3 is imported on demand by src/js/relations.js -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap">
 </head>
 <body>
@@ -134,7 +136,6 @@
     <audio id="audio"><source src="assets/sfx/sfx-click.wav" type="audio/wav"></audio>
 
     <!-- Main Entry Script -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="src/default.js"></script>
 </body>
 </html>
