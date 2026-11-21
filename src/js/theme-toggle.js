@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!themeToggle) return;
 
     themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('light-theme');
+        const isLight = document.body.classList.toggle('light-theme');
+        themeToggle.setAttribute('aria-pressed', String(isLight));
     });
 });

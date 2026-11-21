@@ -59,7 +59,8 @@ button {
 button:hover {
     transform: translateY(-3px);
 }
-button[aria-pressed="true"] {
+button[aria-pressed="true"],
+.main-visibility-toggle[aria-expanded="true"] {
     border-color: color-mix(in srgb, var(--clr-border), var(--clr-color-mix-60));
     background-color: color-mix(in srgb, var(--clr-background), var(--clr-color-mix-20));
     color: var(--clr-ph1);
@@ -71,7 +72,8 @@ button img {
 }
 
 .main-visibility-toggle,
-.theme-toggle {
+.theme-toggle,
+.music-toggle {
     position: fixed;
     z-index: 1200;
     width: var(--btn-size);
@@ -84,4 +86,7 @@ button img {
 }
 .theme-toggle {
     top: calc(var(--px-10) * 2 + var(--btn-size));
+}
+.music-toggle {
+    top: calc(var(--px-10) * 3 + var(--btn-size) * 2);
 }

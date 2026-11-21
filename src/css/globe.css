@@ -41,6 +41,8 @@
 .globe-canvas.is-emphasized + .globe-marker-layer { opacity: 1; }
 .globe-marker {
     position: absolute;
+    top: 0;
+    left: 0;
     z-index: 1;
     display: grid;
     place-items: center;
@@ -58,6 +60,7 @@
     text-indent: 0;
     opacity: var(--marker-opacity, 1);
     pointer-events: none;
+    /* globe.js replaces this with an inline transform that also moves the marker to its position. */
     transform: translate(-50%, -50%);
 }
 .globe-marker[hidden] { display: none; }

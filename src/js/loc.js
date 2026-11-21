@@ -174,7 +174,7 @@ function buildLocalizationElementLookup() {
  */
 async function loadLocalization() {
     try {
-        const data = await fetchLocalization();
+        const data = await getLocalization();
         if (window.poisReady) await window.poisReady;
         window.localizationData = data;
 
@@ -233,6 +233,13 @@ async function loadLocalization() {
             description.innerHTML = loadingTips[initialIndex];
 
             title.dataset.loadingTipsBound = 'true';
+            // The title works as a button, so keyboard users can focus it and press Enter or Space.
+            title.tabIndex = 0;
+            title.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                title.click();
+            });
             title.addEventListener('click', () => {
                 let nextIndex = Math.floor(Math.random() * loadingTips.length);
                 if (loadingTips.length > 1 && description.dataset.loadingTipIndex === '' + nextIndex) {
@@ -251,25 +258,24 @@ async function loadLocalization() {
 }
 
 
-// Cache for storing localization data
-const localizationCache = {};
+// The localization request, so every caller shares one fetch.
+let localizationPromise = null;
 
 
 /**
- * Retrieves the localization data.
+ * Retrieves the localization data. The first call starts the request; later calls
+ * share it, whether it is still loading or already done.
  *
  * @returns {Promise<Object>} The parsed localization data.
  */
-async function getLocalization() {
-    if (localizationCache.data) {
-        return localizationCache.data;
+function getLocalization() {
+    if (!localizationPromise) {
+        localizationPromise = fetchLocalization().catch(error => {
+            localizationPromise = null; // let a later call try again
+            throw error;
+        });
     }
-
-    const data = await fetchLocalization();
-
-    localizationCache.data = data;
-
-    return data;
+    return localizationPromise;
 }
 
 

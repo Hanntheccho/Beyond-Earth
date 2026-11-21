@@ -310,10 +310,19 @@ function main() {
     seaLevel = ev.detail.meters;
     dirty = true;
   });
+  // Markers are only positioned while the globe is emphasized (the marker layer is
+  // invisible and inert otherwise), so redraw once when that class changes.
+  new MutationObserver(() => { dirty = true; })
+    .observe(canvas, { attributes: true, attributeFilter: ['class'] });
   let dataError = false;
   let lastFrame = performance.now();
   const SPIN_DEG_PER_SEC = 3.6; // constant angular velocity
   const AUTO_SPIN_MIN_MORPH = 0.8;
+  // While content covers the globe it is only a faint backdrop (see .globe-canvas.is-loaded
+  // in globe.css), so it redraws less often. It runs at the full rate while the globe is the
+  // focus or an animation is playing. The spin uses real elapsed time, so its speed is the same.
+  const FRAME_MS_FOCUSED = 33;  // about 30 fps
+  const FRAME_MS_BACKDROP = 80; // about 12 fps
 
   const sMax = 7;
   const sMin = () => 240 / DEG_R;
@@ -448,9 +457,11 @@ function main() {
       }
       ids.add(marker.id);
       const entry = { ...marker };
+      // The wrap-around copies only matter on the flat map, so every copy except the
+      // main one is created the first time it is on screen.
       const copies = [];
       for (let copy = -3; copy <= 3; copy++) {
-        copies.push({ copy, button: createMarkerButton(entry, copy) });
+        copies.push({ copy, button: copy === 0 ? createMarkerButton(entry, copy) : null });
       }
       markerInstances.push({ entry, copies });
     });
@@ -458,6 +469,7 @@ function main() {
   }
 
   function renderMarkers(t, halfW) {
+    if (!canvas.classList.contains('is-emphasized')) return;
     const phi0 = view.lat / DEG_R;
     const cosPhi0 = Math.cos(phi0), sinPhi0 = Math.sin(phi0);
     const globeRadius = view.s * DEG_R;
@@ -468,7 +480,8 @@ function main() {
       const radialScale = 1 + entry.altitudeKm / EARTH_RADIUS_KM;
       const visibleHorizon = -Math.sqrt(Math.max(0, 1 - 1 / (radialScale * radialScale)));
 
-      copies.forEach(({ copy, button }) => {
+      copies.forEach((instance) => {
+        const { copy } = instance;
         const dlon = entry.lon + copy * 360 - view.lon;
         const lam = dlon / DEG_R;
         const px = cosPhi * Math.sin(lam);
@@ -494,11 +507,26 @@ function main() {
           && x > -entry.size && x < vw + entry.size
           && y > -entry.size && y < vh + entry.size;
 
-        button.hidden = !visible;
-        if (!visible) return;
-        button.style.left = `${x.toFixed(2)}px`;
-        button.style.top = `${y.toFixed(2)}px`;
-        button.style.opacity = String(copyAlpha * visibility);
+        let { button } = instance;
+        if (!visible) {
+          if (button && !button.hidden) button.hidden = true;
+          return;
+        }
+        if (!button) button = instance.button = createMarkerButton(entry, copy);
+        if (button.hidden) button.hidden = false;
+
+        // transform moves the button without a layout pass; left/top are 0 in globe.css.
+        // Only write what changed, so steady markers cost nothing.
+        const transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) translate(-50%, -50%)`;
+        if (instance.transform !== transform) {
+          button.style.transform = transform;
+          instance.transform = transform;
+        }
+        const opacity = String(copyAlpha * visibility);
+        if (instance.opacity !== opacity) {
+          button.style.opacity = opacity;
+          instance.opacity = opacity;
+        }
       });
     });
   }
@@ -519,7 +547,9 @@ function main() {
   function frame(now) {
     if (hidden) return; // pause when tab hidden
     requestAnimationFrame(frame);
-    if (now - lastFrame < 33) return;
+    const minFrameMs = canvas.classList.contains('is-emphasized') || zoomAnim
+      ? FRAME_MS_FOCUSED : FRAME_MS_BACKDROP;
+    if (now - lastFrame < minFrameMs) return;
     if (data && !dataError && !reducedMotion.matches
       && morphT(view.s) >= AUTO_SPIN_MIN_MORPH) {
       const dt = (now - lastFrame) / 1000;

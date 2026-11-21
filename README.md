@@ -17,6 +17,7 @@ Interactive scenario briefing for the world after the Great Mistake of 2070. A s
 | `src/js`, `src/css` | Interface scripts and styles |
 | `data/` | Scenario, market, GDP, resource, and locale JSON |
 | `assets/` | Icons, faction marks, and audio |
+| `docs/legacy/` | Legacy worldbuilding text, not loaded by the site |
 | `tools/validate.mjs` | Data checks (`npm run validate`) |
 
 No build step. Dependencies are loaded from the page itself.
