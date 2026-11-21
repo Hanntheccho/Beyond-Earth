@@ -37,7 +37,7 @@ window.scenarioConfig = {
         { year: 2084, label: 'Siege of Washington', y: 310, series: ['worldGDP', 'population'] },
         { year: 2088, label: 'Hamburg Flood', y: 140, series: ['seaLevel', 'population'] },
         { year: 2089, label: 'INTEGR Founded', y: 200, series: ['ecobalance'], positive: true },
-        { year: 2089, label: 'Antarctic Collapse', y: 210, series: ['iceVolume', 'seaLevel'] },
+        { year: 2090, label: 'Antarctic Collapse', y: 210, series: ['iceVolume', 'seaLevel'] },
         { year: 2107, label: 'Swiss Plebiscite', y: 200, series: ['worldGDP'], positive: true },
         { year: 2134, label: 'Congo Crisis', series: ['population', 'worldGDP'] },
         { year: 2154, label: 'Great Betrayal', y: 160, series: ['worldGDP'] },
@@ -53,7 +53,7 @@ window.scenarioConfig = {
         { start: 2070, end: 2100, label: 'Dark Age', series: ['temperature', 'ecobalance', 'population', 'worldGDP'] },
         { start: 2080, end: 2160, label: 'Ice Sheet Collapse', series: ['seaLevel', 'iceVolume'] },
         { start: 2100, end: 2200, label: 'Reconstruction Era', series: ['worldGDP', 'ecobalance'], positive: true },
-        { start: 2050, end: 2070, label: 'AoP', positive: true }
+        { start: 2050, end: 2070, label: 'AoP', positive: true } // Age of Plenty
     ]
 };
 
@@ -112,9 +112,8 @@ window.scenarioChartData = {
         { year: 2080, value: 3.9 },
         { year: 2087, value: 4.6 },
         { year: 2088, value: 5.4 }, // Hamburg Flood
-        { year: 2089, value: 5.6 }, // Antarctic Collapse: the West Antarctic ice sheet gives way
-        { year: 2090, value: 7.8 },
-        { year: 2091, value: 9.6 },
+        { year: 2089, value: 5.6 },
+        { year: 2090, value: 9.6 }, // Antarctic Collapse: the West Antarctic ice sheet gives way
         { year: 2092, value: 10.1 },
         { year: 2095, value: 10.5 },
         { year: 2100, value: 10.9 },
@@ -153,9 +152,8 @@ window.scenarioChartData = {
         { year: 2070, value: 29.0 }, // The Great Mistake
         { year: 2080, value: 28.4 },
         { year: 2085, value: 28.0 },
-        { year: 2089, value: 27.7 }, // Antarctic Collapse: the West Antarctic ice sheet gives way
-        { year: 2090, value: 25.4 },
-        { year: 2091, value: 23.4 },
+        { year: 2089, value: 27.7 },
+        { year: 2090, value: 23.8 }, // Antarctic Collapse: the West Antarctic ice sheet gives way
         { year: 2095, value: 22.6 },
         { year: 2100, value: 20.5 },
         { year: 2105, value: 18.0 },
