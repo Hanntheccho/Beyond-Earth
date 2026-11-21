@@ -77,11 +77,6 @@
     padding: var(--px-20);
     border: var(--border);
     border-left-width: var(--border-left);
-    content-visibility: auto;
-    contain-intrinsic-size: auto 320px;
-}
-.div-desc-win[treemap-panel] {
-    contain-intrinsic-size: auto 860px;
 }
 .div-desc-win.grid {
     display: flex;
