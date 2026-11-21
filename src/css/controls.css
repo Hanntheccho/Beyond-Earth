@@ -109,6 +109,7 @@ button img {
     background: var(--clr-background);
     color: var(--clr-data);
     font-size: var(--fnt-size-data);
+    box-shadow: var(--box-shadow);
 }
 .options-menu[hidden] {
     display: none;

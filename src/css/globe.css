@@ -121,6 +121,7 @@
     background: var(--clr-background);
     color: var(--clr-data);
     font-size: var(--fnt-size-data);
+    box-shadow: var(--box-shadow);
 }
 .globe-coordinates {
     left: var(--px-10);
