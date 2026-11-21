@@ -25,6 +25,7 @@ import './js/audio.js';
 import './js/panel-toggle.js';
 import './js/theme-toggle.js';
 import './js/main-visibility.js';
+import './js/data-view.js';
 import './js/tooltips.js';
 import './js/market-text.js';
 import './js/scroll-reveal.js';

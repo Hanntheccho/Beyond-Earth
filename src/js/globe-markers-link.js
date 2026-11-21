@@ -23,6 +23,10 @@
         // aria-expanded="false" means the content is currently hidden.
         if (toggle && toggle.getAttribute('aria-expanded') === 'false') toggle.click();
 
+        // POI panels live in the briefing, so leave the data view (data-view.js).
+        const dataViewToggle = document.getElementById('data-view-toggle');
+        if (dataViewToggle && dataViewToggle.getAttribute('aria-pressed') === 'true') dataViewToggle.click();
+
         // panel-toggle.js swaps the panels and loc.js formats the text on this click.
         poiButton.click();
 

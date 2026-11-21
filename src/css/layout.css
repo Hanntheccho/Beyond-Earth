@@ -15,10 +15,13 @@
 }
 .div-main::before {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--max-width) / 3);   /* fixed: no longer follows page height */
     z-index: 0;
     box-sizing: border-box;
-    background: var(--img-url) center / 40px repeat;
+    background: var(--img-url) top center / 40px repeat;   /* anchor tiles to the top */
     content: "";
     opacity: 0.6;
     -webkit-mask-image:

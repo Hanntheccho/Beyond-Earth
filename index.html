@@ -50,6 +50,9 @@
         <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light theme" aria-pressed="false">
             <img src="assets/circle-half.svg" alt="">
         </button>
+        <button id="data-view-toggle" class="data-view-toggle" type="button" aria-label="Show data view" aria-controls="data-view" aria-pressed="false">
+            <img src="be-icon-alt.svg" alt="">
+        </button>
         <div class="back-title"><span>BYOND UNiTY :HTML</span></div>
     </header>
 
@@ -62,12 +65,12 @@
         <span id="music-volume-readout" class="music-volume-readout">100%</span>
     </div>
 
-    <!-- Main -->
+    <!-- Main View -->
     <main class="div-main" id="main-content">
-        <article class="scenario-briefing">
-            <h1 class="main-title" data-panel-group="main" data-panel-target="BE0-panel">[BYOND UNiTY :HTML]</h1>
-            <div class="market-text"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
+        <h1 class="main-title" data-panel-group="main" data-panel-target="BE0-panel">[BYOND UNiTY :HTML]</h1>
+        <div class="market-text"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
 
+        <article class="scenario-briefing" id="briefing-view">
             <div class="div-submain">
                 <section id="BE0-panel" data-panel-group="main" aria-hidden="false">
                     <div class="div-desc-win">
@@ -83,6 +86,14 @@
                         <div class="data-status"><span>MÜNINSTEK EcoData & Model · 2070 to 2200 outlook</span></div>
                         <div class="data-grid" data-scenario-summary></div>
                     </div>
+                </section>
+            </div>
+        </article>
+
+        <!-- Data View -->
+        <article class="data-view" id="data-view" hidden>
+            <div class="div-submain">
+                <section id="data-view-panel">
                     <div class="div-desc-win grid" data-data-buttons></div>
 
                     <!-- Market Data Panels -->
