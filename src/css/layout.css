@@ -46,7 +46,6 @@
     color: var(--clr-h1);
     font-weight: 900;
     letter-spacing: .2em;
-    cursor: pointer;
 }
 .back-title {
     position: fixed;

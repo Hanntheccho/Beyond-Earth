@@ -195,14 +195,14 @@ function buildLocalizationElementLookup() {
     return elementsByClass;
 }
 
-// Let the title cycle the main description through the archived quotes (LOADING_TIP_*).
+// Change the main description quote whenever it, or any of its parents, is shown or hidden.
 function bindLoadingTips(data) {
     const loadingTips = Object.entries(data)
         .filter(([key, value]) => key.startsWith('LOADING_TIP_') && typeof value === 'string' && value.length > 0)
         .map(([, value]) => value);
-    const description = document.querySelector('.BE0-desc');
-    const title = document.querySelector('.main-title');
-    if (!description || !title || !loadingTips.length || title.dataset.loadingTipsBound) return;
+    const description = document.querySelector('.quote-txt');
+    const quoteBox = document.getElementById('quote-div');
+    if (!description || !quoteBox || !loadingTips.length || description.dataset.loadingTipsBound) return;
 
     let tipIndex = 0;
     function showTip(index) {
@@ -212,19 +212,20 @@ function bindLoadingTips(data) {
     }
     showTip(Math.floor(Math.random() * loadingTips.length));
 
-    title.dataset.loadingTipsBound = 'true';
-    // The title works as a button, so keyboard users can focus it and press Enter or Space.
-    title.tabIndex = 0;
-    title.addEventListener('keydown', event => {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        event.preventDefault();
-        title.click();
-    });
-    title.addEventListener('click', () => {
-        // Any tip but the current one, so every click changes it.
+    description.dataset.loadingTipsBound = 'true';
+    let quoteBoxWasVisible = !quoteBox.closest('[hidden]');
+    const visibilityObserver = new MutationObserver(() => {
+        const quoteBoxIsVisible = !quoteBox.closest('[hidden]');
+        if (quoteBoxIsVisible === quoteBoxWasVisible) return;
+        quoteBoxWasVisible = quoteBoxIsVisible;
+
+        // Any tip but the current one, so every visibility change updates it.
         const offset = loadingTips.length > 1 ? 1 + Math.floor(Math.random() * (loadingTips.length - 1)) : 0;
         showTip((tipIndex + offset) % loadingTips.length);
     });
+    for (let element = quoteBox; element; element = element.parentElement) {
+        visibilityObserver.observe(element, { attributes: true, attributeFilter: ['hidden'] });
+    }
 }
 
 async function loadLocalization() {
