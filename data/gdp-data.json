@@ -185,6 +185,10 @@
         {
           "name": "Greece",
           "value": 180
+        },
+        {
+          "name": "Union of Maghreb",
+          "value": 700
         }
       ]
     },
@@ -310,29 +314,6 @@
               "value": 40
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Union of Maghreb",
-      "tag": "MAGHREB",
-      "value": 700
-    },
-    {
-      "name": "United Arab Alliance",
-      "tag": "UAR",
-      "children": [
-        {
-          "name": "Republic of Egypt",
-          "value": 350
-        },
-        {
-          "name": "Sudan",
-          "value": 150
-        },
-        {
-          "name": "Tripolitania",
-          "value": 120
         }
       ]
     },
@@ -463,6 +444,23 @@
       "name": "Al-Falah",
       "tag": "ALFALAH",
       "children": [
+        {
+          "name": "United Arab Alliance",
+          "children": [
+            {
+              "name": "Republic of Egypt",
+              "value": 350
+            },
+            {
+              "name": "Sudan",
+              "value": 150
+            },
+            {
+              "name": "Tripolitania",
+              "value": 120
+            }
+          ]
+        },
         {
           "name": "Turkiye",
           "value": 1200

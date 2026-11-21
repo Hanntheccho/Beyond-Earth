@@ -2,6 +2,7 @@
 // each element whose class matches a key (class="poiFRA" gets the "poiFRA" text).
 // Keywords (keywords-ph1/2/3.json) are highlighted in descriptions when they are first
 // shown, so the cost is only paid for the panels and tooltips people actually open.
+// Matching ignores case, except for keywords written with a leading "=" ("=Trust").
 //
 // Exports for other modules:
 //   getLocalization()            the merged localization data (fetched once)
@@ -85,16 +86,32 @@ function parseWrapper(selector) {
     return { tag: tag || 'span', className: classes.join(' ') };
 }
 
-// One regex per list, longest keywords first so they win over their substrings.
+// Keywords that start with "=" match with exact case ("=Trust" highlights "Trust" but
+// not "trust"); all others ignore case.
+const EXACT_CASE_PREFIX = '=';
+
+// One regex for a group of keywords, longest first so they win over their substrings.
 // Unicode letters, numbers, and underscores count as word characters.
-function buildMatcher(keywords) {
-    if (!Array.isArray(keywords)) return null;
+function buildMatcher(keywords, flags) {
     const escaped = keywords
-        .filter(keyword => typeof keyword === 'string' && keyword.length > 0)
         .sort((a, b) => b.length - a.length)
         .map(keyword => keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
     if (!escaped.length) return null;
-    return new RegExp(`(?<![\\p{L}\\p{N}_])(${escaped.join('|')})(?![\\p{L}\\p{N}_])`, 'giu');
+    return new RegExp(`(?<![\\p{L}\\p{N}_])(${escaped.join('|')})(?![\\p{L}\\p{N}_])`, flags);
+}
+
+// Up to two regexes per list: case-insensitive keywords first, then exact-case ones,
+// so a longer case-insensitive phrase ("Antarctica Trust") is wrapped whole before the
+// exact-case pass sees what is left.
+function buildMatchers(keywords) {
+    if (!Array.isArray(keywords)) return [];
+    const valid = keywords.filter(keyword => typeof keyword === 'string' && keyword.length > 0);
+    const exact = valid
+        .filter(keyword => keyword.startsWith(EXACT_CASE_PREFIX))
+        .map(keyword => keyword.slice(EXACT_CASE_PREFIX.length))
+        .filter(Boolean);
+    const anyCase = valid.filter(keyword => !keyword.startsWith(EXACT_CASE_PREFIX));
+    return [buildMatcher(anyCase, 'giu'), buildMatcher(exact, 'gu')].filter(Boolean);
 }
 
 let keywordFormatters = null;
@@ -108,8 +125,9 @@ function getKeywordFormatters() {
         } catch (error) {
             console.warn(`Could not load shared localization keywords from ${list.path}:`, error);
         }
-        return { ...list, ...parseWrapper(list.selector), matcher: buildMatcher(keywords) };
-    })).then(formatters => formatters.filter(formatter => formatter.matcher));
+        const wrapper = parseWrapper(list.selector);
+        return buildMatchers(keywords).map(matcher => ({ ...list, ...wrapper, matcher }));
+    })).then(formatters => formatters.flat());
     return keywordFormatters;
 }
 

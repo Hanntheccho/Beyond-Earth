@@ -63,9 +63,10 @@
     /* globe-markers.js replaces this with an inline transform that also moves the marker
        to its position, and sets the opacity, on every frame. */
     transform: translate(-50%, -50%);
-    /* Not the transform transition every button has: it would restart on each frame
-       and make the markers trail behind the globe. */
-    transition: none;
+    /* The markers glide after the globe instead of sticking to it: each frame's move
+       restarts this transition, so they trail slightly behind. That is the intended look,
+       so it is set here rather than left to the button rule (reduced motion turns it off). */
+    transition: transform var(--transition-time) ease;
 }
 .globe-marker-layer.is-emphasized .globe-marker { pointer-events: auto; }
 .globe-marker::after {

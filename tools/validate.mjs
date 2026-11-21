@@ -132,10 +132,20 @@ function checkLocalization() {
         }
 
         list.forEach(keyword => {
-            if (seenKeywords.has(keyword)) {
-                warn('loc', `keyword "${keyword}" is in both ${seenKeywords.get(keyword)} and ${file}`);
+            // A leading "=" makes loc.js match the keyword with exact case.
+            const exactCase = keyword.startsWith('=');
+            const word = exactCase ? keyword.slice(1) : keyword;
+            if (!word) {
+                error('loc', `data/loc/${file} has an empty keyword ("${keyword}")`);
+                return;
+            }
+            if (exactCase && word.toLowerCase() === word) {
+                warn('loc', `keyword "${keyword}" in ${file} is exact-case but has no capital letters, so "=" changes nothing`);
+            }
+            if (seenKeywords.has(word)) {
+                warn('loc', `keyword "${word}" is in both ${seenKeywords.get(word)} and ${file}`);
             } else {
-                seenKeywords.set(keyword, file);
+                seenKeywords.set(word, file);
             }
         });
     });

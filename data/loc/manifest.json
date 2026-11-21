@@ -11,6 +11,15 @@
     "pois/CHI.json",
     "pois/PAU.json",
     "pois/HYD.json",
+    "pois/NSA.json",
+    "pois/CAF.json",
+    "pois/AFL.json",
+    "pois/PLY.json",
+    "pois/KIM.json",
+    "pois/CNS.json",
+    "pois/ANTT.json",
+    "pois/COOP.json",
+    "pois/BMK.json",
     "pois/affy.json",
     "quotes.json"
 ]

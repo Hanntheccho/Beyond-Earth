@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="237.03558mm"
+   height="236.22923mm"
+   viewBox="0 0 237.03558 236.22923"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="CAF.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.48693448"
+     inkscape:cx="217.68842"
+     inkscape:cy="678.73608"
+     inkscape:window-width="1920"
+     inkscape:window-height="991"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(13.517796,6.3740095)">
+    <path
+       id="rect1"
+       style="fill:#ffffff;stroke-width:1.64;stroke-linejoin:round;stroke-opacity:0.920611"
+       d="M 105.00026,4.3099334 81.048745,28.261443 H 47.17536 v 33.87286 L 23.223335,86.086333 47.17536,110.03836 v 33.87286 h 33.873385 l 23.951515,23.95151 23.95151,-23.95151 h 33.87287 v -33.87286 l 23.95202,-23.952027 -23.95202,-23.95203 v -33.87286 h -33.87287 z m 0,24.3979896 16.80569,16.80518 h 23.76703 v 23.76702 l 16.80569,16.80621 -16.80569,16.806207 v 23.76702 H 121.80595 L 105.00026,143.46474 88.194562,126.65956 H 64.42702 V 102.89254 L 47.621328,86.086333 64.42702,69.280123 v -23.76702 h 23.767542 z" />
+    <path
+       id="path2"
+       style="fill:#ffffff;stroke-width:1.25075;stroke-linejoin:round;stroke-opacity:0.920611"
+       d="M 92.703174,-6.3740095 A 118.51767,118.51767 0 0 0 -13.517796,111.33763 118.51767,118.51767 0 0 0 104.9998,229.85523 118.51767,118.51767 0 0 0 223.51779,111.33763 118.51767,118.51767 0 0 0 117.29682,-6.3740095 94.206841,94.206841 0 0 1 199.20671,87.026947 94.206841,94.206841 0 0 1 104.9998,181.23386 94.206841,94.206841 0 0 1 10.793284,87.026947 94.206841,94.206841 0 0 1 92.703174,-6.3740095 Z" />
+  </g>
+</svg>

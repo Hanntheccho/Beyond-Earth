@@ -5,7 +5,7 @@
     "icon": "../../be-icon.svg",
     "lat": 30,
     "lon": 70,
-    "altitudeKm": 300,
+    "altitudeKm": 2000,
     "size": 50
   },
   {
@@ -114,7 +114,7 @@
     "lat": -20,
     "lon": -51,
     "altitudeKm": 200,
-    "size": 50
+    "size": 60
   },
   {
     "id": "poiSLA",
@@ -147,7 +147,7 @@
     "id": "poiPAU",
     "label": "People's African Union",
     "icon": "../../assets/PAU.svg",
-    "lat": -6,
+    "lat": -17,
     "lon": 37,
     "altitudeKm": 400,
     "size": 80
@@ -176,6 +176,51 @@
     "icon": "../../assets/PLY.svg",
     "lat": -6,
     "lon": 127,
+    "altitudeKm": 300,
+    "size": 50
+  },
+  {
+    "id": "poiCAF",
+    "label": "Central Asian Federation",
+    "icon": "../../assets/CAF.svg",
+    "lat": 41,
+    "lon": 63,
+    "altitudeKm": 300,
+    "size": 50
+  },
+  {
+    "id": "poiAFL",
+    "label": "Al-Falah",
+    "icon": "../../assets/AFL.svg",
+    "lat": 29,
+    "lon": 40,
+    "altitudeKm": 300,
+    "size": 50
+  },
+  {
+    "id": "poiKIM",
+    "label": "Kimpwanza League",
+    "icon": "../../assets/KIM.svg",
+    "lat": 0,
+    "lon": 18,
+    "altitudeKm": 300,
+    "size": 50
+  },
+  {
+    "id": "poiCNS",
+    "label": "Conosur",
+    "icon": "../../assets/CNS.svg",
+    "lat": -38,
+    "lon": -66,
+    "altitudeKm": 300,
+    "size": 40
+  },
+  {
+    "id": "poiBMK",
+    "label": "Bamako Compact",
+    "icon": "../../assets/BMK.svg",
+    "lat": 13,
+    "lon": -4,
     "altitudeKm": 300,
     "size": 50
   }
