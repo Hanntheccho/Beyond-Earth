@@ -25,7 +25,7 @@
         <span>BYOND UNiTY :HTML</span>
     </div>
 
-    <!-- Environmental VFX -->
+    <!-- VFX -->
     <div id="vfx-container" aria-hidden="true">
         <div class="vfx-halftone"></div>
         <div class="vfx-overlay">
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <!-- Background Layer -->
+    <!-- Globe -->
     <section id="background-stage" aria-label="Global Visualization">
         <div class="globe-preview">
             <canvas id="map" class="globe-canvas" data-view="lon=-30&lat=15" data-update-url="false" aria-hidden="true"></canvas>
@@ -72,7 +72,6 @@
     <div id="options-menu" class="options-menu" role="dialog" aria-label="Options" hidden>
         <span class="data-status">OPTIONS</span>
 
-        <!-- Theme -->
         <div class="options-row">
             <label class="options-check">
                 <input id="theme-toggle" type="checkbox">
@@ -80,7 +79,6 @@
             </label>
         </div>
 
-        <!-- Music -->
         <div class="options-row music-controls" role="group" aria-label="Background music">
             <label class="options-check">
                 <input id="music-toggle" type="checkbox">
@@ -90,7 +88,6 @@
             <span id="music-volume-readout" class="options-readout music-volume-readout">100%</span>
         </div>
 
-        <!-- Interface Sounds -->
         <div class="options-row sfx-controls" role="group" aria-label="Interface sounds">
             <label class="options-check">
                 <input id="sfx-toggle" type="checkbox" checked>
@@ -100,7 +97,6 @@
             <span id="sfx-volume-readout" class="options-readout">100%</span>
         </div>
 
-        <!-- Screen Effects -->
         <div class="options-row">
             <label class="options-check">
                 <input type="checkbox" data-vfx-toggle="scanline" checked>
@@ -120,7 +116,6 @@
             </label>
         </div>
 
-        <!-- Motion -->
         <div class="options-row">
             <label class="options-check">
                 <input id="reduced-motion-toggle" type="checkbox">
@@ -129,7 +124,7 @@
         </div>
     </div>
 
-    <!-- Main View -->
+    <!-- Main -->
     <main class="div-main" id="main-content">
         <h1 class="main-title" data-panel-group="main" data-panel-target="BE0-panel">[BYOND UNiTY :HTML]</h1>
         <div class="market-text"><div class="market-text-line"><span class="market-text-txt"></span></div></div>
