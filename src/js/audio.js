@@ -4,7 +4,6 @@ const clickSound = document.getElementById("audio");
 const musicToggle = document.getElementById("music-toggle");
 const MUSIC_STORAGE_KEY = "be-music";
 
-if (backgroundMusic) backgroundMusic.volume = 1.0;
 if (clickSound) clickSound.volume = 1.0;
 
 // Music is off until the player turns it on, and the choice is remembered.
@@ -30,6 +29,37 @@ function syncMusicToggle() {
 }
 
 syncMusicToggle();
+
+// Music volume, 0 to 100, remembered between visits like the on/off choice.
+const musicVolumeInput = document.getElementById("music-volume");
+const musicVolumeReadout = document.getElementById("music-volume-readout");
+const MUSIC_VOLUME_STORAGE_KEY = "be-music-volume";
+
+function readMusicVolume() {
+    try {
+        const saved = parseInt(localStorage.getItem(MUSIC_VOLUME_STORAGE_KEY), 10);
+        if (Number.isFinite(saved)) return Math.min(100, Math.max(0, saved));
+    } catch (e) { /* fall back to full volume */ }
+    return 100;
+}
+
+function applyMusicVolume(percent, save) {
+    if (backgroundMusic) backgroundMusic.volume = percent / 100;
+    if (musicVolumeInput) musicVolumeInput.value = String(percent);
+    if (musicVolumeReadout) musicVolumeReadout.textContent = percent + "%";
+    if (!save) return;
+    try {
+        localStorage.setItem(MUSIC_VOLUME_STORAGE_KEY, String(percent));
+    } catch (e) { /* the volume just won't persist */ }
+}
+
+applyMusicVolume(readMusicVolume(), false);
+
+if (musicVolumeInput) {
+    musicVolumeInput.addEventListener("input", function() {
+        applyMusicVolume(Number(musicVolumeInput.value), true);
+    });
+}
 
 // Browsers only allow audio after a user gesture. If music was left on last visit,
 // it starts with the first click or key press.

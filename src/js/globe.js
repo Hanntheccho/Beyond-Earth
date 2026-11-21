@@ -470,6 +470,8 @@ function main() {
 
   function renderMarkers(t, halfW) {
     if (!canvas.classList.contains('is-emphasized')) return;
+    // Markers are hidden by CSS while the globe is grabbed; they update once it is released.
+    if (canvas.classList.contains('dragging')) return;
     const phi0 = view.lat / DEG_R;
     const cosPhi0 = Math.cos(phi0), sinPhi0 = Math.sin(phi0);
     const globeRadius = view.s * DEG_R;
@@ -675,7 +677,10 @@ function main() {
   const endPointer = (ev) => {
     pointers.delete(ev.pointerId);
     if (pointers.size < 2) pinchDist = 0;
-    if (pointers.size === 0) canvas.classList.remove('dragging');
+    if (pointers.size === 0) {
+      canvas.classList.remove('dragging');
+      dirty = true; // reposition the markers for where the drag ended
+    }
   };
   canvas.addEventListener('pointerup', endPointer);
   canvas.addEventListener('pointercancel', endPointer);

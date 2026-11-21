@@ -48,11 +48,17 @@
         <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light theme" aria-pressed="false">
             <img src="assets/circle-half.svg" alt="">
         </button>
+        <div class="back-title"><span>BYOND UNiTY :HTML</span></div>
+    </header>
+
+    <!-- Music controls -->
+    <div class="music-controls" role="group" aria-label="Background music">
         <button id="music-toggle" class="music-toggle" type="button" aria-label="Toggle background music" aria-pressed="false">
             <img src="assets/music.svg" alt="">
         </button>
-        <div class="back-title"><span>BYOND UNiTY :HTML</span></div>
-    </header>
+        <input id="music-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Music volume">
+        <span id="music-volume-readout" class="music-volume-readout">100%</span>
+    </div>
 
     <!-- Main Content -->
     <main class="div-main" id="main-content">

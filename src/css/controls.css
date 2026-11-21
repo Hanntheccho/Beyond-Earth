@@ -72,8 +72,7 @@ button img {
 }
 
 .main-visibility-toggle,
-.theme-toggle,
-.music-toggle {
+.theme-toggle {
     position: fixed;
     z-index: 1200;
     width: var(--btn-size);
@@ -87,6 +86,33 @@ button img {
 .theme-toggle {
     top: calc(var(--px-10) * 2 + var(--btn-size));
 }
-.music-toggle {
-    top: calc(var(--px-10) * 3 + var(--btn-size) * 2);
+
+/* Music controls: bottom-right corner above the ticker, styled like the globe readouts. */
+.music-controls {
+    position: fixed;
+    right: var(--px-10);
+    bottom: calc(40px + var(--px-10));
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 9px;
+    border: 1px solid var(--clr-border);
+    background: var(--clr-background);
+    color: var(--clr-data);
+    font-size: var(--fnt-size-data);
+}
+.music-controls .music-toggle {
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 5px;
+}
+.music-controls input[type="range"] {
+    width: 120px;
+    accent-color: var(--clr-border);
+}
+.music-volume-readout {
+    min-width: 4ch;
+    text-align: right;
 }
