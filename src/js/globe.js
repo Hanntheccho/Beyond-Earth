@@ -1,3 +1,4 @@
+import { motionPreference } from './motion.js';
 /*
  * Interactive Earth sea-level globe renderer.
  * Adapted from MIT-licensed source.
@@ -308,7 +309,7 @@ function main() {
   let pointerPosition = null;
 
   let vw = 0, vh = 0, dpr = 1;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reducedMotion = motionPreference;
   const view = {
     lon: num('lon', 105),
     lat: num('lat', 25),

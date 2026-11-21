@@ -4,8 +4,6 @@ const clickSound = document.getElementById("audio");
 const musicToggle = document.getElementById("music-toggle");
 const MUSIC_STORAGE_KEY = "be-music";
 
-if (clickSound) clickSound.volume = 1.0;
-
 // Music is off until the player turns it on, and the choice is remembered.
 // Storage can be blocked (private windows, cleared site data), so every access is wrapped.
 function readMusicPreference() {
@@ -91,9 +89,62 @@ if (musicToggle) {
     });
 }
 
+// Interface sounds (the click sound): on by default, with their own volume, both remembered.
+const sfxToggle = document.getElementById("sfx-toggle");
+const sfxVolumeInput = document.getElementById("sfx-volume");
+const sfxVolumeReadout = document.getElementById("sfx-volume-readout");
+const SFX_STORAGE_KEY = "be-sfx";
+const SFX_VOLUME_STORAGE_KEY = "be-sfx-volume";
+
+function readSfxPreference() {
+    try {
+        return localStorage.getItem(SFX_STORAGE_KEY) !== "off";
+    } catch (e) {
+        return true;
+    }
+}
+
+let sfxWanted = readSfxPreference();
+if (sfxToggle) sfxToggle.checked = sfxWanted;
+
+if (sfxToggle) {
+    sfxToggle.addEventListener("change", function() {
+        sfxWanted = sfxToggle.checked;
+        try {
+            localStorage.setItem(SFX_STORAGE_KEY, sfxWanted ? "on" : "off");
+        } catch (e) { /* the preference just won't persist */ }
+    });
+}
+
+function readSfxVolume() {
+    try {
+        const saved = parseInt(localStorage.getItem(SFX_VOLUME_STORAGE_KEY), 10);
+        if (Number.isFinite(saved)) return Math.min(100, Math.max(0, saved));
+    } catch (e) { /* fall back to full volume */ }
+    return 100;
+}
+
+function applySfxVolume(percent, save) {
+    if (clickSound) clickSound.volume = percent / 100;
+    if (sfxVolumeInput) sfxVolumeInput.value = String(percent);
+    if (sfxVolumeReadout) sfxVolumeReadout.textContent = percent + "%";
+    if (!save) return;
+    try {
+        localStorage.setItem(SFX_VOLUME_STORAGE_KEY, String(percent));
+    } catch (e) { /* the volume just won't persist */ }
+}
+
+applySfxVolume(readSfxVolume(), false);
+
+if (sfxVolumeInput) {
+    sfxVolumeInput.addEventListener("input", function() {
+        applySfxVolume(Number(sfxVolumeInput.value), true);
+    });
+}
+
 document.body.addEventListener('click', function(event) {
     const btn = event.target.closest && event.target.closest('button, input[type="checkbox"], .treemap-tile.has-children, .globe-marker img');
-    if (!btn || !clickSound) return;
+    if (!btn || !clickSound || !sfxWanted) return;
     try {
         clickSound.currentTime = 0;
         clickSound.play().catch(() => {});

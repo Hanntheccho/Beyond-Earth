@@ -1,4 +1,5 @@
-/* reduced-motion.css - prefers-reduced-motion overrides. Must load last. */
+/* reduced-motion.css - Reduced motion overrides, from the OS setting (prefers-reduced-motion)
+   or the "Reduce motion" option (body.reduced-motion). Must load last. */
 
 @media (prefers-reduced-motion: reduce) {
     .scroll-reveal-ready .scroll-reveal,
@@ -13,14 +14,44 @@
     body::after,
     .globe-preview,
     .globe-canvas,
-    .div-desc-win,
     .market-text,
     .market-text-line,
     .scenario-chart-plot .chart-reveal,
     .scenario-chart-plot .chart-event-group,
-    .loading-spinner {
+    .loading-spinner,
+    button {
         animation: none !important;
         transition: none !important;
         animation-delay: 0ms !important;
     }
+    button:hover {
+        transform: none;
+    }
+}
+
+/* scroll-reveal-ready is set on <html>, so it sits above body here. */
+.scroll-reveal-ready body.reduced-motion .scroll-reveal,
+.scroll-reveal-ready body.reduced-motion .scroll-copy {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+}
+body.reduced-motion .div-desc-win,
+body.reduced-motion .tooltip-popup,
+body.reduced-motion::before,
+body.reduced-motion::after,
+body.reduced-motion .globe-preview,
+body.reduced-motion .globe-canvas,
+body.reduced-motion .market-text,
+body.reduced-motion .market-text-line,
+body.reduced-motion .scenario-chart-plot .chart-reveal,
+body.reduced-motion .scenario-chart-plot .chart-event-group,
+body.reduced-motion .loading-spinner,
+body.reduced-motion button {
+    animation: none !important;
+    transition: none !important;
+    animation-delay: 0ms !important;
+}
+body.reduced-motion button:hover {
+    transform: none;
 }

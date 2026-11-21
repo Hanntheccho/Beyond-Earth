@@ -1,3 +1,4 @@
+import { motionPreference } from './motion.js';
 // Market data grids. Rows are persistent (keyed by tag/name): value and change
 // numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
@@ -10,7 +11,7 @@
     const REORDER_DURATION = 500;
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotionQuery = motionPreference;
 
     function renderMarketGrid(host) {
         const marketId = host.dataset.marketGrid;

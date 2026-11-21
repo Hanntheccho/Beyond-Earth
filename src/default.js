@@ -24,6 +24,7 @@ import './js/audio.js';
 import './js/panel-toggle.js';
 import './js/theme-toggle.js';
 import './js/options-menu.js';
+import './js/display-options.js';
 import './js/main-visibility.js';
 import './js/data-view.js';
 import './js/tooltips.js';

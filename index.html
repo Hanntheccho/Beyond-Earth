@@ -89,6 +89,44 @@
             <input id="music-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Music volume">
             <span id="music-volume-readout" class="options-readout music-volume-readout">100%</span>
         </div>
+
+        <!-- Interface Sounds -->
+        <div class="options-row sfx-controls" role="group" aria-label="Interface sounds">
+            <label class="options-check">
+                <input id="sfx-toggle" type="checkbox" checked>
+                <span class="options-label">UI SOUNDS</span>
+            </label>
+            <input id="sfx-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Interface sound volume">
+            <span id="sfx-volume-readout" class="options-readout">100%</span>
+        </div>
+
+        <!-- Screen Effects -->
+        <div class="options-row">
+            <label class="options-check">
+                <input type="checkbox" data-vfx-toggle="scanline" checked>
+                <span class="options-label">SCANLINES</span>
+            </label>
+        </div>
+        <div class="options-row">
+            <label class="options-check">
+                <input type="checkbox" data-vfx-toggle="halftone" checked>
+                <span class="options-label">HALFTONE</span>
+            </label>
+        </div>
+        <div class="options-row">
+            <label class="options-check">
+                <input type="checkbox" data-vfx-toggle="vignette" checked>
+                <span class="options-label">VIGNETTE</span>
+            </label>
+        </div>
+
+        <!-- Motion -->
+        <div class="options-row">
+            <label class="options-check">
+                <input id="reduced-motion-toggle" type="checkbox">
+                <span class="options-label">REDUCE MOTION</span>
+            </label>
+        </div>
     </div>
 
     <!-- Main View -->

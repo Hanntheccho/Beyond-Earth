@@ -40,3 +40,10 @@
     opacity: 0.05;
     filter: var(--img-filter);
 }
+
+/* Each effect can be turned off from the options menu. */
+.vfx-off-scanline .vfx-scanline,
+.vfx-off-halftone .vfx-halftone,
+.vfx-off-vignette .vfx-vignette {
+    display: none;
+}

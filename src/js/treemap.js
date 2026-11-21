@@ -1,3 +1,4 @@
+import { motionPreference } from './motion.js';
 // Shared treemap layout, labels, colors, and optional hierarchical navigation.
 // Tiles are persistent (keyed by tag/name) and tweened between market ticks, so
 // geometry, value, and change numbers animate instead of being rebuilt each tick.
@@ -14,7 +15,7 @@
     const TWEEN_PROPS = ['x', 'y', 'w', 'h', 'value', 'pct'];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotionQuery = motionPreference;
 
     function add(parent, tag, attrs, text) {
         const element = document.createElementNS(svgNS, tag);

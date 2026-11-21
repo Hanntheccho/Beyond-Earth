@@ -1,3 +1,4 @@
+import { motionPreference } from './motion.js';
 // Scrolling market ticker. Items are persistent (keyed by tag/name): percent values
 // are tweened between ticks. The marquee is driven in JS at a constant px/s, so
 // changes in text width never make it jump.
@@ -17,7 +18,7 @@
     const DIRECTIONS = ['positive', 'negative', 'neutrale'];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotionQuery = motionPreference;
     const keyOf = item => item.tag || item.name;
     const format = pct => `${pct > 0 ? '+' : ''}${pct.toFixed(1)}`;
 

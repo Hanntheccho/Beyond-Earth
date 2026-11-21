@@ -1,3 +1,4 @@
+import { motionPreference } from './motion.js';
 // Clicking a globe marker brings the content back and opens the POI panel with
 // the same id (for example the "poiFRA" marker opens the "poiFRA" panel).
 // Markers without a matching panel (poiANTT, poiNSA, poiCOOP, poiPLY...) do nothing.
@@ -7,7 +8,7 @@
 (function () {
     const PANEL_GROUP = 'lys-pois';
     const toggle = document.querySelector('.main-visibility-toggle');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotion = motionPreference;
 
     document.addEventListener('click', event => {
         const marker = event.target.closest && event.target.closest('.globe-marker');

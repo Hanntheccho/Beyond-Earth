@@ -102,7 +102,7 @@ button img {
     position: fixed;
     z-index: 1200;
     top: calc(var(--px-10) * 3 + var(--btn-size) * 3 + var(--px-10));
-    right: calc(var(--px-10) + (var(--btn-size) - var(--btn-size-sub)) / 2);
+    right: calc(var(--px-10) + (var(--btn-size) - var(--btn-size)) / 2);
     display: none;
     flex-direction: column;
     gap: 2px; /* plus the 4px button margins: 10px between buttons */
@@ -111,8 +111,8 @@ button img {
     display: flex;
 }
 .data-tabs button {
-    width: var(--btn-size-sub);
-    height: var(--btn-size-sub);
+    width: var(--btn-size);
+    height: var(--btn-size);
     padding: 10px;
 }
 
@@ -183,6 +183,14 @@ button img {
 }
 .options-check:hover input[type="checkbox"] {
     border-color: var(--clr-data);
+}
+/* Locked by a system setting (e.g. the OS already asks for reduced motion). */
+.options-check:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.options-check input[type="checkbox"]:disabled {
+    cursor: not-allowed;
 }
 .options-row input[type="range"] {
     width: 120px;
