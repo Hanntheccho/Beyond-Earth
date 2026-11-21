@@ -1,4 +1,4 @@
-// Shared renderer. The chart buttons and panels are generated from
+// scenario-chart.js - Shared renderer. The chart buttons and panels are generated from
 // window.scenarioSeries (one per series that has data), and everything about
 // a chart (name, unit, axis bounds, trend direction) comes from
 // window.scenarioSeries / window.scenarioConfig in scenario-data.js.
@@ -8,31 +8,32 @@
 // Events and eras are drawn in red by default. Add `positive: true` to one in
 // scenarioConfig to draw it in green instead (the .chart-positive class).
 //
+// Each chart is drawn the first time it comes into view (its panel is shown and
+// scrolled to), so hidden charts cost nothing at startup.
+//
 // Animation: the series (areas, lines) sit in a group clipped by a rect
 // that grows left to right (see .chart-reveal in src/css/chart.css). Event tags fade
 // in as the reveal passes them, using the --p custom property (0 to 1 across
 // the chart width). The delay and duration are set in src/css/chart.css;
 // keep the two rules there in sync.
+import { observeVisibility } from './viewport-visibility.js';
+import { SVG_NS, appendSvg as add } from './svg.js';
+
 (function () {
     const datasets = window.scenarioChartData || {};
     const seriesMeta = window.scenarioSeries || {};
     const config = window.scenarioConfig || {};
     const baselineYear = Number.isFinite(config.baselineYear) ? config.baselineYear : 2070;
-    const svgNS = 'http://www.w3.org/2000/svg';
     const valueFormatter = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 4 });
     const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
 
     const TAG_HEIGHT = 18;
     const PANEL_GROUP = 'mit-charts';
+    // Chart viewBox. The plot reserves this aspect ratio before its chart is drawn,
+    // so drawing it later does not shift the page.
+    const CHART_WIDTH = 800;
+    const CHART_HEIGHT = 400;
     const sortedData = new Map();
-
-    function add(svg, tag, attrs, text) {
-        const element = document.createElementNS(svgNS, tag);
-        Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
-        if (text !== undefined) element.textContent = text;
-        svg.append(element);
-        return element;
-    }
 
     function metaFor(plot) {
         const key = plot.dataset.series;
@@ -105,7 +106,7 @@
         const sorted = sortedPoints(meta.key);
         if (!sorted.length) return;
 
-        const width = 800, height = 400;
+        const width = CHART_WIDTH, height = CHART_HEIGHT;
         const margin = { top: 40, right: 40, bottom: 40, left: 40 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
@@ -131,8 +132,8 @@
         // Appends the green variant class when an event or era has `positive: true`.
         const positiveClass = item => (item.positive ? ' chart-positive' : '');
         const firstYear = sorted[0].year;
-        const lastYear = sorted[sorted.length - 1].year;
-        const svg = document.createElementNS(svgNS, 'svg');
+        const lastYear = sorted.at(-1).year;
+        const svg = document.createElementNS(SVG_NS, 'svg');
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.setAttribute('role', 'presentation');
         svg.setAttribute('aria-hidden', 'true');
@@ -162,12 +163,7 @@
         yearTicks.forEach(year => {
             const xx = x(year);
             add(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, class: 'chart-year-tick' });
-            const label = document.createElementNS(svgNS, 'text');
-            label.setAttribute('x', xx);
-            label.setAttribute('y', height - 15);
-            label.setAttribute('class', 'year-label');
-            label.textContent = String(year);
-            svg.append(label);
+            add(svg, 'text', { x: xx, y: height - 15, class: 'year-label' }, String(year));
         });
 
         // Events from scenarioConfig.events, optionally limited via `series`.
@@ -270,13 +266,15 @@
         keys.forEach((key, index) => {
             const id = `chart-${key}`;
             const active = index === 0;
+            const name = seriesMeta[key].name || key;
+            const points = sortedPoints(key);
 
             const button = document.createElement('button');
             button.type = 'button';
             button.dataset.panelGroup = PANEL_GROUP;
             button.dataset.panelTarget = id;
             button.setAttribute('aria-pressed', String(active));
-            button.textContent = seriesMeta[key].name || key;
+            button.textContent = name;
             buttons.push(button);
 
             const panel = document.createElement('div');
@@ -289,6 +287,8 @@
             plot.className = 'scenario-chart-plot';
             plot.dataset.series = key;
             plot.setAttribute('role', 'img');
+            plot.setAttribute('aria-label', `${name} chart, ${points[0].year} to ${points.at(-1).year}`);
+            plot.style.aspectRatio = `${CHART_WIDTH} / ${CHART_HEIGHT}`;
             panel.append(plot);
             panels.push(panel);
         });
@@ -298,6 +298,12 @@
 
     buildChartUi();
     const plots = [...document.querySelectorAll('.scenario-chart-plot[data-series]')];
-    plots.forEach(render);
     renderSummary(plots);
+    plots.forEach(plot => {
+        const stop = observeVisibility(plot, isVisible => {
+            if (!isVisible) return;
+            stop();
+            render(plot);
+        });
+    });
 })();

@@ -17,12 +17,12 @@
 //   volatility            : max random shock per tick (leaves only)
 //   momentum              : smoothed recent % change (leaves only)
 //
-// PUBLIC API: window.valueChanges (assigned at the bottom of the file)
+// PUBLIC API: import { valueChanges } from './data-calc.js'
 //   getMarket(id)  -> market object with getSnapshot/getQuote/subscribe/...
 //   registerSource(id, root)          register a tree to simulate
 //   setRelations(data)                load data/relations.json
 //   start / stop / tick / render      control the ticker manually
-(function () {
+export const valueChanges = (function () {
     // All registered trees used by the market simulation and derived views.
     const sources = [];
     const influenceListeners = new Set();
@@ -32,6 +32,10 @@
     // (e.g. oil price -> an energy company).
     let relations = [];
     let timer = null;
+    // Relations resolved against the registered trees, plus the same list grouped
+    // by target. Trees never change shape after registration (only their values
+    // move), so this is rebuilt only when a tree or the relations change.
+    let resolved = null;
 
     // Safety rails so a value can never collapse to zero or explode.
     // Values stay within 5% to 1000% of their starting value.
@@ -136,6 +140,7 @@
     function registerSource(key, root) {
         prepareValues(root);
         sources.push({ root });
+        resolved = null;
 
         if (key) {
             const market = getMarket(key);
@@ -147,6 +152,7 @@
     // Store the relations loaded from data/relations.json.
     function setRelations(data) {
         relations = data.relations || [];
+        resolved = null;
     }
 
     function createNodeIndex() {
@@ -163,8 +169,10 @@
         return nodeIndex.byTag.get(targetKey) || nodeIndex.byName.get(targetKey) || null;
     }
 
-    function resolveRelations(nodeIndex) {
-        return relations.map(relation => {
+    function getResolvedRelations() {
+        if (resolved) return resolved;
+        const nodeIndex = createNodeIndex();
+        const list = relations.map(relation => {
             const source = findNodeByKey(relation.sourceKey, nodeIndex);
             const target = findNodeByKey(relation.targetKey, nodeIndex);
             return {
@@ -173,11 +181,18 @@
                 targetKey: target ? itemKey(target) : relation.targetKey
             };
         });
+        const byTarget = new Map();
+        list.forEach(relation => {
+            if (!byTarget.has(relation.targetKey)) byTarget.set(relation.targetKey, []);
+            byTarget.get(relation.targetKey).push(relation);
+        });
+        resolved = { list, byTarget };
+        return resolved;
     }
 
     function getInfluenceData() {
-        const nodeIndex = createNodeIndex();
-        const graphRelations = resolveRelations(nodeIndex);
+        // Copies, so a subscriber can never alter the cached relations.
+        const graphRelations = getResolvedRelations().list.map(relation => ({ ...relation }));
         const nodes = new Map();
         graphRelations.forEach(relation => {
             [relation.sourceKey, relation.targetKey].forEach(key => {
@@ -194,7 +209,7 @@
         });
 
         sources.forEach(source => walk(source.root, node => {
-            const key = node.tag || node.name;
+            const key = itemKey(node);
             if (!nodes.has(key)) return;
             nodes.set(key, {
                 id: key,
@@ -238,11 +253,11 @@
         // Used to measure change and to compute each relation's source movement.
         const previous = new Map();
         const previousKeyMap = new Map();
-        const resolvedRelations = resolveRelations(createNodeIndex());
+        const relationsByTarget = getResolvedRelations().byTarget;
 
         sources.forEach(source => walk(source.root, node => {
             previous.set(node, node.value);
-            previousKeyMap.set(node.tag || node.name, node.value);
+            previousKeyMap.set(itemKey(node), node.value);
         }));
 
         // Market mood: decays 14% per tick toward 0 and gets a small random kick,
@@ -265,23 +280,16 @@
         }
         sources.forEach(source => updateLeaf(source.root));
 
-        // Snapshot the freshly updated values so relations can compare against the last tick.
-        const currentKeyMap = new Map();
-        sources.forEach(source => walk(source.root, node => {
-            currentKeyMap.set(node.tag || node.name, node.value);
-        }));
-
         // Pass 2: sum all incoming relation effects per target before applying them.
-        if (resolvedRelations.length) {
-            const relationsByTarget = new Map();
-            resolvedRelations.forEach(relation => {
-                if (!relationsByTarget.has(relation.targetKey)) relationsByTarget.set(relation.targetKey, []);
-                relationsByTarget.get(relation.targetKey).push(relation);
-            });
+        if (relationsByTarget.size) {
+            // Snapshot the freshly updated values so relations can compare against the last tick.
+            const currentKeyMap = new Map();
+            sources.forEach(source => walk(source.root, node => {
+                currentKeyMap.set(itemKey(node), node.value);
+            }));
 
             sources.forEach(source => walk(source.root, node => {
-                const nodeKey = node.tag || node.name;
-                const relevantRelations = relationsByTarget.get(nodeKey);
+                const relevantRelations = relationsByTarget.get(itemKey(node));
                 if (!relevantRelations) return;
 
                 const applyToLeaf = (leaf) => {
@@ -373,19 +381,6 @@
         timer = null;
     }
 
-    // Public API used by the market data loader and view components.
-    window.valueChanges = {
-        getMarket,
-        registerSource,
-        setRelations,
-        getInfluenceData,
-        subscribeInfluence,
-        tick: computeValues,
-        render: publishMarkets,
-        start: startTicker,
-        stop: stopTicker
-    };
-
     // Panels that are hidden skip their redraws to save work. When one of the
     // plain panels (those with data-panel-group but no data-panel-target, i.e.
     // not the buttons) is shown or hidden, republish so a newly visible panel
@@ -404,4 +399,17 @@
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden) publishMarkets();
     });
+
+    // Public API used by the market data loader and view components.
+    return {
+        getMarket,
+        registerSource,
+        setRelations,
+        getInfluenceData,
+        subscribeInfluence,
+        tick: computeValues,
+        render: publishMarkets,
+        start: startTicker,
+        stop: stopTicker
+    };
 })();

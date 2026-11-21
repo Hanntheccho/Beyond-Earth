@@ -5,6 +5,9 @@
  * of from index.html: the download starts when the graph nears the viewport
  * and nothing is drawn until it has arrived.
  */
+import { valueChanges } from './data-calc.js';
+import { observeVisibility } from './viewport-visibility.js';
+
 (function () {
     const container = document.getElementById('influence-graph-container');
     if (!container) return;
@@ -28,14 +31,12 @@
     }
 
     // Warm the download before the graph is actually on screen.
-    if (typeof IntersectionObserver !== 'undefined') {
-        const prefetch = new IntersectionObserver(entries => {
-            if (!entries.some(entry => entry.isIntersecting)) return;
-            prefetch.disconnect();
-            loadD3().catch(() => {});
-        }, { rootMargin: D3_PREFETCH_MARGIN });
-        prefetch.observe(container);
-    }
+    const prefetch = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        prefetch.disconnect();
+        loadD3().catch(() => {});
+    }, { rootMargin: D3_PREFETCH_MARGIN });
+    prefetch.observe(container);
 
     let simulation, svg;
     let simulationNodes = new Map();
@@ -54,7 +55,7 @@
         graphWidth = container.clientWidth;
         graphHeight = container.clientHeight;
 
-        svg = d3.select('#influence-graph-container')
+        svg = d3.select(container)
             .append('svg')
             .attr('width', graphWidth)
             .attr('height', graphHeight);
@@ -86,22 +87,30 @@
             .force('bounds', () => constrainNodesToBounds(simulation.nodes()))
             .stop();
 
-        if (typeof ResizeObserver !== 'undefined') {
-            new ResizeObserver(() => {
-                graphWidth = container.clientWidth;
-                graphHeight = container.clientHeight;
-                svg.attr('width', graphWidth).attr('height', graphHeight);
-                simulation.force('center')
-                    .x(graphWidth / 2)
-                    .y(graphHeight / 2);
-                constrainNodesToBounds(simulation.nodes());
-                simulation.alpha(0.1).restart();
-            }).observe(container);
-        }
+        new ResizeObserver(() => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            // Hiding the data view shrinks the container to 0 x 0. Keep the last size,
+            // or every node would be clamped into the corner while it is hidden.
+            if (!width || !height) return;
+            graphWidth = width;
+            graphHeight = height;
+            svg.attr('width', graphWidth).attr('height', graphHeight);
+            simulation.force('center')
+                .x(graphWidth / 2)
+                .y(graphHeight / 2);
+            constrainNodesToBounds(simulation.nodes());
+            simulation.alpha(0.1).restart();
+        }).observe(container);
     }
 
     function clamp(value, minimum, maximum) {
         return Math.max(minimum, Math.min(maximum, value));
+    }
+
+    // Identifies a directed link (keys never contain control characters).
+    function linkKey(sourceKey, targetKey) {
+        return `${sourceKey}\u0001${targetKey}`;
     }
 
     function clampNodeToBounds(node) {
@@ -132,8 +141,8 @@
             if (logValue > maxLogValue) maxLogValue = logValue;
         });
         const exponentialScale = Math.exp(3) - 1;
-        const nodesById = new Map();
 
+        // Existing node objects are reused so they keep their positions.
         const nodes = data.nodes.map(n => {
             const radius = n.hasData === false
                 ? 5
@@ -150,7 +159,6 @@
                 radius,
                 labelFontSize
             });
-            nodesById.set(node.id, node);
             return node;
         });
         simulationNodes = new Map(nodes.map(node => [node.id, node]));
@@ -162,11 +170,12 @@
             weight: Number(relation.weight) || 0
         }));
 
+        // Links between the same two nodes (either direction) bend apart.
         const linksByPair = new Map();
         links.forEach(link => {
             const pairKey = link.sourceKey <= link.targetKey
-                ? JSON.stringify([link.sourceKey, link.targetKey])
-                : JSON.stringify([link.targetKey, link.sourceKey]);
+                ? linkKey(link.sourceKey, link.targetKey)
+                : linkKey(link.targetKey, link.sourceKey);
             if (!linksByPair.has(pairKey)) linksByPair.set(pairKey, []);
             linksByPair.get(pairKey).push(link);
         });
@@ -182,15 +191,11 @@
         simulation.force('link').links(links);
         simulation.force('collide').radius(node => node.radius + 8);
 
-        const link = svg.selectAll('.link').data(
-            links,
-            d => JSON.stringify([d.sourceKey, d.targetKey])
-        );
+        const link = svg.selectAll('.link').data(links, d => linkKey(d.sourceKey, d.targetKey));
         link.exit().remove();
         const linkEnter = link.enter().append('path')
             .attr('class', 'link')
-            .attr('fill', 'none')
-            .attr('marker-end', d => `url(#relationship-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
+            .attr('fill', 'none');
         linkEnter.append('title');
 
         const node = svg.selectAll('.node-group').data(nodes, d => d.id);
@@ -225,13 +230,12 @@
 
         const nodeMerge = nodeEnter.merge(node);
         const linkMerge = linkEnter.merge(link);
+        // Selection and drag state are applied by updateHighlight() below.
         nodeMerge
             .classed('is-unavailable', d => d.hasData === false)
             .classed('is-down', d => d.hasData !== false && d.changePercent < 0)
             .classed('is-up', d => d.hasData !== false && d.changePercent >= 0)
-            .classed('is-selected', d => selectedNodeId === d.id)
-            .attr('aria-label', d => d.label || d.name)
-            .attr('aria-pressed', d => String(selectedNodeId === d.id));
+            .attr('aria-label', d => d.label || d.name);
         nodeMerge.select('circle')
             .interrupt()
             .transition()
@@ -255,11 +259,10 @@
             .classed('is-positive', d => d.weight >= 0)
             .classed('is-negative', d => d.weight < 0)
             .attr('marker-end', d => `url(#relationship-arrow-${d.weight < 0 ? 'negative' : 'positive'})`);
-        updateDraggedLinks();
-        updateDraggedNodes();
+        updateHighlight();
         linkMerge.select('title').text(d => {
-            const source = nodesById.get(d.sourceKey);
-            const target = nodesById.get(d.targetKey);
+            const source = simulationNodes.get(d.sourceKey);
+            const target = simulationNodes.get(d.targetKey);
             return `${source.label || source.name} -> ${target.label || target.name}\nWeight: ${numberFormat.format(d.weight)}`;
         });
 
@@ -317,22 +320,18 @@
         renderWhenReady();
     }
 
-    function updateDraggedLinks() {
-        const activeNodeIds = new Set(draggedNodeIds);
-        if (selectedNodeId !== null) activeNodeIds.add(selectedNodeId);
-        svg.selectAll('.link')
-            .classed('is-node-dragged-related', d =>
-                activeNodeIds.has(d.sourceKey) || activeNodeIds.has(d.targetKey)
-            );
-    }
-
-    function updateDraggedNodes() {
+    // Highlights the dragged and selected nodes, their links and their neighbours,
+    // and dims every other node.
+    function updateHighlight() {
         const activeNodeIds = new Set(draggedNodeIds);
         if (selectedNodeId !== null) activeNodeIds.add(selectedNodeId);
         const relatedNodeIds = new Set(activeNodeIds);
-        svg.selectAll('.link').each(d => {
-            if (activeNodeIds.has(d.sourceKey)) relatedNodeIds.add(d.targetKey);
-            if (activeNodeIds.has(d.targetKey)) relatedNodeIds.add(d.sourceKey);
+        svg.selectAll('.link').classed('is-node-dragged-related', d => {
+            const fromActive = activeNodeIds.has(d.sourceKey);
+            const toActive = activeNodeIds.has(d.targetKey);
+            if (fromActive) relatedNodeIds.add(d.targetKey);
+            if (toActive) relatedNodeIds.add(d.sourceKey);
+            return fromActive || toActive;
         });
         svg.selectAll('.node-group')
             .classed('is-dragging', d => draggedNodeIds.has(d.id))
@@ -345,18 +344,17 @@
 
     function toggleSelection(node) {
         selectedNodeId = selectedNodeId === node.id ? null : node.id;
-        updateDraggedLinks();
-        updateDraggedNodes();
+        updateHighlight();
     }
 
+    // Clicking anywhere outside the graph's nodes clears the selection.
     document.addEventListener('click', event => {
         if (selectedNodeId === null || event.target.closest?.('#influence-graph-container .node-group')) return;
         selectedNodeId = null;
-        updateDraggedLinks();
-        updateDraggedNodes();
+        updateHighlight();
     });
 
-    window.viewportVisibility.observe(container, isVisible => {
+    observeVisibility(container, isVisible => {
         inViewport = isVisible;
         renderWhenReady();
     });
@@ -365,8 +363,7 @@
 
     function dragstarted(event) {
         draggedNodeIds.add(event.subject.id);
-        updateDraggedNodes();
-        updateDraggedLinks();
+        updateHighlight();
         clampNodeToBounds(event.subject);
         event.subject.fx = event.subject.x;
         event.subject.fy = event.subject.y;
@@ -388,11 +385,10 @@
             simulation.alphaTarget(0);
             dragSimulationActive = false;
         }
-        updateDraggedNodes();
-        updateDraggedLinks();
+        updateHighlight();
         event.subject.fx = null;
         event.subject.fy = null;
     }
 
-    window.valueChanges.subscribeInfluence(update);
+    valueChanges.subscribeInfluence(update);
 })();

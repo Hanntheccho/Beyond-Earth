@@ -1,160 +1,166 @@
-/**
- * Gets the localization data.
- *
- * Loads every localization JSON listed in data/loc/manifest.json.
- */
-async function fetchLocalization() {
-    return applyDescriptionTitles(await fetchLocalizationFiles());
+// loc.js - Localization. Loads every JSON listed in data/loc/manifest.json and fills
+// each element whose class matches a key (class="poiFRA" gets the "poiFRA" text).
+// Keywords (keywords-ph1/2/3.json) are highlighted in descriptions when they are first
+// shown, so the cost is only paid for the panels and tooltips people actually open.
+//
+// Exports for other modules:
+//   getLocalization()            the merged localization data (fetched once)
+//   formatLocalizationValue(key) one string with its keywords highlighted
+//   localizationData             that data once the page is localized, null before
+//   localizeAfter(promise)       wait for a promise (pois.js building its panels)
+//                                before localizing the page
+
+const MANIFEST_PATH = 'data/loc/manifest.json';
+const POI_PANEL_GROUP = 'lys-pois';
+// Applied in this order. Text already inside a highlight of the same list is skipped.
+const KEYWORD_LISTS = [
+    { path: 'data/loc/keywords-ph3.json', selector: '.ph3' },
+    { path: 'data/loc/keywords-ph2.json', selector: '.ph2' },
+    { path: 'data/loc/keywords-ph1.json', selector: '.ph1' }
+];
+
+export let localizationData = null;
+
+const setupTasks = [];
+export function localizeAfter(promise) {
+    setupTasks.push(promise);
 }
 
-/** Add each description's localized title heading. */
-function applyDescriptionTitles(localization) {
-    for (const [key, description] of Object.entries(localization)) {
-        if (!key.endsWith('-desc') || typeof description !== 'string') continue;
+// ------------------------------------------------------------------ loading
 
-        const title = localization[key.slice(0, -5)];
-        if (typeof title !== 'string') continue;
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const escapeHtml = text => text.replace(/[&<>"']/g, character => HTML_ESCAPES[character]);
 
-        const escapedTitle = title.replace(/[&<>"']/g, character => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        })[character]);
-        localization[key] = `<h2>[${escapedTitle}]</h2>${description}`;
-    }
-
-    return localization;
+async function fetchJson(path, what) {
+    const response = await fetch(path);
+    if (!response.ok) throw new Error(`Failed to load ${what} ${path} (${response.status})`);
+    return response.json();
 }
 
-/** Load and merge all localization files listed in the root localization manifest. */
+// Load and merge all localization files listed in the manifest.
 async function fetchLocalizationFiles() {
-    const manifestPath = 'data/loc/manifest.json';
-    const manifestResponse = await fetch(manifestPath);
-    if (!manifestResponse.ok) {
-        throw new Error(`Failed to load localization manifest ${manifestPath}`);
-    }
-
-    const files = await manifestResponse.json();
+    const files = await fetchJson(MANIFEST_PATH, 'localization manifest');
     if (!Array.isArray(files) || files.some(file => typeof file !== 'string' || !file.endsWith('.json'))) {
-        throw new Error(`Invalid localization manifest ${manifestPath}`);
+        throw new Error(`Invalid localization manifest ${MANIFEST_PATH}`);
     }
-
-    const entries = await Promise.all(files.map(async file => {
-        const path = `data/loc/${file}`;
-        const response = await fetch(path);
-        if (!response.ok) throw new Error(`Failed to load localization file ${path}`);
-        return response.json();
-    }));
-
+    const entries = await Promise.all(files.map(file => fetchJson(`data/loc/${file}`, 'localization file')));
     return Object.assign({}, ...entries);
 }
 
-const keywordPromises = new Map();
-
-/** Load a keyword list once per file; it stays separate from localization JSONs. */
-function fetchKeywords(path) {
-    if (!keywordPromises.has(path)) {
-        keywordPromises.set(path, fetch(path).then(response => {
-            if (!response.ok) throw new Error(`Failed to load ${path}`);
-            return response.json();
-        }).catch(error => {
-            console.warn(`Could not load shared localization keywords from ${path}:`, error);
-            return [];
-        }));
+// Put each description's localized title in front of it as a heading.
+function applyDescriptionTitles(localization) {
+    for (const [key, description] of Object.entries(localization)) {
+        if (!key.endsWith('-desc') || typeof description !== 'string') continue;
+        const title = localization[key.slice(0, -5)];
+        if (typeof title !== 'string') continue;
+        localization[key] = `<h2>[${escapeHtml(title)}]</h2>${description}`;
     }
-    return keywordPromises.get(path);
+    return localization;
 }
 
-/** Wrap whole keyword matches in <tag> in text nodes, leaving existing HTML markup intact. */
-function applyKeywordFormatting(localization, keywords, tagName) {
-    if (!Array.isArray(keywords) || keywords.length === 0) return localization;
+let localizationPromise = null;
 
+// The first call starts the request; later calls share it, whether it is still
+// loading or already done. A failed request is retried on the next call.
+export function getLocalization() {
+    localizationPromise ??= fetchLocalizationFiles()
+        .then(applyDescriptionTitles)
+        .catch(error => {
+            localizationPromise = null;
+            throw error;
+        });
+    return localizationPromise;
+}
+
+// ----------------------------------------------------------------- keywords
+
+// ".cls" -> <span class="cls">, "tag.a.b" -> <tag class="a b">, "tag" -> <tag>.
+function parseWrapper(selector) {
+    if (selector.startsWith('.')) return { tag: 'span', className: selector.slice(1) };
+    const [tag, ...classes] = selector.split('.');
+    return { tag: tag || 'span', className: classes.join(' ') };
+}
+
+// One regex per list, longest keywords first so they win over their substrings.
+// Unicode letters, numbers, and underscores count as word characters.
+function buildMatcher(keywords) {
+    if (!Array.isArray(keywords)) return null;
     const escaped = keywords
         .filter(keyword => typeof keyword === 'string' && keyword.length > 0)
         .sort((a, b) => b.length - a.length)
         .map(keyword => keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-    if (escaped.length === 0) return localization;
+    if (!escaped.length) return null;
+    return new RegExp(`(?<![\\p{L}\\p{N}_])(${escaped.join('|')})(?![\\p{L}\\p{N}_])`, 'giu');
+}
 
-    // Unicode letters, numbers, and underscores count as word characters.
-    const matcher = new RegExp(`(?<![\\p{L}\\p{N}_])(${escaped.join('|')})(?![\\p{L}\\p{N}_])`, 'giu');
+let keywordFormatters = null;
 
-    for (const [key, value] of Object.entries(localization)) {
-        if (typeof value !== 'string' || !value) continue;
-
-        const template = document.createElement('template');
-        template.innerHTML = value;
-        const textNodes = [];
-        // Keywords are for descriptive copy only. Leave labels and other
-        // localization strings outside paragraphs untouched.
-        template.content.querySelectorAll('p').forEach(paragraph => {
-            const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
-            while (walker.nextNode()) textNodes.push(walker.currentNode);
-        });
-
-        for (const textNode of textNodes) {
-            if (textNode.parentElement?.closest(tagName)) continue;
-            matcher.lastIndex = 0;
-            const text = textNode.nodeValue;
-            if (!matcher.test(text)) continue;
-            matcher.lastIndex = 0;
-
-            const replacement = document.createDocumentFragment();
-            let lastIndex = 0;
-            for (const match of text.matchAll(matcher)) {
-                replacement.append(document.createTextNode(text.slice(lastIndex, match.index)));
-                let tag = tagName;
-                let cls = '';
-                if (tagName.startsWith('.')) {
-                    tag = 'span';
-                    cls = tagName.slice(1);
-                } else if (tagName.includes('.')) {
-                    const parts = tagName.split('.');
-                    tag = parts[0] || 'span';
-                    cls = parts.slice(1).join(' ');
-                }
-                const wrapper = document.createElement(tag);
-                if (cls) wrapper.className = cls;
-                wrapper.textContent = match[0];
-                replacement.append(wrapper);
-                lastIndex = match.index + match[0].length;
-            }
-            replacement.append(document.createTextNode(text.slice(lastIndex)));
-            textNode.replaceWith(replacement);
+// Fetches the keyword lists and compiles their regexes once, on first use.
+function getKeywordFormatters() {
+    keywordFormatters ??= Promise.all(KEYWORD_LISTS.map(async list => {
+        let keywords = [];
+        try {
+            keywords = await fetchJson(list.path, 'keyword list');
+        } catch (error) {
+            console.warn(`Could not load shared localization keywords from ${list.path}:`, error);
         }
+        return { ...list, ...parseWrapper(list.selector), matcher: buildMatcher(keywords) };
+    })).then(formatters => formatters.filter(formatter => formatter.matcher));
+    return keywordFormatters;
+}
 
-        localization[key] = template.innerHTML;
+// Wrap whole keyword matches in text nodes, leaving existing HTML markup intact.
+// Keywords are for descriptive copy only, so only text inside paragraphs is touched.
+function wrapKeywords(root, { matcher, selector, tag, className }) {
+    const textNodes = [];
+    root.querySelectorAll('p').forEach(paragraph => {
+        const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+    });
+
+    for (const textNode of textNodes) {
+        if (textNode.parentElement?.closest(selector)) continue;
+        const text = textNode.nodeValue;
+        matcher.lastIndex = 0;
+        if (!matcher.test(text)) continue;
+        matcher.lastIndex = 0;
+
+        const replacement = document.createDocumentFragment();
+        let lastIndex = 0;
+        for (const match of text.matchAll(matcher)) {
+            replacement.append(text.slice(lastIndex, match.index));
+            const wrapper = document.createElement(tag);
+            if (className) wrapper.className = className;
+            wrapper.textContent = match[0];
+            replacement.append(wrapper);
+            lastIndex = match.index + match[0].length;
+        }
+        replacement.append(text.slice(lastIndex));
+        textNode.replaceWith(replacement);
     }
-    return localization;
 }
 
 const formattedLocalization = new Map();
 
-/** Format one localization string on demand, sharing keyword fetches across callers. */
-function formatLocalizationValue(key) {
+// Format one localization string on demand; each key is only formatted once.
+export function formatLocalizationValue(key) {
     if (formattedLocalization.has(key)) return formattedLocalization.get(key);
 
-    const value = window.localizationData && window.localizationData[key];
+    const value = localizationData?.[key];
     if (typeof value !== 'string') return Promise.resolve(value);
 
-    const formatted = Promise.all([
-        fetchKeywords('data/loc/keywords-ph3.json'),
-        fetchKeywords('data/loc/keywords-ph2.json'),
-        fetchKeywords('data/loc/keywords-ph1.json')
-    ]).then(([ph3Keywords, ph2Keywords, ph1Keywords]) => {
-        const localized = { [key]: value };
-        applyKeywordFormatting(localized, ph3Keywords, '.ph3');
-        applyKeywordFormatting(localized, ph2Keywords, '.ph2');
-        applyKeywordFormatting(localized, ph1Keywords, '.ph1');
-        return localized[key];
+    const formatted = getKeywordFormatters().then(formatters => {
+        if (!value || !formatters.length) return value;
+        const template = document.createElement('template');
+        template.innerHTML = value;
+        formatters.forEach(formatter => wrapKeywords(template.content, formatter));
+        return template.innerHTML;
     });
-
     formattedLocalization.set(key, formatted);
     return formatted;
 }
 
-window.formatLocalizationValue = formatLocalizationValue;
+// ------------------------------------------------------------------- page
 
 function buildLocalizationElementLookup() {
     const elementsByClass = new Map();
@@ -167,31 +173,57 @@ function buildLocalizationElementLookup() {
     return elementsByClass;
 }
 
+// Let the title cycle the main description through the archived quotes (LOADING_TIP_*).
+function bindLoadingTips(data) {
+    const loadingTips = Object.entries(data)
+        .filter(([key, value]) => key.startsWith('LOADING_TIP_') && typeof value === 'string' && value.length > 0)
+        .map(([, value]) => value);
+    const description = document.querySelector('.BE0-desc');
+    const title = document.querySelector('.main-title');
+    if (!description || !title || !loadingTips.length || title.dataset.loadingTipsBound) return;
 
-/**
- * Loads localization data and updates the page.
- *
- */
+    let tipIndex = 0;
+    function showTip(index) {
+        tipIndex = index;
+        description.dataset.loadingTipIndex = String(index);
+        description.innerHTML = loadingTips[index];
+    }
+    showTip(Math.floor(Math.random() * loadingTips.length));
+
+    title.dataset.loadingTipsBound = 'true';
+    // The title works as a button, so keyboard users can focus it and press Enter or Space.
+    title.tabIndex = 0;
+    title.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        title.click();
+    });
+    title.addEventListener('click', () => {
+        // Any tip but the current one, so every click changes it.
+        const offset = loadingTips.length > 1 ? 1 + Math.floor(Math.random() * (loadingTips.length - 1)) : 0;
+        showTip((tipIndex + offset) % loadingTips.length);
+    });
+}
+
 async function loadLocalization() {
     try {
         const data = await getLocalization();
-        if (window.poisReady) await window.poisReady;
-        window.localizationData = data;
+        await Promise.allSettled(setupTasks);
+        localizationData = data;
 
         const elementsByClass = buildLocalizationElementLookup();
         Object.entries(data).forEach(([key, value]) => {
-            const elements = elementsByClass.get(key);
-            if (elements) elements.forEach(element => {
+            elementsByClass.get(key)?.forEach(element => {
                 element.innerHTML = value;
             });
         });
 
+        // POI descriptions get their keywords highlighted when their panel is first opened.
         const formattedPoiDescriptions = new Set();
         function formatPoiPanel(button) {
             const key = `${button.dataset.panelTarget}-desc`;
             const elements = elementsByClass.get(key);
-            if (!elements || !Object.prototype.hasOwnProperty.call(data, key) ||
-                formattedPoiDescriptions.has(key)) return;
+            if (!elements || !Object.hasOwn(data, key) || formattedPoiDescriptions.has(key)) return;
 
             formattedPoiDescriptions.add(key);
             formatLocalizationValue(key).then(value => {
@@ -204,82 +236,24 @@ async function loadLocalization() {
             });
         }
 
+        const poiButtonSelector = `[data-panel-target][data-panel-group="${POI_PANEL_GROUP}"]`;
         document.addEventListener('click', event => {
-            const button = event.target.closest &&
-                event.target.closest('[data-panel-target][data-panel-group="lys-pois"]');
-            if (!button) return;
-            formatPoiPanel(button);
+            const button = event.target.closest?.(poiButtonSelector);
+            if (button) formatPoiPanel(button);
         });
 
-        const initialPoiButton = document.querySelector(
-            '[data-panel-target][data-panel-group="lys-pois"][aria-pressed="true"]'
-        );
+        const initialPoiButton = document.querySelector(`${poiButtonSelector}[aria-pressed="true"]`);
         if (initialPoiButton) {
-            window.requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
                 const initialPanel = document.getElementById(initialPoiButton.dataset.panelTarget);
                 if (initialPanel && !initialPanel.hidden) formatPoiPanel(initialPoiButton);
             });
         }
 
-        // Let the title cycle the main description through archived quotes.
-        const loadingTips = Object.entries(data)
-            .filter(([key, value]) => key.startsWith('LOADING_TIP_') && typeof value === 'string' && value.length > 0)
-            .map(([, value]) => value);
-        const description = document.querySelector('.BE0-desc');
-        const title = document.querySelector('.main-title');
-        if (description && title && loadingTips.length > 0 && !title.dataset.loadingTipsBound) {
-            const initialIndex = Math.floor(Math.random() * loadingTips.length);
-            description.dataset.loadingTipIndex = '' + initialIndex;
-            description.innerHTML = loadingTips[initialIndex];
-
-            title.dataset.loadingTipsBound = 'true';
-            // The title works as a button, so keyboard users can focus it and press Enter or Space.
-            title.tabIndex = 0;
-            title.addEventListener('keydown', event => {
-                if (event.key !== 'Enter' && event.key !== ' ') return;
-                event.preventDefault();
-                title.click();
-            });
-            title.addEventListener('click', () => {
-                let nextIndex = Math.floor(Math.random() * loadingTips.length);
-                if (loadingTips.length > 1 && description.dataset.loadingTipIndex === '' + nextIndex) {
-                    // Keep the tip changing on each click, including consecutive clicks.
-                    while ('' + nextIndex === description.dataset.loadingTipIndex) {
-                        nextIndex = Math.floor(Math.random() * loadingTips.length);
-                    }
-                }
-                description.dataset.loadingTipIndex = '' + nextIndex;
-                description.innerHTML = loadingTips[nextIndex];
-            });
-        }
+        bindLoadingTips(data);
     } catch (error) {
         console.error('Error loading localization:', error);
     }
 }
 
-
-// The localization request, so every caller shares one fetch.
-let localizationPromise = null;
-
-
-/**
- * Retrieves the localization data. The first call starts the request; later calls
- * share it, whether it is still loading or already done.
- *
- * @returns {Promise<Object>} The parsed localization data.
- */
-function getLocalization() {
-    if (!localizationPromise) {
-        localizationPromise = fetchLocalization().catch(error => {
-            localizationPromise = null; // let a later call try again
-            throw error;
-        });
-    }
-    return localizationPromise;
-}
-
-
-// Load localization
 loadLocalization();
-
-window.getLocalization = getLocalization;

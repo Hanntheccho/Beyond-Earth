@@ -1,24 +1,23 @@
+// market-text.js - Scrolling market ticker. Items are persistent (keyed by tag/name):
+// percent values are tweened between ticks. The marquee is driven in JS at a constant
+// px/s, so changes in text width never make it jump. It pauses while the ticker is
+// off screen or hidden (for example while the globe is explored on its own).
 import { motionPreference } from './motion.js';
-// Scrolling market ticker. Items are persistent (keyed by tag/name): percent values
-// are tweened between ticks. The marquee is driven in JS at a constant px/s, so
-// changes in text width never make it jump.
+import { valueChanges } from './data-calc.js';
+import { observeVisibility } from './viewport-visibility.js';
+
 (function () {
     const ticker = document.querySelector('.market-text-txt');
     if (!ticker) return;
     const line = ticker.closest('.market-text-line') || ticker;
     const bar = ticker.closest('.market-text') || line.parentElement;
-
-    const market = (typeof window.valueChanges === 'object' && window.valueChanges.getMarket)
-        ? window.valueChanges.getMarket('resources')
-        : null;
-    if (!market) return;
+    const market = valueChanges.getMarket('resources');
 
     const SPEED = 50;      // marquee speed in px per second
     const DURATION = 700;  // number tween; keep well below the market tick interval
     const DIRECTIONS = ['positive', 'negative', 'neutrale'];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
-    const reducedMotionQuery = motionPreference;
     const keyOf = item => item.tag || item.name;
     const format = pct => `${pct > 0 ? '+' : ''}${pct.toFixed(1)}`;
 
@@ -28,18 +27,12 @@ import { motionPreference } from './motion.js';
     let x = bar.clientWidth;
     let raf = 0;
     let last = 0;
+    let onScreen = false;
 
-    function measure() {
-        lineWidth = line.offsetWidth;
-    }
-
-    const lineResizeObserver = new ResizeObserver(entries => {
-        lineWidth = entries[0].contentRect.width;
-    });
-    lineResizeObserver.observe(line);
+    new ResizeObserver(() => { lineWidth = line.offsetWidth; }).observe(line);
 
     function applyTransform() {
-        line.style.transform = reducedMotionQuery.matches ? '' : `translate3d(${x}px, 0, 0)`;
+        line.style.transform = motionPreference.matches ? '' : `translate3d(${x}px, 0, 0)`;
     }
 
     function paint(entry) {
@@ -61,14 +54,14 @@ import { motionPreference } from './motion.js';
     function build(current) {
         ticker.replaceChildren();
         items.clear();
-        ticker.append(document.createTextNode('MondayMarket ||| '));
+        ticker.append('MondayMarket ||| ');
         current.forEach((item, index) => {
-            if (index) ticker.append(document.createTextNode(' | '));
+            if (index) ticker.append(' | ');
             const wrapper = document.createElement('span');
             wrapper.className = 'market-text-item';
             const val = document.createElement('span');
             val.className = 'market-text-val';
-            wrapper.append(val, document.createTextNode(` ${item.name}`));
+            wrapper.append(val, ` ${item.name}`);
             ticker.append(wrapper);
 
             const pct = item.changePercent || 0;
@@ -77,12 +70,12 @@ import { motionPreference } from './motion.js';
             setDirection(entry, item);
             items.set(keyOf(item), entry);
         });
-        measure();
+        lineWidth = line.offsetWidth;
         applyTransform();
     }
 
     function frame(now) {
-        const reduced = reducedMotionQuery.matches;
+        const reduced = motionPreference.matches;
         const dt = Math.min(0.1, (now - last) / 1000);
         last = now;
 
@@ -103,11 +96,12 @@ import { motionPreference } from './motion.js';
         }
         applyTransform();
 
-        raf = (!document.hidden && (!reduced || tweening)) ? requestAnimationFrame(frame) : 0;
+        const keepGoing = !document.hidden && onScreen && (!reduced || tweening);
+        raf = keepGoing ? requestAnimationFrame(frame) : 0;
     }
 
     function startLoop() {
-        if (raf) return;
+        if (raf || !onScreen || !items.size) return;
         last = performance.now();
         raf = requestAnimationFrame(frame);
     }
@@ -134,8 +128,13 @@ import { motionPreference } from './motion.js';
         startLoop();
     }
 
+    observeVisibility(bar, isVisible => {
+        onScreen = isVisible;
+        startLoop();
+    });
+
     document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && items.size) startLoop();
+        if (!document.hidden) startLoop();
     });
 
     market.subscribe(render, { immediate: true });

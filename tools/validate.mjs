@@ -611,6 +611,82 @@ function checkSyntax() {
     }
 }
 
+// --------------------------------------------------------------------- modules
+
+// Names a module exports: `export function/const/let/class name` and `export { a, b as c }`.
+function exportedNames(source) {
+    const names = new Set();
+    for (const match of source.matchAll(/^\s*export\s+(?:async\s+)?(?:function\*?|class|const|let|var)\s+([A-Za-z_$][\w$]*)/gm)) {
+        names.add(match[1]);
+    }
+    for (const match of source.matchAll(/^\s*export\s*\{([^}]*)\}/gm)) {
+        match[1].split(',').forEach(part => {
+            const name = part.trim().split(/\s+as\s+/).pop().trim();
+            if (name) names.add(name);
+        });
+    }
+    return names;
+}
+
+// The page is one module graph starting at src/default.js: a missing file or a
+// missing named export stops every script on the page, so both are errors. A module
+// in src/js that nothing imports never runs, which is only a warning.
+function checkModules() {
+    const entry = 'src/default.js';
+    if (!exists(abs(entry))) {
+        error('modules', `${entry} is missing`);
+        return;
+    }
+    const exportsCache = new Map();
+    const exportsOf = file => {
+        if (!exportsCache.has(file)) exportsCache.set(file, exportedNames(read(file)));
+        return exportsCache.get(file);
+    };
+    const reached = new Set();
+    const queue = [abs(entry)];
+
+    while (queue.length) {
+        const file = queue.shift();
+        if (reached.has(file)) continue;
+        reached.add(file);
+        const rel = path.relative(ROOT, file).replaceAll('\\', '/');
+        const source = read(file);
+        const dir = path.dirname(file);
+
+        // Static imports: import './x.js', import { a, b as c } from './x.js'
+        for (const match of source.matchAll(/^\s*import\s+(?:([^'";]+?)\s+from\s+)?['"]([^'"]+)['"]/gm)) {
+            const [, clause, spec] = match;
+            if (!spec.startsWith('.')) continue;
+            const target = path.resolve(dir, spec);
+            if (!exists(target)) {
+                error('modules', `${rel} imports "${spec}" which does not exist`);
+                continue;
+            }
+            if (!target.endsWith('.js')) continue;
+            queue.push(target);
+
+            const named = clause && /\{([^}]*)\}/.exec(clause);
+            if (!named) continue;
+            const available = exportsOf(target);
+            named[1].split(',')
+                .map(part => part.trim().split(/\s+as\s+/)[0].trim())
+                .filter(Boolean)
+                .forEach(name => {
+                    if (!available.has(name)) error('modules', `${rel} imports { ${name} } from "${spec}", which does not export it; no script on the page would run`);
+                });
+        }
+
+        // Dynamic imports of local files (the globe's marker JSON, for example).
+        for (const match of source.matchAll(/\bimport\(\s*['"](\.[^'"]+)['"]/g)) {
+            if (!exists(path.resolve(dir, match[1]))) error('modules', `${rel} dynamically imports "${match[1]}" which does not exist`);
+        }
+    }
+
+    listJs('src/js').forEach(rel => {
+        if (!reached.has(abs(rel))) warn('modules', `${rel} is not imported from ${entry} (directly or through another module), so it never runs`);
+    });
+}
+
 // ------------------------------------------------------------------------ main
 
 const loc = checkLocalization();
@@ -623,6 +699,7 @@ checkDataFileDuplicates('data/mkt-data.json');
 checkDataFileDuplicates('data/gdp-data.json');
 checkEconomicRelations();
 checkScenario();
+checkModules();
 checkSyntax();
 
 function print(title, list) {

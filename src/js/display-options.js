@@ -3,24 +3,10 @@ import {
     motionPreference,
     saveReducedMotionPreference,
     setReducedMotion,
-    systemPrefersReducedMotion
+    systemPrefersReducedMotion,
+    watchSystemReducedMotion
 } from './motion.js';
-
-// Storage can be blocked (private windows, cleared site data), so every access is wrapped.
-function readFlag(key, fallback) {
-    try {
-        const saved = localStorage.getItem(key);
-        if (saved === "on") return true;
-        if (saved === "off") return false;
-    } catch (e) { /* use the fallback */ }
-    return fallback;
-}
-
-function saveFlag(key, isOn) {
-    try {
-        localStorage.setItem(key, isOn ? "on" : "off");
-    } catch (e) { /* the preference just won't persist */ }
-}
+import { readFlag, writeFlag } from './storage.js';
 
 // Screen effects: each one is on by default and hidden with body.vfx-off-<name>.
 document.querySelectorAll('[data-vfx-toggle]').forEach(toggle => {
@@ -36,22 +22,23 @@ document.querySelectorAll('[data-vfx-toggle]').forEach(toggle => {
 
     toggle.addEventListener('change', () => {
         applyEffect(toggle.checked);
-        saveFlag(key, toggle.checked);
+        writeFlag(key, toggle.checked);
     });
 });
 
 // Reduce motion: when the OS already asks for it, the box is ticked and locked.
 const motionToggle = document.getElementById('reduced-motion-toggle');
-if (motionToggle) {
-    function syncMotionToggle() {
-        const locked = systemPrefersReducedMotion();
-        motionToggle.checked = motionPreference.matches;
-        motionToggle.disabled = locked;
-        motionToggle.title = locked ? 'Set by your system settings' : '';
-    }
 
+function syncMotionToggle() {
+    const locked = systemPrefersReducedMotion();
+    motionToggle.checked = motionPreference.matches;
+    motionToggle.disabled = locked;
+    motionToggle.title = locked ? 'Set by your system settings' : '';
+}
+
+if (motionToggle) {
     syncMotionToggle();
-    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', syncMotionToggle);
+    watchSystemReducedMotion(syncMotionToggle);
 
     motionToggle.addEventListener('change', () => {
         setReducedMotion(motionToggle.checked);

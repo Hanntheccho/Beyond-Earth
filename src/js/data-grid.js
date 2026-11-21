@@ -1,7 +1,10 @@
-import { motionPreference } from './motion.js';
-// Market data grids. Rows are persistent (keyed by tag/name): value and change
-// numbers are tweened between ticks, and rows slide to their new position when
+// data-grid.js - Market data grids. Rows are persistent (keyed by tag/name): value and
+// change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
+import { motionPreference } from './motion.js';
+import { valueChanges } from './data-calc.js';
+import { observeVisibility } from './viewport-visibility.js';
+
 (function () {
     const valueFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
@@ -11,30 +14,37 @@ import { motionPreference } from './motion.js';
     const REORDER_DURATION = 500;
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
-    const reducedMotionQuery = motionPreference;
+    const keyOf = item => item.tag || item.name;
 
     function renderMarketGrid(host) {
         const marketId = host.dataset.marketGrid;
         if (!marketId) return;
-        const status = Array.from(document.querySelectorAll('[data-market-status]'))
-            .find(element => element.dataset.marketStatus === marketId);
-        const market = window.valueChanges.getMarket(marketId);
+        const status = document.querySelector(`[data-market-status="${CSS.escape(marketId)}"]`);
+        const wrapper = host.closest('[data-panel-group]');
+        const market = valueChanges.getMarket(marketId);
         const rows = new Map();
         let displayedItems = null;
         let raf = 0;
         let inViewport = false;
+        let renderQueued = false;
 
         function createRow(item, key) {
             const row = document.createElement('div');
             row.className = 'data-grid-row';
             row.dataset.itemKey = key;
-            row.innerHTML = '<span class="data-grid-name"></span><span class="data-grid-unit"></span><span class="data-grid-value"></span><span class="data-grid-change"></span>';
-            row.querySelector('.data-grid-name').textContent = item.name;
-            row.querySelector('.data-grid-unit').textContent = item.unit || '€$B';
+            const cell = (className, text = '') => {
+                const span = document.createElement('span');
+                span.className = className;
+                span.textContent = text;
+                row.append(span);
+                return span;
+            };
+            cell('data-grid-name', item.name);
+            cell('data-grid-unit', item.unit || '€$B');
             return {
                 row,
-                valueEl: row.querySelector('.data-grid-value'),
-                changeEl: row.querySelector('.data-grid-change'),
+                valueEl: cell('data-grid-value'),
+                changeEl: cell('data-grid-change'),
                 cur: null,
                 from: null,
                 to: null,
@@ -58,7 +68,7 @@ import { motionPreference } from './motion.js';
         }
 
         function step(now) {
-            const reduced = reducedMotionQuery.matches;
+            const reduced = motionPreference.matches;
             let active = false;
             rows.forEach(entry => {
                 const progress = reduced ? 1 : Math.min(1, (now - entry.t0) / DURATION);
@@ -75,31 +85,12 @@ import { motionPreference } from './motion.js';
             if (!raf && inViewport) raf = requestAnimationFrame(step);
         }
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden || !inViewport) return;
-            render(displayedItems || market.getSnapshot());
-        });
-
-        function setViewportVisibility(isVisible) {
-            const changed = inViewport !== isVisible;
-            inViewport = isVisible;
-            if (!inViewport) {
-                cancelAnimationFrame(raf);
-                raf = 0;
-            } else if (changed && !document.hidden) {
-                render(displayedItems || market.getSnapshot());
-            }
-        }
-
-        window.viewportVisibility.observe(host, setViewportVisibility);
-
         function render(current) {
             if (!current.length) return;
             const sorted = current.slice().sort((a, b) => b.value - a.value);
-            const keyOf = item => item.tag || item.name;
             const keys = new Set(sorted.map(keyOf));
             const now = performance.now();
-            const reduced = reducedMotionQuery.matches;
+            const reduced = motionPreference.matches;
             const orderChanged = host.children.length !== sorted.length
                 || sorted.some((item, index) => host.children[index].dataset.itemKey !== keyOf(item));
 
@@ -131,16 +122,15 @@ import { motionPreference } from './motion.js';
                     host.insertBefore(entry.row, host.children[index] || null);
                 }
 
-                const target = { value: item.value, pct: item.changePercent || 0 };
                 entry.from = { ...entry.cur };
-                entry.to = target;
+                entry.to = { value: item.value, pct: item.changePercent || 0 };
                 entry.t0 = now;
 
                 const up = item.change >= 0;
+                const newDir = up ? 'up' : 'down';
+                const prevDir = entry.row.dataset.direction;
                 entry.changeEl.classList.toggle('is-up', up);
                 entry.changeEl.classList.toggle('is-down', !up);
-                const prevDir = entry.row.dataset.direction;
-                const newDir = up ? 'up' : 'down';
                 entry.row.classList.toggle('is-positive', up);
                 entry.row.classList.toggle('is-negative', !up);
                 entry.row.dataset.direction = newDir;
@@ -150,7 +140,7 @@ import { motionPreference } from './motion.js';
                 }
             });
             if (flashes.length) {
-                void flashes[0].offsetWidth;
+                void flashes[0].offsetWidth; // restart the flash animation
                 flashes.forEach(row => row.classList.add('is-flashing'));
             }
 
@@ -174,23 +164,41 @@ import { motionPreference } from './motion.js';
             if (status) status.textContent = `MONDAYMARKET · updated ${new Date().toLocaleTimeString()}`;
         }
 
+        // A market tick reaches the grid twice: through its own subscription and
+        // through the treemap's treemap:items event. Both land in the same task, so
+        // they are merged into one render with the latest items.
+        function requestRender() {
+            if (renderQueued) return;
+            renderQueued = true;
+            queueMicrotask(() => {
+                renderQueued = false;
+                if (document.hidden || !inViewport || wrapper?.hidden) return;
+                render(displayedItems || market.getSnapshot());
+            });
+        }
+
+        observeVisibility(host, isVisible => {
+            const changed = inViewport !== isVisible;
+            inViewport = isVisible;
+            if (!inViewport) {
+                cancelAnimationFrame(raf);
+                raf = 0;
+            } else if (changed) {
+                requestRender();
+            }
+        });
+
+        document.addEventListener('visibilitychange', requestRender);
+
+        // The treemap reports which items it shows (it can be drilled into).
         document.addEventListener('treemap:items', event => {
             const detail = event.detail;
             if (!detail || detail.marketId !== marketId) return;
             displayedItems = detail.items;
-            if (document.hidden || !inViewport) return;
-            const wrapper = host.closest('[data-panel-group]');
-            if (wrapper && wrapper.hidden) return;
-            render(displayedItems);
+            requestRender();
         });
 
-        market.subscribe((current) => {
-            if (document.hidden) return;
-            const wrapper = host.closest('[data-panel-group]');
-            if (wrapper && wrapper.hidden) return;
-            if (!inViewport) return;
-            render(displayedItems || current);
-        });
+        market.subscribe(requestRender);
     }
 
     document.querySelectorAll('[data-market-grid]').forEach(renderMarketGrid);

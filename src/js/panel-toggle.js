@@ -1,20 +1,21 @@
-document.addEventListener('click', function(event) {
-    const button = event.target.closest && event.target.closest('[data-panel-target][data-panel-group]');
+// panel-toggle.js - Tabbed panels. A button with data-panel-group and data-panel-target
+// shows the element with that id and hides the other panels of the same group
+// (elements with the same data-panel-group but no data-panel-target).
+document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-panel-target][data-panel-group]');
     if (!button) return;
 
-    const group = button.getAttribute('data-panel-group');
-    const targetId = button.getAttribute('data-panel-target');
-    const activePanel = document.getElementById(targetId);
-    if (!activePanel || activePanel.getAttribute('data-panel-group') !== group) return;
+    const group = button.dataset.panelGroup;
+    const activePanel = document.getElementById(button.dataset.panelTarget);
+    if (!activePanel || activePanel.dataset.panelGroup !== group) return;
 
-    document.querySelectorAll('[data-panel-target][data-panel-group]').forEach(function(candidate) {
-        if (candidate.getAttribute('data-panel-group') !== group) return;
-        candidate.setAttribute('aria-pressed', String(candidate === button));
-    });
-    document.querySelectorAll('[data-panel-group]:not([data-panel-target])').forEach(function(panel) {
-        if (panel.getAttribute('data-panel-group') !== group) return;
-        const isActive = panel === activePanel;
-        panel.hidden = !isActive;
-        panel.setAttribute('aria-hidden', String(!isActive));
+    document.querySelectorAll(`[data-panel-group="${CSS.escape(group)}"]`).forEach(element => {
+        if (element.hasAttribute('data-panel-target')) {
+            element.setAttribute('aria-pressed', String(element === button));
+            return;
+        }
+        const isActive = element === activePanel;
+        element.hidden = !isActive;
+        element.setAttribute('aria-hidden', String(!isActive));
     });
 });

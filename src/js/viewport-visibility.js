@@ -1,67 +1,46 @@
-(function () {
-    const targets = new Map();
-    const rootMargin = 80;
-    let fallbackTimer = 0;
+// viewport-visibility.js - Tells components when an element is on screen (or within
+// MARGIN px of it vertically), so off-screen or hidden panels can skip their redraws.
+// An element inside a hidden panel has no box, so it reports as not visible.
+const MARGIN = 80;
 
-    function setVisibility(record, isVisible) {
-        if (record.isVisible === isVisible) return;
-        record.isVisible = isVisible;
-        record.callback(isVisible);
-    }
+// element -> { isVisible: true | false | null (not known yet), callbacks: Set }
+const targets = new Map();
 
-    function isInViewport(element) {
-        const bounds = element.getBoundingClientRect();
-        return bounds.width > 0 && bounds.height > 0 &&
-            bounds.bottom >= -rootMargin && bounds.top <= window.innerHeight + rootMargin &&
-            bounds.right >= -rootMargin && bounds.left <= window.innerWidth + rootMargin;
-    }
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        const target = targets.get(entry.target);
+        if (!target) return;
+        const isVisible = entry.isIntersecting && entry.intersectionRatio > 0;
+        if (target.isVisible === isVisible) return;
+        target.isVisible = isVisible;
+        target.callbacks.forEach(callback => callback(isVisible));
+    });
+}, { rootMargin: `${MARGIN}px 0px`, threshold: 0.01 });
 
-    function checkFallback() {
-        fallbackTimer = 0;
-        targets.forEach((record, element) => {
-            if (!record.intersectionObserved) setVisibility(record, isInViewport(element));
+// Calls callback(isVisible) once the state is known and again whenever it changes.
+// Returns a function that stops the updates.
+export function observeVisibility(element, callback) {
+    if (!(element instanceof Element)) throw new TypeError('Viewport target must be an Element');
+    if (typeof callback !== 'function') throw new TypeError('Viewport callback must be a function');
+
+    let target = targets.get(element);
+    if (!target) {
+        target = { isVisible: null, callbacks: new Set() };
+        targets.set(element, target);
+        observer.observe(element);
+    } else if (target.isVisible !== null) {
+        // Already observed: the observer will not report again until something
+        // changes, so hand this callback the known state.
+        queueMicrotask(() => {
+            if (target.callbacks.has(callback)) callback(target.isVisible);
         });
     }
+    target.callbacks.add(callback);
 
-    function scheduleFallback() {
-        if (!fallbackTimer) fallbackTimer = window.setTimeout(checkFallback, 80);
-    }
-
-    const observer = 'IntersectionObserver' in window
-        ? new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                const record = targets.get(entry.target);
-                if (!record) return;
-                record.intersectionObserved = true;
-                setVisibility(record, entry.isIntersecting && entry.intersectionRatio > 0);
-            });
-        }, { rootMargin: `${rootMargin}px 0px`, threshold: 0.01 })
-        : null;
-
-    window.viewportVisibility = {
-        observe(element, callback) {
-            if (!(element instanceof Element)) throw new TypeError('Viewport target must be an Element');
-            if (typeof callback !== 'function') throw new TypeError('Viewport callback must be a function');
-
-            const record = { callback, intersectionObserved: false, isVisible: null };
-            targets.set(element, record);
-            if (observer) observer.observe(element);
-            scheduleFallback();
-
-            return function unobserve() {
-                targets.delete(element);
-                if (observer) observer.unobserve(element);
-            };
-        }
+    return function unobserve() {
+        target.callbacks.delete(callback);
+        if (target.callbacks.size || targets.get(element) !== target) return;
+        targets.delete(element);
+        observer.unobserve(element);
     };
-
-    window.addEventListener('scroll', scheduleFallback, { passive: true });
-    window.addEventListener('resize', scheduleFallback, { passive: true });
-
-    const hiddenAttributeObserver = new MutationObserver(scheduleFallback);
-    hiddenAttributeObserver.observe(document.body, {
-        attributes: true,
-        attributeFilter: ['hidden'],
-        subtree: true
-    });
-})();
+}
