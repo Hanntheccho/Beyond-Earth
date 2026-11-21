@@ -27,7 +27,7 @@
 
 #influence-graph-container .node-group circle {
     fill-opacity: var(--opacity-10);
-    stroke-width: 1;
+    stroke-width: var(--stroke-width-1);
     transition: fill var(--transition-time-clr) ease, stroke var(--transition-time-clr) ease;
     cursor: grab;
 }

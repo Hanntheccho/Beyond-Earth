@@ -51,7 +51,7 @@
 .scenario-chart-plot .chart-series-area.chart-trend-flat { color: var(--clr-neutrale); fill: var(--clr-neutrale); fill-opacity: calc(var(--opacity-10) / 10); }
 .scenario-chart-plot .chart-series-line {
     fill: none;
-    stroke-width: 1.5px;
+    stroke-width: var(--stroke-width-1);
     stroke-linecap: round;
     stroke-linejoin: round;
 }

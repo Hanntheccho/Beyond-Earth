@@ -22,7 +22,7 @@
     fill: var(--treemap-color, var(--clr-neutrale));
     fill-opacity: var(--opacity-10);
     stroke: var(--treemap-color, var(--clr-neutrale));
-    stroke-width: 1px;
+    stroke-width: var(--stroke-width-1);
 }
 .treemap-tile:hover { filter: var(--brightness-50); }
 .treemap-tile:focus { outline: none; }
