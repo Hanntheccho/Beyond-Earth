@@ -361,6 +361,13 @@ function checkScenario() {
     if (match && sea.length && Number(match[1]) !== sea[sea.length - 1].value) {
         warn('globe', `DEFAULT_SEA_LEVEL is ${match[1]} but the last seaLevel value is ${sea[sea.length - 1].value}`);
     }
+
+    // elev-1080.webp flattens deep ocean, which is only invisible while the sea
+    // level never drops below 0 m.
+    const negative = sea.filter(p => Number(p.value) < 0);
+    if (negative.length) {
+        error('globe', `seaLevel has values below 0 m (${negative.map(p => `${p.year}: ${p.value}`).join(', ')}); the flattened ocean in elev-1080.webp would show. Rebuild it from the PNG with a deeper band, or keep sea level >= 0`);
+    }
 }
 
 // ------------------------------------------------------------- html and assets
@@ -398,10 +405,31 @@ function checkHtmlAndAssets(loc) {
     }
 
     if (exists(abs('src/js/globe.js'))) {
-        // globe.js resolves this against its own location, src/js/.
-        const match = /decodeElevation\(\s*'([^']+)'\s*\)/.exec(read(abs('src/js/globe.js')));
-        if (match && !exists(path.resolve(abs('src/js'), match[1]))) {
-            error('assets', `globe.js loads "${match[1]}" (resolved from src/js/) which does not exist`);
+        // globe.js resolves these against its own location, src/js/.
+        const globeSource = read(abs('src/js/globe.js'));
+        const list = /const\s+ELEVATION_SOURCES\s*=\s*\[([^\]]*)\]/.exec(globeSource);
+        const sources = list ? [...list[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : [];
+        if (!list) warn('globe', 'ELEVATION_SOURCES was not found in globe.js, so elevation files were not checked');
+        sources.forEach((source, index) => {
+            if (exists(path.resolve(abs('src/js'), source))) return;
+            const message = `globe.js loads "${source}" (resolved from src/js/) which does not exist`;
+            if (index === 0) error('assets', message);
+            else warn('assets', `${message}; it is only the fallback`);
+        });
+
+        // The WebP is generated from the PNG; flag a PNG edited without a rebuild.
+        const png = abs('data/elev-1080.png');
+        const webp = abs('data/elev-1080.webp');
+        if (exists(png) && exists(webp) && fs.statSync(png).mtimeMs > fs.statSync(webp).mtimeMs) {
+            warn('globe', 'data/elev-1080.png is newer than data/elev-1080.webp; rebuild it with tools/make-elevation-webp.py');
+        }
+
+        // The shader clamp and the generator must agree on the coast band.
+        const script = abs('tools/make-elevation-webp.py');
+        const jsBand = /const\s+COAST_BAND_M\s*=\s*([\d.]+)/.exec(globeSource);
+        const pyBand = exists(script) && /^COAST_BAND_M\s*=\s*([\d.]+)/m.exec(read(script));
+        if (jsBand && pyBand && Number(jsBand[1]) !== Number(pyBand[1])) {
+            error('globe', `COAST_BAND_M is ${jsBand[1]} in globe.js but ${pyBand[1]} in tools/make-elevation-webp.py; deep ocean edits would show on the coastline`);
         }
     }
 

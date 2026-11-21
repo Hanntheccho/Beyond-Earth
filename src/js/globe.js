@@ -16,6 +16,15 @@ const DEG_R = 57.29577951308232; // 180/pi: globe radius = scale(px/deg) * DEG_R
 const EARTH_RADIUS_KM = 6371;
 const DEFAULT_SEA_LEVEL = 50; // 2200 value, keeps today's look as the fallback
 
+// Water deeper than this (below the current sea level) does not affect the
+// coastline. elev-1080.webp flattens deep ocean on that assumption, so keep it
+// equal to COAST_BAND_M in tools/make-elevation-webp.py. Requires sea level >= 0.
+const COAST_BAND_M = 2000;
+
+// Resolved from src/js/. The WebP is the shipped file; the PNG is the untouched
+// source, only fetched if the WebP cannot be decoded.
+const ELEVATION_SOURCES = ['../../data/elev-1080.webp', '../../data/elev-1080.png'];
+
 const GLOBE_COLORS = {
   dark: { ocean: [0.1, 0.1, 0.1], land: [0.4, 0.4, 0.4], contour: [1,1,1], grid: [0.2,0.2,0.2], coast: [0.9,0.9,0.9] },
   light: { ocean: [0.8, 0.8, 0.8], land: [0.6, 0.6, 0.6], contour: [0,0,0], grid: [0.7,0.7,0.7], coast: [0.1,0.1,0.1] }
@@ -112,7 +121,9 @@ void main() {
     col = mix(col, uContourColor, lineAA(f / 5.0, 1.25) * 0.95 * fadeMajor);
   }
 
-  float coast = 1.0 - smoothstep(0.0, 1.0, abs(rel) / max(fwidth(rel), 1e-7));
+  // Clamp the water side so deep (flattened) ocean cannot add offshore lines.
+  float relCoast = max(rel, -${COAST_BAND_M.toFixed(1)});
+  float coast = 1.0 - smoothstep(0.0, 1.0, abs(relCoast) / max(fwidth(relCoast), 1e-7));
 
   vec2 gf = vLonLat / 15.0;
   vec2 gg = abs(fract(gf + 0.5) - 0.5) / max(fwidth(gf), vec2(1e-7));
@@ -746,12 +757,17 @@ function main() {
   })();
 
   (async () => {
-    try {
-      uploadElevation(await decodeElevation('../../data/elev-1080.png'));
-    } catch (err) {
-      console.error('Failed to load globe elevation data.', err);
-      dataError = true;
+    for (const [index, url] of ELEVATION_SOURCES.entries()) {
+      try {
+        uploadElevation(await decodeElevation(url));
+        return;
+      } catch (err) {
+        const last = index === ELEVATION_SOURCES.length - 1;
+        if (last) console.error('Failed to load globe elevation data.', err);
+        else console.warn(`Globe elevation ${url} failed; trying the next source.`, err);
+      }
     }
+    dataError = true;
   })();
 
   canvas.addEventListener('webglcontextlost', (ev) => {
