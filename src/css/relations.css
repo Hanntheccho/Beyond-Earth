@@ -1,4 +1,4 @@
-/* relations.css - Influence graph node and link styling. */
+/* relations.css - Influence graph node and link styling (see src/js/relations.js). */
 
 #influence-graph-container {
     position: relative;
@@ -25,60 +25,46 @@
     overflow: visible;
 }
 
-#influence-graph-container .node-group circle {
-    fill-opacity: var(--opacity-10);
-    stroke-width: var(--stroke-width-1);
-    transition: fill var(--transition-time-clr) ease, stroke var(--transition-time-clr) ease;
-    cursor: grab;
-}
+/* Nodes: the state class sets the color, and the circle and label paint with it
+   (currentColor), so a change fades through the group's color transition. */
 #influence-graph-container .node-group {
-    transition: opacity var(--transition-time) ease;
+    transition: opacity var(--transition-time) ease, color var(--transition-time-clr) ease;
 }
-#influence-graph-container .node-group:focus {
-    outline: none;
+#influence-graph-container .node-group.is-up { color: var(--clr-positive); }
+#influence-graph-container .node-group.is-down { color: var(--clr-negative); }
+#influence-graph-container .node-group.is-unavailable { color: var(--clr-neutrale); }
+#influence-graph-container .node-group circle {
+    fill: currentColor;
+    fill-opacity: var(--opacity-10);
+    stroke: currentColor;
+    stroke-width: var(--stroke-width-1);
+    cursor: grab;
 }
 #influence-graph-container .node-group.is-dragging circle {
     cursor: grabbing;
 }
-#influence-graph-container .node-group.is-unrelated-to-dragged-node {
-    opacity: 0;
-    transition: opacity var(--transition-time) ease;
+#influence-graph-container .node-label {
+    fill: currentColor;
+    font-family: var(--fnt);
+    font-weight: bold;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+#influence-graph-container .node-group:focus {
+    outline: none;
+}
+#influence-graph-container .node-group:hover,
+#influence-graph-container .node-group:focus-visible {
+    filter: var(--brightness-50);
 }
 #influence-graph-container .node-group.is-dragging:hover {
     filter: none;
 }
-#influence-graph-container .node-group:hover {
-    filter: var(--brightness-50);
+#influence-graph-container .node-group.is-unrelated-to-dragged-node {
+    opacity: 0;
 }
-#influence-graph-container .node-group.is-up {
-    color: var(--clr-positive);
-}
-#influence-graph-container .node-group.is-down {
-    color: var(--clr-negative);
-}
-#influence-graph-container .node-group.is-unavailable {
-    color: var(--clr-neutrale);
-}
-#influence-graph-container .node-group.is-up circle,
-#influence-graph-container .relationship-arrow-positive path {
-    fill: var(--clr-positive);
-}
-#influence-graph-container .node-group.is-up circle {
-    stroke: var(--clr-positive);
-}
-#influence-graph-container .node-group.is-down circle,
-#influence-graph-container .relationship-arrow-negative path {
-    fill: var(--clr-negative);
-}
-#influence-graph-container .node-group.is-down circle {
-    stroke: var(--clr-negative);
-}
-#influence-graph-container .node-group.is-up .node-label {
-    fill: var(--clr-positive);
-}
-#influence-graph-container .node-group.is-down .node-label {
-    fill: var(--clr-negative);
-}
+
+/* Links stay hidden until a node they touch is dragged or selected. */
 #influence-graph-container .link.is-positive,
 #influence-graph-container .link.is-negative {
     fill: none;
@@ -95,17 +81,9 @@
 #influence-graph-container .link.is-negative {
     stroke: var(--clr-negative);
 }
-#influence-graph-container .node-group.is-unavailable circle {
-    fill: var(--clr-neutrale);
-    stroke: var(--clr-neutrale);
+#influence-graph-container .relationship-arrow-positive path {
+    fill: var(--clr-positive);
 }
-#influence-graph-container .node-label {
-    font-family: var(--fnt);
-    font-weight: bold;
-    text-transform: uppercase;
-    pointer-events: none;
-    transition: fill var(--transition-time-clr) ease;
-}
-#influence-graph-container .node-group.is-unavailable .node-label {
-    fill: var(--clr-neutrale);
+#influence-graph-container .relationship-arrow-negative path {
+    fill: var(--clr-negative);
 }

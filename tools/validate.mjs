@@ -611,6 +611,66 @@ function checkSyntax() {
     }
 }
 
+// ----------------------------------------------------------------- stylesheets
+
+// index.html links every stylesheet itself so they all download at once. A file in
+// src/css that is neither linked nor @imported is never applied, and the cascade
+// relies on reduced-motion.css coming last. A var(--x) without a fallback drops its
+// whole declaration when --x is never set, which shows no error in the browser.
+function checkStylesheets(html) {
+    if (!html) return;
+    const linked = [...html.matchAll(/<link\b[^>]*>/g)]
+        .map(match => match[0])
+        .filter(tag => /\brel="stylesheet"/.test(tag))
+        .map(tag => /\bhref="([^"]+)"/.exec(tag)?.[1])
+        .filter(href => href && !isExternal(href))
+        .map(stripQuery);
+
+    // Stylesheets reached from the links, following @import.
+    const loaded = new Set();
+    const queue = linked.map(href => abs(href));
+    while (queue.length) {
+        const file = queue.shift();
+        if (loaded.has(file) || !exists(file)) continue;
+        loaded.add(file);
+        for (const match of read(file).matchAll(/@import\s+(?:url\(\s*)?["']([^"')]+)["']/g)) {
+            if (!isExternal(match[1])) queue.push(path.resolve(path.dirname(file), stripQuery(match[1])));
+        }
+    }
+    const cssFiles = listCss('src/css');
+    cssFiles.forEach(rel => {
+        if (!loaded.has(abs(rel))) warn('css', `${rel} is not linked from index.html (or imported by a linked stylesheet), so it is never applied`);
+    });
+    if (linked.length && !linked.at(-1).endsWith('reduced-motion.css')) {
+        warn('css', `reduced-motion.css should be the last stylesheet linked from index.html (the last one is ${linked.at(-1)}), or later rules can undo the reduced-motion overrides`);
+    }
+
+    // Custom properties are set in the stylesheets, registered with @property, or set
+    // from the scripts (style.setProperty('--x', ...) or "--x:" in an inline style).
+    const sources = cssFiles.map(rel => [rel, read(abs(rel))]);
+    const defined = new Set();
+    sources.forEach(([, text]) => {
+        for (const match of text.matchAll(/(--[\w-]+)\s*:/g)) defined.add(match[1]);
+        for (const match of text.matchAll(/@property\s+(--[\w-]+)/g)) defined.add(match[1]);
+    });
+    const scripts = ['src/default.js', ...listJs('src/js')]
+        .filter(rel => exists(abs(rel)))
+        .map(rel => read(abs(rel)))
+        .join('\n') + html;
+    for (const match of scripts.matchAll(/setProperty\(\s*['"`](--[\w-]+)/g)) defined.add(match[1]);
+    for (const match of scripts.matchAll(/(--[\w-]+)\s*:/g)) defined.add(match[1]);
+
+    sources.forEach(([rel, text]) => {
+        const reported = new Set();
+        for (const match of text.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)) {
+            const name = match[1];
+            if (defined.has(name) || reported.has(name)) continue;
+            reported.add(name);
+            warn('css', `${rel} uses var(${name}) without a fallback, but ${name} is never set, so those declarations are ignored`);
+        }
+    });
+}
+
 // --------------------------------------------------------------------- modules
 
 // Names a module exports: `export function/const/let/class name` and `export { a, b as c }`.
@@ -693,6 +753,7 @@ const loc = checkLocalization();
 const poiIds = checkPois(loc);
 checkMarkers(poiIds);
 const html = checkHtmlAndAssets(loc);
+checkStylesheets(html);
 checkTreemaps(html);
 checkDataFileDuplicates('data/src-data.json');
 checkDataFileDuplicates('data/mkt-data.json');

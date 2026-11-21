@@ -1,33 +1,20 @@
 /* tokens.css - Design tokens shared by every component. */
 
 :root {
+    /* Base colors: the light theme swaps these two (tokens-light.css). */
     --clr: black;
     --clr-body: white;
-    --clr-body-background: color-mix(in srgb, var(--clr), var(--clr-body) 6%);
-    --clr-border: color-mix(in srgb, var(--clr-body), transparent 90%);
-    --clr-h1: var(--clr-body);
-    --clr-h2: var(--clr-body);
-    --clr-ph1: var(--clr-body);
-    --clr-ph2: color-mix(in srgb, var(--clr-body) 90%, var(--clr));
-    --clr-ph3: color-mix(in srgb, var(--clr-body) 80%, var(--clr));
-    --clr-p: color-mix(in srgb, var(--clr-body) 70%, var(--clr));
-    --clr-cite: var(--clr-body);
-    --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
-    --clr-background: color-mix(in srgb, var(--clr-body-background), transparent 12%);
+    --clr-background-transparency: 12%;
     --clr-positive: #00ff6a;
     --clr-negative: #ff0000;
     --clr-neutrale: #a0a0a0;
-    --clr-color-mix-20: var(--clr-body) 20%;
-    --clr-color-mix-60: var(--clr-body) 60%;
     --max-width: 800px;
-    --border: 2px solid var(--clr-border);
     --border-left: 12px;
     --transition-time: 160ms;
     --transition-time-clr: 900ms;
     --transition-time-400: 400ms;
     --opacity-10: .06;
     --brightness-50: brightness(.5);
-    --box-shadow: 0 0 16px var(--box-shadow-clr);
     --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
     --letter-spacing-02: .1em;
     --fnt: 'Source Code Pro', monospace;
@@ -40,8 +27,31 @@
     --px-20: 20px;
     --px-10: 10px;
     --btn-size: 74px;
-    --img-filter: invert(0);
+    --img-filter: none; /* the light theme inverts the icons and background art */
     --img-url: url("../../be-icon.svg");
     --img-url-alt: url("../../be-icon-alt.svg");
     --stroke-width-1: 1.5;
+}
+
+/* Tokens derived from the base colors. A custom property is worked out where it is
+   declared and then inherited as a finished value, so these are declared on
+   .light-theme (the body) as well, where they are worked out again from the light
+   base colors. Both themes share these formulas. */
+:root,
+.light-theme {
+    --clr-body-background: color-mix(in srgb, var(--clr), var(--clr-body) 6%);
+    --clr-border: color-mix(in srgb, var(--clr-body), transparent 90%);
+    --clr-h1: var(--clr-body);
+    --clr-h2: var(--clr-body);
+    --clr-ph1: var(--clr-body);
+    --clr-ph2: color-mix(in srgb, var(--clr-body) 90%, var(--clr));
+    --clr-ph3: color-mix(in srgb, var(--clr-body) 80%, var(--clr));
+    --clr-p: color-mix(in srgb, var(--clr-body) 70%, var(--clr));
+    --clr-cite: var(--clr-body);
+    --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
+    --clr-background: color-mix(in srgb, var(--clr-body-background), transparent var(--clr-background-transparency));
+    --clr-color-mix-20: var(--clr-body) 20%;
+    --clr-color-mix-60: var(--clr-body) 60%;
+    --border: 2px solid var(--clr-border);
+    --box-shadow: 0 0 16px var(--box-shadow-clr);
 }

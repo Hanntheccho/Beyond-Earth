@@ -2,22 +2,20 @@
 
 .data-status {
     display: grid;
-    margin-top: 0;
-    margin-bottom: 0;
-    color: var(--clr-data);
-    font-size: var(--fnt-size-bttn);
-    text-align: right;
-    border-bottom: var(--border);
-    border-top: var(--border);
     align-items: center;
     min-height: 30px;
+    margin-block: 0;
+    border-top: var(--border);
+    border-bottom: var(--border);
+    color: var(--clr-data);
+    font-size: var(--fnt-size-bttn);
     letter-spacing: var(--letter-spacing-02);
+    text-align: right;
 }
 .data-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 0 20px;
-    margin-top: 0;
     font-size: var(--fnt-size-data);
 }
 .data-grid-row {
@@ -30,11 +28,14 @@
 }
 .data-grid-unit { color: var(--clr-data); }
 .data-grid-value { text-align: right; white-space: nowrap; }
-.data-grid-change { text-align: right; }
-.data-grid-change { transition: color var(--transition-time-clr) ease; }
+.data-grid-change {
+    text-align: right;
+    transition: color var(--transition-time-clr) ease;
+}
 .data-grid-change.is-up { color: var(--clr-positive); }
 .data-grid-change.is-down { color: var(--clr-negative); }
 
+/* A row flashes when its direction flips (data-grid.js adds .is-flashing). */
 @keyframes rowFlashUp { 0% { background: color-mix(in srgb, var(--clr-positive), transparent 98%); } 60% { background: color-mix(in srgb, var(--clr-positive), transparent 90%); } 100% { background: transparent; } }
 @keyframes rowFlashDown { 0% { background: color-mix(in srgb, var(--clr-negative), transparent 98%); } 60% { background: color-mix(in srgb, var(--clr-negative), transparent 90%); } 100% { background: transparent; } }
 

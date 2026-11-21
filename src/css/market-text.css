@@ -2,7 +2,6 @@
 
 .market-text {
     position: fixed;
-    top: auto;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -23,8 +22,7 @@
 .market-text-line {
     flex: none;
 }
-.positive { color: var(--clr-positive); }
-.negative { color: var(--clr-negative); }
-.neutrale { color: var(--clr-neutrale); }
-
 .market-text-val { transition: color var(--transition-time-clr) ease; }
+.market-text-val.positive { color: var(--clr-positive); }
+.market-text-val.negative { color: var(--clr-negative); }
+.market-text-val.neutrale { color: var(--clr-neutrale); }

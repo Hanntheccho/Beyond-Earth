@@ -373,7 +373,7 @@ export const valueChanges = (function () {
         timer = setInterval(() => {
             computeValues();
             publishMarkets();
-        }, Math.max(250, Number(options.intervalMs) || 10000));
+        }, Math.max(250, Number(options.intervalMs) || 2000));
     }
 
     function stopTicker() {

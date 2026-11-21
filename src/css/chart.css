@@ -42,22 +42,23 @@
     fill: color-mix(in srgb, var(--clr-negative) 80%, transparent);
     text-transform: uppercase;
 }
+/* Each segment's trend class sets its color; the area and line paint with it. */
+.scenario-chart-plot .chart-trend-good { color: var(--clr-positive); }
+.scenario-chart-plot .chart-trend-bad { color: var(--clr-negative); }
+.scenario-chart-plot .chart-trend-flat { color: var(--clr-neutrale); }
 .scenario-chart-plot .chart-series-area {
-    fill-opacity: 0.1;
+    fill: currentColor;
+    fill-opacity: var(--opacity-10);
     stroke: none;
 }
-.scenario-chart-plot .chart-series-area.chart-trend-good { color: var(--clr-positive); fill: var(--clr-positive); fill-opacity: var(--opacity-10); }
-.scenario-chart-plot .chart-series-area.chart-trend-bad { color: var(--clr-negative); fill: var(--clr-negative); fill-opacity: var(--opacity-10); }
-.scenario-chart-plot .chart-series-area.chart-trend-flat { color: var(--clr-neutrale); fill: var(--clr-neutrale); fill-opacity: calc(var(--opacity-10) / 10); }
+.scenario-chart-plot .chart-series-area.chart-trend-flat { fill-opacity: calc(var(--opacity-10) / 10); }
 .scenario-chart-plot .chart-series-line {
     fill: none;
+    stroke: currentColor;
     stroke-width: var(--stroke-width-1);
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-.scenario-chart-plot .chart-series-line.chart-trend-good { color: var(--clr-positive); stroke: var(--clr-positive); }
-.scenario-chart-plot .chart-series-line.chart-trend-bad { color: var(--clr-negative); stroke: var(--clr-negative); }
-.scenario-chart-plot .chart-series-line.chart-trend-flat { color: var(--clr-neutrale); stroke: var(--clr-neutrale); }
 .scenario-chart-plot text.chart-event-label {
     fill: var(--clr-body);
     text-transform: uppercase;

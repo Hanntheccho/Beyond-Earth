@@ -1,4 +1,10 @@
-/* base.css - Page base: body, drifting background art, keyframes. */
+/* base.css - Page base: the hidden attribute, body and its background art. */
+
+/* The scripts hide panels, menus, markers and readouts with the hidden attribute.
+   Without !important, a component's own display (flex, grid...) would win over it. */
+[hidden] {
+    display: none !important;
+}
 
 body {
     margin: 0;

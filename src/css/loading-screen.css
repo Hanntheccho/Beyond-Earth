@@ -24,6 +24,10 @@
 }
 
 .loading-spinner {
+    /* Holds the icon below. Without it the icon only stays inside while the spin
+       animation runs (a transform also does this); with reduced motion it would
+       spread over the whole loading screen. */
+    position: relative;
     width: 80px;
     height: 80px;
     border: 3px solid var(--clr-border);

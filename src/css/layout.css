@@ -52,17 +52,16 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -999999;
+    z-index: -2; /* behind the body's background art (-1) */
     width: 100%;
     color: var(--clr-h1);
     opacity: 0.08;
     font-size: 64px;
     font-weight: bold;
     letter-spacing: .6em;
-    line-height: 0;
+    line-height: 1em;
     margin: 0 10px;
     pointer-events: none;
-    line-height: 1em;
 }
 .div-submain {
     position: relative;
@@ -89,7 +88,7 @@
 }
 
 .div-desc {
-    padding: 0px var(--px-20) 0px var(--px-20);
+    padding: 0 var(--px-20);
     border: 0 solid var(--clr-border);
     border-left-width: var(--border-left);
     max-height: 666px;

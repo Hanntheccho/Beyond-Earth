@@ -1,5 +1,14 @@
-/* controls.css - Form controls: scrollbar, range input, buttons, main visibility toggle. */
+/* controls.css - Form controls: scrollbar, range input, buttons, header toggles, options menu. */
 
+/* Chrome, Edge and Safari use ::-webkit-scrollbar; Firefox only takes the standard
+   properties. They are kept apart because Chrome ignores ::-webkit-scrollbar as soon
+   as scrollbar-color or scrollbar-width is set. */
+@supports not selector(::-webkit-scrollbar) {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--clr-data) var(--clr-background);
+    }
+}
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -16,19 +25,27 @@
 }
 
 input[type="range"] {
-    appearance: none;
     -webkit-appearance: none;
-
+    appearance: none;
     width: 100%;
     height: 4px;
     background: var(--clr-border);
     border-radius: 0;
     outline: none;
 }
+/* The thumb needs one rule per engine: a selector list with an unknown
+   pseudo-element would be dropped entirely. */
 input[type="range"]::-webkit-slider-thumb {
-    appearance: none;
     -webkit-appearance: none;
-
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--clr-ph1);
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
     width: 12px;
     height: 12px;
     background: var(--clr-ph1);
@@ -59,8 +76,10 @@ button {
 button:hover {
     transform: translateY(-3px);
 }
+/* Pressed and open states share one look. */
 button[aria-pressed="true"],
-.main-visibility-toggle[aria-expanded="true"] {
+.main-visibility-toggle[aria-expanded="true"],
+.options-toggle[aria-expanded="true"] {
     border-color: color-mix(in srgb, var(--clr-border), var(--clr-color-mix-60));
     background-color: color-mix(in srgb, var(--clr-background), var(--clr-color-mix-20));
     color: var(--clr-ph1);
@@ -87,22 +106,18 @@ button img {
 .options-toggle {
     top: calc(var(--px-10) * 2 + var(--btn-size));
 }
-.options-toggle[aria-expanded="true"] {
-    border-color: color-mix(in srgb, var(--clr-border), var(--clr-color-mix-60));
-    background-color: color-mix(in srgb, var(--clr-background), var(--clr-color-mix-20));
-}
 .data-view-toggle {
     top: calc(var(--px-10) * 3 + var(--btn-size) * 2);
 }
 
-/* Data category tabs: a smaller column under the data view toggle, centred on the
+/* Data category tabs: a column under the data view toggle, lined up with the
    column above, with a wider gap to separate them from the global controls.
    Shown only while the data view is open and the main content is visible. */
 .data-tabs {
     position: fixed;
     z-index: 1200;
     top: calc(var(--px-10) * 3 + var(--btn-size) * 3 + var(--px-10));
-    right: calc(var(--px-10) + (var(--btn-size) - var(--btn-size)) / 2);
+    right: var(--px-10);
     display: none;
     flex-direction: column;
     gap: 2px; /* plus the 4px button margins: 10px between buttons */
@@ -132,9 +147,6 @@ button img {
     font-size: var(--fnt-size-data);
     box-shadow: var(--box-shadow);
 }
-.options-menu[hidden] {
-    display: none;
-}
 .options-row {
     display: flex;
     align-items: center;
@@ -153,8 +165,8 @@ button img {
     user-select: none;
 }
 .options-check input[type="checkbox"] {
-    appearance: none;
     -webkit-appearance: none;
+    appearance: none;
     flex: none;
     width: 16px;
     height: 16px;

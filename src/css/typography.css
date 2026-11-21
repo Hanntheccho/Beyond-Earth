@@ -10,7 +10,6 @@ cite {
 }
 
 p {
-    text-overflow: ellipsis;
     font-size: var(--fnt-size-text);
     letter-spacing: var(--letter-spacing-02);
     line-height: 1.5;

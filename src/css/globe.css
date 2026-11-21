@@ -37,7 +37,6 @@
     pointer-events: none;
     transition: opacity 600ms ease;
 }
-.globe-canvas.is-loaded + .globe-marker-layer { opacity: 0; }
 .globe-canvas.is-emphasized + .globe-marker-layer { opacity: 1; }
 /* While the globe is grabbed the markers fade out; globe-markers.js repositions them on release. */
 .globe-canvas.dragging + .globe-marker-layer { opacity: 0; transition-duration: 120ms; }
@@ -60,12 +59,14 @@
     text-transform: none;
     letter-spacing: normal;
     text-indent: 0;
-    opacity: var(--marker-opacity, 1);
     pointer-events: none;
-    /* globe-markers.js replaces this with an inline transform that also moves the marker to its position. */
+    /* globe-markers.js replaces this with an inline transform that also moves the marker
+       to its position, and sets the opacity, on every frame. */
     transform: translate(-50%, -50%);
+    /* Not the transform transition every button has: it would restart on each frame
+       and make the markers trail behind the globe. */
+    transition: none;
 }
-.globe-marker[hidden] { display: none; }
 .globe-marker-layer.is-emphasized .globe-marker { pointer-events: auto; }
 .globe-marker::after {
     position: absolute;
@@ -104,12 +105,10 @@
 }
 .globe-marker img:hover {
     opacity: 1;
-    filter: var(--img-filter);
 }
 .globe-marker:hover,
 .globe-marker:focus-visible {
     z-index: 3;
-    transform: translate(-50%, -50%);
 }
 .globe-coordinates,
 .sea-level {
@@ -127,7 +126,6 @@
     left: var(--px-10);
     pointer-events: none;
 }
-.globe-coordinates[hidden] { display: none; }
 .sea-level {
     left: 50%;
     display: none;

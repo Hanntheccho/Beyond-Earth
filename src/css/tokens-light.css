@@ -1,33 +1,21 @@
-/* tokens-light.css - Light theme version of design tokens. */
+/* tokens-light.css - Light theme (body.light-theme). Swaps the base colors, and the
+   derived tokens in tokens.css follow; only the tokens that need other values on
+   white are set here. */
 
 .light-theme {
-    --clr: white;                   /* Was black */
-    --clr-body: black;              /* Was white */
-    --clr-body-background: color-mix(in srgb, var(--clr), var(--clr-body) 6%);
-    --clr-border: color-mix(in srgb, var(--clr-body), transparent 90%);
-    --clr-h1: var(--clr-body);
-    --clr-h2: var(--clr-body);
-    --clr-ph1: var(--clr-body);
-    --clr-ph2: color-mix(in srgb, var(--clr-body) 90%, var(--clr));
-    --clr-ph3: color-mix(in srgb, var(--clr-body) 80%, var(--clr));
-    --clr-p: color-mix(in srgb, var(--clr-body) 70%, var(--clr));
-    --clr-cite: var(--clr-body);
-    --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
-    --clr-background: color-mix(in srgb, var(--clr-body-background), transparent 10%);
-    --clr-color-mix-20: var(--clr-body) 20%;
-    --clr-color-mix-60: var(--clr-body) 60%;
-    --border: 2px solid var(--clr-border);
+    --clr: white;
+    --clr-body: black;
+    --clr-background-transparency: 10%;
 
-    /* Keep these or adjust for better contrast on white */
-    --clr-positive: color-mix(in srgb, #00ff6a 60%, black);        /* Darker green for white bg */
-    --clr-negative: color-mix(in srgb, #ff0000 60%, black);        /* Darker red for white bg */
+    /* Darker status colors for contrast on white */
+    --clr-positive: color-mix(in srgb, #00ff6a 60%, black);
+    --clr-negative: color-mix(in srgb, #ff0000 60%, black);
     --clr-neutrale: color-mix(in srgb, #a0a0a0 60%, black);
 
-    /* Update shadow for light mode */
-    --box-shadow: 0 0 16px var(--box-shadow-clr);
+    /* Lighter shadow */
     --box-shadow-clr: color-mix(in srgb, black 20%, transparent);
 
-    /* Invert for light theme */
+    /* The icons and background art are white, so invert them */
     --img-filter: invert(1);
 }
 .light-theme img {

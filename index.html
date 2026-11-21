@@ -8,14 +8,33 @@
 
     <link rel="icon" href="be-icon.svg" type="image/svg+xml">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="src/default.css">
-
-    <!-- Fonts -->
+    <!-- Connections: Google Fonts, and jsDelivr for d3 (imported on demand by src/js/relations.js) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- d3 is imported on demand by src/js/relations.js -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <!-- CSS: one link per stylesheet, so they all download at once (an @import chain
+         waits for its first file before it fetches the rest). The order is the cascade
+         order: tokens first, reduced-motion.css last. -->
+    <link rel="stylesheet" href="src/css/tokens.css">
+    <link rel="stylesheet" href="src/css/tokens-light.css">
+    <link rel="stylesheet" href="src/css/base.css">
+    <link rel="stylesheet" href="src/css/controls.css">
+    <link rel="stylesheet" href="src/css/typography.css">
+    <link rel="stylesheet" href="src/css/layout.css">
+    <link rel="stylesheet" href="src/css/scroll-reveal.css">
+    <link rel="stylesheet" href="src/css/tooltip.css">
+    <link rel="stylesheet" href="src/css/chart.css">
+    <link rel="stylesheet" href="src/css/globe.css">
+    <link rel="stylesheet" href="src/css/treemap.css">
+    <link rel="stylesheet" href="src/css/data-grid.css">
+    <link rel="stylesheet" href="src/css/relations.css">
+    <link rel="stylesheet" href="src/css/market-text.css">
+    <link rel="stylesheet" href="src/css/vfx.css">
+    <link rel="stylesheet" href="src/css/loading-screen.css">
+    <link rel="stylesheet" href="src/css/reduced-motion.css">
+
+    <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap">
 </head>
 <body>
