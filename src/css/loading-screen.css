@@ -23,6 +23,36 @@
     pointer-events: none;
 }
 
+/* Loading bar under the title, drawn like the range sliders' track. loading-screen.js
+   sets --progress (0 to 1) as tasks finish, and the fill glides to it. */
+.loading-bar {
+    position: relative;
+    width: 200px;
+    height: 4px;
+    overflow: hidden;
+    background: var(--clr-border);
+}
+.loading-bar-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--clr-body);
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left center;
+    transition: transform var(--transition-time-400) ease-out;
+}
+/* A faint light sweeps along the bar while it waits, so it never looks stuck. */
+.loading-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--clr-body) 35%, transparent), transparent);
+    transform: translateX(-100%);
+    animation: loading-sweep 1.4s ease-in-out infinite;
+}
+@keyframes loading-sweep {
+    to { transform: translateX(100%); }
+}
+
 .loading-spinner {
     /* Holds the icon below. Without it the icon only stays inside while the spin
        animation runs (a transform also does this); with reduced motion it would

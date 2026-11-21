@@ -19,6 +19,8 @@
     .scenario-chart-plot .chart-reveal,
     .scenario-chart-plot .chart-event-group,
     .loading-spinner,
+    .loading-bar-fill,
+    .loading-bar::after,
     button {
         animation: none !important;
         transition: none !important;
@@ -47,6 +49,8 @@ body.reduced-motion .market-text-line,
 body.reduced-motion .scenario-chart-plot .chart-reveal,
 body.reduced-motion .scenario-chart-plot .chart-event-group,
 body.reduced-motion .loading-spinner,
+body.reduced-motion .loading-bar-fill,
+body.reduced-motion .loading-bar::after,
 body.reduced-motion button {
     animation: none !important;
     transition: none !important;

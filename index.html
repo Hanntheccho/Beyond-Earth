@@ -38,10 +38,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap">
 </head>
 <body>
-    <!-- Loading Screen -->
+    <!-- Loading Screen: loading-screen.js fills the bar as the page gets ready -->
     <div id="loading-screen">
         <div class="loading-spinner" aria-hidden="true"></div>
         <span>BYOND UNiTY :HTML</span>
+        <div class="loading-bar" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="loading-bar-fill"></div>
+        </div>
     </div>
 
     <!-- VFX -->

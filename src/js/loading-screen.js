@@ -2,27 +2,58 @@
 // out. Ready means every task handed to holdLoadingScreen() has settled, loaded or
 // failed: the page's own files and fonts (below), the text and POI panels (loc.js), the
 // market data (market-data.js) and the globe's terrain (globe.js). MAX_WAIT_MS caps the
-// wait, so one stuck request cannot keep the page covered. The console gets one line
-// with the time each task finished, counted from when the page started loading.
+// wait, so one stuck request cannot keep the page covered.
+//
+// The bar under the title fills by the share of the work that is done; screen readers
+// also hear what it is still waiting for. The console gets one line with the time each
+// task finished, counted from when the page started loading.
 
 const MAX_WAIT_MS = 10000;
 
+// Rough share of the loading work per task, by download size, so the bar moves by how
+// much is left rather than by how many tasks are left. Other tasks count 1.
+//   page files  ~310 KB of scripts and styles, plus the icons
+//   fonts       ~40 KB
+//   text        ~120 KB in 18 files
+//   market data ~50 KB
+//   terrain     330 KB, then decoding and the upload to the graphics card
+const TASK_WEIGHTS = { 'page files': 3, fonts: 1, text: 2, 'market data': 1, terrain: 3 };
+
 const loadingScreen = document.getElementById('loading-screen');
+const bar = loadingScreen?.querySelector('.loading-bar');
 const tasks = [];
 let shown = false;
+let shownProgress = 0;
 let resolveShown;
 
 // Resolves as the loading screen starts to fade out (scroll-reveal.js waits for it).
 export const pageShown = new Promise(resolve => { resolveShown = resolve; });
 
-// Keeps the loading screen up until promise settles. label names the task in the console.
+function renderProgress() {
+    if (!bar || shown) return;
+    const total = tasks.reduce((sum, task) => sum + task.weight, 0);
+    const done = tasks.reduce((sum, task) => sum + (task.ms === null ? 0 : task.weight), 0);
+    // Never move back, even if a task is added after others have finished.
+    shownProgress = Math.max(shownProgress, total ? done / total : 0);
+    const pending = tasks.filter(task => task.ms === null).map(task => task.label);
+    bar.style.setProperty('--progress', shownProgress.toFixed(3));
+    bar.setAttribute('aria-valuenow', String(Math.round(shownProgress * 100)));
+    bar.setAttribute('aria-valuetext', pending.length ? `Waiting for ${pending.join(', ')}` : 'Ready');
+}
+
+// Keeps the loading screen up until promise settles. label names the task for screen
+// readers and in the console.
 export function holdLoadingScreen(label, promise) {
     if (shown) return;
-    const task = { label, ms: null };
+    const task = { label, weight: TASK_WEIGHTS[label] ?? 1, ms: null };
     task.settled = Promise.resolve(promise)
         .catch(() => { /* the module reports its own errors; the page shows anyway */ })
-        .then(() => { task.ms = performance.now(); });
+        .then(() => {
+            task.ms = performance.now();
+            renderProgress();
+        });
     tasks.push(task);
+    renderProgress();
 }
 
 // Modules keep adding tasks while they start up, so wait until a pass adds none.
