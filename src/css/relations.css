@@ -28,6 +28,9 @@
 #influence-graph-container .node-group {
     transition: opacity var(--transition-time) ease;
 }
+#influence-graph-container .node-group:focus {
+    outline: none;
+}
 #influence-graph-container .node-group.is-dragging circle {
     cursor: grabbing;
 }
@@ -75,6 +78,7 @@
     fill: none;
     opacity: 0;
     transition: opacity var(--transition-time) ease, stroke var(--transition-time-clr) ease;
+    cursor: help;
 }
 #influence-graph-container .link.is-node-dragged-related {
     opacity: .5;

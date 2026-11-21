@@ -8,6 +8,8 @@
     let simulation, svg;
     let simulationNodes = new Map();
     const draggedNodeIds = new Set();
+    let selectedNodeId = null;
+    let dragSimulationActive = false;
     let layoutInitialized = false;
     let inViewport = false;
     let latestData = null;
@@ -125,10 +127,21 @@
         node.exit().remove();
         const nodeEnter = node.enter().append('g')
             .attr('class', 'node-group')
+            .attr('role', 'button')
+            .attr('tabindex', 0)
             .call(d3.drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
-                .on('end', dragended));
+                .on('end', dragended))
+            .on('click', (event, d) => {
+                event.stopPropagation();
+                toggleSelection(d);
+            })
+            .on('keydown', (event, d) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                toggleSelection(d);
+            });
 
         nodeEnter.append('circle')
             .attr('r', d => d.radius);
@@ -145,7 +158,10 @@
         nodeMerge
             .classed('is-unavailable', d => d.hasData === false)
             .classed('is-down', d => d.hasData !== false && d.changePercent < 0)
-            .classed('is-up', d => d.hasData !== false && d.changePercent >= 0);
+            .classed('is-up', d => d.hasData !== false && d.changePercent >= 0)
+            .classed('is-selected', d => selectedNodeId === d.id)
+            .attr('aria-label', d => d.label || d.name)
+            .attr('aria-pressed', d => String(selectedNodeId === d.id));
         nodeMerge.select('circle')
             .interrupt()
             .transition()
@@ -215,24 +231,43 @@
     }
 
     function updateDraggedLinks() {
+        const activeNodeIds = new Set(draggedNodeIds);
+        if (selectedNodeId !== null) activeNodeIds.add(selectedNodeId);
         svg.selectAll('.link')
             .classed('is-node-dragged-related', d =>
-                draggedNodeIds.has(d.sourceKey) || draggedNodeIds.has(d.targetKey)
+                activeNodeIds.has(d.sourceKey) || activeNodeIds.has(d.targetKey)
             );
     }
 
     function updateDraggedNodes() {
-        const relatedNodeIds = new Set(draggedNodeIds);
+        const activeNodeIds = new Set(draggedNodeIds);
+        if (selectedNodeId !== null) activeNodeIds.add(selectedNodeId);
+        const relatedNodeIds = new Set(activeNodeIds);
         svg.selectAll('.link').each(d => {
-            if (draggedNodeIds.has(d.sourceKey)) relatedNodeIds.add(d.targetKey);
-            if (draggedNodeIds.has(d.targetKey)) relatedNodeIds.add(d.sourceKey);
+            if (activeNodeIds.has(d.sourceKey)) relatedNodeIds.add(d.targetKey);
+            if (activeNodeIds.has(d.targetKey)) relatedNodeIds.add(d.sourceKey);
         });
         svg.selectAll('.node-group')
             .classed('is-dragging', d => draggedNodeIds.has(d.id))
+            .classed('is-selected', d => selectedNodeId === d.id)
+            .attr('aria-pressed', d => String(selectedNodeId === d.id))
             .classed('is-unrelated-to-dragged-node', d =>
-                draggedNodeIds.size > 0 && !relatedNodeIds.has(d.id)
+                activeNodeIds.size > 0 && !relatedNodeIds.has(d.id)
             );
     }
+
+    function toggleSelection(node) {
+        selectedNodeId = selectedNodeId === node.id ? null : node.id;
+        updateDraggedLinks();
+        updateDraggedNodes();
+    }
+
+    document.addEventListener('click', event => {
+        if (selectedNodeId === null || event.target.closest?.('#influence-graph-container .node-group')) return;
+        selectedNodeId = null;
+        updateDraggedLinks();
+        updateDraggedNodes();
+    });
 
     window.viewportVisibility.observe(container, isVisible => {
         inViewport = isVisible;
@@ -248,9 +283,6 @@
     });
 
     function dragstarted(event) {
-        if (!event.active) {
-            simulation.alphaTarget(0.3).restart();
-        }
         draggedNodeIds.add(event.subject.id);
         updateDraggedNodes();
         updateDraggedLinks();
@@ -259,15 +291,20 @@
     }
 
     function dragged(event) {
+        if (!dragSimulationActive) {
+            simulation.alphaTarget(0.3).restart();
+            dragSimulationActive = true;
+        }
         event.subject.fx = event.x;
         event.subject.fy = event.y;
     }
 
     function dragended(event) {
-        if (!event.active) {
-            simulation.alphaTarget(0);
-        }
         draggedNodeIds.delete(event.subject.id);
+        if (dragSimulationActive && draggedNodeIds.size === 0) {
+            simulation.alphaTarget(0);
+            dragSimulationActive = false;
+        }
         updateDraggedNodes();
         updateDraggedLinks();
         event.subject.fx = null;
