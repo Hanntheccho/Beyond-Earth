@@ -50,8 +50,8 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const YEAR_STEP = 25;
     // Chart aspect ratio. The plot reserves it before its chart is drawn, so drawing
     // it later does not shift the page; the chart itself is drawn at the plot's size.
-    const CHART_WIDTH = 800;
-    const CHART_HEIGHT = 400;
+    const CHART_WIDTH = 2;
+    const CHART_HEIGHT = 1;
     const sortedData = new Map();
 
     function metaFor(plot) {
