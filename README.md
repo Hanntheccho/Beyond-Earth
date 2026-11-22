@@ -15,7 +15,7 @@ Interactive scenario briefing for the world after the Great Mistake of 2070. A s
 | --- | --- |
 | `index.html` | Page entry |
 | `src/js`, `src/css` | Interface scripts and styles |
-| `data/` | Scenario, bloc, corp, good, relations, and locale JSON |
+| `data/` | Scenario, bloc, corp, good, relations, marker, and locale JSON; `scenario-data.md` and `relations.md` explain how to edit them |
 | `assets/` | Icons, faction marks, and audio |
 | `docs/legacy/` | Legacy worldbuilding text, not loaded by the site |
 | `tools/validate.mjs` | Data checks (`npm run validate`) |

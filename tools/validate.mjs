@@ -5,7 +5,8 @@
 //   node tools/validate.mjs --info   also lists POI stubs and marker/panel links
 //
 // Errors are things that break the page and make the exit code 1. Warnings are
-// suspicious but not fatal. Needs Node 18 or newer, and no packages.
+// suspicious but not fatal. Needs Node 20.10 or newer (for the JSON import syntax),
+// and no packages.
 //
 // What it cannot do: it checks syntax, not undefined variables. For that class
 // of bug (a leftover constant after a rename, say) use ESLint with "no-undef".
@@ -13,7 +14,6 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import vm from 'node:vm';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -302,26 +302,17 @@ function checkTreemaps(html) {
 // -------------------------------------------------------------- scenario data
 
 function checkScenario() {
-    const rel = 'src/js/scenario-data.js';
-    if (!exists(abs(rel))) {
-        error('files', `${rel} is missing`);
-        return;
-    }
-    const context = vm.createContext({ window: {} });
-    try {
-        vm.runInContext(read(abs(rel)), context, { filename: rel });
-    } catch (e) {
-        error('scenario', `${rel} failed to run: ${e.message}`);
-        return;
-    }
-    const series = context.window.scenarioSeries || {};
-    const data = context.window.scenarioChartData || {};
-    const config = context.window.scenarioConfig || {};
+    const rel = 'data/scenario-data.json';
+    const scenario = readJson(rel);
+    if (!scenario) return;
+    const series = scenario.series || {};
+    const pointsBySeries = scenario.points || {};
+    const timeline = scenario.timeline || {};
 
     const range = {};
-    Object.keys(data).forEach(key => {
-        if (!series[key]) warn(rel, `chart data "${key}" has no entry in scenarioSeries, so it never gets a chart`);
-        const points = Array.isArray(data[key]) ? data[key] : [];
+    Object.keys(pointsBySeries).forEach(key => {
+        if (!series[key]) warn(rel, `points "${key}" has no entry in series, so it never gets a chart`);
+        const points = Array.isArray(pointsBySeries[key]) ? pointsBySeries[key] : [];
         const valid = points.filter(p => Number.isFinite(p.year) && Number.isFinite(p.value));
         if (valid.length !== points.length) warn(rel, `${key}: ${points.length - valid.length} point(s) without a numeric year/value are ignored`);
         if (valid.length < 2) {
@@ -331,12 +322,12 @@ function checkScenario() {
         const years = valid.map(p => p.year);
         if (new Set(years).size !== years.length) warn(rel, `${key}: has duplicate years`);
         range[key] = [Math.min(...years), Math.max(...years)];
-        if (Number.isFinite(config.baselineYear) && !years.includes(config.baselineYear)) {
-            warn(rel, `${key}: no ${config.baselineYear} point, so its summary row shows N/A`);
+        if (Number.isFinite(timeline.baselineYear) && !years.includes(timeline.baselineYear)) {
+            warn(rel, `${key}: no ${timeline.baselineYear} point, so its summary row shows N/A`);
         }
     });
     Object.keys(series).forEach(key => {
-        if (!range[key]) warn(rel, `scenarioSeries "${key}" has no usable chart data, so its button is skipped`);
+        if (!range[key]) warn(rel, `series "${key}" has no usable points, so its button is skipped`);
     });
 
     const unknownSeries = (item, kind, label) => (item.series || []).filter(s => {
@@ -345,7 +336,7 @@ function checkScenario() {
         return true;
     });
 
-    (config.events || []).forEach(event => {
+    (timeline.events || []).forEach(event => {
         const label = `${event.label} (${event.year})`;
         if (!Number.isFinite(event.year)) {
             warn(rel, `event "${event.label}" has no numeric year and is never drawn`);
@@ -359,14 +350,14 @@ function checkScenario() {
         }
     });
 
-    (config.eras || []).forEach(era => {
+    (timeline.eras || []).forEach(era => {
         if (!(era.start < era.end)) warn(rel, `era "${era.label}": start (${era.start}) must be before end (${era.end})`);
         unknownSeries(era, 'era', era.label);
     });
 
     // Without the slider the globe uses this constant, so it should match the chart.
     const globePath = abs('src/js/globe.js');
-    const sea = Array.isArray(data.seaLevel) ? data.seaLevel.slice().sort((a, b) => a.year - b.year) : [];
+    const sea = Array.isArray(pointsBySeries.seaLevel) ? pointsBySeries.seaLevel.slice().sort((a, b) => a.year - b.year) : [];
     const match = exists(globePath) && /const\s+DEFAULT_SEA_LEVEL\s*=\s*([\d.]+)/.exec(read(globePath));
     if (match && sea.length && Number(match[1]) !== sea[sea.length - 1].value) {
         warn('globe', `DEFAULT_SEA_LEVEL is ${match[1]} but the last seaLevel value is ${sea[sea.length - 1].value}`);

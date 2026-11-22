@@ -9,12 +9,11 @@ import './js/loading-screen.js';
 import './js/loc.js';
 import './js/viewport-visibility.js';
 import './js/simulation.js';
-import './js/scenario-data.js';
 
 // 2. Visualization Components
 import './js/globe.js';
 import './js/treemap.js';
-import './js/scenario-chart.js';
+import './js/chart.js';
 import './js/globe-sea-level.js';
 import './js/globe-markers-link.js';
 

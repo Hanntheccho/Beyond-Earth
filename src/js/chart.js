@@ -1,12 +1,12 @@
-// scenario-chart.js - Shared renderer. The chart buttons and panels are generated from
-// window.scenarioSeries (one per series that has data), and everything about
-// a chart (name, unit, axis bounds, trend direction) comes from
-// window.scenarioSeries / window.scenarioConfig in scenario-data.js.
-// index.html only needs an empty <div class="div-desc-win grid" data-scenario-buttons></div>;
+// chart.js - Scenario chart renderer. Everything a chart shows comes from
+// data/scenario-data.json (explained in data/scenario-data.md): name, unit, axis
+// bounds and trend direction from `series`, events and eras from `timeline`, and
+// the values from `points`. One button and panel is built per series that has points.
+// index.html only needs an empty <div class="div-desc-win grid" data-chart-buttons></div>;
 // the panels are inserted right after it.
 //
-// Events and eras are drawn in red by default. Add `positive: true` to one in
-// scenarioConfig to draw it in green instead (the .chart-positive class).
+// Events and eras are drawn in red by default. Add `"positive": true` to one in the
+// timeline to draw it in green instead (the .is-positive class).
 //
 // Each chart is drawn the first time it comes into view (its panel is shown and
 // scrolled to), so hidden charts cost nothing at startup.
@@ -18,17 +18,18 @@
 // keep the two rules there in sync.
 import { observeVisibility } from './viewport-visibility.js';
 import { SVG_NS, appendSvg as add } from './svg.js';
+import scenario from '../../data/scenario-data.json' with { type: 'json' };
 
 (function () {
-    const datasets = window.scenarioChartData || {};
-    const seriesMeta = window.scenarioSeries || {};
-    const config = window.scenarioConfig || {};
-    const baselineYear = Number.isFinite(config.baselineYear) ? config.baselineYear : 2070;
+    const pointsBySeries = scenario.points || {};
+    const seriesMeta = scenario.series || {};
+    const timeline = scenario.timeline || {};
+    const baselineYear = Number.isFinite(timeline.baselineYear) ? timeline.baselineYear : 2070;
     const valueFormatter = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 4 });
     const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
 
     const TAG_HEIGHT = 18;
-    const PANEL_GROUP = 'mit-charts';
+    const PANEL_GROUP = 'charts';
     // Chart viewBox. The plot reserves this aspect ratio before its chart is drawn,
     // so drawing it later does not shift the page.
     const CHART_WIDTH = 800;
@@ -49,19 +50,19 @@ import { SVG_NS, appendSvg as add } from './svg.js';
         };
     }
 
-    function sortedPoints(series) {
-        if (sortedData.has(series)) return sortedData.get(series);
-        const points = datasets[series];
+    function sortedPoints(key) {
+        if (sortedData.has(key)) return sortedData.get(key);
+        const points = pointsBySeries[key];
         const sorted = Array.isArray(points)
             ? points.filter(point => Number.isFinite(point.year) && Number.isFinite(point.value))
                 .sort((a, b) => a.year - b.year)
             : [];
-        sortedData.set(series, sorted);
+        sortedData.set(key, sorted);
         return sorted;
     }
 
     function renderSummary(plots) {
-        const host = document.querySelector('[data-scenario-summary]');
+        const host = document.querySelector('[data-chart-summary]');
         if (!host) return;
 
         host.replaceChildren();
@@ -127,10 +128,10 @@ import { SVG_NS, appendSvg as add } from './svg.js';
         const negativeTrend = meta.trend === 'negative';
         const trendClassForChange = change => {
             const direction = negativeTrend ? -change : change;
-            return direction > 0 ? 'chart-trend-good' : direction < 0 ? 'chart-trend-bad' : 'chart-trend-flat';
+            return direction > 0 ? 'is-good' : direction < 0 ? 'is-bad' : 'is-flat';
         };
         // Appends the green variant class when an event or era has `positive: true`.
-        const positiveClass = item => (item.positive ? ' chart-positive' : '');
+        const positiveClass = item => (item.positive ? ' is-positive' : '');
         const firstYear = sorted[0].year;
         const lastYear = sorted.at(-1).year;
         const svg = document.createElementNS(SVG_NS, 'svg');
@@ -138,8 +139,8 @@ import { SVG_NS, appendSvg as add } from './svg.js';
         svg.setAttribute('role', 'presentation');
         svg.setAttribute('aria-hidden', 'true');
 
-        // Eras (shaded bands) from scenarioConfig.eras, optionally limited via `series`.
-        const eras = (Array.isArray(config.eras) ? config.eras : [])
+        // Eras (shaded bands) from timeline.eras, optionally limited via `series`.
+        const eras = (Array.isArray(timeline.eras) ? timeline.eras : [])
             .filter(era => !Array.isArray(era.series) || era.series.includes(meta.key));
         eras.forEach(era => {
             if (!(era.start < lastYear && era.end > firstYear)) return;
@@ -163,11 +164,11 @@ import { SVG_NS, appendSvg as add } from './svg.js';
         yearTicks.forEach(year => {
             const xx = x(year);
             add(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, class: 'chart-year-tick' });
-            add(svg, 'text', { x: xx, y: height - 15, class: 'year-label' }, String(year));
+            add(svg, 'text', { x: xx, y: height - 15, class: 'chart-year-label' }, String(year));
         });
 
-        // Events from scenarioConfig.events, optionally limited via `series`.
-        const events = (Array.isArray(config.events) ? config.events : [])
+        // Events from timeline.events, optionally limited via `series`.
+        const events = (Array.isArray(timeline.events) ? timeline.events : [])
             .filter(event => !Array.isArray(event.series) || event.series.includes(meta.key))
             .filter(event => Number.isFinite(event.year) && event.year >= firstYear && event.year <= lastYear)
             .sort((a, b) => a.year - b.year);
@@ -187,13 +188,13 @@ import { SVG_NS, appendSvg as add } from './svg.js';
             });
         });
 
-        // Reveal: everything in `series` is clipped by a rect that grows left to
+        // Reveal: everything in `seriesGroup` is clipped by a rect that grows left to
         // right via CSS. The clip covers the full viewBox so glows are not cut off.
         const clipId = `chart-reveal-${meta.key}`;
         const defs = add(svg, 'defs', {});
         const clip = add(defs, 'clipPath', { id: clipId });
         add(clip, 'rect', { x: 0, y: 0, width, height, class: 'chart-reveal' });
-        const series = add(svg, 'g', { 'clip-path': `url(#${clipId})` });
+        const seriesGroup = add(svg, 'g', { 'clip-path': `url(#${clipId})` });
 
         const baseline = height - margin.bottom;
         for (let index = 1; index < sorted.length; index++) {
@@ -207,8 +208,8 @@ import { SVG_NS, appendSvg as add } from './svg.js';
                 `L ${previousPosition.x} ${baseline}`,
                 'Z'
             ].join(' ');
-            add(series, 'path', { d: segmentArea, class: `chart-series-area ${trendClass}` });
-            add(series, 'path', {
+            add(seriesGroup, 'path', { d: segmentArea, class: `chart-series-area ${trendClass}` });
+            add(seriesGroup, 'path', {
                 d: `M ${previousPosition.x} ${previousPosition.y} L ${currentPosition.x} ${currentPosition.y}`,
                 class: `chart-series-line ${trendClass}`
             });
@@ -220,8 +221,8 @@ import { SVG_NS, appendSvg as add } from './svg.js';
             const current = sorted[segmentIndex];
             const pointTrendClass = previous && current
                 ? trendClassForChange(current.value - previous.value)
-                : 'chart-trend-flat';
-            const dot = add(series, 'circle', {
+                : 'is-flat';
+            const dot = add(seriesGroup, 'circle', {
                 cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
             });
             add(dot, 'title', {}, `${point.year}: ${point.value} ${meta.unit}`);
@@ -255,9 +256,9 @@ import { SVG_NS, appendSvg as add } from './svg.js';
         plot.replaceChildren(svg);
     }
 
-    // Build the button row and chart panels from scenarioSeries, in key order.
+    // Build the button row and chart panels from the series, in key order.
     function buildChartUi() {
-        const buttonHost = document.querySelector('[data-scenario-buttons]');
+        const buttonHost = document.querySelector('[data-chart-buttons]');
         if (!buttonHost) return;
 
         const keys = Object.keys(seriesMeta).filter(key => sortedPoints(key).length);
@@ -284,7 +285,7 @@ import { SVG_NS, appendSvg as add } from './svg.js';
             panel.hidden = !active;
             panel.setAttribute('aria-hidden', String(!active));
             const plot = document.createElement('div');
-            plot.className = 'scenario-chart-plot';
+            plot.className = 'chart-plot';
             plot.dataset.series = key;
             plot.setAttribute('role', 'img');
             plot.setAttribute('aria-label', `${name} chart, ${points[0].year} to ${points.at(-1).year}`);
@@ -297,7 +298,7 @@ import { SVG_NS, appendSvg as add } from './svg.js';
     }
 
     buildChartUi();
-    const plots = [...document.querySelectorAll('.scenario-chart-plot[data-series]')];
+    const plots = [...document.querySelectorAll('.chart-plot[data-series]')];
     renderSummary(plots);
     plots.forEach(plot => {
         const stop = observeVisibility(plot, isVisible => {

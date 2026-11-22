@@ -7,8 +7,7 @@
 import { motionPreference } from './motion.js';
 import { isMainVisible, setMainVisible } from './main-visibility.js';
 import { isDataViewOpen, setDataViewOpen } from './data-view.js';
-
-const PANEL_GROUP = 'lys-pois';
+import { POI_PANEL_GROUP } from './loc.js';
 
 document.addEventListener('click', event => {
     const marker = event.target.closest?.('.globe-marker');
@@ -16,7 +15,7 @@ document.addEventListener('click', event => {
     if (!id) return;
 
     const poiButton = document.querySelector(
-        `[data-panel-group="${PANEL_GROUP}"][data-panel-target="${CSS.escape(id)}"]`
+        `[data-panel-group="${POI_PANEL_GROUP}"][data-panel-target="${CSS.escape(id)}"]`
     );
     const panel = document.getElementById(id);
     if (!poiButton || !panel) return;

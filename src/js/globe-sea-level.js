@@ -1,8 +1,10 @@
-// Year slider that drives the globe's sea level. Values come from
-// scenarioChartData.seaLevel, so the slider and the chart always agree.
+// Year slider that drives the globe's sea level. Values come from the seaLevel
+// points in data/scenario-data.json, so the slider and the chart always agree.
 // globe.js listens for the 'sealevelchange' event.
+import scenario from '../../data/scenario-data.json' with { type: 'json' };
+
 (function () {
-    const points = (window.scenarioChartData?.seaLevel || []).slice().sort((a, b) => a.year - b.year);
+    const points = (scenario.points?.seaLevel || []).slice().sort((a, b) => a.year - b.year);
     const host = document.querySelector('.globe-preview');
     if (!points.length || !host) return;
 

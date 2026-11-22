@@ -1,4 +1,4 @@
-// svg.js - Small helper for building SVG by hand (treemap.js, scenario-chart.js).
+// svg.js - Small helper for building SVG by hand (treemap.js, chart.js).
 export const SVG_NS = 'http://www.w3.org/2000/svg';
 
 // Creates an SVG element, sets the attributes that are not null/undefined, adds the

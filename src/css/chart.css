@@ -1,10 +1,10 @@
-/* chart.css - Scenario chart plot (see src/js/scenario-chart.js). */
+/* chart.css - Scenario chart plot (see src/js/chart.js). */
 
-.scenario-chart-plot {
+.chart-plot {
     position: relative;
     isolation: isolate;
 }
-.scenario-chart-plot::before {
+.chart-plot::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -17,67 +17,67 @@
     opacity: var(--opacity-10);
     filter: var(--img-filter);
 }
-.scenario-chart-plot svg {
+.chart-plot svg {
     position: relative;
     z-index: 1;
     display: block;
     width: 100%;
     height: auto;
 }
-.scenario-chart-plot text {
+.chart-plot text {
     fill: var(--clr-data);
     font-size: var(--fnt-size-data);
 }
-.scenario-chart-plot .chart-axis-label { text-anchor: end; }
-.scenario-chart-plot .year-label,
-.scenario-chart-plot .chart-event-label,
-.scenario-chart-plot .chart-era-label { text-anchor: middle; }
-.scenario-chart-plot .chart-grid-line { stroke: var(--clr-border); stroke-width: 1; }
-.scenario-chart-plot .chart-year-tick { stroke: var(--clr-border); stroke-width: 1; }
-.scenario-chart-plot .chart-event-line { stroke: var(--clr-negative); stroke-width: 1.5; stroke-dasharray: 4 4; }
-.scenario-chart-plot .chart-event-tag { fill: color-mix(in srgb, var(--clr-negative) 20%, var(--clr)); stroke: var(--clr-negative); stroke-width: 0.8; }
-.scenario-chart-plot .chart-era-band { fill: var(--clr-negative); fill-opacity: var(--opacity-10); }
-.scenario-chart-plot .chart-era-boundary { stroke: var(--clr-negative); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.75; }
-.scenario-chart-plot text.chart-era-label {
+.chart-plot .chart-axis-label { text-anchor: end; }
+.chart-plot .chart-year-label,
+.chart-plot .chart-event-label,
+.chart-plot .chart-era-label { text-anchor: middle; }
+.chart-plot .chart-grid-line { stroke: var(--clr-border); stroke-width: 1; }
+.chart-plot .chart-year-tick { stroke: var(--clr-border); stroke-width: 1; }
+.chart-plot .chart-event-line { stroke: var(--clr-negative); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.chart-plot .chart-event-tag { fill: color-mix(in srgb, var(--clr-negative) 20%, var(--clr)); stroke: var(--clr-negative); stroke-width: 0.8; }
+.chart-plot .chart-era-band { fill: var(--clr-negative); fill-opacity: var(--opacity-10); }
+.chart-plot .chart-era-boundary { stroke: var(--clr-negative); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.75; }
+.chart-plot text.chart-era-label {
     fill: color-mix(in srgb, var(--clr-negative) 80%, transparent);
     text-transform: uppercase;
 }
 /* Each segment's trend class sets its color; the area and line paint with it. */
-.scenario-chart-plot .chart-trend-good { color: var(--clr-positive); }
-.scenario-chart-plot .chart-trend-bad { color: var(--clr-negative); }
-.scenario-chart-plot .chart-trend-flat { color: var(--clr-neutrale); }
-.scenario-chart-plot .chart-series-area {
+.chart-plot .is-good { color: var(--clr-positive); }
+.chart-plot .is-bad { color: var(--clr-negative); }
+.chart-plot .is-flat { color: var(--clr-neutrale); }
+.chart-plot .chart-series-area {
     fill: currentColor;
     fill-opacity: var(--opacity-10);
     stroke: none;
 }
-.scenario-chart-plot .chart-series-area.chart-trend-flat { fill-opacity: calc(var(--opacity-10) / 10); }
-.scenario-chart-plot .chart-series-line {
+.chart-plot .chart-series-area.is-flat { fill-opacity: calc(var(--opacity-10) / 10); }
+.chart-plot .chart-series-line {
     fill: none;
     stroke: currentColor;
     stroke-width: var(--stroke-width-1);
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-.scenario-chart-plot text.chart-event-label {
+.chart-plot text.chart-event-label {
     fill: var(--clr-body);
     text-transform: uppercase;
 }
 
-.scroll-reveal.is-inview .scenario-chart-plot .chart-reveal {
+.scroll-reveal.is-inview .chart-plot .chart-reveal {
     transform-box: fill-box;
     transform-origin: left center;
     animation: chart-reveal 1400ms cubic-bezier(.2, .7, .2, 1) 150ms both;
 }
-.scroll-reveal.is-inview .scenario-chart-plot .chart-event-group {
+.scroll-reveal.is-inview .chart-plot .chart-event-group {
     animation: chart-fade 400ms ease-out both;
     animation-delay: calc(150ms + var(--p, 0) * 1400ms);
 }
 @keyframes chart-reveal { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes chart-fade   { from { opacity: 0; } to { opacity: 1; } }
 
-.scenario-chart-plot .chart-era-band.chart-positive { fill: var(--clr-positive); }
-.scenario-chart-plot .chart-era-boundary.chart-positive { stroke: var(--clr-positive); }
-.scenario-chart-plot text.chart-era-label.chart-positive { fill: color-mix(in srgb, var(--clr-positive) 80%, transparent); }
-.scenario-chart-plot .chart-event-group.chart-positive .chart-event-line { stroke: var(--clr-positive); }
-.scenario-chart-plot .chart-event-group.chart-positive .chart-event-tag { fill: color-mix(in srgb, var(--clr-positive) 20%, var(--clr)); stroke: var(--clr-positive); }
+.chart-plot .chart-era-band.is-positive { fill: var(--clr-positive); }
+.chart-plot .chart-era-boundary.is-positive { stroke: var(--clr-positive); }
+.chart-plot text.chart-era-label.is-positive { fill: color-mix(in srgb, var(--clr-positive) 80%, transparent); }
+.chart-plot .chart-event-group.is-positive .chart-event-line { stroke: var(--clr-positive); }
+.chart-plot .chart-event-group.is-positive .chart-event-tag { fill: color-mix(in srgb, var(--clr-positive) 20%, var(--clr)); stroke: var(--clr-positive); }

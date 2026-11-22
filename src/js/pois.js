@@ -7,11 +7,9 @@
 // the panels are inserted right after it. The elements carry the same classes
 // loc.js already fills ("poiXXX" for the title, "poiXXX-desc" for the text), and
 // loc.js waits for them to be built (localizeAfter) before it localizes the page.
-import { getLocalization, localizeAfter } from './loc.js';
+import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
 
 (function () {
-    const PANEL_GROUP = 'lys-pois';
-
     const buttonHost = document.querySelector('[data-poi-buttons]');
     if (!buttonHost) return;
 
@@ -24,7 +22,7 @@ import { getLocalization, localizeAfter } from './loc.js';
     function buildButton(id, active) {
         const button = document.createElement('button');
         button.type = 'button';
-        button.dataset.panelGroup = PANEL_GROUP;
+        button.dataset.panelGroup = POI_PANEL_GROUP;
         button.dataset.panelTarget = id;
         button.setAttribute('aria-pressed', String(active));
         button.append(buildLabel(id));
@@ -48,7 +46,7 @@ import { getLocalization, localizeAfter } from './loc.js';
         const panel = document.createElement('div');
         panel.className = 'div-desc-win';
         panel.id = id;
-        panel.dataset.panelGroup = PANEL_GROUP;
+        panel.dataset.panelGroup = POI_PANEL_GROUP;
         panel.hidden = !active;
         panel.setAttribute('aria-hidden', String(!active));
 

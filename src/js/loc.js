@@ -16,7 +16,8 @@
 import { holdLoadingScreen } from './loading-screen.js';
 
 const MANIFEST_PATH = 'data/loc/manifest.json';
-const POI_PANEL_GROUP = 'lys-pois';
+// Panel group of the POI buttons and panels; pois.js and globe-markers-link.js import it.
+export const POI_PANEL_GROUP = 'pois';
 // Applied in this order. Text already inside a highlight of the same list is skipped.
 const KEYWORD_LISTS = [
     { path: 'data/loc/keywords-ph3.json', selector: '.ph3' },
