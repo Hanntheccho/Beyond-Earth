@@ -30,10 +30,18 @@
    keeps short rows with centered cells. Keyed on the ledger rather than on
    :has(.ledger-spark), which would be re-checked on every frame of the number tweens. */
 .ledger[data-ledger] .ledger-row {
-    min-height: 80px;
     align-items: start;
     padding-top: 2px;
+    cursor: pointer;
 }
+/* A live row shows its item in the expanded chart when clicked; the shown one stays
+   tinted. Hover and keyboard focus get a lighter tint. The tints are inset shadows,
+   not backgrounds, so the direction flash (which animates the background) never
+   clears them. */
+.ledger[data-ledger] .ledger-row:focus { outline: none; }
+.ledger[data-ledger] .ledger-row:hover,
+.ledger[data-ledger] .ledger-row:focus-visible { box-shadow: inset 0 0 0 100vmax color-mix(in srgb, var(--clr-data), transparent 94%); }
+.ledger[data-ledger] .ledger-row.is-selected { box-shadow: inset 0 0 0 100vmax color-mix(in srgb, var(--clr-data), transparent 88%); }
 /* The sparkline fills the lower part of the row, under the cells: a faint area with
    its line on top, colored by the trend. The row isolates it, so it sits above the
    row's flash background and below the text where the two meet. */
@@ -57,11 +65,25 @@
 .ledger-spark-line {
     fill: none;
     stroke: currentColor;
-    stroke-opacity: calc(var(--opacity-10) * 10);
     stroke-width: var(--stroke-width-1);
     vector-effect: non-scaling-stroke;
     stroke-linejoin: round;
 }
+
+/* Expanded chart above each live ledger (ledger.js): a status line naming the shown
+   item, then its history drawn large, with a stronger area than the row sparklines. */
+.ledger-chart { margin-bottom: var(--px-10); }
+.ledger-chart-title .is-up { color: var(--clr-positive); }
+.ledger-chart-title .is-down { color: var(--clr-negative); }
+.ledger-chart-plot {
+    display: block;
+    width: 100%;
+    height: 160px;
+    color: var(--clr-neutrale);
+}
+.ledger-chart-plot.is-up { color: var(--clr-positive); }
+.ledger-chart-plot.is-down { color: var(--clr-negative); }
+.ledger-chart-plot .ledger-spark-area { fill-opacity: var(--opacity-10); }
 
 /* The name and change keep some room from the row's edges, since neighbouring
    ledger columns sit right against each other. */
