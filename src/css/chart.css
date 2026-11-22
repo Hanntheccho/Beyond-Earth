@@ -17,12 +17,11 @@
     opacity: var(--opacity-10);
     filter: var(--img-filter);
 }
+/* chart.js sizes the SVG to the plot in real pixels, so CSS does not scale it. */
 .chart-plot svg {
     position: relative;
     z-index: 1;
     display: block;
-    width: 100%;
-    height: auto;
 }
 .chart-plot text {
     fill: var(--clr-data);

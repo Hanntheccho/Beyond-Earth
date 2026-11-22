@@ -30,8 +30,8 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
 
     const TAG_HEIGHT = 18;
     const PANEL_GROUP = 'charts';
-    // Chart viewBox. The plot reserves this aspect ratio before its chart is drawn,
-    // so drawing it later does not shift the page.
+    // Chart aspect ratio. The plot reserves it before its chart is drawn, so drawing
+    // it later does not shift the page; the chart itself is drawn at the plot's size.
     const CHART_WIDTH = 800;
     const CHART_HEIGHT = 400;
     const sortedData = new Map();
@@ -107,7 +107,10 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         const sorted = sortedPoints(meta.key);
         if (!sorted.length) return;
 
-        const width = CHART_WIDTH, height = CHART_HEIGHT;
+        // One SVG unit per CSS pixel: the chart is drawn at the plot's real size, so
+        // margins, tags, strokes and text are real pixels instead of being scaled by CSS.
+        const width = plot.clientWidth, height = plot.clientHeight;
+        if (!width || !height) return;
         const margin = { top: 40, right: 40, bottom: 40, left: 40 };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
@@ -136,6 +139,8 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         const lastYear = sorted.at(-1).year;
         const svg = document.createElementNS(SVG_NS, 'svg');
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
         svg.setAttribute('role', 'presentation');
         svg.setAttribute('aria-hidden', 'true');
 
@@ -301,10 +306,21 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const plots = [...document.querySelectorAll('.chart-plot[data-series]')];
     renderSummary(plots);
     plots.forEach(plot => {
+        let drawnWidth = 0;
+        const draw = () => {
+            drawnWidth = plot.clientWidth;
+            render(plot);
+        };
         const stop = observeVisibility(plot, isVisible => {
             if (!isVisible) return;
             stop();
-            render(plot);
+            draw();
+            // Draws the chart again when the plot's width changes (this replays the
+            // reveal); a hidden plot reports no width and is skipped.
+            new ResizeObserver(() => {
+                const width = plot.clientWidth;
+                if (width && width !== drawnWidth) draw();
+            }).observe(plot);
         });
     });
 })();
