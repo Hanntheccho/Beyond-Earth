@@ -62,9 +62,15 @@ export const simulation = (function () {
     // Values kept per node for the history charts, and the ticks the trend change
     // spans. Before the first tick the clock runs a silent warm-up long enough to
     // fill the history, so the charts open with a past instead of a flat line.
-    const HISTORY_LENGTH = 300;
+    const HISTORY_LENGTH = 60;
     const TREND_TICKS = 30;
     let warmedUp = false;
+    // Milliseconds between ticks, unless start() is given its own intervalMs; never
+    // faster than MIN_TICK_INTERVAL_MS. Changing it changes how much real time the
+    // history and the trend cover. Keep the views' tween durations (treemap.js,
+    // ledger.js, ticker.js) well below it, so animations finish before the next tick.
+    const TICK_INTERVAL_MS = 1000;
+    const MIN_TICK_INTERVAL_MS = 250;
     // Momentum is a smoothed % change, capped at +/-MAX_MOMENTUM (in percent).
     const MAX_MOMENTUM = 5;
     // Cap on the momentum boost applied to a value per tick (a fraction, not a percent).
@@ -335,10 +341,8 @@ export const simulation = (function () {
 
     // Start the simulation. The first start runs the silent warm-up that fills the
     // history, then it ticks once immediately (so the page has movement data right
-    // away) and every intervalMs; the default and the minimum are in the
-    // setInterval call below.
-    // Restarting replaces any running timer. Keep UI tween durations well below
-    // this interval so animations finish before the next tick.
+    // away) and every options.intervalMs, or TICK_INTERVAL_MS by default.
+    // Restarting replaces any running timer.
     function startClock(options = {}) {
         if (timer) clearInterval(timer);
         if (!warmedUp) {
@@ -350,7 +354,7 @@ export const simulation = (function () {
         timer = setInterval(() => {
             computeValues();
             publishFeeds();
-        }, Math.max(250, Number(options.intervalMs) || 2000));
+        }, Math.max(MIN_TICK_INTERVAL_MS, Number(options.intervalMs) || TICK_INTERVAL_MS));
     }
 
     function stopClock() {

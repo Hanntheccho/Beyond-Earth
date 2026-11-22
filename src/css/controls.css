@@ -62,13 +62,13 @@ button {
     background-color: var(--clr-background);
     font-family: var(--fnt);
     margin: 4px;
-    padding: 4px 8px;
+    padding: .5ch 1ch;
     font-size: var(--fnt-size-bttn);
     color: var(--clr-data);
     letter-spacing: var(--letter-spacing-02);
     text-indent: var(--letter-spacing-02);
-    border: 2px solid;
-    border-bottom-width: 4px;
+    border: .25ch solid;
+    border-bottom-width: .75ch;
     border-color: var(--clr-border);
     transition: transform var(--transition-time) ease;
     font-weight: bold;
@@ -89,15 +89,17 @@ button img {
     width: 100%;
     height: auto;
 }
+button:has(img) {
+    padding: var(--px-10);
+    width: var(--btn-size);
+    height: var(--btn-size);
+}
 
 .main-visibility-toggle,
 .options-toggle,
 .data-view-toggle {
     position: fixed;
     z-index: 1200;
-    width: var(--btn-size);
-    height: var(--btn-size);
-    padding: 12px;
     right: var(--px-10);
 }
 .main-visibility-toggle {
@@ -124,11 +126,6 @@ button img {
 }
 .app-header:has(.data-view-toggle[aria-pressed="true"]):has(.main-visibility-toggle[aria-expanded="true"]) .data-tabs {
     display: flex;
-}
-.data-tabs button {
-    width: var(--btn-size);
-    height: var(--btn-size);
-    padding: 10px;
 }
 
 /* Options menu: opens to the left of the options toggle, styled like the globe readouts. */

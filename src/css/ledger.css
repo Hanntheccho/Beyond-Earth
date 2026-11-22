@@ -6,7 +6,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     font-size: var(--fnt-size-data);
-    gap: 0 var(--px-10);
+    gap: 0 var(--px-20);
 }
 .ledger-row {
     display: grid;
@@ -20,7 +20,7 @@
    rather than on :has(.ledger-spark), which would be re-checked on every frame of the
    number tweens. */
 .ledger[data-ledger] .ledger-row {
-    grid-template-columns: minmax(10ch, 1fr) 7ch minmax(10ch, auto) 10ch 60px;
+    grid-template-columns: minmax(10ch, 1fr) 6ch minmax(10ch, auto) 7ch 60px;
 }
 
 .ledger-unit { text-align: right; color: var(--clr-data); }
@@ -47,7 +47,7 @@
 .ledger-spark-line {
     fill: none;
     stroke: currentColor;
-    stroke-width: 1;
+    stroke-width: var(--stroke-width-1);
     vector-effect: non-scaling-stroke;
     stroke-linejoin: round;
 }

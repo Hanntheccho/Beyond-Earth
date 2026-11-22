@@ -30,7 +30,7 @@
     --img-filter: none; /* the light theme inverts the icons and background art */
     --img-url: url("../../be-icon.svg");
     --img-url-alt: url("../../be-icon-alt.svg");
-    --stroke-width-1: 1.5;
+    --stroke-width-1: 1;
 }
 
 /* Tokens derived from the base colors. A custom property is worked out where it is
