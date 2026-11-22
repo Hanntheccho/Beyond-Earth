@@ -22,7 +22,7 @@
     position: relative;
     z-index: 1;
     display: block;
-    overflow: visible;
+/*  overflow: visible; */
 }
 /* chart.js places every label by its vertical center, so no baseline nudges are needed. */
 .chart-plot text {
