@@ -20,6 +20,8 @@ import { observeVisibility } from './viewport-visibility.js';
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
     const format = pct => `${pct > 0 ? '+' : ''}${pct.toFixed(1)}`;
+    // The ticker shows and colors by the trend change (trendPercent in simulation.js).
+    const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
 
     const items = new Map();
     let signature = '';
@@ -43,7 +45,7 @@ import { observeVisibility } from './viewport-visibility.js';
     }
 
     function setDirection(entry, item) {
-        const change = Number(item.change);
+        const change = trendOf(item);
         const direction = change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutrale');
         if (entry.dir === direction) return;
         entry.dir = direction;
@@ -64,7 +66,7 @@ import { observeVisibility } from './viewport-visibility.js';
             wrapper.append(val, ` ${item.name}`);
             ticker.append(wrapper);
 
-            const pct = item.changePercent || 0;
+            const pct = trendOf(item);
             const entry = { val, cur: pct, from: pct, to: pct, t0: 0, done: true, dir: null, text: '' };
             paint(entry);
             setDirection(entry, item);
@@ -120,7 +122,7 @@ import { observeVisibility } from './viewport-visibility.js';
             const entry = items.get(keyOf(item));
             if (!entry) return;
             entry.from = entry.cur;
-            entry.to = item.changePercent || 0;
+            entry.to = trendOf(item);
             entry.t0 = now;
             entry.done = false;
             setDirection(entry, item);
@@ -139,3 +141,4 @@ import { observeVisibility } from './viewport-visibility.js';
 
     feed.subscribe(render, { immediate: true });
 })();
+

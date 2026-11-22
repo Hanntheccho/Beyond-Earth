@@ -22,6 +22,10 @@
 //                           (leaves only): the leaf's own volatility from its data
 //                           file, otherwise the size rule in leafVolatility()
 //   momentum              : smoothed recent % change (leaves only)
+//   history               : the last HISTORY_LENGTH values, oldest first (read-only
+//                           for subscribers; snapshots share the array)
+//   trendPercent          : % change over the last TREND_TICKS ticks; the views
+//                           color by this, since a single tick is mostly noise
 //
 // PUBLIC API: import { simulation } from './simulation.js'
 //   getFeed(id)    -> feed object with getSnapshot/subscribe/publish
@@ -57,6 +61,12 @@ export const simulation = (function () {
     // tick. It keeps long runs close to the data files without changing how far a
     // single tick moves.
     const REVERSION_RATE = 0.003;
+    // Values kept per node for the history charts, and the ticks the trend change
+    // spans. Before the first tick the clock runs a silent warm-up long enough to
+    // fill the history, so the charts open with a past instead of a flat line.
+    const HISTORY_LENGTH = 300;
+    const TREND_TICKS = 30;
+    let warmedUp = false;
     // Momentum is a smoothed % change, capped at +/-MAX_MOMENTUM (in percent).
     const MAX_MOMENTUM = 5;
     // Cap on the momentum boost applied to a value per tick (a fraction, not a percent).
@@ -113,6 +123,16 @@ export const simulation = (function () {
         // Volatility only applies to leaves.
         node.volatility = node.children.length ? 0 : leafVolatility(node);
         node.momentum = 0;  // Initialize momentum tracking
+        node.history = [node.value];
+        node.trendPercent = 0;
+    }
+
+    // Append the node's new value to its history and update its trend change.
+    function recordHistory(node) {
+        node.history.push(node.value);
+        if (node.history.length > HISTORY_LENGTH) node.history.shift();
+        const start = node.history[Math.max(0, node.history.length - 1 - TREND_TICKS)];
+        node.trendPercent = start ? (node.value - start) / start * 100 : 0;
     }
 
     // A leaf's own "volatility" from its data file wins (tools/validate.mjs checks it).
@@ -252,6 +272,7 @@ export const simulation = (function () {
                 label: node.tag || node.name,
                 value: node.value,
                 changePercent: node.changePercent,
+                trendPercent: node.trendPercent,
                 hasData: true
             });
         }));
@@ -367,6 +388,7 @@ export const simulation = (function () {
             const oldValue = previous.get(node) || 0;
             node.change = node.value - oldValue;
             node.changePercent = oldValue ? node.change / oldValue * 100 : 0;
+            recordHistory(node);
         }
         trees.forEach(tree => finalize(tree.root));
     }
@@ -377,13 +399,18 @@ export const simulation = (function () {
         publishRelationsData();
     }
 
-    // Start the simulation. Ticks once immediately (so the page has movement
-    // data right away), then every intervalMs; the default and the minimum are
-    // in the setInterval call below.
+    // Start the simulation. The first start runs the silent warm-up that fills the
+    // history, then it ticks once immediately (so the page has movement data right
+    // away) and every intervalMs; the default and the minimum are in the
+    // setInterval call below.
     // Restarting replaces any running timer. Keep UI tween durations well below
     // this interval so animations finish before the next tick.
     function startClock(options = {}) {
         if (timer) clearInterval(timer);
+        if (!warmedUp) {
+            warmedUp = true;
+            for (let i = 0; i < HISTORY_LENGTH; i++) computeValues();
+        }
         computeValues();
         publishFeeds();
         timer = setInterval(() => {

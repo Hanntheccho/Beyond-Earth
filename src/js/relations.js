@@ -49,7 +49,9 @@ import { observeVisibility } from './viewport-visibility.js';
     let graphWidth = 0;
     let graphHeight = 0;
     const NODE_TRANSITION_DURATION = 400;
-    const numberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+    const numberFormat = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+    // Nodes color by the trend change (trendPercent in simulation.js), like the grids.
+    const trendOf = d => Number(d.trendPercent ?? d.changePercent) || 0;
 
     function initGraph() {
         graphWidth = container.clientWidth;
@@ -234,8 +236,8 @@ import { observeVisibility } from './viewport-visibility.js';
         // Selection and drag state are applied by updateHighlight() below.
         nodeMerge
             .classed('is-unavailable', d => d.hasData === false)
-            .classed('is-down', d => d.hasData !== false && d.changePercent < 0)
-            .classed('is-up', d => d.hasData !== false && d.changePercent >= 0)
+            .classed('is-down', d => d.hasData !== false && trendOf(d) < 0)
+            .classed('is-up', d => d.hasData !== false && trendOf(d) >= 0)
             .attr('aria-label', d => d.label || d.name);
         nodeMerge.select('circle')
             .interrupt()
@@ -251,7 +253,7 @@ import { observeVisibility } from './viewport-visibility.js';
             .attr('visibility', d => d.labelFontSize >= 1 ? 'visible' : 'hidden');
         nodeMerge.select('title').text(d => {
             if (d.hasData === false) return `${d.name}: data unavailable`;
-            const change = Number(d.changePercent) || 0;
+            const change = trendOf(d);
             const label = d.label === d.name ? d.name : `${d.name} (${d.label})`;
             return `${label}\n${numberFormat.format(d.value)}\n${change >= 0 ? '+' : ''}${numberFormat.format(change)}`;
         });
@@ -393,3 +395,4 @@ import { observeVisibility } from './viewport-visibility.js';
 
     simulation.subscribeRelations(update);
 })();
+

@@ -10,8 +10,8 @@ import { appendSvg as add } from './svg.js';
     const width = 800;
     const height = 800;
     const numberFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-    const tooltipNumberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
-    const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
+    const tooltipNumberFormat = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+    const percentFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
     // Tween settings. Keep DURATION well below the feed tick interval.
     const DURATION = 700;
@@ -20,6 +20,8 @@ import { appendSvg as add } from './svg.js';
     const lerp = (a, b, t) => a + (b - a) * t;
 
     const splitWords = name => String(name).trim().split(/\s+/);
+    // Tiles show and color by the trend change (trendPercent in simulation.js).
+    const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
 
     // Wrap at spaces only; fitLabel accounts for long unbroken words by reducing the font size.
     function wrapWords(words, maxChars) {
@@ -224,7 +226,7 @@ import { appendSvg as add } from './svg.js';
         }
 
         function setDirection(tile, item) {
-            const change = Number(item.change);
+            const change = trendOf(item);
             const direction = Number.isFinite(change) ? (change > 0 ? 'up' : (change < 0 ? 'down' : 'neutral')) : 'neutral';
             if (tile.group.dataset.direction !== direction) tile.group.dataset.direction = direction;
         }
@@ -307,7 +309,7 @@ import { appendSvg as add } from './svg.js';
             squarify(items, 0, 0, width, height, getValue).forEach(({ item, x, y, w, h }) => {
                 const key = keyOf(item);
                 const value = getValue(item);
-                const change = Number(item.changePercent) || 0;
+                const change = trendOf(item);
                 const target = { x, y, w, h, value, pct: change };
                 let tile = tiles.get(key);
                 if (!tile) {
@@ -390,3 +392,4 @@ import { appendSvg as add } from './svg.js';
         if (status) status.textContent = `${id || 'Treemap'} data could not be loaded. Check ${url || 'the data url'}.`;
     });
 })();
+

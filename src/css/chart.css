@@ -81,3 +81,4 @@
 .chart-plot text.chart-era-label.is-positive { fill: color-mix(in srgb, var(--clr-positive) 80%, transparent); }
 .chart-plot .chart-event-group.is-positive .chart-event-line { stroke: var(--clr-positive); }
 .chart-plot .chart-event-group.is-positive .chart-event-tag { fill: color-mix(in srgb, var(--clr-positive) 20%, var(--clr)); stroke: var(--clr-positive); }
+

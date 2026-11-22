@@ -25,8 +25,8 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const seriesMeta = scenario.series || {};
     const timeline = scenario.timeline || {};
     const baselineYear = Number.isFinite(timeline.baselineYear) ? timeline.baselineYear : 2070;
-    const valueFormatter = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 4 });
-    const changeFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, signDisplay: 'always' });
+    const valueFormatter = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
+    const changeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, signDisplay: 'always' });
 
     const TAG_HEIGHT = 18;
     const PANEL_GROUP = 'charts';
@@ -308,3 +308,4 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         });
     });
 })();
+

@@ -1,13 +1,16 @@
 // data-grid.js - Live data grids. Rows are persistent (keyed by tag/name): value and
 // change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
+// The change column and the colors follow each item's trend change (trendPercent in
+// simulation.js), and a sparkline shows its recent history.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
+import { appendSvg as add } from './svg.js';
 
 (function () {
-    const valueFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-    const percentFormat = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
+    const valueFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const percentFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
     // Keep both durations well below the feed tick interval.
     const DURATION = 700;
@@ -15,6 +18,21 @@ import { observeVisibility } from './viewport-visibility.js';
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
+    const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
+    // Sparkline viewBox; CSS stretches it to the column.
+    const SPARK_WIDTH = 120;
+    const SPARK_HEIGHT = 20;
+
+    // Polyline points for a history, scaled to fill the sparkline box.
+    function sparkPoints(history) {
+        if (!Array.isArray(history) || history.length < 2) return '';
+        const min = Math.min(...history);
+        const range = Math.max(...history) - min || 1;
+        const step = SPARK_WIDTH / (history.length - 1);
+        return history.map((value, index) =>
+            `${(index * step).toFixed(1)},${(SPARK_HEIGHT - 1 - (value - min) / range * (SPARK_HEIGHT - 2)).toFixed(1)}`
+        ).join(' ');
+    }
 
     function renderFeedGrid(host) {
         const feedId = host.dataset.feedGrid;
@@ -40,8 +58,17 @@ import { observeVisibility } from './viewport-visibility.js';
             };
             cell('data-grid-name', item.name);
             cell('data-grid-unit', item.unit || '€$B');
+            const spark = add(row, 'svg', {
+                class: 'data-grid-spark',
+                viewBox: `0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}`,
+                preserveAspectRatio: 'none',
+                'aria-hidden': 'true'
+            });
+            const sparkLine = add(spark, 'polyline', { class: 'data-grid-spark-line' });
             return {
                 row,
+                spark,
+                sparkLine,
                 valueEl: cell('data-grid-value'),
                 changeEl: cell('data-grid-change'),
                 cur: null,
@@ -107,7 +134,7 @@ import { observeVisibility } from './viewport-visibility.js';
                 const key = keyOf(item);
                 if (rows.has(key)) return;
                 const entry = createRow(item, key);
-                entry.cur = { value: item.value, pct: item.changePercent || 0 };
+                entry.cur = { value: item.value, pct: trendOf(item) };
                 paint(entry);
                 rows.set(key, entry);
                 host.appendChild(entry.row);
@@ -122,10 +149,12 @@ import { observeVisibility } from './viewport-visibility.js';
                 }
 
                 entry.from = { ...entry.cur };
-                entry.to = { value: item.value, pct: item.changePercent || 0 };
+                entry.to = { value: item.value, pct: trendOf(item) };
                 entry.t0 = now;
-
-                const up = item.change >= 0;
+                entry.sparkLine.setAttribute('points', sparkPoints(item.history));
+                const up = trendOf(item) >= 0;
+                entry.spark.classList.toggle('is-up', up);
+                entry.spark.classList.toggle('is-down', !up);
                 const newDir = up ? 'up' : 'down';
                 const prevDir = entry.row.dataset.direction;
                 entry.changeEl.classList.toggle('is-up', up);
@@ -201,3 +230,4 @@ import { observeVisibility } from './viewport-visibility.js';
 
     document.querySelectorAll('[data-feed-grid]').forEach(renderFeedGrid);
 })();
+

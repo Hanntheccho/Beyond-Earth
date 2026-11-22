@@ -45,3 +45,4 @@
 .treemap-label-name { text-transform: uppercase; }
 .treemap-label-value { fill: color-mix(in srgb, var(--treemap-color) 40%, black); }
 .treemap-label-change { fill: color-mix(in srgb, var(--treemap-color) 60%, black); }
+
