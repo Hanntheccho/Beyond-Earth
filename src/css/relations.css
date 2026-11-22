@@ -40,6 +40,15 @@
     stroke-width: var(--stroke-width-1);
     cursor: grab;
 }
+/* Each feed gets its own outline, so the node types stand apart at a glance: blocs a
+   thicker one, corps the plain one, goods a dashed one. relations.js tags each node
+   with its feed (is-feed-blocs and so on). */
+#relations-graph .node-group.is-feed-blocs circle {
+    stroke-width: calc(var(--stroke-width-1) * 2);
+}
+#relations-graph .node-group.is-feed-goods circle {
+    stroke-dasharray: 4 3;
+}
 #relations-graph .node-group.is-dragging circle {
     cursor: grabbing;
 }
@@ -87,3 +96,4 @@
 #relations-graph .relation-arrow-negative path {
     fill: var(--clr-negative);
 }
+

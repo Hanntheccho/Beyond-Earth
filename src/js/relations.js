@@ -203,8 +203,10 @@ import { observeVisibility } from './viewport-visibility.js';
 
         const node = svg.selectAll('.node-group').data(nodes, d => d.id);
         node.exit().remove();
+        // Each node is tagged with its feed (is-feed-blocs, is-feed-corps, is-feed-goods)
+        // once, when it is created; relations.css gives each feed its own outline.
         const nodeEnter = node.enter().append('g')
-            .attr('class', 'node-group')
+            .attr('class', d => d.feed ? `node-group is-feed-${String(d.feed).replace(/[^\w-]/g, '-')}` : 'node-group')
             .attr('role', 'button')
             .attr('tabindex', 0)
             .call(d3.drag()

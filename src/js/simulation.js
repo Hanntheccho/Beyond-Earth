@@ -34,7 +34,8 @@
 //   subscribeRelations(listener)      relations graph data after every tick
 //   start / stop / tick / render      control the clock manually
 export const simulation = (function () {
-    // All registered trees used by the simulation and derived views.
+    // All registered trees used by the simulation and derived views, as
+    // { feed, root }: the feed id ("blocs", "corps", "goods") and the tree.
     const trees = [];
     const relationsListeners = new Set();
     // Global sentiment that drifts slowly and nudges every leaf in the same direction.
@@ -192,7 +193,7 @@ export const simulation = (function () {
     // Called by feed-loader.js once per normalized tree.
     function registerTree(key, root) {
         prepareValues(root);
-        trees.push({ root });
+        trees.push({ feed: key, root });
         resolved = null;
 
         if (key) {
@@ -273,6 +274,8 @@ export const simulation = (function () {
                 value: node.value,
                 changePercent: node.changePercent,
                 trendPercent: node.trendPercent,
+                // Which feed the item comes from, so the graph can tell goods apart.
+                feed: tree.feed,
                 hasData: true
             });
         }));
