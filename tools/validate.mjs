@@ -261,6 +261,10 @@ function checkMarkers(poiIds) {
 // -------------------------------------------------------------------- treemaps
 
 function checkTreemaps(html) {
+    // A leaf "volatility" is the largest random move per tick, as a fraction of the
+    // value. Anything above this is probably a percent typed as a fraction.
+    const MAX_VOLATILITY = 0.05;
+
     // The files and tag settings come from the treemap <div>s in index.html.
     const treemapFiles = [...html.matchAll(/<div[^>]*\bclass="treemap"[^>]*>/g)]
         .map(match => ({
@@ -277,11 +281,15 @@ function checkTreemaps(html) {
             const label = node.name || node.tag || '(unnamed)';
             const here = [...trail, label].join(' > ');
             if (!node.name && !node.tag) warn(file, `${here}: node has no name or tag`);
+            const hasVolatility = Object.prototype.hasOwnProperty.call(node, 'volatility');
 
             const children = Array.isArray(node.children) ? node.children : [];
             if (children.length) {
                 if (Object.prototype.hasOwnProperty.call(node, 'value')) {
                     error(file, `${here}: parent has an explicit "value"; it is ignored and computed from its children`);
+                }
+                if (hasVolatility) {
+                    warn(file, `${here}: parent has a "volatility"; only leaves move on their own, so it is ignored. Set it on the leaves instead`);
                 }
                 const seen = new Set();
                 children.forEach(child => {
@@ -291,8 +299,15 @@ function checkTreemaps(html) {
                     if (useTags && !child.tag) warn(file, `${here} > ${child.name || '(unnamed)'}: no "tag" (tags are used as labels here)`);
                     walk(child, [...trail, label]);
                 });
-            } else if (!(Number(node.value) > 0)) {
-                warn(file, `${here}: leaf has no positive "value"`);
+            } else {
+                if (!(Number(node.value) > 0)) warn(file, `${here}: leaf has no positive "value"`);
+                if (!hasVolatility) return;
+                const volatility = node.volatility;
+                if (typeof volatility !== 'number' || !Number.isFinite(volatility) || volatility < 0) {
+                    warn(file, `${here}: "volatility" must be a number from 0 (a fraction of the value per tick, 0.01 is 1%); simulation.js falls back to its size rule`);
+                } else if (volatility > MAX_VOLATILITY) {
+                    warn(file, `${here}: "volatility" ${volatility} is larger than ${MAX_VOLATILITY}; it is a fraction of the value per tick (0.01 is 1%), not a percent`);
+                }
             }
         };
         walk(root, []);

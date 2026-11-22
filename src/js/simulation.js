@@ -3,18 +3,22 @@
 // OVERVIEW
 // feed-loader.js loads and registers the treemap datasets (blocs, corps, goods).
 // This file then simulates live movement on top of those trees: on every tick
-// (interval set in startClock) each leaf value moves randomly, linked entities
-// push each other around, and parent values are re-summed. Afterwards every
-// subscriber (treemaps, data grids, the ticker) is notified so it can animate
-// to the new numbers.
+// (interval set in startClock) each leaf value moves randomly and is pulled gently
+// back toward its starting value, linked entities push each other around, and
+// parent values are re-summed. Afterwards every subscriber (treemaps, data grids,
+// the ticker) is notified so it can animate to the new numbers.
 //
 // DATA SHAPE (after data-loader.js normalizes it)
-//   node = { name, tag?, value, children: [...] }
-// Leaves carry a value; parents are always the sum of their children.
+//   node = { name, tag?, value, volatility?, children: [...] }
+// Leaves carry a value and may carry their own volatility; parents are always the
+// sum of their children.
 // prepareValues() adds these simulation fields to every node:
 //   change, changePercent : movement during the last tick
-//   baseValue             : the starting value, used to clamp runaway moves
-//   volatility            : max random shock per tick (leaves only)
+//   baseValue             : the starting value; leaves are pulled back toward it,
+//                           and runaway moves are clamped around it
+//   volatility            : max random shock per tick, as a fraction of the value
+//                           (leaves only): the leaf's own volatility from its data
+//                           file, otherwise the size rule in leafVolatility()
 //   momentum              : smoothed recent % change (leaves only)
 //
 // PUBLIC API: import { simulation } from './simulation.js'
@@ -33,15 +37,24 @@ export const simulation = (function () {
     // (e.g. oil price -> an energy company).
     let relations = [];
     let timer = null;
-    // Relations resolved against the registered trees, plus the same list grouped
-    // by target. Trees never change shape after registration (only their values
-    // move), so this is rebuilt only when a tree or the relations change.
+    // Relations resolved against the registered trees, plus the nodes they link
+    // grouped by target node. Trees never change shape after registration (only
+    // their values move), so this is rebuilt only when a tree or the relations change.
     let resolved = null;
+    // How far each relation target was pushed by its relations during the last tick
+    // (a fraction of its value). Relations that start from it pass that push on
+    // during the next tick, so effects travel one link per tick.
+    let lastPushes = new Map();
 
     // Safety rails so a value can never collapse to zero or explode: values stay
-    // between MIN_VALUE_RATIO and MAX_VALUE_RATIO times their starting value.
+    // between MIN_VALUE_RATIO and MAX_VALUE_RATIO times their starting value. The
+    // pull toward the starting value (REVERSION_RATE) normally keeps them far from both.
     const MIN_VALUE_RATIO = 0.05;
     const MAX_VALUE_RATIO = 100;
+    // Share of a leaf's distance from its starting value that is pulled back every
+    // tick. It keeps long runs close to the data files without changing how far a
+    // single tick moves.
+    const REVERSION_RATE = 0.003;
     // Momentum is a smoothed % change, capped at +/-MAX_MOMENTUM (in percent).
     const MAX_MOMENTUM = 5;
     // Cap on the momentum boost applied to a value per tick (a fraction, not a percent).
@@ -67,6 +80,12 @@ export const simulation = (function () {
         );
     }
 
+    // How far a node is from its starting value, in log terms: 0 at the start,
+    // positive above it and negative below it, with doubling and halving the same size.
+    function distanceFromStart(node) {
+        return node.baseValue > 0 && node.value > 0 ? Math.log(node.value / node.baseValue) : 0;
+    }
+
     // One-time setup of a freshly loaded tree. Children are prepared first so a
     // parent's starting value can be the sum of its children.
     function prepareValues(node) {
@@ -77,12 +96,20 @@ export const simulation = (function () {
         node.change = 0;
         node.changePercent = 0;
         node.baseValue = node.value;
-        // Volatility only applies to leaves. Bigger items move less (it scales with
-        // 1 / sqrt(value)), kept between a fixed minimum and maximum.
-        node.volatility = node.children.length
-            ? 0
-            : Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(Math.max(node.value, 1) / 100)));
+        // Volatility only applies to leaves.
+        node.volatility = node.children.length ? 0 : leafVolatility(node);
         node.momentum = 0;  // Initialize momentum tracking
+    }
+
+    // A leaf's own "volatility" from its data file wins (tools/validate.mjs checks it).
+    // Otherwise the size rule applies: bigger items move less (it scales with
+    // 1 / sqrt(value)), kept between a fixed minimum and maximum. That suits blocs
+    // and corps; goods set their own, because their values are prices in different units.
+    function leafVolatility(node) {
+        if (typeof node.volatility === 'number' && Number.isFinite(node.volatility) && node.volatility >= 0) {
+            return node.volatility;
+        }
+        return Math.max(0.0035, Math.min(0.016, 0.014 / Math.sqrt(Math.max(node.value, 1) / 100)));
     }
 
     // A "feed" is a named view onto one registered tree (for example
@@ -164,19 +191,21 @@ export const simulation = (function () {
     function getResolvedRelations() {
         if (resolved) return resolved;
         const nodeIndex = createNodeIndex();
+        // Target node -> its incoming relations as { from: node, weight }. A relation
+        // whose key matches no node is left out here and only shows in the graph.
+        const byTarget = new Map();
         const list = relations.map(relation => {
             const from = findNodeByKey(relation.fromKey, nodeIndex);
             const to = findNodeByKey(relation.toKey, nodeIndex);
+            if (from && to) {
+                if (!byTarget.has(to)) byTarget.set(to, []);
+                byTarget.get(to).push({ from, weight: Number(relation.weight) || 0 });
+            }
             return {
                 ...relation,
                 fromKey: from ? itemKey(from) : relation.fromKey,
                 toKey: to ? itemKey(to) : relation.toKey
             };
-        });
-        const byTarget = new Map();
-        list.forEach(relation => {
-            if (!byTarget.has(relation.toKey)) byTarget.set(relation.toKey, []);
-            byTarget.get(relation.toKey).push(relation);
         });
         resolved = { list, byTarget };
         return resolved;
@@ -234,23 +263,19 @@ export const simulation = (function () {
     }
 
     // One simulation step. Runs in four passes over all registered trees:
-    //   1. random movement of every leaf
+    //   1. random movement of every leaf, and a pull back toward its starting value
     //   2. incoming relations push their targets
     //   3. momentum: recent movement slightly extends itself
     //   4. roll parent values up from their children and record change/changePercent
-    // Incoming relations are measured by how much the FROM item changed during pass 1,
-    // so they react to the random move, not to other relations.
+    // A relation carries how much its FROM item moved during pass 1, plus how far the
+    // FROM item was itself pushed by relations during the previous tick. So a push
+    // travels one link per tick (a good, then the bloc it moves, then that bloc's
+    // rivals) and shrinks at every link, instead of feeding back within one tick.
     function computeValues() {
-        // Snapshot of every value before this tick, by node and by key.
-        // Used to measure change and to compute each relation's "from" movement.
+        // Snapshot of every value before this tick. Used to measure change and to
+        // compute each relation's "from" movement.
         const previous = new Map();
-        const previousKeyMap = new Map();
-        const relationsByTarget = getResolvedRelations().byTarget;
-
-        trees.forEach(tree => walk(tree.root, node => {
-            previous.set(node, node.value);
-            previousKeyMap.set(itemKey(node), node.value);
-        }));
+        trees.forEach(tree => walk(tree.root, node => previous.set(node, node.value)));
 
         // Sentiment: decays toward 0 every tick and gets a small random kick, within
         // a fixed limit. A fraction of it is applied to every leaf below.
@@ -258,8 +283,9 @@ export const simulation = (function () {
 
         // Pass 1: apply normal stochastic movement to every leaf.
         // Each leaf changes by sentiment + a tiny random drift + a random shock whose
-        // size is limited by the leaf's volatility. Parents are re-summed as the
-        // recursion unwinds.
+        // size is limited by the leaf's volatility, and is pulled back by
+        // REVERSION_RATE of its distance from its starting value. Parents are
+        // re-summed as the recursion unwinds.
         function updateLeaf(node) {
             if (node.children.length) {
                 node.children.forEach(updateLeaf);
@@ -267,49 +293,30 @@ export const simulation = (function () {
             } else {
                 const drift = (Math.random() - 0.5) * 0.0012;
                 const shock = (Math.random() * 2 - 1) * node.volatility;
-                node.value = clampValue(node, node.value * (1 + sentiment * 0.2 + drift + shock));
+                const pull = -REVERSION_RATE * distanceFromStart(node);
+                node.value = clampValue(node, node.value * (1 + sentiment * 0.2 + drift + shock + pull));
             }
         }
         trees.forEach(tree => updateLeaf(tree.root));
 
-        // Pass 2: sum all incoming relation effects per target before applying them.
-        if (relationsByTarget.size) {
-            // Snapshot the freshly updated values so relations can compare against the last tick.
-            const currentKeyMap = new Map();
-            trees.forEach(tree => walk(tree.root, node => {
-                currentKeyMap.set(itemKey(node), node.value);
-            }));
-
-            trees.forEach(tree => walk(tree.root, node => {
-                const relevantRelations = relationsByTarget.get(itemKey(node));
-                if (!relevantRelations) return;
-
-                const applyToLeaf = (leaf) => {
-                    let impact = 0;
-                    relevantRelations.forEach(rel => {
-                        const prevFromVal = previousKeyMap.get(rel.fromKey);
-                        const currentFromVal = currentKeyMap.get(rel.fromKey);
-                        if (prevFromVal && currentFromVal) {
-                            const fromChange = (currentFromVal - prevFromVal) / prevFromVal;
-                            impact += fromChange * rel.weight * leaf.value;
-                        }
-                    });
-                    leaf.value = clampValue(leaf, leaf.value + impact);
-                };
-
-                const applyToNode = (n) => {
-                    if (n.children.length) n.children.forEach(applyToNode);
-                    else applyToLeaf(n);
-                };
-
-                if (node.children.length) {
-                    // Parent-level relation: cascade down to every leaf descendant.
-                    applyToNode(node);
-                } else {
-                    applyToLeaf(node);
-                }
-            }));
-        }
+        // Pass 2: work out every target's push from the values pass 1 left, then apply
+        // them all, so no push is measured on top of another push from this tick.
+        // A push on a parent cascades down to every leaf descendant.
+        const pushes = new Map();
+        getResolvedRelations().byTarget.forEach((incoming, target) => {
+            pushes.set(target, incoming.reduce((sum, { from, weight }) => {
+                const start = previous.get(from);
+                if (!start) return sum;
+                const fromChange = (from.value - start) / start + (lastPushes.get(from) || 0);
+                return sum + fromChange * weight;
+            }, 0));
+        });
+        const applyPush = (node, push) => {
+            if (node.children.length) node.children.forEach(child => applyPush(child, push));
+            else node.value = clampValue(node, node.value * (1 + push));
+        };
+        pushes.forEach((push, target) => applyPush(target, push));
+        lastPushes = pushes;
 
         // Pass 3: speculative momentum (leaves only; parents are re-aggregated in finalize)
         // Momentum is an exponential moving average of the leaf's % change so far
@@ -406,3 +413,4 @@ export const simulation = (function () {
         stop: stopClock
     };
 })();
+

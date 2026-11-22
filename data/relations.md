@@ -82,6 +82,7 @@ Names in relations.json follow data/bloc-data.json and data/corp-data.json exact
 - A "from" price move pushes the "to" item in the same direction when the weight is positive (it earns from that good) and the opposite direction when negative (it pays for it). Producers get +, heavy consumers and importers get -.
 - Good to bloc/corp weights use the +/- steps above (0.05 each). Bloc/corp links use free values between 0.02 and 0.12.
 - The bloc to corp link is usually a bit larger than the corp back to the bloc (the state backs the firm more than the firm moves the state). Rivalries are negative and small (-0.02 to -0.03).
+- Pushes chain: a bloc or corp passes on what its own relations did to it one tick later. An oil move reaches Al-Falah at once and Al-Falah's rivals on the next tick, smaller at every link.
 
 ## Added country lists (real-world availability of goods)
 - Brasilia: Brazil (iron, bauxite, manganese, graphite, phosphate, nickel), Bolivaria and Guiana (oil), Caribbean Union (Cuban nickel).
@@ -137,3 +138,4 @@ Each pair is listed with the lore behind it.
 
 ## Keys
 - data/relations.json uses a single "relations" array. tools/validate.mjs reads that array, checks each relation's keys and weight, and enforces the source and target rules at the top of this file.
+
