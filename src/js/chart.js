@@ -40,7 +40,6 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const ERA_LABEL_GAP = 12;      // era labels' center, below the plot area's top
     // Event tags: TAG_PADDING is the room beside the label, split between both sides.
     const TAG_HEIGHT = 18;
-    const TAG_MIN_WIDTH = 56;
     const TAG_PADDING = 12;
 
     // Value axis: GRID_STEPS spaces between its grid lines, and VALUE_PADDING of the
@@ -280,7 +279,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             const tag = add(eventGroup, 'rect', { y: tagY, height: TAG_HEIGHT, class: 'chart-event-tag' });
             const text = add(eventGroup, 'text', { y: tagY + TAG_HEIGHT / 2, class: 'chart-event-label' }, label);
             labelFontSize ??= parseFloat(getComputedStyle(text).fontSize);
-            const tagWidth = Math.max(TAG_MIN_WIDTH, label.length * CHAR_WIDTH * labelFontSize + TAG_PADDING);
+            const tagWidth = label.length * CHAR_WIDTH * labelFontSize + TAG_PADDING;
             const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
             tag.setAttribute('x', tagX);
             tag.setAttribute('width', tagWidth);
