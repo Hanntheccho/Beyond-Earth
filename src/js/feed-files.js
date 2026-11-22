@@ -1,5 +1,6 @@
-// Reads and normalizes the static data files behind the live data views.
-// Simulation and presentation stay in simulation.js and the view components.
+// feed-files.js - Reads the files behind the feeds: each treemap's JSON tree, which it
+// normalizes, and data/relations.json. feed-loader.js registers the results with the
+// simulation; simulation and presentation stay in simulation.js and the view components.
 export async function loadTree(path, useTags = false) {
     const response = await fetch(path);
     if (!response.ok) throw new Error(`Treemap data could not be loaded: ${path} (${response.status})`);

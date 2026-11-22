@@ -9,7 +9,7 @@
 // parent values are re-summed. Afterwards every subscriber (treemaps, ledgers,
 // the ticker) is notified so it can animate to the new numbers.
 //
-// DATA SHAPE (after data-loader.js normalizes it)
+// DATA SHAPE (after feed-files.js normalizes it)
 //   node = { name, tag?, value, volatility?, children: [...] }
 // Leaves carry a value and may carry their own volatility; parents are always the
 // sum of their children.
@@ -31,22 +31,19 @@
 //   getFeed(id)    -> feed object with getSnapshot/subscribe/publish
 //   registerTree(id, root)            register a tree to simulate
 //   setRelations(data)                load data/relations.json
-//   subscribeRelations(listener)      relations graph data after every tick
 //   start / stop / tick / render      control the clock manually
 export const simulation = (function () {
-    // All registered trees used by the simulation and derived views, as
-    // { feed, root }: the feed id ("blocs", "corps", "goods") and the tree.
+    // All registered trees used by the simulation and derived views.
     const trees = [];
-    const relationsListeners = new Set();
     // Global sentiment that drifts slowly and nudges every leaf in the same direction.
     let sentiment = 0;
     // Relations from relations.json: the "from" item's movement pushes the "to" item
     // (e.g. oil price -> an energy company).
     let relations = [];
     let timer = null;
-    // Relations resolved against the registered trees, plus the nodes they link
-    // grouped by target node. Trees never change shape after registration (only
-    // their values move), so this is rebuilt only when a tree or the relations change.
+    // Relations resolved against the registered trees: the nodes they link, grouped
+    // by target node. Trees never change shape after registration (only their values
+    // move), so this is rebuilt only when a tree or the relations change.
     let resolved = null;
     // How far each relation target was pushed by its relations during the last tick
     // (a fraction of its value). Relations that start from it pass that push on
@@ -72,12 +69,6 @@ export const simulation = (function () {
     const MAX_MOMENTUM = 5;
     // Cap on the momentum boost applied to a value per tick (a fraction, not a percent).
     const MAX_MOMENTUM_BOOST = 0.005;
-
-    // Items are identified by tag when they have one, otherwise by name.
-    // This is the key used by relations, treemaps, ledgers and the ticker.
-    function itemKey(item) {
-        return item.tag || item.name;
-    }
 
     // Depth-first visit of a node and all its descendants.
     function walk(node, callback) {
@@ -193,7 +184,7 @@ export const simulation = (function () {
     // Called by feed-loader.js once per normalized tree.
     function registerTree(key, root) {
         prepareValues(root);
-        trees.push({ feed: key, root });
+        trees.push({ root });
         resolved = null;
 
         if (key) {
@@ -219,85 +210,26 @@ export const simulation = (function () {
         return { byTag, byName };
     }
 
-    function findNodeByKey(toKey, nodeIndex) {
-        return nodeIndex.byTag.get(toKey) || nodeIndex.byName.get(toKey) || null;
+    // The node a relation key names: its tag first, then its name.
+    function findNodeByKey(key, nodeIndex) {
+        return nodeIndex.byTag.get(key) || nodeIndex.byName.get(key) || null;
     }
 
     function getResolvedRelations() {
         if (resolved) return resolved;
         const nodeIndex = createNodeIndex();
         // Target node -> its incoming relations as { from: node, weight }. A relation
-        // whose key matches no node is left out here and only shows in the graph.
+        // whose key matches no node is skipped (tools/validate.mjs reports those).
         const byTarget = new Map();
-        const list = relations.map(relation => {
+        relations.forEach(relation => {
             const from = findNodeByKey(relation.fromKey, nodeIndex);
             const to = findNodeByKey(relation.toKey, nodeIndex);
-            if (from && to) {
-                if (!byTarget.has(to)) byTarget.set(to, []);
-                byTarget.get(to).push({ from, weight: Number(relation.weight) || 0 });
-            }
-            return {
-                ...relation,
-                fromKey: from ? itemKey(from) : relation.fromKey,
-                toKey: to ? itemKey(to) : relation.toKey
-            };
+            if (!from || !to) return;
+            if (!byTarget.has(to)) byTarget.set(to, []);
+            byTarget.get(to).push({ from, weight: Number(relation.weight) || 0 });
         });
-        resolved = { list, byTarget };
+        resolved = { byTarget };
         return resolved;
-    }
-
-    function getRelationsData() {
-        // Copies, so a subscriber can never alter the cached relations.
-        const graphRelations = getResolvedRelations().list.map(relation => ({ ...relation }));
-        const nodes = new Map();
-        graphRelations.forEach(relation => {
-            [relation.fromKey, relation.toKey].forEach(key => {
-                if (typeof key !== 'string' || !key) return;
-                nodes.set(key, {
-                    id: key,
-                    name: key,
-                    label: key,
-                    value: 0,
-                    changePercent: 0,
-                    hasData: false
-                });
-            });
-        });
-
-        trees.forEach(tree => walk(tree.root, node => {
-            const key = itemKey(node);
-            if (!nodes.has(key)) return;
-            nodes.set(key, {
-                id: key,
-                name: node.name,
-                label: node.tag || node.name,
-                value: node.value,
-                changePercent: node.changePercent,
-                trendPercent: node.trendPercent,
-                // Which feed the item comes from, so the graph can tell goods apart.
-                feed: tree.feed,
-                hasData: true
-            });
-        }));
-
-        return {
-            nodes: Array.from(nodes.values()),
-            relations: graphRelations
-        };
-    }
-
-    // Publish current relations data to the graph's subscribers.
-    function publishRelationsData() {
-        if (!relationsListeners.size) return;
-        const data = getRelationsData();
-        relationsListeners.forEach(listener => listener(data));
-    }
-
-    function subscribeRelations(listener, options = {}) {
-        if (typeof listener !== 'function') throw new TypeError('Relations subscriber must be a function');
-        relationsListeners.add(listener);
-        if (options.immediate !== false) listener(getRelationsData());
-        return () => relationsListeners.delete(listener);
     }
 
     // One simulation step. Runs in four passes over all registered trees:
@@ -396,10 +328,9 @@ export const simulation = (function () {
         trees.forEach(tree => finalize(tree.root));
     }
 
-    // Publish the latest numbers to feed subscribers, then refresh the graph.
+    // Publish the latest numbers to feed subscribers.
     function publishFeeds() {
         feeds.forEach(feed => feed.publish());
-        publishRelationsData();
     }
 
     // Start the simulation. The first start runs the silent warm-up that fills the
@@ -451,8 +382,6 @@ export const simulation = (function () {
         getFeed,
         registerTree,
         setRelations,
-        getRelationsData,
-        subscribeRelations,
         tick: computeValues,
         render: publishFeeds,
         start: startClock,

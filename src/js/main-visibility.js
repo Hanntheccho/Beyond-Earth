@@ -1,6 +1,6 @@
 // main-visibility.js - Hides or shows the page content so the globe can be explored
 // on its own. While the content is hidden, the globe and its markers are emphasized
-// (interactive); data-view.js and globe-markers-link.js bring the content back.
+// (interactive); view-toggle.js and globe-markers-link.js bring the content back.
 const toggle = document.querySelector('.main-visibility-toggle');
 const mainContent = document.getElementById('main-content');
 const globeCanvas = document.getElementById('map');
@@ -25,3 +25,4 @@ export function setMainVisible(visible) {
 }
 
 toggle?.addEventListener('click', () => setMainVisible(!isMainVisible()));
+

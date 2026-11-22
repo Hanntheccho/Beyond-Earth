@@ -37,6 +37,11 @@
     stroke: var(--treemap-color, var(--clr-neutrale));
     stroke-width: var(--stroke-width-1);
 }
+/* Leaf tiles (the last children, with nothing to drill into) get a dashed outline;
+   tiles that open into their children keep the solid one. treemap.js adds has-children. */
+.treemap-tile:not(.has-children) .treemap-surface {
+    stroke-dasharray: 4 3;
+}
 
 /* The value and change labels are darker shades of the tile color. They are mixed
    with black instead of using filter: brightness(), which would put every label in

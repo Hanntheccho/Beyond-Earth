@@ -23,5 +23,5 @@ Interactive scenario briefing for the world after the Great Mistake of 2070. A s
 
 The globe loads `data/elev-1080.webp`, a lossless copy of the PNG heightmap with deep ocean flattened. After editing the PNG, rerun the script. The PNG stays as the original and as a fallback.
 
-No build step. Dependencies are loaded from the page itself; d3 (pinned, from jsDelivr) is imported on demand by `src/js/relations.js` when the relations graph nears the viewport.
+No build step and no script dependencies: every module is plain JavaScript in `src/js`, loaded from `src/default.js`.
 

@@ -2,7 +2,7 @@
 // It starts right away because the loading screen waits for it (the ticker shows from
 // the start). Every module has run by the time a file arrives, so the treemaps and ledgers
 // are already listening for the feeds:loaded / feeds:error events.
-import { loadRelations, loadTree } from './data-loader.js';
+import { loadRelations, loadTree } from './feed-files.js';
 import { simulation } from './simulation.js';
 import { holdLoadingScreen } from './loading-screen.js';
 

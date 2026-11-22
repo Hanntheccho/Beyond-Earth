@@ -8,10 +8,9 @@
 
     <link rel="icon" href="be-icon.svg" type="image/svg+xml">
 
-    <!-- Connections: Google Fonts, and jsDelivr for d3 (imported on demand by src/js/relations.js) -->
+    <!-- Connections: Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
     <!-- CSS: one link per stylesheet, so they all download at once (an @import chain
          waits for its first file before it fetches the rest). The order is the cascade
@@ -28,7 +27,6 @@
     <link rel="stylesheet" href="src/css/globe.css">
     <link rel="stylesheet" href="src/css/treemap.css">
     <link rel="stylesheet" href="src/css/ledger.css">
-    <link rel="stylesheet" href="src/css/relations.css">
     <link rel="stylesheet" href="src/css/ticker.css">
     <link rel="stylesheet" href="src/css/vfx.css">
     <link rel="stylesheet" href="src/css/loading-screen.css">
@@ -183,6 +181,7 @@
                             <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"></div>
                         </div>
                         <div class="div-desc-win">
+                            <div class="data-status"><span>MONDAYMARKET · blocs</span></div>
                             <div class="ledger" data-ledger="blocs"></div>
                         </div>
                     </div>
@@ -194,6 +193,7 @@
                             <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="true" role="group" aria-label="Corps treemap"></div>
                         </div>
                         <div class="div-desc-win">
+                            <div class="data-status"><span>MONDAYMARKET · corps</span></div>
                             <div class="ledger" data-ledger="corps"></div>
                         </div>
                     </div>
@@ -205,12 +205,9 @@
                             <div class="treemap" data-treemap="goods" data-url="data/good-data.json" data-use-tags="false" role="group" aria-label="Goods treemap"></div>
                         </div>
                         <div class="div-desc-win">
+                            <div class="data-status"><span>MONDAYMARKET · goods</span></div>
                             <div class="ledger" data-ledger="goods"></div>
                         </div>
-                    </div>
-
-                    <div class="div-desc-win">
-                        <div id="relations-graph"></div>
                     </div>
                 </section>
             </div>

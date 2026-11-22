@@ -19,7 +19,6 @@ import './js/globe-markers-link.js';
 
 // 3. UI Components & Logic
 import './js/ledger.js';
-import './js/relations.js';
 import './js/pois.js';
 import './js/audio.js';
 import './js/panel-toggle.js';
@@ -27,7 +26,7 @@ import './js/theme-toggle.js';
 import './js/options-menu.js';
 import './js/display-options.js';
 import './js/main-visibility.js';
-import './js/data-view.js';
+import './js/view-toggle.js';
 import './js/tooltips.js';
 import './js/ticker.js';
 import './js/scroll-reveal.js';

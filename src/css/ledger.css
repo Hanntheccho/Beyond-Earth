@@ -5,8 +5,15 @@
 .ledger {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 0 20px;
     font-size: var(--fnt-size-data);
+}
+/* Live ledgers scroll once their rows pass max-height, with the theme's scrollbar
+   (controls.css). The gutter stays reserved, so the columns keep their width when
+   drilling into the treemap changes how many rows there are. */
+.ledger[data-ledger] {
+    max-height: 360px;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 .ledger-row {
     position: relative;
@@ -23,9 +30,9 @@
    keeps short rows with centered cells. Keyed on the ledger rather than on
    :has(.ledger-spark), which would be re-checked on every frame of the number tweens. */
 .ledger[data-ledger] .ledger-row {
-    min-height: 50px;
+    min-height: 80px;
     align-items: start;
-    padding-top: 0.5em;
+    padding-top: 2px;
 }
 /* The sparkline fills the lower part of the row, under the cells: a faint area with
    its line on top, colored by the trend. The row isolates it, so it sits above the
@@ -55,11 +62,14 @@
     vector-effect: non-scaling-stroke;
     stroke-linejoin: round;
 }
-/* A ledger has no status bar above it, so the first line of rows draws the top edge. */
-/*.ledger-row:nth-child(-n + 2) { border-top: var(--border); } */
+
+/* The name and change keep some room from the row's edges, since neighbouring
+   ledger columns sit right against each other. */
+.ledger-name { padding-left: 2px; }
 .ledger-unit { color: var(--clr-data); }
 .ledger-value { text-align: right; white-space: nowrap; }
 .ledger-change {
+    padding-right: 2px;
     text-align: right;
     transition: color var(--transition-time-clr) ease;
 }

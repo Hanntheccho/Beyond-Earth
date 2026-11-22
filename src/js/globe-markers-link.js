@@ -6,7 +6,7 @@
 // Needs data-id on each marker button (set in createButton in globe-markers.js).
 import { motionPreference } from './motion.js';
 import { isMainVisible, setMainVisible } from './main-visibility.js';
-import { isDataViewOpen, setDataViewOpen } from './data-view.js';
+import { isDataViewOpen, setDataViewOpen } from './view-toggle.js';
 import { POI_PANEL_GROUP } from './loc.js';
 
 document.addEventListener('click', event => {
@@ -32,3 +32,4 @@ document.addEventListener('click', event => {
         behavior: motionPreference.matches ? 'auto' : 'smooth'
     });
 });
+
