@@ -3,9 +3,7 @@
 // change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
 // The change column and the colors follow each item's trend change (trendPercent in
-// simulation.js), and a faint sparkline of its recent history fills the row's background.
-// Above each ledger, an expanded chart draws one row's history large: the top row by
-// default, or the row last clicked.
+// simulation.js), and a sparkline of its recent history ends each row.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
@@ -22,15 +20,11 @@ import { appendSvg as add } from './svg.js';
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
     const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
-    // Sparkline viewBox; CSS stretches it over the lower part of the row. SPARK_TOP_GAP
+    // Sparkline viewBox; CSS stretches it to its column. SPARK_TOP_GAP
     // keeps the peak off the box's top edge.
     const SPARK_WIDTH = 100;
     const SPARK_HEIGHT = 30;
     const SPARK_TOP_GAP = 4;
-    // Expanded chart viewBox; CSS sets its height and stretches it to the panel width.
-    const CHART_WIDTH = 800;
-    const CHART_HEIGHT = 160;
-    const CHART_TOP_GAP = 12;
 
     // Line points for a history, scaled to fill a width x height box from the bottom up,
     // leaving topGap free above the peak.
@@ -49,96 +43,21 @@ import { appendSvg as add } from './svg.js';
         return points ? `${points} ${width},${height} 0,${height}` : '';
     }
 
-    // The expanded chart for a ledger, inserted right above it in the same panel: a
-    // status line naming the shown item, and its history drawn with the same area and
-    // line as the row sparklines.
-    function createChart(host) {
-        const box = document.createElement('div');
-        box.className = 'ledger-chart';
-        // .data-status lays out its children as rows, so the parts share one span.
-        const title = document.createElement('div');
-        title.className = 'data-status ledger-chart-title';
-        const label = document.createElement('span');
-        const name = document.createElement('span');
-        const value = document.createElement('span');
-        const change = document.createElement('span');
-        label.append(name, ' · ', value, ' · ', change);
-        title.append(label);
-        box.append(title);
-        const svg = add(box, 'svg', {
-            class: 'ledger-chart-plot',
-            viewBox: `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`,
-            preserveAspectRatio: 'none',
-            'aria-hidden': 'true'
-        });
-        const area = add(svg, 'polygon', { class: 'ledger-spark-area' });
-        const line = add(svg, 'polyline', { class: 'ledger-spark-line' });
-        host.before(box);
-        return { name, value, change, svg, area, line };
-    }
-
     function renderLedger(host) {
         const feedId = host.dataset.ledger;
         if (!feedId) return;
         const wrapper = host.closest('[data-panel-group]');
         const feed = simulation.getFeed(feedId);
         const rows = new Map();
-        const chart = createChart(host);
         let displayedItems = null;
-        // The item the expanded chart shows, and the items of the last render (sorted)
-        // so a click can redraw the chart right away.
-        let selectedKey = null;
-        let lastSorted = [];
         let raf = 0;
         let inViewport = false;
         let renderQueued = false;
-
-        function drawChart(item) {
-            if (!item) return;
-            const points = linePoints(item.history, CHART_WIDTH, CHART_HEIGHT, CHART_TOP_GAP);
-            chart.line.setAttribute('points', points);
-            chart.area.setAttribute('points', areaPoints(points, CHART_WIDTH, CHART_HEIGHT));
-            const up = trendOf(item) >= 0;
-            chart.svg.classList.toggle('is-up', up);
-            chart.svg.classList.toggle('is-down', !up);
-            chart.name.textContent = item.name;
-            chart.value.textContent = `${valueFormat.format(item.value)} ${item.unit || '€$B'}`;
-            chart.change.textContent = percentFormat.format(trendOf(item));
-            chart.change.className = up ? 'is-up' : 'is-down';
-        }
-
-        // Show an item in the expanded chart and mark its row.
-        function select(key) {
-            selectedKey = key;
-            rows.forEach((entry, rowKey) => {
-                entry.row.classList.toggle('is-selected', rowKey === key);
-                entry.row.setAttribute('aria-pressed', String(rowKey === key));
-            });
-            drawChart(lastSorted.find(item => keyOf(item) === key));
-        }
 
         function createRow(item, key) {
             const row = document.createElement('div');
             row.className = 'ledger-row';
             row.dataset.itemKey = key;
-            // Clicking a row (or Enter/Space on it) shows it in the expanded chart.
-            row.tabIndex = 0;
-            row.setAttribute('role', 'button');
-            row.setAttribute('aria-pressed', 'false');
-            row.addEventListener('click', () => select(key));
-            row.addEventListener('keydown', event => {
-                if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(key); }
-            });
-            // The sparkline sits behind the cells (see .ledger-spark in ledger.css): a
-            // faint area under the history, with its line on top.
-            const spark = add(row, 'svg', {
-                class: 'ledger-spark',
-                viewBox: `0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}`,
-                preserveAspectRatio: 'none',
-                'aria-hidden': 'true'
-            });
-            const sparkArea = add(spark, 'polygon', { class: 'ledger-spark-area' });
-            const sparkLine = add(spark, 'polyline', { class: 'ledger-spark-line' });
             const cell = (className, text = '') => {
                 const span = document.createElement('span');
                 span.className = className;
@@ -147,14 +66,26 @@ import { appendSvg as add } from './svg.js';
                 return span;
             };
             cell('ledger-name', item.name);
-            cell('ledger-unit', item.unit || '€$B');
+            cell('ledger-unit', item.unit || '');
+            const valueEl = cell('ledger-value');
+            const changeEl = cell('ledger-change');
+            // The sparkline is the last column: a faint area under the history, with
+            // its line on top.
+            const spark = add(row, 'svg', {
+                class: 'ledger-spark',
+                viewBox: `0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}`,
+                preserveAspectRatio: 'none',
+                'aria-hidden': 'true'
+            });
+            const sparkArea = add(spark, 'polygon', { class: 'ledger-spark-area' });
+            const sparkLine = add(spark, 'polyline', { class: 'ledger-spark-line' });
             return {
                 row,
                 spark,
                 sparkArea,
                 sparkLine,
-                valueEl: cell('ledger-value'),
-                changeEl: cell('ledger-change'),
+                valueEl,
+                changeEl,
                 cur: null,
                 from: null,
                 to: null,
@@ -257,12 +188,6 @@ import { appendSvg as add } from './svg.js';
                 void flashes[0].offsetWidth; // restart the flash animation
                 flashes.forEach(row => row.classList.add('is-flashing'));
             }
-
-            // The expanded chart starts on the top row, and goes back to the top row when
-            // the shown item is gone (after drilling in or out of the treemap).
-            lastSorted = sorted;
-            if (keys.has(selectedKey)) drawChart(sorted.find(item => keyOf(item) === selectedKey));
-            else select(keyOf(sorted[0]));
 
             // FLIP "last/invert/play": slide rows from their old position to the new one.
             if (!reduced && orderChanged) {

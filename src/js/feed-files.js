@@ -18,13 +18,16 @@ export async function loadRelations() {
     return response.json();
 }
 
-function normalizeNode(raw, useTags) {
+// A node without its own "unit" takes its parent's, so a unit set on :root (or any
+// parent) reaches every child that does not set one explicitly.
+function normalizeNode(raw, useTags, parentUnit = '') {
     const node = { ...raw };
     node.name = String(raw.name || raw.tag || 'Unnamed');
     node.label = useTags && raw.tag ? String(raw.tag) : node.name;
     node.value = Number(raw.value) || 0;
+    node.unit = raw.unit ? String(raw.unit) : parentUnit;
     node.children = Array.isArray(raw.children)
-        ? raw.children.map(child => normalizeNode(child, useTags))
+        ? raw.children.map(child => normalizeNode(child, useTags, node.unit))
         : [];
     return node;
 }

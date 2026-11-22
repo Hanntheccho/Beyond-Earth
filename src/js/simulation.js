@@ -146,10 +146,10 @@ export const simulation = (function () {
             key,
             root: null,
             listeners: new Set(),
-            // Shallow copies of the root's direct children, with the root's unit
-            // supplied when an item does not have one of its own.
+            // Shallow copies of the root's direct children. Each already carries its unit
+            // (feed-files.js passes a parent's unit down to children without their own).
             getSnapshot() {
-                return feed.root ? feed.root.children.map(item => ({ ...item, unit: item.unit || feed.root.unit })) : [];
+                return feed.root ? feed.root.children.map(item => ({ ...item })) : [];
             },
             // Register a listener. By default it is called once immediately with
             // the current snapshot. Returns an unsubscribe function.
