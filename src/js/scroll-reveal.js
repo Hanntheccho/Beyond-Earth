@@ -36,7 +36,7 @@ function observeReveal(element) {
 document.documentElement.classList.add('scroll-reveal-ready');
 document.querySelectorAll(REVEAL_SELECTOR).forEach(observeReveal);
 
-// Only added elements matter: text-only changes (ticker, treemap and grid numbers)
+// Only added elements matter: text-only changes (ticker, treemap and ledger numbers)
 // cannot add copy, so they are skipped without touching the DOM. Each window is
 // prepared once per batch of mutations.
 const mutationObserver = new MutationObserver(mutations => {
@@ -56,3 +56,4 @@ mutationObserver.observe(document.getElementById('main-content') || document.bod
     childList: true,
     subtree: true
 });
+

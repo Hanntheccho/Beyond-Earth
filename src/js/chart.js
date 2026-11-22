@@ -72,18 +72,18 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             if (!sorted.length) return;
 
             const row = document.createElement('div');
-            row.className = 'data-grid-row';
+            row.className = 'ledger-row';
             const name = document.createElement('span');
-            name.className = 'data-grid-name';
+            name.className = 'ledger-name';
             name.textContent = meta.name;
             const unit = document.createElement('span');
-            unit.className = 'data-grid-unit';
+            unit.className = 'ledger-unit';
             unit.textContent = meta.unit;
             const value = document.createElement('span');
-            value.className = 'data-grid-value';
+            value.className = 'ledger-value';
             value.textContent = valueFormatter.format(sorted.at(-1).value);
             const change = document.createElement('span');
-            change.className = 'data-grid-change';
+            change.className = 'ledger-change';
             const baseline = sorted.find(point => point.year === baselineYear);
             if (baseline && baseline.value !== 0) {
                 const delta = sorted.at(-1).value - baseline.value;

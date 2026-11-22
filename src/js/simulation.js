@@ -6,7 +6,7 @@
 // (interval set in startClock) each leaf value moves randomly and is pulled gently
 // back toward its resting value (its starting value, shifted by how far its linked
 // items are from theirs), linked entities push each other around, and
-// parent values are re-summed. Afterwards every subscriber (treemaps, data grids,
+// parent values are re-summed. Afterwards every subscriber (treemaps, ledgers,
 // the ticker) is notified so it can animate to the new numbers.
 //
 // DATA SHAPE (after data-loader.js normalizes it)
@@ -74,7 +74,7 @@ export const simulation = (function () {
     const MAX_MOMENTUM_BOOST = 0.005;
 
     // Items are identified by tag when they have one, otherwise by name.
-    // This is the key used by relations, treemaps, grids and the ticker.
+    // This is the key used by relations, treemaps, ledgers and the ticker.
     function itemKey(item) {
         return item.tag || item.name;
     }

@@ -50,7 +50,7 @@ import { observeVisibility } from './viewport-visibility.js';
     let graphHeight = 0;
     const NODE_TRANSITION_DURATION = 400;
     const numberFormat = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
-    // Nodes color by the trend change (trendPercent in simulation.js), like the grids.
+    // Nodes color by the trend change (trendPercent in simulation.js), like the ledgers.
     const trendOf = d => Number(d.trendPercent ?? d.changePercent) || 0;
 
     function initGraph() {

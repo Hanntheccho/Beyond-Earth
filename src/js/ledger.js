@@ -1,4 +1,5 @@
-// data-grid.js - Live data grids. Rows are persistent (keyed by tag/name): value and
+// ledger.js - Live ledgers, one per <div data-ledger="feed id"> in index.html (the
+// blocs, corps and goods panels). Rows are persistent (keyed by tag/name): value and
 // change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
 // The change column and the colors follow each item's trend change (trendPercent in
@@ -34,8 +35,8 @@ import { appendSvg as add } from './svg.js';
         ).join(' ');
     }
 
-    function renderFeedGrid(host) {
-        const feedId = host.dataset.feedGrid;
+    function renderLedger(host) {
+        const feedId = host.dataset.ledger;
         if (!feedId) return;
         const wrapper = host.closest('[data-panel-group]');
         const feed = simulation.getFeed(feedId);
@@ -47,7 +48,7 @@ import { appendSvg as add } from './svg.js';
 
         function createRow(item, key) {
             const row = document.createElement('div');
-            row.className = 'data-grid-row';
+            row.className = 'ledger-row';
             row.dataset.itemKey = key;
             const cell = (className, text = '') => {
                 const span = document.createElement('span');
@@ -56,21 +57,21 @@ import { appendSvg as add } from './svg.js';
                 row.append(span);
                 return span;
             };
-            cell('data-grid-name', item.name);
-            cell('data-grid-unit', item.unit || '€$B');
+            cell('ledger-name', item.name);
+            cell('ledger-unit', item.unit || '€$B');
             const spark = add(row, 'svg', {
-                class: 'data-grid-spark',
+                class: 'ledger-spark',
                 viewBox: `0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}`,
                 preserveAspectRatio: 'none',
                 'aria-hidden': 'true'
             });
-            const sparkLine = add(spark, 'polyline', { class: 'data-grid-spark-line' });
+            const sparkLine = add(spark, 'polyline', { class: 'ledger-spark-line' });
             return {
                 row,
                 spark,
                 sparkLine,
-                valueEl: cell('data-grid-value'),
-                changeEl: cell('data-grid-change'),
+                valueEl: cell('ledger-value'),
+                changeEl: cell('ledger-change'),
                 cur: null,
                 from: null,
                 to: null,
@@ -191,7 +192,7 @@ import { appendSvg as add } from './svg.js';
             startLoop();
         }
 
-        // A feed tick reaches the grid twice: through its own subscription and
+        // A feed tick reaches the ledger twice: through its own subscription and
         // through the treemap's treemap:items event. Both land in the same task, so
         // they are merged into one render with the latest items.
         function requestRender() {
@@ -228,6 +229,6 @@ import { appendSvg as add } from './svg.js';
         feed.subscribe(requestRender);
     }
 
-    document.querySelectorAll('[data-feed-grid]').forEach(renderFeedGrid);
+    document.querySelectorAll('[data-ledger]').forEach(renderLedger);
 })();
 

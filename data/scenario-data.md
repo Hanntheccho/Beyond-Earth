@@ -8,14 +8,14 @@
 
 One entry per indicator, keyed by series id.
 
-- `name`: label on the chart button and in the summary grid
-- `unit`: unit shown in tooltips and the summary grid
+- `name`: label on the chart button and in the summary ledger
+- `unit`: unit shown in tooltips and the summary ledger
 - `trend`: `"positive"` (higher is better, the default) or `"negative"` (higher is worse). It decides which changes are drawn green and which red.
 - `min` / `max`: optional fixed y-axis bounds
 
 ## timeline
 
-- `baselineYear`: the summary grid shows each series' change since this year. A series without a point in that year shows N/A.
+- `baselineYear`: the summary ledger shows each series' change since this year. A series without a point in that year shows N/A.
 - `events`: a `year` and a `label`, plus these optional fields:
   - `series`: a list of series ids, to show the event on those charts only
   - `y`: moves the tag, in chart pixels. Positive moves it down, negative moves it up, and 0 or no `y` keeps it just above the plot.

@@ -18,7 +18,7 @@ import './js/globe-sea-level.js';
 import './js/globe-markers-link.js';
 
 // 3. UI Components & Logic
-import './js/data-grid.js';
+import './js/ledger.js';
 import './js/relations.js';
 import './js/pois.js';
 import './js/audio.js';

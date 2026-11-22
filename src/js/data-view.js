@@ -1,6 +1,6 @@
 // data-view.js - Data view toggle: inside <main>, swaps the scenario briefing article
-// (#briefing-view) for the data article (#data-view) with the treemaps, data
-// grids and relations graph. The title, ticker and layout of <main> are shared.
+// (#briefing-view) for the data article (#data-view) with the treemaps,
+// ledgers and relations graph. The title, ticker and layout of <main> are shared.
 import { isMainVisible, setMainVisible } from './main-visibility.js';
 
 const toggle = document.getElementById('data-view-toggle');
@@ -25,3 +25,4 @@ export function setDataViewOpen(open) {
 }
 
 toggle?.addEventListener('click', () => setDataViewOpen(!isDataViewOpen()));
+
