@@ -7,8 +7,6 @@ import { observeVisibility } from './viewport-visibility.js';
 import { appendSvg as add } from './svg.js';
 
 (function () {
-    const width = 800;
-    const height = 800;
     const numberFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
     const tooltipNumberFormat = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
     const percentFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
@@ -18,6 +16,10 @@ import { appendSvg as add } from './svg.js';
     const TWEEN_PROPS = ['x', 'y', 'w', 'h', 'value', 'pct'];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
+
+    // Width of one label character as a fraction of the font size. The label font is
+    // monospaced, so this is its ch in em.
+    const CHAR_WIDTH = 0.6;
 
     const splitWords = name => String(name).trim().split(/\s+/);
     // Tiles show and color by the trend change (trendPercent in simulation.js).
@@ -96,16 +98,16 @@ import { appendSvg as add } from './svg.js';
         const longestWordLength = words.reduce((longest, word) => Math.max(longest, word.length), 1);
         // Use the widest unwrapped label to size all three labels consistently.
         const longestLabelLength = Math.max(longestWordLength, valueText.length, changeText.length);
-        const maxSizeByLabelWidth = availableWidth / (longestLabelLength * 0.68);
+        const maxSizeByLabelWidth = availableWidth / (longestLabelLength * CHAR_WIDTH);
         for (let size = Math.min(availableWidth * 0.13, availableHeight * 0.16, maxSizeByLabelWidth); size >= 1.5; size -= 0.25) {
-            const lines = wrapWords(words, Math.max(1, Math.floor(availableWidth / (size * 0.68))));
+            const lines = wrapWords(words, Math.max(1, Math.floor(availableWidth / (size * CHAR_WIDTH))));
             // Vertical spacing between wrapped name lines; requiredHeight reserves room for all three text rows.
             const lineHeight = size * 0.8;
             const requiredHeight = (lines.length - 1) * lineHeight + size * 2.8 + 2;
             if (requiredHeight <= availableHeight) return { lines, size, lineHeight, requiredHeight };
         }
         const size = 1.5;
-        const lines = wrapWords(words, Math.max(1, Math.floor(availableWidth / (size * 0.68))));
+        const lines = wrapWords(words, Math.max(1, Math.floor(availableWidth / (size * CHAR_WIDTH))));
         return { lines, size, lineHeight: size, requiredHeight: h };
     }
 
@@ -124,6 +126,27 @@ import { appendSvg as add } from './svg.js';
         let pathSignature = null;
         let svg = null;
         let raf = 0;
+
+        // The board is square and as wide as the host, with one SVG unit per CSS pixel,
+        // so sizes, insets and font sizes are real pixels instead of being scaled by CSS.
+        // mountTree only mounts a visible host, so its width is known here.
+        let width = host.clientWidth;
+        let height = width;
+
+        function setBoardSize() {
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+        }
+
+        // Lays the tiles out again when the host's width changes. The SVG sets the host's
+        // height, so only width changes count; a hidden host reports no width and is skipped.
+        new ResizeObserver(([entry]) => {
+            const nextWidth = Math.round(entry.contentRect.width);
+            if (!nextWidth || nextWidth === width) return;
+            width = height = nextWidth;
+            if (svg) { setBoardSize(); render(); }
+        }).observe(host);
 
         function createTile(item) {
             const canDrill = getChildren(item).length > 0;
@@ -297,11 +320,11 @@ import { appendSvg as add } from './svg.js';
                 host.replaceChildren();
                 tiles.clear();
                 svg = add(host, 'svg', {
-                    viewBox: `0 0 ${width} ${height}`,
                     role: options.accessible ? 'img' : 'presentation',
                     'aria-hidden': options.accessible ? 'false' : 'true',
                     'aria-label': options.accessible ? `${getName(current.node)} treemap` : null
                 });
+                setBoardSize();
                 renderBreadcrumbs();
             }
 

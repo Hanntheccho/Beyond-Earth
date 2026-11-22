@@ -12,7 +12,8 @@
     pointer-events: none;
     filter: var(--img-filter);
 }
-.treemap svg { position: relative; overflow: visible; display: block; width: 100%; height: auto; }
+/* treemap.js sizes the SVG to the host width in real pixels, so CSS does not scale it. */
+.treemap svg { position: relative; overflow: visible; display: block; }
 
 /* Each tile's color follows its direction and fades over a feed tick. */
 @property --treemap-color {
