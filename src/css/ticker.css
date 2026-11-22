@@ -12,7 +12,7 @@
     white-space: nowrap;
     text-transform: uppercase;
     font-size: var(--fnt-size-bttn);
-    letter-spacing: var(--letter-spacing-02);
+    letter-spacing: var(--letter-spacing-01);
     color: var(--clr-data);
     background-color: var(--clr-background);
     box-shadow: var(--box-shadow);

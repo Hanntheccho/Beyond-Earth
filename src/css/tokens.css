@@ -16,7 +16,7 @@
     --opacity-10: .06;
     --brightness-50: brightness(.5);
     --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
-    --letter-spacing-02: .1em;
+    --letter-spacing-01: .1em;
     --fnt: 'Source Code Pro', monospace;
     --fnt-size-h1: calc(var(--fnt-size-text) + 12px);
     --fnt-size-h2: calc(var(--fnt-size-text) + 6px);

@@ -42,11 +42,10 @@
     position: relative;
     z-index: 1;
     margin: 0;
-    margin-bottom: -20px;
-    padding: 12px 20px;
+    margin-bottom: calc(var(--px-20) * -1);
+    padding: 10px var(--px-20);
     color: var(--clr-h1);
-    font-weight: 900;
-    letter-spacing: .2em;
+    letter-spacing: calc(var(--letter-spacing-01) * 2);
 }
 .back-title {
     position: fixed;
@@ -55,12 +54,11 @@
     z-index: -2; /* behind the body's background art */
     width: 100%;
     color: var(--clr-h1);
-    opacity: 0.08;
-    font-size: 64px;
+    opacity: var(--opacity-10);
+    font-size: calc(var(--fnt-size-h1) * 2);
     font-weight: bold;
-    letter-spacing: .6em;
-    line-height: 1em;
-    margin: 0 10px;
+    letter-spacing: calc(var(--letter-spacing-01) * 4);
+    margin: 0 .2lh;
     pointer-events: none;
 }
 .div-submain {
@@ -122,7 +120,7 @@
     border-bottom: var(--border);
     color: var(--clr-data);
     font-size: var(--fnt-size-bttn);
-    letter-spacing: var(--letter-spacing-02);
+    letter-spacing: var(--letter-spacing-01);
     text-align: right;
 }
 

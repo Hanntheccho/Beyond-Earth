@@ -78,10 +78,11 @@
     padding: 5px 8px;
     border: 1px solid var(--clr-border);
     background: var(--clr-background);
+    box-shadow: var(--box-shadow);
     color: var(--clr-ph1);
     content: attr(data-label);
     text-align: center;
-    text-indent: var(--letter-spacing-02);
+    text-indent: var(--letter-spacing-01);
     white-space: normal;
     opacity: 0;
     pointer-events: none;
@@ -89,7 +90,7 @@
     transition: opacity 120ms ease, transform 120ms ease;
     font: var(--fnt-size-bttn) var(--fnt);
     text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-02);
+    letter-spacing: var(--letter-spacing-01);
     font-weight: bold;
 }
 .globe-marker:hover::after,
