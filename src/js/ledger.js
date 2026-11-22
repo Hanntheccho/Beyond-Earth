@@ -3,7 +3,7 @@
 // change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
 // The change column and the colors follow each item's trend change (trendPercent in
-// simulation.js), and a sparkline shows its recent history.
+// simulation.js), and a faint sparkline of its recent history fills the row's background.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
@@ -20,18 +20,20 @@ import { appendSvg as add } from './svg.js';
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
     const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
-    // Sparkline viewBox; CSS stretches it to the column.
-    const SPARK_WIDTH = 120;
-    const SPARK_HEIGHT = 20;
+    // Sparkline viewBox; CSS stretches it over the whole row. SPARK_TOP_GAP keeps the
+    // peak off the row's top edge.
+    const SPARK_WIDTH = 100;
+    const SPARK_HEIGHT = 30;
+    const SPARK_TOP_GAP = 4;
 
-    // Polyline points for a history, scaled to fill the sparkline box.
+    // Line points for a history, scaled to fill the sparkline box from the bottom up.
     function sparkPoints(history) {
         if (!Array.isArray(history) || history.length < 2) return '';
         const min = Math.min(...history);
         const range = Math.max(...history) - min || 1;
         const step = SPARK_WIDTH / (history.length - 1);
         return history.map((value, index) =>
-            `${(index * step).toFixed(1)},${(SPARK_HEIGHT - 1 - (value - min) / range * (SPARK_HEIGHT - 2)).toFixed(1)}`
+            `${(index * step).toFixed(1)},${(SPARK_HEIGHT - (value - min) / range * (SPARK_HEIGHT - SPARK_TOP_GAP)).toFixed(1)}`
         ).join(' ');
     }
 
@@ -50,6 +52,16 @@ import { appendSvg as add } from './svg.js';
             const row = document.createElement('div');
             row.className = 'ledger-row';
             row.dataset.itemKey = key;
+            // The sparkline sits behind the cells (see .ledger-spark in ledger.css): a
+            // faint area under the history, with its line on top.
+            const spark = add(row, 'svg', {
+                class: 'ledger-spark',
+                viewBox: `0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}`,
+                preserveAspectRatio: 'none',
+                'aria-hidden': 'true'
+            });
+            const sparkArea = add(spark, 'polygon', { class: 'ledger-spark-area' });
+            const sparkLine = add(spark, 'polyline', { class: 'ledger-spark-line' });
             const cell = (className, text = '') => {
                 const span = document.createElement('span');
                 span.className = className;
@@ -59,16 +71,10 @@ import { appendSvg as add } from './svg.js';
             };
             cell('ledger-name', item.name);
             cell('ledger-unit', item.unit || '€$B');
-            const spark = add(row, 'svg', {
-                class: 'ledger-spark',
-                viewBox: `0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}`,
-                preserveAspectRatio: 'none',
-                'aria-hidden': 'true'
-            });
-            const sparkLine = add(spark, 'polyline', { class: 'ledger-spark-line' });
             return {
                 row,
                 spark,
+                sparkArea,
                 sparkLine,
                 valueEl: cell('ledger-value'),
                 changeEl: cell('ledger-change'),
@@ -152,7 +158,10 @@ import { appendSvg as add } from './svg.js';
                 entry.from = { ...entry.cur };
                 entry.to = { value: item.value, pct: trendOf(item) };
                 entry.t0 = now;
-                entry.sparkLine.setAttribute('points', sparkPoints(item.history));
+                const points = sparkPoints(item.history);
+                entry.sparkLine.setAttribute('points', points);
+                // The area closes the line down to the bottom corners of the box.
+                entry.sparkArea.setAttribute('points', points ? `${points} ${SPARK_WIDTH},${SPARK_HEIGHT} 0,${SPARK_HEIGHT}` : '');
                 const up = trendOf(item) >= 0;
                 entry.spark.classList.toggle('is-up', up);
                 entry.spark.classList.toggle('is-down', !up);
