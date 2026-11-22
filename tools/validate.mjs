@@ -461,6 +461,11 @@ function checkRelations() {
     // Relations larger than this are probably a typo (the guide in data/relations.md
     // suggests small fixed steps, and the existing data stays below this).
     const MAX_RELATION_WEIGHT = 0.25;
+    // simulation.js passes bloc/corp pushes on from link to link and shifts resting
+    // values by them. They fade only while each item's total incoming bloc/corp weight
+    // stays small, so warn when one goes above this.
+    const MAX_INCOMING_LINK_WEIGHT = 0.75;
+    const incomingLinkWeight = new Map();
 
     // Index every node of the database files by its tag and by its name, the two keys
     // simulation.js uses to resolve a fromKey/toKey. depth 1 is a top-level
@@ -549,6 +554,16 @@ function checkRelations() {
             warn('relations', `${where}: weight is 0, so this relation has no effect`);
         } else if (Math.abs(entry.weight) > MAX_RELATION_WEIGHT) {
             warn('relations', `${where}: weight ${entry.weight} is larger than ${MAX_RELATION_WEIGHT}`);
+        }
+
+        if (from && to && !from.some(record => record.good) && Number.isFinite(entry.weight)) {
+            incomingLinkWeight.set(entry.toKey, (incomingLinkWeight.get(entry.toKey) || 0) + Math.abs(entry.weight));
+        }
+    });
+
+    incomingLinkWeight.forEach((total, toKey) => {
+        if (total > MAX_INCOMING_LINK_WEIGHT) {
+            warn('relations', `"${toKey}" receives bloc/corp links totalling ${total.toFixed(2)} (absolute weights); above ${MAX_INCOMING_LINK_WEIGHT} pushes passed between linked items fade slowly, and at 1 they stop fading`);
         }
     });
 }

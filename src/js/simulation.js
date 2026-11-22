@@ -4,7 +4,8 @@
 // feed-loader.js loads and registers the treemap datasets (blocs, corps, goods).
 // This file then simulates live movement on top of those trees: on every tick
 // (interval set in startClock) each leaf value moves randomly and is pulled gently
-// back toward its starting value, linked entities push each other around, and
+// back toward its resting value (its starting value, shifted by how far its linked
+// items are from theirs), linked entities push each other around, and
 // parent values are re-summed. Afterwards every subscriber (treemaps, data grids,
 // the ticker) is notified so it can animate to the new numbers.
 //
@@ -14,7 +15,8 @@
 // sum of their children.
 // prepareValues() adds these simulation fields to every node:
 //   change, changePercent : movement during the last tick
-//   baseValue             : the starting value; leaves are pulled back toward it,
+//   baseValue             : the starting value; leaves are pulled back toward it
+//                           (shifted by their relations, see restingShifts()),
 //                           and runaway moves are clamped around it
 //   volatility            : max random shock per tick, as a fraction of the value
 //                           (leaves only): the leaf's own volatility from its data
@@ -48,10 +50,10 @@ export const simulation = (function () {
 
     // Safety rails so a value can never collapse to zero or explode: values stay
     // between MIN_VALUE_RATIO and MAX_VALUE_RATIO times their starting value. The
-    // pull toward the starting value (REVERSION_RATE) normally keeps them far from both.
+    // pull toward the resting value (REVERSION_RATE) normally keeps them far from both.
     const MIN_VALUE_RATIO = 0.05;
     const MAX_VALUE_RATIO = 100;
-    // Share of a leaf's distance from its starting value that is pulled back every
+    // Share of a leaf's distance from its resting value that is pulled back every
     // tick. It keeps long runs close to the data files without changing how far a
     // single tick moves.
     const REVERSION_RATE = 0.003;
@@ -84,6 +86,18 @@ export const simulation = (function () {
     // positive above it and negative below it, with doubling and halving the same size.
     function distanceFromStart(node) {
         return node.baseValue > 0 && node.value > 0 ? Math.log(node.value / node.baseValue) : 0;
+    }
+
+    // Where each relation target rests, as a log distance from its starting value:
+    // the sum of weight x each FROM item's distance from its own start. While cobalt
+    // stays high, an item that earns from it rests higher too, so the pull back keeps
+    // the effect instead of undoing it. Measured on the values at the start of a tick.
+    function restingShifts() {
+        const shifts = new Map();
+        getResolvedRelations().byTarget.forEach((incoming, target) => {
+            shifts.set(target, incoming.reduce((sum, { from, weight }) => sum + weight * distanceFromStart(from), 0));
+        });
+        return shifts;
     }
 
     // One-time setup of a freshly loaded tree. Children are prepared first so a
@@ -263,7 +277,7 @@ export const simulation = (function () {
     }
 
     // One simulation step. Runs in four passes over all registered trees:
-    //   1. random movement of every leaf, and a pull back toward its starting value
+    //   1. random movement of every leaf, and a pull back toward its resting value
     //   2. incoming relations push their targets
     //   3. momentum: recent movement slightly extends itself
     //   4. roll parent values up from their children and record change/changePercent
@@ -284,20 +298,22 @@ export const simulation = (function () {
         // Pass 1: apply normal stochastic movement to every leaf.
         // Each leaf changes by sentiment + a tiny random drift + a random shock whose
         // size is limited by the leaf's volatility, and is pulled back by
-        // REVERSION_RATE of its distance from its starting value. Parents are
-        // re-summed as the recursion unwinds.
-        function updateLeaf(node) {
+        // REVERSION_RATE of its distance from its resting value. A shift on a parent
+        // applies to every leaf below it. Parents are re-summed as the recursion unwinds.
+        const shifts = restingShifts();
+        function updateLeaf(node, inheritedShift) {
+            const shift = inheritedShift + (shifts.get(node) || 0);
             if (node.children.length) {
-                node.children.forEach(updateLeaf);
+                node.children.forEach(child => updateLeaf(child, shift));
                 node.value = node.children.reduce((sum, child) => sum + child.value, 0);
             } else {
                 const drift = (Math.random() - 0.5) * 0.0012;
                 const shock = (Math.random() * 2 - 1) * node.volatility;
-                const pull = -REVERSION_RATE * distanceFromStart(node);
+                const pull = -REVERSION_RATE * (distanceFromStart(node) - shift);
                 node.value = clampValue(node, node.value * (1 + sentiment * 0.2 + drift + shock + pull));
             }
         }
-        trees.forEach(tree => updateLeaf(tree.root));
+        trees.forEach(tree => updateLeaf(tree.root, 0));
 
         // Pass 2: work out every target's push from the values pass 1 left, then apply
         // them all, so no push is measured on top of another push from this tick.
