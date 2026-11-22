@@ -12,6 +12,7 @@ import './js/simulation.js';
 
 // 2. Visualization Components
 import './js/globe.js';
+import './js/background-candles.js';
 import './js/treemap.js';
 import './js/chart.js';
 import './js/globe-sea-level.js';
