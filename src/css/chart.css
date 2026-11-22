@@ -17,12 +17,16 @@
     opacity: var(--opacity-10);
     filter: var(--img-filter);
 }
-/* chart.js sizes the SVG to the plot in real pixels, so CSS does not scale it. */
+/* chart.js sizes the SVG to the plot in real pixels, so CSS does not scale it. The
+   plot's size comes only from its width and aspect-ratio: the SVG is taken out of the
+   flow, so an SVG drawn at a stale size cannot grow the plot (an aspect-ratio box
+   grows to fit taller content) and then be redrawn at that grown height. */
 .chart-plot svg {
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 1;
     display: block;
-/*  overflow: visible; */
+    overflow: visible;
 }
 /* chart.js places every label by its vertical center, so no baseline nudges are needed. */
 .chart-plot text {

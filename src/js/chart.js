@@ -127,7 +127,9 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
 
         // One SVG unit per CSS pixel: the chart is drawn at the plot's real size, so
         // margins, tags, strokes and text are real pixels instead of being scaled by CSS.
-        const width = plot.clientWidth, height = plot.clientHeight;
+        // The height comes from the width and the aspect ratio rather than from layout,
+        // so a plot measured mid-layout can never hand back a stretched height.
+        const width = plot.clientWidth, height = Math.round(width * CHART_HEIGHT / CHART_WIDTH);
         if (!width || !height) return;
         const margin = { top: CHART_MARGIN, right: CHART_MARGIN, bottom: CHART_MARGIN, left: CHART_MARGIN };
         const innerWidth = width - margin.left - margin.right;
