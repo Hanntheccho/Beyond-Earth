@@ -4,7 +4,7 @@
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
-import { appendSvg as add } from './svg.js';
+import { CHAR_WIDTH, appendSvg as add } from './svg.js';
 
 (function () {
     const numberFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
@@ -17,9 +17,22 @@ import { appendSvg as add } from './svg.js';
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
 
-    // Width of one label character as a fraction of the font size. The label font is
-    // monospaced, so this is its ch in em.
-    const CHAR_WIDTH = 0.6;
+    // Tile layout, in pixels. Each tile's surface is inset by TILE_INSET on every side,
+    // which makes the gaps between tiles; labels keep LABEL_PADDING from the tile edge.
+    const TILE_INSET = 2;
+    const LABEL_PADDING = 8;
+
+    // Label sizing (see fitLabel). The font size is capped at a fraction of the tile's
+    // label area, and tried from there downwards in LABEL_SIZE_STEP pixel steps. A tile
+    // whose labels only fit below MIN_LABEL_SIZE pixels shows no labels.
+    const LABEL_SIZE_BY_WIDTH = 0.13;
+    const LABEL_SIZE_BY_HEIGHT = 0.16;
+    const LABEL_SIZE_STEP = 0.25;
+    const MIN_LABEL_SIZE = 1;
+    // Spacing between wrapped name lines, and the height of the name's first line plus
+    // the value and change rows, both as fractions of the font size.
+    const LABEL_LINE_HEIGHT = 0.8;
+    const LABEL_BLOCK_HEIGHT = 2.8;
 
     const splitWords = name => String(name).trim().split(/\s+/);
     // Tiles show and color by the trend change (trendPercent in simulation.js).
@@ -90,25 +103,23 @@ import { appendSvg as add } from './svg.js';
         return rectangles;
     }
 
-    // Largest font size at which the wrapped name, value and change fit the tile.
+    // Largest font size at which the wrapped name, value and change fit the tile, or
+    // null when they only fit below MIN_LABEL_SIZE.
     function fitLabel(words, valueText, changeText, w, h) {
-        // Keep an inset inside each tile; paint() also passes % of the tile dimensions.
-        const availableWidth = Math.max(1, w - 8);
-        const availableHeight = Math.max(1, h - 6);
+        const availableWidth = w - 2 * LABEL_PADDING;
+        const availableHeight = h - 2 * LABEL_PADDING;
         const longestWordLength = words.reduce((longest, word) => Math.max(longest, word.length), 1);
         // Use the widest unwrapped label to size all three labels consistently.
         const longestLabelLength = Math.max(longestWordLength, valueText.length, changeText.length);
         const maxSizeByLabelWidth = availableWidth / (longestLabelLength * CHAR_WIDTH);
-        for (let size = Math.min(availableWidth * 0.13, availableHeight * 0.16, maxSizeByLabelWidth); size >= 1.5; size -= 0.25) {
+        const largestSize = Math.min(availableWidth * LABEL_SIZE_BY_WIDTH, availableHeight * LABEL_SIZE_BY_HEIGHT, maxSizeByLabelWidth);
+        for (let size = largestSize; size >= MIN_LABEL_SIZE; size -= LABEL_SIZE_STEP) {
             const lines = wrapWords(words, Math.max(1, Math.floor(availableWidth / (size * CHAR_WIDTH))));
-            // Vertical spacing between wrapped name lines; requiredHeight reserves room for all three text rows.
-            const lineHeight = size * 0.8;
-            const requiredHeight = (lines.length - 1) * lineHeight + size * 2.8 + 2;
+            const lineHeight = size * LABEL_LINE_HEIGHT;
+            const requiredHeight = (lines.length - 1) * lineHeight + size * LABEL_BLOCK_HEIGHT;
             if (requiredHeight <= availableHeight) return { lines, size, lineHeight, requiredHeight };
         }
-        const size = 1.5;
-        const lines = wrapWords(words, Math.max(1, Math.floor(availableWidth / (size * CHAR_WIDTH))));
-        return { lines, size, lineHeight: size, requiredHeight: h };
+        return null;
     }
 
     function mount(host, options) {
@@ -189,16 +200,15 @@ import { appendSvg as add } from './svg.js';
         function paint(tile) {
             const { x, y, w, h, value, pct } = tile.cur;
 
-            // Tile gap is defined here by the rectangle inset and dimensions.
-            tile.rect.setAttribute('x', x + 2);
-            tile.rect.setAttribute('y', y + 2);
-            tile.rect.setAttribute('width', Math.max(0, w - 4));
-            tile.rect.setAttribute('height', Math.max(0, h - 4));
+            tile.rect.setAttribute('x', x + TILE_INSET);
+            tile.rect.setAttribute('y', y + TILE_INSET);
+            tile.rect.setAttribute('width', Math.max(0, w - 2 * TILE_INSET));
+            tile.rect.setAttribute('height', Math.max(0, h - 2 * TILE_INSET));
 
             // The fit is fixed for the whole tween, so the label size and visibility
-            // only need writing when a new tick changes them.
+            // only need writing when a new tick changes them. No fit hides the labels.
             const fit = tile.fit;
-            const visibility = fit.size >= 2 ? 'visible' : 'hidden';
+            const visibility = fit ? 'visible' : 'hidden';
             if (visibility !== tile.lastVisibility) {
                 tile.lastVisibility = visibility;
                 tile.labels.forEach(element => element.setAttribute('visibility', visibility));
@@ -344,7 +354,7 @@ import { appendSvg as add } from './svg.js';
                 tile.from = { ...tile.cur };
                 tile.to = target;
                 tile.t0 = now;
-                tile.fit = fitLabel(tile.words, numberFormat.format(value), percentFormat.format(change), w * 0.9, h * 0.9);
+                tile.fit = fitLabel(tile.words, numberFormat.format(value), percentFormat.format(change), w, h);
 
                 const name = getName(item);
                 const label = getLabel(item);

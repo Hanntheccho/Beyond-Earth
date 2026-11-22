@@ -22,10 +22,13 @@
     position: relative;
     z-index: 1;
     display: block;
+    overflow: visible;
 }
+/* chart.js places every label by its vertical center, so no baseline nudges are needed. */
 .chart-plot text {
     fill: var(--clr-data);
     font-size: var(--fnt-size-data);
+    dominant-baseline: central;
 }
 .chart-plot .chart-axis-label { text-anchor: end; }
 .chart-plot .chart-year-label,

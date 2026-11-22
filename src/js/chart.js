@@ -17,7 +17,7 @@
 // the chart width). The delay and duration are set in src/css/chart.css;
 // keep the two rules there in sync.
 import { observeVisibility } from './viewport-visibility.js';
-import { SVG_NS, appendSvg as add } from './svg.js';
+import { CHAR_WIDTH, SVG_NS, appendSvg as add } from './svg.js';
 import scenario from '../../data/scenario-data.json' with { type: 'json' };
 
 (function () {
@@ -28,8 +28,27 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const valueFormatter = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
     const changeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, signDisplay: 'always' });
 
-    const TAG_HEIGHT = 18;
     const PANEL_GROUP = 'charts';
+
+    // Chart layout, in pixels. The plot area keeps CHART_MARGIN free on every side for
+    // the axis labels and event tags. Text is placed by its vertical center
+    // (dominant-baseline in src/css/chart.css).
+    const CHART_MARGIN = 40;
+    const AXIS_LABEL_GAP = 10;     // value labels' right edge, left of the plot area
+    const YEAR_TICK_LENGTH = 5;    // year ticks below the plot area
+    const YEAR_LABEL_GAP = 20;     // year labels' center, below the plot area
+    const ERA_LABEL_GAP = 12;      // era labels' center, below the plot area's top
+    // Event tags: TAG_PADDING is the room beside the label, split between both sides.
+    const TAG_HEIGHT = 18;
+    const TAG_MIN_WIDTH = 56;
+    const TAG_PADDING = 12;
+
+    // Value axis: GRID_STEPS spaces between its grid lines, and VALUE_PADDING of the
+    // value range added above and below the data when the series sets no min or max.
+    // Year axis: a tick every YEAR_STEP years, plus one at the last year.
+    const GRID_STEPS = 4;
+    const VALUE_PADDING = 0.12;
+    const YEAR_STEP = 25;
     // Chart aspect ratio. The plot reserves it before its chart is drawn, so drawing
     // it later does not shift the page; the chart itself is drawn at the plot's size.
     const CHART_WIDTH = 800;
@@ -111,7 +130,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         // margins, tags, strokes and text are real pixels instead of being scaled by CSS.
         const width = plot.clientWidth, height = plot.clientHeight;
         if (!width || !height) return;
-        const margin = { top: 40, right: 40, bottom: 40, left: 40 };
+        const margin = { top: CHART_MARGIN, right: CHART_MARGIN, bottom: CHART_MARGIN, left: CHART_MARGIN };
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
         let min = Infinity, max = -Infinity;
@@ -120,7 +139,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             max = Math.max(max, point.value);
         });
         if (min === max) { min -= 1; max += 1; }
-        const padding = (max - min) * 0.12;
+        const padding = (max - min) * VALUE_PADDING;
         if (meta.min !== undefined) min = meta.min;
         else min -= padding;
         if (meta.max !== undefined) max = meta.max;
@@ -143,6 +162,8 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         svg.setAttribute('height', height);
         svg.setAttribute('role', 'presentation');
         svg.setAttribute('aria-hidden', 'true');
+        // In the page from the start, so the event tags can read their label's font size.
+        plot.replaceChildren(svg);
 
         // Eras (shaded bands) from timeline.eras, optionally limited via `series`.
         const eras = (Array.isArray(timeline.eras) ? timeline.eras : [])
@@ -157,19 +178,20 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             });
         });
 
-        for (let tick = 0; tick <= 4; tick++) {
-            const value = max - (max - min) * tick / 4;
+        for (let tick = 0; tick <= GRID_STEPS; tick++) {
+            const value = max - (max - min) * tick / GRID_STEPS;
             const yy = y(value);
             add(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, class: 'chart-grid-line' });
-            add(svg, 'text', { x: margin.left - 10, y: yy + 4, class: 'chart-axis-label' }, Number(value.toPrecision(3)).toString());
+            add(svg, 'text', { x: margin.left - AXIS_LABEL_GAP, y: yy, class: 'chart-axis-label' }, Number(value.toPrecision(3)).toString());
         }
+        const plotBottom = height - margin.bottom;
         const yearTicks = [];
-        for (let year = firstYear; year <= lastYear; year += 25) yearTicks.push(year);
+        for (let year = firstYear; year <= lastYear; year += YEAR_STEP) yearTicks.push(year);
         if (yearTicks[yearTicks.length - 1] !== lastYear) yearTicks.push(lastYear);
         yearTicks.forEach(year => {
             const xx = x(year);
-            add(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, class: 'chart-year-tick' });
-            add(svg, 'text', { x: xx, y: height - 15, class: 'chart-year-label' }, String(year));
+            add(svg, 'line', { x1: xx, x2: xx, y1: plotBottom, y2: plotBottom + YEAR_TICK_LENGTH, class: 'chart-year-tick' });
+            add(svg, 'text', { x: xx, y: plotBottom + YEAR_LABEL_GAP, class: 'chart-year-label' }, String(year));
         });
 
         // Events from timeline.events, optionally limited via `series`.
@@ -182,7 +204,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         eras.forEach(era => {
             if (!(era.start >= firstYear && era.end <= lastYear)) return;
             add(svg, 'text', {
-                x: (x(era.start) + x(era.end)) / 2, y: margin.top + 16,
+                x: (x(era.start) + x(era.end)) / 2, y: margin.top + ERA_LABEL_GAP,
                 class: `chart-era-label${positiveClass(era)}`
             }, era.label || '');
             [era.start, era.end].forEach(year => {
@@ -232,11 +254,11 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             });
             add(dot, 'title', {}, `${point.year}: ${point.value} ${meta.unit}`);
         });
+        // Read from the first event label, so the tags follow the font size in chart.css.
+        let labelFontSize = null;
         events.forEach(event => {
             const label = String(event.label || '');
             const eventX = x(event.year);
-            const tagWidth = Math.max(56, label.length * 6.6 + 6);
-            const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
             // Default tag sits just above the plot; `y` shifts it down (positive) or up (negative).
             const tagY = margin.top - TAG_HEIGHT + (Number.isFinite(event.y) ? event.y : 0);
             const rightIndex = sorted.findIndex(point => point.year >= event.year);
@@ -255,10 +277,15 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
                 x1: eventX, x2: eventX, y1: tagY + TAG_HEIGHT, y2: y(eventValue),
                 class: 'chart-event-line'
             });
-            add(eventGroup, 'rect', { x: tagX, y: tagY, width: tagWidth, height: TAG_HEIGHT, class: 'chart-event-tag' });
-            add(eventGroup, 'text', { x: tagX + tagWidth / 2, y: tagY + TAG_HEIGHT - 6, class: 'chart-event-label' }, label);
+            const tag = add(eventGroup, 'rect', { y: tagY, height: TAG_HEIGHT, class: 'chart-event-tag' });
+            const text = add(eventGroup, 'text', { y: tagY + TAG_HEIGHT / 2, class: 'chart-event-label' }, label);
+            labelFontSize ??= parseFloat(getComputedStyle(text).fontSize);
+            const tagWidth = Math.max(TAG_MIN_WIDTH, label.length * CHAR_WIDTH * labelFontSize + TAG_PADDING);
+            const tagX = Math.max(margin.left, Math.min(eventX - tagWidth / 2, width - margin.right - tagWidth));
+            tag.setAttribute('x', tagX);
+            tag.setAttribute('width', tagWidth);
+            text.setAttribute('x', tagX + tagWidth / 2);
         });
-        plot.replaceChildren(svg);
     }
 
     // Build the button row and chart panels from the series, in key order.
