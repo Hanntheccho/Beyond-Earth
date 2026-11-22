@@ -61,8 +61,8 @@ button {
     box-shadow: none;
     background-color: var(--clr-background);
     font-family: var(--fnt);
-    margin: 4px;
-    padding: .5ch 1ch;
+    margin: .25ch;
+    padding: .5ch 0.75ch;
     font-size: var(--fnt-size-bttn);
     color: var(--clr-data);
     letter-spacing: var(--letter-spacing-02);
@@ -97,10 +97,12 @@ button:has(img) {
 
 .main-visibility-toggle,
 .options-toggle,
-.data-view-toggle {
+.data-view-toggle,
+.data-tabs {
     position: fixed;
     z-index: 1200;
     right: var(--px-10);
+    margin: 0;
 }
 .main-visibility-toggle {
     top: var(--px-10);
@@ -116,13 +118,13 @@ button:has(img) {
    column above, with a wider gap to separate them from the global controls.
    Shown only while the data view is open and the main content is visible. */
 .data-tabs {
-    position: fixed;
-    z-index: 1200;
-    top: calc(var(--px-10) * 3 + var(--btn-size) * 3 + var(--px-10));
-    right: var(--px-10);
+    top: calc(var(--px-10) * 4 + var(--btn-size) * 3);
     display: none;
     flex-direction: column;
-    gap: 2px; /* adds to the button margins for the space between buttons */
+    gap: var(--px-10);
+}
+.data-tabs > button {
+    margin: 0;
 }
 .app-header:has(.data-view-toggle[aria-pressed="true"]):has(.main-visibility-toggle[aria-expanded="true"]) .data-tabs {
     display: flex;
