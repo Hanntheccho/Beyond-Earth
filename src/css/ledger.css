@@ -10,7 +10,7 @@
 }
 .ledger-row {
     display: grid;
-    grid-template-columns: minmax(10ch, 1fr) 7ch minmax(10ch, auto) 10ch;
+    grid-template-columns: 1fr 7ch 10ch 10ch;
     align-items: center;
     gap: 1ch;
     min-height: 2lh;
@@ -20,7 +20,7 @@
    rather than on :has(.ledger-spark), which would be re-checked on every frame of the
    number tweens. */
 .ledger[data-ledger] .ledger-row {
-    grid-template-columns: minmax(10ch, 1fr) 6ch minmax(10ch, auto) 7ch 4ch;
+    grid-template-columns: 1fr 6ch 10ch 7ch 4ch;
 }
 
 .ledger-unit,
