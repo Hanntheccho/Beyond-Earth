@@ -92,7 +92,7 @@
 .data-status {
     display: grid;
     align-items: center;
-    min-height: 30px;
+    min-height: 2lh;
     margin-block: 0;
     border-top: var(--border);
     border-bottom: var(--border);
