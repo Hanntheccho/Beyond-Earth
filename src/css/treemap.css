@@ -44,8 +44,8 @@
     stroke-dasharray: var(--stroke-dasharray-4);
 }
 
-/* The value and change labels are darker shades of the tile color. They are mixed
-   with black instead of using filter: brightness(), which would put every label in
+/* The value and change labels are darker shades of the tile color. They are color-mixed
+   instead of using filter: brightness(), which would put every label in
    its own filter layer and redraw it on each frame of a tween. */
 .treemap-label { font-weight: bold; fill: var(--treemap-color); pointer-events: none; }
 .treemap-label-name { text-transform: uppercase; }

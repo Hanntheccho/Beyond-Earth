@@ -10,9 +10,6 @@
     margin: 0 auto;
     box-shadow: 0 0 600px var(--box-shadow-clr), 0 0 600px var(--box-shadow-clr);
     box-sizing: border-box;
-/*  max-height: 100vh;
-    overflow-y: scroll;
-    scrollbar-width: none; */
 }
 .div-main::before {
     position: absolute;
@@ -72,7 +69,6 @@
 .div-desc {
     margin: var(--px-20);
 }
-
 .div-desc-win {
     padding: var(--px-20);
     border: var(--border);
@@ -84,29 +80,12 @@
     overflow-y: auto;
     padding: 0;
 }
-
 .div-desc {
     padding: 0 var(--px-20);
     border: 0 solid var(--clr-border);
     border-left-width: var(--border-left);
     max-height: 666px;
     overflow-y: auto;
-}
-.div-desc.has-background {
-    position: relative;
-    isolation: isolate;
-}
-.div-desc.has-background::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: var(--desc-bg, var(--img-url));
-    background-position: center;
-    background-size: auto 90%;
-    background-repeat: no-repeat;
-    opacity: var(--opacity-10);
-    filter: var(--img-filter);
 }
 
 /* Status bar above a panel's content: the treemap panels, the options menu and the
