@@ -20,7 +20,7 @@
    rather than on :has(.ledger-spark), which would be re-checked on every frame of the
    number tweens. */
 .ledger[data-ledger] .ledger-row {
-    grid-template-columns: minmax(10ch, 1fr) 6ch minmax(10ch, auto) 7ch 2lh;
+    grid-template-columns: minmax(10ch, 1fr) 6ch minmax(10ch, auto) 7ch 4ch;
 }
 
 .ledger-unit,
@@ -34,8 +34,8 @@
 /* The sparkline: a faint area with its line on top, colored by the trend. */
 .ledger-spark {
     display: block;
-    width: 2lh;
-    height: 1lh;
+    width: 4ch;
+    height: 2ch;
     pointer-events: none;
     color: var(--clr-neutrale);
 }
