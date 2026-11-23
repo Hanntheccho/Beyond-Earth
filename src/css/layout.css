@@ -86,11 +86,11 @@
 }
 /* Shared faint-artwork rule in base.css; below the text, which is not positioned. */
 .div-desc-win.has-icon::before {
-    inset: var(--space-m);
+    inset: calc(var(--space-m) * 4);
     z-index: -1;
     background-image: var(--poi-icon);
     /* Proportional to the marker's size, capped at the panel's width. */
-    background-size: min(100%, calc(var(--poi-icon-size, 20) * 1%));
+    background-size: clamp(50%, calc(var(--poi-icon-size, 20) * 1%), 100%);
 }
 .div-desc {
     max-height: 666px;
