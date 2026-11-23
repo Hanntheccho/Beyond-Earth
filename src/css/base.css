@@ -43,7 +43,8 @@ body::after {
    background-image and background-size. */
 .chart-plot::before,
 .treemap::before,
-.loading-spinner::before {
+.loading-spinner::before,
+.div-desc-win.has-icon::before {
     content: "";
     position: absolute;
     inset: 0;

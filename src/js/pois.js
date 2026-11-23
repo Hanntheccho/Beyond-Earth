@@ -7,6 +7,8 @@
 // the panels are inserted right after it. The elements carry the same classes
 // loc.js already fills ("poiXXX" for the title, "poiXXX-desc" for the text), and
 // loc.js waits for them to be built (localizeAfter) before it localizes the page.
+// A panel whose id matches a globe marker (data/globe-markers.json) shows that marker's
+// icon as its background (the "has-icon" class and --poi-icon, styled in layout.css).
 import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
 
 (function () {
@@ -42,9 +44,33 @@ import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
         return button;
     }
 
-    function buildPanel(id, active, nestedIds) {
+    // Marker icons by id; a failed load only drops the backgrounds, not the POIs.
+    async function loadMarkerIcons() {
+        try {
+            const { default: markers } = await import('../../data/globe-markers.json', {
+                with: { type: 'json' },
+            });
+            const icons = new Map();
+            for (const marker of Array.isArray(markers) ? markers : []) {
+                if (typeof marker?.id === 'string' && typeof marker.icon === 'string' && marker.icon) {
+                    // Icons are resolved from src/js/, like globe-markers.js does.
+                    icons.set(marker.id, new URL(marker.icon, import.meta.url).href);
+                }
+            }
+            return icons;
+        } catch (error) {
+            console.error('Could not load globe marker icons for POI panels:', error);
+            return new Map();
+        }
+    }
+
+    function buildPanel(id, active, nestedIds, icon) {
         const panel = document.createElement('div');
         panel.className = 'div-desc-win';
+        if (icon) {
+            panel.classList.add('has-icon');
+            panel.style.setProperty('--poi-icon', `url("${icon}")`);
+        }
         panel.id = id;
         panel.dataset.panelGroup = POI_PANEL_GROUP;
         panel.hidden = !active;
@@ -62,7 +88,7 @@ import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
 
     localizeAfter((async function () {
         try {
-            const pois = await getLocalization();
+            const [pois, markerIcons] = await Promise.all([getLocalization(), loadMarkerIcons()]);
             const keys = Object.keys(pois);
             const ids = keys.filter(key => key.startsWith('poi') && !key.endsWith('-desc'));
 
@@ -76,7 +102,7 @@ import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
                     /^\d+$/.test(key.slice(nestedPrefix.length)) &&
                     Object.hasOwn(pois, `${key}-desc`));
                 buttons.push(buildButton(id, active));
-                panels.push(buildPanel(id, active, nestedIds));
+                panels.push(buildPanel(id, active, nestedIds, markerIcons.get(id)));
             });
 
             buttonHost.replaceChildren(...buttons);
