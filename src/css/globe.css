@@ -1,45 +1,48 @@
+
 /* globe.css - Globe preview, markers, sea-level control (see src/js/globe.js, globe-markers.js). */
 
 .globe-preview {
     position: fixed;
     inset: 0;
+    z-index: 0;
     isolation: isolate;
     overflow: hidden;
-    z-index: 0;
 }
-.globe-canvas {
+.globe-canvas,
+.globe-marker-layer {
     position: absolute;
     inset: 0;
+    transition: opacity 600ms ease;
+}
+.globe-canvas {
     z-index: 1;
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
     border: 0;
     cursor: grab;
     touch-action: none;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 600ms ease;
 }
-.globe-canvas.is-loaded {
-    opacity: 0.2;
-}
+.globe-canvas.is-loaded { opacity: 0.2; }
 .globe-canvas.is-emphasized {
     opacity: 1;
     pointer-events: auto;
 }
 .globe-canvas.dragging { cursor: grabbing; }
+
 .globe-marker-layer {
-    position: absolute;
-    inset: 0;
     z-index: 2;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 600ms ease;
 }
 .globe-canvas.is-emphasized + .globe-marker-layer { opacity: 1; }
 /* While the globe is grabbed the markers fade out; globe-markers.js repositions them on release. */
-.globe-canvas.dragging + .globe-marker-layer { opacity: 0; transition-duration: 120ms; }
+.globe-canvas.dragging + .globe-marker-layer {
+    opacity: 0;
+    transition-duration: 120ms;
+}
 .globe-marker {
     position: absolute;
     top: 0;
@@ -69,6 +72,7 @@
     transition: transform var(--transition-time) ease;
 }
 .globe-marker-layer.is-emphasized .globe-marker { pointer-events: auto; }
+
 .globe-marker::after {
     position: absolute;
     z-index: 1;
@@ -88,10 +92,9 @@
     pointer-events: none;
     transform: translate(-50%, 3px);
     transition: opacity 120ms ease, transform 120ms ease;
-    font: var(--fnt-size-bttn) var(--fnt);
+    font: bold var(--fnt-size-bttn) var(--fnt);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-01);
-    font-weight: bold;
 }
 .globe-marker:hover::after,
 .globe-marker:focus-visible::after {
@@ -105,13 +108,10 @@
     object-fit: contain;
     opacity: 0.2;
 }
-.globe-marker img:hover {
-    opacity: 1;
-}
+.globe-marker img:hover { opacity: 1; }
 .globe-marker:hover,
-.globe-marker:focus-visible {
-    z-index: 3;
-}
+.globe-marker:focus-visible { z-index: 3; }
+
 .globe-coordinates,
 .sea-level {
     position: absolute;
@@ -136,5 +136,8 @@
     transform: translateX(-50%);
 }
 .globe-canvas.is-emphasized ~ .sea-level { display: flex; }
-.sea-level input { width: 200px; accent-color: var(--clr-border); }
+.sea-level input {
+    width: 200px;
+    accent-color: var(--clr-border);
+}
 .sea-level-readout { min-width: 14ch; }

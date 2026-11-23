@@ -13,7 +13,8 @@
     --transition-time: 160ms;
     --transition-time-clr: 900ms;
     --transition-time-400: 400ms;
-    --opacity-10: .06;
+    --opacity-10: .1;
+    --fill-opacity-1: .06;
     --brightness-50: brightness(.5);
     --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
     --letter-spacing-01: .1em;
@@ -31,6 +32,7 @@
     --img-url: url("../../be-icon.svg");
     --img-url-alt: url("../../be-icon-alt.svg");
     --stroke-width-1: 1;
+    --stroke-dasharray-4: 4 4;
 }
 
 /* Tokens derived from the base colors. A custom property is worked out where it is

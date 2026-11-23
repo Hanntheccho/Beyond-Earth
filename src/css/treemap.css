@@ -34,14 +34,14 @@
 .treemap-tile:focus { outline: none; }
 .treemap-surface {
     fill: var(--treemap-color, var(--clr-neutrale));
-    fill-opacity: var(--opacity-10);
+    fill-opacity: var(--fill-opacity-1);
     stroke: var(--treemap-color, var(--clr-neutrale));
     stroke-width: var(--stroke-width-1);
 }
 /* Leaf tiles (the last children, with nothing to drill into) get a dashed outline;
    tiles that open into their children keep the solid one. treemap.js adds has-children. */
 .treemap-tile:not(.has-children) .treemap-surface {
-    stroke-dasharray: 4 3;
+    stroke-dasharray: var(--stroke-dasharray-4);
 }
 
 /* The value and change labels are darker shades of the tile color. They are mixed
@@ -49,6 +49,6 @@
    its own filter layer and redraw it on each frame of a tween. */
 .treemap-label { font-weight: bold; fill: var(--treemap-color); pointer-events: none; }
 .treemap-label-name { text-transform: uppercase; }
-.treemap-label-value { fill: color-mix(in srgb, var(--treemap-color) 40%, black); }
-.treemap-label-change { fill: color-mix(in srgb, var(--treemap-color) 60%, black); }
+.treemap-label-value { fill: color-mix(in srgb, var(--treemap-color) 40%, var(--clr)); }
+.treemap-label-change { fill: color-mix(in srgb, var(--treemap-color) 60%, var(--clr)); }
 

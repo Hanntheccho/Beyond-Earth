@@ -24,7 +24,7 @@
     box-sizing: border-box;
     background: var(--img-url) top center / 40px repeat;   /* anchor tiles to the top */
     content: "";
-    opacity: 0.6;
+    opacity: .6;
     -webkit-mask-image:
         linear-gradient(to bottom, #000 0, transparent calc(var(--max-width) / 3)),
         linear-gradient(to right, #000 0, transparent 85%),
