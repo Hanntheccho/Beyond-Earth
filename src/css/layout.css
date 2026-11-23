@@ -89,7 +89,8 @@
     inset: var(--space-m);
     z-index: -1;
     background-image: var(--poi-icon);
-    background-size: 60%;
+    /* Proportional to the marker's size, capped at the panel's width. */
+    background-size: min(100%, calc(var(--poi-icon-size, 20) * 1%));
 }
 .div-desc {
     max-height: 666px;

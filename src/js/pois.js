@@ -8,7 +8,8 @@
 // loc.js already fills ("poiXXX" for the title, "poiXXX-desc" for the text), and
 // loc.js waits for them to be built (localizeAfter) before it localizes the page.
 // A panel whose id matches a globe marker (data/globe-markers.json) shows that marker's
-// icon as its background (the "has-icon" class and --poi-icon, styled in layout.css).
+// icon as its background, scaled by the marker's size (the "has-icon" class, --poi-icon
+// and --poi-icon-size, styled in layout.css).
 import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
 
 (function () {
@@ -54,7 +55,10 @@ import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
             for (const marker of Array.isArray(markers) ? markers : []) {
                 if (typeof marker?.id === 'string' && typeof marker.icon === 'string' && marker.icon) {
                     // Icons are resolved from src/js/, like globe-markers.js does.
-                    icons.set(marker.id, new URL(marker.icon, import.meta.url).href);
+                    icons.set(marker.id, {
+                        url: new URL(marker.icon, import.meta.url).href,
+                        size: Number.isFinite(marker.size) && marker.size > 0 ? marker.size : null,
+                    });
                 }
             }
             return icons;
@@ -69,7 +73,9 @@ import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
         panel.className = 'div-desc-win';
         if (icon) {
             panel.classList.add('has-icon');
-            panel.style.setProperty('--poi-icon', `url("${icon}")`);
+            panel.style.setProperty('--poi-icon', `url("${icon.url}")`);
+            // Unitless marker size in px; layout.css turns it into a background size.
+            if (icon.size) panel.style.setProperty('--poi-icon-size', String(icon.size));
         }
         panel.id = id;
         panel.dataset.panelGroup = POI_PANEL_GROUP;

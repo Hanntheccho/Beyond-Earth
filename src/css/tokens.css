@@ -6,9 +6,9 @@
     --clr-body: white;
     --clr-background-transparency: 12%;
     /* Status hues. Each theme derives --clr-positive and the rest from these. */
-    --clr-positive-base: #00ff6a;
+    --clr-positive-base: #00ff00;
     --clr-negative-base: #ff0000;
-    --clr-neutrale-base: #a0a0a0;
+    --clr-neutrale-base: #808080;
     --clr-positive: var(--clr-positive-base);
     --clr-negative: var(--clr-negative-base);
     --clr-neutrale: var(--clr-neutrale-base);
