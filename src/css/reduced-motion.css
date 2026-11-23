@@ -1,17 +1,48 @@
 /* reduced-motion.css - Reduced motion overrides, from the OS setting (prefers-reduced-motion)
-   or the "Reduce motion" option (body.reduced-motion). Must load last. */
+   or the "Reduce motion" option (body.reduced-motion). Must load last.
+
+   The two blocks below hold the same overrides: a media query cannot share a selector
+   list with a class, so each list is written once per trigger. Keep them in sync.
+   :is() cannot take pseudo-elements, so the ::before and ::after art is listed apart. */
 
 @media (prefers-reduced-motion: reduce) {
-    .scroll-reveal-ready .scroll-reveal,
-    .scroll-reveal-ready .scroll-copy {
+    .scroll-reveal-ready :is(.scroll-reveal, .scroll-copy) {
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
     }
-    .div-desc-win,
-    .tooltip-popup,
+    :is(
+        .div-desc-win,
+        .tooltip-popup,
+        .globe-preview,
+        .globe-canvas,
+        .ticker,
+        .ticker-line,
+        .chart-plot .chart-reveal,
+        .chart-plot .chart-event-group,
+        .loading-spinner,
+        .loading-bar-fill,
+        button
+    ),
     body::before,
     body::after,
+    .loading-bar::after {
+        animation: none !important;
+        transition: none !important;
+        animation-delay: 0ms !important;
+    }
+    button:hover { transform: none; }
+}
+
+/* scroll-reveal-ready is set on <html>, so it sits above body here. */
+.scroll-reveal-ready body.reduced-motion :is(.scroll-reveal, .scroll-copy) {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+}
+body.reduced-motion :is(
+    .div-desc-win,
+    .tooltip-popup,
     .globe-preview,
     .globe-canvas,
     .ticker,
@@ -20,42 +51,13 @@
     .chart-plot .chart-event-group,
     .loading-spinner,
     .loading-bar-fill,
-    .loading-bar::after,
-    button {
-        animation: none !important;
-        transition: none !important;
-        animation-delay: 0ms !important;
-    }
-    button:hover {
-        transform: none;
-    }
-}
-
-/* scroll-reveal-ready is set on <html>, so it sits above body here. */
-.scroll-reveal-ready body.reduced-motion .scroll-reveal,
-.scroll-reveal-ready body.reduced-motion .scroll-copy {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-}
-body.reduced-motion .div-desc-win,
-body.reduced-motion .tooltip-popup,
+    button
+),
 body.reduced-motion::before,
 body.reduced-motion::after,
-body.reduced-motion .globe-preview,
-body.reduced-motion .globe-canvas,
-body.reduced-motion .ticker,
-body.reduced-motion .ticker-line,
-body.reduced-motion .chart-plot .chart-reveal,
-body.reduced-motion .chart-plot .chart-event-group,
-body.reduced-motion .loading-spinner,
-body.reduced-motion .loading-bar-fill,
-body.reduced-motion .loading-bar::after,
-body.reduced-motion button {
+body.reduced-motion .loading-bar::after {
     animation: none !important;
     transition: none !important;
     animation-delay: 0ms !important;
 }
-body.reduced-motion button:hover {
-    transform: none;
-}
+body.reduced-motion button:hover { transform: none; }

@@ -1,36 +1,36 @@
 /* layout.css - Page frame: .div-main, titles, panels, description blocks. */
 
 .div-main {
-    isolation: isolate;
     position: relative;
     z-index: 1;
-    padding-bottom: 40px;
+    isolation: isolate;
+    box-sizing: border-box;
     max-width: var(--max-width);
     min-height: 100vh;
     margin: 0 auto;
+    padding-bottom: 40px;
     box-shadow: 0 0 600px var(--box-shadow-clr), 0 0 600px var(--box-shadow-clr);
-    box-sizing: border-box;
 }
+/* Tiled art across the top of the page, anchored to the top. Its height follows the
+   page width, not the page length, and the mask fades it out downward and to the sides. */
 .div-main::before {
+    --div-main-mask:
+        linear-gradient(to bottom, #000 0, transparent calc(var(--max-width) / 3)),
+        linear-gradient(to right, #000 0, transparent 85%),
+        linear-gradient(to left, #000 0, transparent 85%);
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: calc(var(--max-width) / 3);   /* fixed: no longer follows page height */
     z-index: 0;
     box-sizing: border-box;
-    background: var(--img-url) top center / 40px repeat;   /* anchor tiles to the top */
-    content: "";
+    height: calc(var(--max-width) / 3);
+    background: var(--img-url) top center / 40px repeat;
     opacity: .6;
-    -webkit-mask-image:
-        linear-gradient(to bottom, #000 0, transparent calc(var(--max-width) / 3)),
-        linear-gradient(to right, #000 0, transparent 85%),
-        linear-gradient(to left, #000 0, transparent 85%);
+    -webkit-mask-image: var(--div-main-mask);
     -webkit-mask-composite: source-in;
-    mask-image:
-        linear-gradient(to bottom, #000 0, transparent calc(var(--max-width) / 3)),
-        linear-gradient(to right, #000 0, transparent 85%),
-        linear-gradient(to left, #000 0, transparent 85%);
+    mask-image: var(--div-main-mask);
     mask-composite: intersect;
     pointer-events: none;
     filter: var(--img-filter);
@@ -38,11 +38,10 @@
 .main-title {
     position: relative;
     z-index: 1;
-    margin: 0;
-    margin-bottom: calc(var(--px-20) * -1);
-    padding: 10px var(--px-20);
+    margin: 0 0 calc(var(--space-m) * -1);
+    padding: var(--space-s) var(--space-m);
     color: var(--clr-h1);
-    letter-spacing: calc(var(--letter-spacing-01) * 2);
+    letter-spacing: calc(var(--letter-spacing) * 2);
 }
 .back-title {
     position: fixed;
@@ -50,12 +49,12 @@
     left: 0;
     z-index: -2; /* behind the body's background art */
     width: 100%;
+    margin: 0 .2lh;
     color: var(--clr-h1);
-    opacity: var(--opacity-10);
+    opacity: var(--opacity-faint);
     font-size: calc(var(--fnt-size-h1) * 2);
     font-weight: bold;
-    letter-spacing: calc(var(--letter-spacing-01) * 4);
-    margin: 0 .2lh;
+    letter-spacing: calc(var(--letter-spacing) * 4);
     pointer-events: none;
 }
 .div-submain {
@@ -67,10 +66,10 @@
 
 .div-desc-win,
 .div-desc {
-    margin: var(--px-20);
+    margin: var(--space-m);
 }
 .div-desc-win {
-    padding: var(--px-20);
+    padding: var(--space-m);
     border: var(--border);
     border-left-width: var(--border-left);
 }
@@ -81,11 +80,11 @@
     padding: 0;
 }
 .div-desc {
-    padding: 0 var(--px-20);
-    border: 0 solid var(--clr-border);
-    border-left-width: var(--border-left);
     max-height: 666px;
     overflow-y: auto;
+    padding: 0 var(--space-m);
+    border: 0 solid var(--clr-border);
+    border-left-width: var(--border-left);
 }
 
 /* Status bar above a panel's content: the treemap panels, the options menu and the
@@ -99,7 +98,7 @@
     border-bottom: var(--border);
     color: var(--clr-data);
     font-size: var(--fnt-size-bttn);
-    letter-spacing: var(--letter-spacing-01);
+    letter-spacing: var(--letter-spacing);
     text-align: right;
 }
 

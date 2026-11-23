@@ -3,19 +3,21 @@
 #loading-screen {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: var(--z-loading-screen);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: var(--space-s);
     background: var(--clr-body-background);
     color: var(--clr-body);
     font-family: var(--fnt);
     font-size: var(--fnt-size-text);
-    letter-spacing: var(--letter-spacing-01);
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
-    transition: opacity var(--transition-time-400) ease, visibility var(--transition-time-400) ease;
+    transition:
+        opacity var(--transition-time-mid) ease,
+        visibility var(--transition-time-mid) ease;
 }
 #loading-screen.hidden {
     opacity: 0;
@@ -27,8 +29,8 @@
    sets --progress (0 to 1) as tasks finish, and the fill glides to it. */
 .loading-bar {
     position: relative;
-    width: 200px;
-    height: 4px;
+    width: var(--slider-width);
+    height: var(--track-height);
     overflow: hidden;
     background: var(--clr-border);
 }
@@ -38,7 +40,7 @@
     background: var(--clr-body);
     transform: scaleX(var(--progress, 0));
     transform-origin: left center;
-    transition: transform var(--transition-time-400) ease-out;
+    transition: transform var(--transition-time-mid) ease-out;
 }
 /* A faint light sweeps along the bar while it waits, so it never looks stuck. */
 .loading-bar::after {
@@ -65,18 +67,10 @@
     border-radius: 50%;
     animation: loading-spin 10s linear infinite;
 }
+/* Background art: the shared rule is in base.css. */
 .loading-spinner::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
     background-image: var(--img-url-alt);
-    background-position: center;
     background-size: 80%;
-    background-repeat: no-repeat;
-    opacity: var(--opacity-10);
-    filter: var(--img-filter);
 }
 @keyframes loading-spin {
     to { transform: rotate(360deg); }

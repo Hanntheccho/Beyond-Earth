@@ -15,7 +15,7 @@ import { observeVisibility } from './viewport-visibility.js';
 
     const SPEED = 50;      // marquee speed in px per second
     const DURATION = 700;  // number tween; keep well below the feed tick interval
-    const DIRECTIONS = ['positive', 'negative', 'neutrale'];
+    const DIRECTIONS = ['is-positive', 'is-negative', 'is-neutrale'];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
@@ -46,7 +46,7 @@ import { observeVisibility } from './viewport-visibility.js';
 
     function setDirection(entry, item) {
         const change = trendOf(item);
-        const direction = change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutrale');
+        const direction = change > 0 ? 'is-positive' : (change < 0 ? 'is-negative' : 'is-neutrale');
         if (entry.dir === direction) return;
         entry.dir = direction;
         entry.val.classList.remove(...DIRECTIONS);

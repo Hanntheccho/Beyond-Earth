@@ -5,8 +5,8 @@
 .ledger {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: 0 var(--space-m);
     font-size: var(--fnt-size-data);
-    gap: 0 var(--px-20);
 }
 .ledger-row {
     display: grid;
@@ -23,11 +23,13 @@
     grid-template-columns: minmax(10ch, 1fr) 6ch minmax(10ch, auto) 7ch 60px;
 }
 
-.ledger-unit { text-align: right; color: var(--clr-data); }
-.ledger-value { text-align: right; }
-.ledger-change { text-align: right; transition: color var(--transition-time-clr) ease; }
-.ledger-change.is-up { color: var(--clr-positive); }
-.ledger-change.is-down { color: var(--clr-negative); }
+.ledger-unit,
+.ledger-value,
+.ledger-change { text-align: right; }
+.ledger-unit { color: var(--clr-data); }
+.ledger-change { transition: color var(--transition-time-clr) ease; }
+.ledger-change.is-positive { color: var(--clr-positive); }
+.ledger-change.is-negative { color: var(--clr-negative); }
 
 /* The sparkline: a faint area with its line on top, colored by the trend. */
 .ledger-spark {
@@ -37,8 +39,8 @@
     pointer-events: none;
     color: var(--clr-neutrale);
 }
-.ledger-spark.is-up { color: var(--clr-positive); }
-.ledger-spark.is-down { color: var(--clr-negative); }
+.ledger-spark.is-positive { color: var(--clr-positive); }
+.ledger-spark.is-negative { color: var(--clr-negative); }
 .ledger-spark-area {
     fill: currentColor;
     fill-opacity: 0;
@@ -47,14 +49,21 @@
 .ledger-spark-line {
     fill: none;
     stroke: currentColor;
-    stroke-width: var(--stroke-width-1);
+    stroke-width: var(--stroke-width);
     vector-effect: non-scaling-stroke;
 }
 
 /* A row flashes when its direction flips (ledger.js adds .is-flashing). */
-@keyframes rowFlashUp { 0% { background: color-mix(in srgb, var(--clr-positive), transparent 98%); } 60% { background: color-mix(in srgb, var(--clr-positive), transparent 90%); } 100% { background: transparent; } }
-@keyframes rowFlashDown { 0% { background: color-mix(in srgb, var(--clr-negative), transparent 98%); } 60% { background: color-mix(in srgb, var(--clr-negative), transparent 90%); } 100% { background: transparent; } }
-
-.ledger-row.is-flashing.is-positive { animation: rowFlashUp var(--transition-time-400) ease-out; }
-.ledger-row.is-flashing.is-negative { animation: rowFlashDown var(--transition-time-400) ease-out; }
+@keyframes ledger-flash-positive {
+    0% { background: color-mix(in srgb, var(--clr-positive), transparent 98%); }
+    60% { background: color-mix(in srgb, var(--clr-positive), transparent 90%); }
+    100% { background: transparent; }
+}
+@keyframes ledger-flash-negative {
+    0% { background: color-mix(in srgb, var(--clr-negative), transparent 98%); }
+    60% { background: color-mix(in srgb, var(--clr-negative), transparent 90%); }
+    100% { background: transparent; }
+}
+.ledger-row.is-flashing.is-positive { animation: ledger-flash-positive var(--transition-time-mid) ease-out; }
+.ledger-row.is-flashing.is-negative { animation: ledger-flash-negative var(--transition-time-mid) ease-out; }
 

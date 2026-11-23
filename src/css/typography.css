@@ -11,14 +11,14 @@ cite {
 
 p {
     font-size: var(--fnt-size-text);
-    letter-spacing: var(--letter-spacing-01);
+    letter-spacing: var(--letter-spacing);
     line-height: 1.5;
     color: var(--clr-p);
     margin-block: 1em;
 }
 h1, h2, .ph1, .ph2, .ph3 {
     font-weight: bold;
-    letter-spacing: var(--letter-spacing-01);
+    letter-spacing: var(--letter-spacing);
     text-transform: uppercase;
 }
 

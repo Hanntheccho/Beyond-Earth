@@ -1,4 +1,5 @@
-/* base.css - Page base: the hidden attribute, body and its background art. */
+/* base.css - Page base: the hidden attribute, body, its background art, and the
+   faint artwork drawn behind panels. */
 
 /* The scripts hide panels, menus, markers and readouts with the hidden attribute.
    Without !important, a component's own display (flex, grid...) would win over it. */
@@ -7,13 +8,13 @@
 }
 
 body {
+    position: relative;
+    isolation: isolate;
+    min-width: var(--max-width);
     margin: 0;
     font-family: var(--fnt);
     color: var(--clr-body);
     background-color: var(--clr-body-background);
-    position: relative;
-    isolation: isolate;
-    min-width: var(--max-width);
 }
 body::before,
 body::after {
@@ -22,14 +23,34 @@ body::after {
     inset: 0;
     z-index: -1;
     pointer-events: none;
+    filter: var(--img-filter);
 }
 body::before {
     background: var(--img-url) center calc(50% - 30px) / 240px repeat;
-    opacity: 0.02;
-    filter: var(--img-filter);
+    opacity: .02;
 }
 body::after {
     background: var(--img-url) center calc(50% - 30px) / 160px repeat;
-    opacity: 0.01;
+    opacity: .01;
+}
+
+/* The icons are white; the light theme inverts them with the art. */
+.light-theme img {
+    filter: var(--img-filter);
+}
+
+/* Faint artwork centered behind a panel. Each component sets its own
+   background-image and background-size. */
+.chart-plot::before,
+.treemap::before,
+.loading-spinner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: var(--opacity-faint);
     filter: var(--img-filter);
 }

@@ -5,19 +5,25 @@
     --clr: black;
     --clr-body: white;
     --clr-background-transparency: 12%;
-    --clr-positive: #00ff6a;
-    --clr-negative: #ff0000;
-    --clr-neutrale: #a0a0a0;
+    /* Status hues. Each theme derives --clr-positive and the rest from these. */
+    --clr-positive-base: #00ff6a;
+    --clr-negative-base: #ff0000;
+    --clr-neutrale-base: #a0a0a0;
+    --clr-positive: var(--clr-positive-base);
+    --clr-negative: var(--clr-negative-base);
+    --clr-neutrale: var(--clr-neutrale-base);
     --max-width: 800px;
     --border-left: 12px;
+    --transition-time-quick: 120ms;
     --transition-time: 160ms;
+    --transition-time-mid: 400ms;
+    --transition-time-emphasis: 600ms;
     --transition-time-clr: 900ms;
-    --transition-time-400: 400ms;
-    --opacity-10: .1;
-    --fill-opacity-1: .06;
-    --brightness-50: brightness(.5);
+    --opacity-faint: .1;
+    --fill-opacity-faint: .06;
+    --filter-dim: brightness(.5);
     --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
-    --letter-spacing-01: .1em;
+    --letter-spacing: .1em;
     --fnt: 'Source Code Pro', monospace;
     --fnt-size-h1: calc(var(--fnt-size-text) + 12px);
     --fnt-size-h2: calc(var(--fnt-size-text) + 6px);
@@ -25,14 +31,28 @@
     --fnt-size-text: 14px;
     --fnt-size-bttn: calc(var(--fnt-size-text) - 2px);
     --fnt-size-data: calc(var(--fnt-size-text) - 4px);
-    --px-20: 20px;
-    --px-10: 10px;
+    --space-m: 20px;
+    --space-s: 10px;
+    --gap-m: 12px;
+    --gap-s: 8px;
     --btn-size: 74px;
+    /* One slot in the fixed column of header buttons: a button and the gap above it. */
+    --header-step: calc(var(--space-s) + var(--btn-size));
+    --track-height: 4px;
+    --slider-width: 200px;
     --img-filter: none; /* the light theme inverts the icons and background art */
     --img-url: url("../../be-icon.svg");
     --img-url-alt: url("../../be-icon-alt.svg");
-    --stroke-width-1: 1;
-    --stroke-dasharray-4: 4 4;
+    --stroke-width: 1;
+    --stroke-dasharray: 4 4;
+
+    /* Page-wide stacking order, lowest first. z-index values inside an element that
+       makes its own stacking context (isolation, a transform...) stay local. */
+    --z-ticker: 1000;
+    --z-tooltip: 1100;
+    --z-header: 1200;
+    --z-loading-screen: 2000;
+    --z-vfx: 3000;
 }
 
 /* Tokens derived from the base colors. A custom property is worked out where it is
@@ -52,8 +72,11 @@
     --clr-cite: var(--clr-body);
     --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
     --clr-background: color-mix(in srgb, var(--clr-body-background), transparent var(--clr-background-transparency));
-    --clr-color-mix-20: var(--clr-body) 20%;
-    --clr-color-mix-60: var(--clr-body) 60%;
+    /* Pressed buttons and open toggles. */
+    --clr-pressed-border: color-mix(in srgb, var(--clr-border), var(--clr-body) 60%);
+    --clr-pressed-background: color-mix(in srgb, var(--clr-background), var(--clr-body) 20%);
     --border: 2px solid var(--clr-border);
+    /* Floating readouts and menus: the options menu, globe readouts, marker labels. */
+    --border-thin: 1px solid var(--clr-border);
     --box-shadow: 0 0 16px var(--box-shadow-clr);
 }

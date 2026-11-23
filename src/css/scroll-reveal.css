@@ -12,7 +12,7 @@
 .scroll-reveal-ready .scroll-copy {
     opacity: 0;
     transform: translateY(6px);
-    transition: opacity 400ms ease, transform 400ms ease;
+    transition: opacity var(--transition-time-mid) ease, transform var(--transition-time-mid) ease;
 }
 .scroll-reveal-ready .scroll-reveal.is-inview .scroll-copy {
     opacity: 1;

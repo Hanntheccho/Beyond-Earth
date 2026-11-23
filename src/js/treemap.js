@@ -260,7 +260,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
 
         function setDirection(tile, item) {
             const change = trendOf(item);
-            const direction = Number.isFinite(change) ? (change > 0 ? 'up' : (change < 0 ? 'down' : 'neutral')) : 'neutral';
+            const direction = Number.isFinite(change) ? (change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutrale')) : 'neutrale';
             if (tile.group.dataset.direction !== direction) tile.group.dataset.direction = direction;
         }
 

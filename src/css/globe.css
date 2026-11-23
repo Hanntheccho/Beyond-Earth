@@ -11,7 +11,7 @@
 .globe-marker-layer {
     position: absolute;
     inset: 0;
-    transition: opacity 600ms ease;
+    transition: opacity var(--transition-time-emphasis) ease;
 }
 .globe-canvas {
     z-index: 1;
@@ -24,7 +24,7 @@
     opacity: 0;
     pointer-events: none;
 }
-.globe-canvas.is-loaded { opacity: 0.2; }
+.globe-canvas.is-loaded { opacity: .2; }
 .globe-canvas.is-emphasized {
     opacity: 1;
     pointer-events: auto;
@@ -40,7 +40,7 @@
 /* While the globe is grabbed the markers fade out; globe-markers.js repositions them on release. */
 .globe-canvas.dragging + .globe-marker-layer {
     opacity: 0;
-    transition-duration: 120ms;
+    transition-duration: var(--transition-time-quick);
 }
 .globe-marker {
     position: absolute;
@@ -78,22 +78,24 @@
     bottom: calc(100% + 8px);
     left: 50%;
     width: max-content;
-    padding: 5px 8px;
-    border: 1px solid var(--clr-border);
+    padding: 5px var(--gap-s);
+    border: var(--border-thin);
     background: var(--clr-background);
     box-shadow: var(--box-shadow);
     color: var(--clr-ph1);
     content: attr(data-label);
     text-align: center;
-    text-indent: var(--letter-spacing-01);
+    text-indent: var(--letter-spacing);
     white-space: normal;
     opacity: 0;
     pointer-events: none;
     transform: translate(-50%, 3px);
-    transition: opacity 120ms ease, transform 120ms ease;
+    transition:
+        opacity var(--transition-time-quick) ease,
+        transform var(--transition-time-quick) ease;
     font: bold var(--fnt-size-bttn) var(--fnt);
     text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-01);
+    letter-spacing: var(--letter-spacing);
 }
 .globe-marker:hover::after,
 .globe-marker:focus-visible::after {
@@ -105,7 +107,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    opacity: 0.2;
+    opacity: .2;
 }
 .globe-marker img:hover { opacity: 1; }
 .globe-marker:hover,
@@ -114,29 +116,26 @@
 .globe-coordinates,
 .sea-level {
     position: absolute;
-    bottom: var(--px-10);
+    bottom: var(--space-s);
     z-index: 3;
     padding: 6px 9px;
-    border: 1px solid var(--clr-border);
+    border: var(--border-thin);
     background: var(--clr-background);
     color: var(--clr-data);
     font-size: var(--fnt-size-data);
     box-shadow: var(--box-shadow);
 }
 .globe-coordinates {
-    left: var(--px-10);
+    left: var(--space-s);
     pointer-events: none;
 }
 .sea-level {
     left: 50%;
     display: none;
     align-items: center;
-    gap: 12px;
+    gap: var(--gap-m);
     transform: translateX(-50%);
 }
 .globe-canvas.is-emphasized ~ .sea-level { display: flex; }
-.sea-level input {
-    width: 200px;
-    accent-color: var(--clr-border);
-}
+.sea-level input { width: var(--slider-width); }
 .sea-level-readout { min-width: 14ch; }

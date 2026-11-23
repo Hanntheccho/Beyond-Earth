@@ -109,8 +109,8 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
                 change.textContent = changeFormatter.format(percentageChange);
                 change.setAttribute('aria-label', `${change.textContent} percent change since ${baselineYear}`);
                 const favorableChange = meta.trend === 'negative' ? -delta : delta;
-                change.classList.toggle('is-up', favorableChange >= 0);
-                change.classList.toggle('is-down', favorableChange < 0);
+                change.classList.toggle('is-positive', favorableChange >= 0);
+                change.classList.toggle('is-negative', favorableChange < 0);
             } else {
                 change.textContent = 'N/A';
                 change.setAttribute('aria-label', `Change since ${baselineYear} unavailable`);
@@ -151,7 +151,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         const negativeTrend = meta.trend === 'negative';
         const trendClassForChange = change => {
             const direction = negativeTrend ? -change : change;
-            return direction > 0 ? 'is-good' : direction < 0 ? 'is-bad' : 'is-flat';
+            return direction > 0 ? 'is-positive' : direction < 0 ? 'is-negative' : 'is-neutrale';
         };
         // Appends the green variant class when an event or era has `positive: true`.
         const positiveClass = item => (item.positive ? ' is-positive' : '');
@@ -249,7 +249,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             const current = sorted[segmentIndex];
             const pointTrendClass = previous && current
                 ? trendClassForChange(current.value - previous.value)
-                : 'is-flat';
+                : 'is-neutrale';
             const dot = add(seriesGroup, 'circle', {
                 cx: px, cy: py, class: `chart-series-point ${pointTrendClass}`
             });

@@ -1,53 +1,64 @@
 /* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
 
-.treemap-breadcrumbs { color: var(--clr-p); font-size: var(--fnt-size-bttn); }
+.treemap-breadcrumbs {
+    color: var(--clr-p);
+    font-size: var(--fnt-size-bttn);
+}
 .treemap-breadcrumbs button { margin-right: 4px; }
-.treemap { position: relative; width: 100%; }
+.treemap {
+    position: relative;
+    width: 100%;
+}
+/* Background art: the shared rule is in base.css. */
 .treemap::before {
-    position: absolute;
-    inset: 0;
-    background: var(--img-url-alt) center / 80% no-repeat;
-    content: '';
-    opacity: var(--opacity-10);
-    pointer-events: none;
-    filter: var(--img-filter);
+    background-image: var(--img-url-alt);
+    background-size: 80%;
 }
 /* treemap.js sizes the SVG to the host width in real pixels, so CSS does not scale it. */
-.treemap svg { position: relative; overflow: visible; display: block; }
+.treemap svg {
+    position: relative;
+    display: block;
+    overflow: visible;
+}
 
 /* Each tile's color follows its direction and fades over a feed tick. */
 @property --treemap-color {
-    syntax: '<color>';
+    syntax: "<color>";
     inherits: true;
+    /* Same hue as --clr-neutrale-base: @property cannot read a var(). */
     initial-value: #a0a0a0;
 }
 .treemap-tile {
     color: var(--treemap-color, var(--clr-neutrale));
     transition: --treemap-color var(--transition-time-clr) ease;
 }
-.treemap-tile[data-direction="up"] { --treemap-color: var(--clr-positive); }
-.treemap-tile[data-direction="down"] { --treemap-color: var(--clr-negative); }
-.treemap-tile[data-direction="neutral"] { --treemap-color: var(--clr-neutrale); }
+.treemap-tile[data-direction="positive"] { --treemap-color: var(--clr-positive); }
+.treemap-tile[data-direction="negative"] { --treemap-color: var(--clr-negative); }
+.treemap-tile[data-direction="neutrale"] { --treemap-color: var(--clr-neutrale); }
 .treemap-tile.has-children { cursor: pointer; }
 .treemap-tile:hover,
-.treemap-tile:focus-visible { filter: var(--brightness-50); }
+.treemap-tile:focus-visible { filter: var(--filter-dim); }
 .treemap-tile:focus { outline: none; }
 .treemap-surface {
     fill: var(--treemap-color, var(--clr-neutrale));
-    fill-opacity: var(--fill-opacity-1);
+    fill-opacity: var(--fill-opacity-faint);
     stroke: var(--treemap-color, var(--clr-neutrale));
-    stroke-width: var(--stroke-width-1);
+    stroke-width: var(--stroke-width);
 }
 /* Leaf tiles (the last children, with nothing to drill into) get a dashed outline;
    tiles that open into their children keep the solid one. treemap.js adds has-children. */
 .treemap-tile:not(.has-children) .treemap-surface {
-    stroke-dasharray: var(--stroke-dasharray-4);
+    stroke-dasharray: var(--stroke-dasharray);
 }
 
 /* The value and change labels are darker shades of the tile color. They are color-mixed
    instead of using filter: brightness(), which would put every label in
    its own filter layer and redraw it on each frame of a tween. */
-.treemap-label { font-weight: bold; fill: var(--treemap-color); pointer-events: none; }
+.treemap-label {
+    font-weight: bold;
+    fill: var(--treemap-color);
+    pointer-events: none;
+}
 .treemap-label-name { text-transform: uppercase; }
 .treemap-label-value { fill: color-mix(in srgb, var(--treemap-color) 40%, var(--clr)); }
 .treemap-label-change { fill: color-mix(in srgb, var(--treemap-color) 60%, var(--clr)); }
