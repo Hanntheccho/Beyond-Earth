@@ -39,6 +39,7 @@
     overflow: visible;
     pointer-events: none;
     color: var(--clr-neutrale);
+    transition: color var(--transition-time-clr) ease;
 }
 .ledger-spark.is-positive { color: var(--clr-positive); }
 .ledger-spark.is-negative { color: var(--clr-negative); }

@@ -36,6 +36,7 @@
     overflow: visible;
     pointer-events: none;
     color: var(--clr-neutrale);
+    transition: color var(--transition-time-clr) ease;
 }
 .ticker-spark.is-positive { color: var(--clr-positive); }
 .ticker-spark.is-negative { color: var(--clr-negative); }

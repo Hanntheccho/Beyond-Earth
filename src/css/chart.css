@@ -52,8 +52,12 @@
     fill-opacity: var(--fill-opacity-faint);
 }
 .chart-plot text.chart-era-label {
-    fill: color-mix(in srgb, var(--clr-negative) 80%, transparent);
+    fill: var(--clr-negative);
     text-transform: uppercase;
+}
+.chart-plot .chart-era-boundary,
+.chart-plot text.chart-era-label {
+    opacity: .5;
 }
 
 /* Each segment's trend class sets its color; the area and line paint with it. */
@@ -97,7 +101,7 @@
     stroke: var(--clr-positive);
 }
 .chart-plot text.chart-era-label.is-positive {
-    fill: color-mix(in srgb, var(--clr-positive) 80%, transparent);
+    fill: var(--clr-positive);
 }
 .chart-plot .chart-event-group.is-positive .chart-event-tag {
     fill: color-mix(in srgb, var(--clr-positive) 20%, var(--clr));
