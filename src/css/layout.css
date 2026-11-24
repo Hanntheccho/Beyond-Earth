@@ -8,7 +8,7 @@
     max-width: var(--max-width);
     min-height: 100vh;
     margin: 0 auto;
-    padding-bottom: 40px;
+    padding-bottom: calc(var(--fnt-size-bttn) * 2);
     box-shadow: 0 0 600px var(--box-shadow-clr), 0 0 600px var(--box-shadow-clr);
 }
 /* Tiled art across the top of the page, anchored to the top. Its height follows the

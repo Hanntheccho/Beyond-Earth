@@ -36,6 +36,7 @@
     display: block;
     width: 4ch;
     height: 2ch;
+    overflow: visible;
     pointer-events: none;
     color: var(--clr-neutrale);
 }

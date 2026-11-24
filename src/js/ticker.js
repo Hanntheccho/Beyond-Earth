@@ -2,9 +2,12 @@
 // percent values are tweened between ticks. The marquee is driven in JS at a constant
 // px/s, so changes in text width never make it jump. It pauses while the ticker is
 // off screen or hidden (for example while the globe is explored on its own).
+// Each item ends with a sparkline of its recent history (sparkline.js), redrawn once
+// per feed tick; the frame loop only moves the line.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
+import { createSparkline, updateSparkline } from './sparkline.js';
 
 (function () {
     const ticker = document.querySelector('.ticker-txt');
@@ -63,13 +66,16 @@ import { observeVisibility } from './viewport-visibility.js';
             wrapper.className = 'ticker-item';
             const val = document.createElement('span');
             val.className = 'ticker-val';
-            wrapper.append(val, ` ${item.name}`);
+            // Same order as the ledger rows: name, change, sparkline.
+            wrapper.append(`${item.name} `, val);
+            const spark = createSparkline(wrapper, 'ticker-spark');
             ticker.append(wrapper);
 
             const pct = trendOf(item);
-            const entry = { val, cur: pct, from: pct, to: pct, t0: 0, done: true, dir: null, text: '' };
+            const entry = { val, spark, cur: pct, from: pct, to: pct, t0: 0, done: true, dir: null, text: '' };
             paint(entry);
             setDirection(entry, item);
+            updateSparkline(spark, item.history, pct >= 0);
             items.set(keyOf(item), entry);
         });
         lineWidth = line.offsetWidth;
@@ -126,6 +132,7 @@ import { observeVisibility } from './viewport-visibility.js';
             entry.t0 = now;
             entry.done = false;
             setDirection(entry, item);
+            updateSparkline(entry.spark, item.history, entry.to >= 0);
         });
         startLoop();
     }

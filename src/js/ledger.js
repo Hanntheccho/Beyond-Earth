@@ -7,7 +7,7 @@
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
-import { appendSvg as add } from './svg.js';
+import { createSparkline, updateSparkline } from './sparkline.js';
 
 (function () {
     const valueFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -20,28 +20,6 @@ import { appendSvg as add } from './svg.js';
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
     const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
-    // Sparkline viewBox; CSS stretches it to its column. SPARK_TOP_GAP
-    // keeps the peak off the box's top edge.
-    const SPARK_WIDTH = 100;
-    const SPARK_HEIGHT = 30;
-    const SPARK_TOP_GAP = 4;
-
-    // Line points for a history, scaled to fill a width x height box from the bottom up,
-    // leaving topGap free above the peak.
-    function linePoints(history, width, height, topGap) {
-        if (!Array.isArray(history) || history.length < 2) return '';
-        const min = Math.min(...history);
-        const range = Math.max(...history) - min || 1;
-        const step = width / (history.length - 1);
-        return history.map((value, index) =>
-            `${(index * step).toFixed(1)},${(height - (value - min) / range * (height - topGap)).toFixed(1)}`
-        ).join(' ');
-    }
-
-    // The area under a line: the line closed down to the bottom corners of its box.
-    function areaPoints(points, width, height) {
-        return points ? `${points} ${width},${height} 0,${height}` : '';
-    }
 
     function renderLedger(host) {
         const feedId = host.dataset.ledger;
@@ -69,21 +47,11 @@ import { appendSvg as add } from './svg.js';
             cell('ledger-unit', item.unit || '');
             const valueEl = cell('ledger-value');
             const changeEl = cell('ledger-change');
-            // The sparkline is the last column: a faint area under the history, with
-            // its line on top.
-            const spark = add(row, 'svg', {
-                class: 'ledger-spark',
-                viewBox: `0 0 ${SPARK_WIDTH} ${SPARK_HEIGHT}`,
-                preserveAspectRatio: 'none',
-                'aria-hidden': 'true'
-            });
-            const sparkArea = add(spark, 'polygon', { class: 'ledger-spark-area' });
-            const sparkLine = add(spark, 'polyline', { class: 'ledger-spark-line' });
+            // The sparkline is the last column (sparkline.js).
+            const spark = createSparkline(row, 'ledger-spark');
             return {
                 row,
                 spark,
-                sparkArea,
-                sparkLine,
                 valueEl,
                 changeEl,
                 cur: null,
@@ -166,12 +134,8 @@ import { appendSvg as add } from './svg.js';
                 entry.from = { ...entry.cur };
                 entry.to = { value: item.value, pct: trendOf(item) };
                 entry.t0 = now;
-                const points = linePoints(item.history, SPARK_WIDTH, SPARK_HEIGHT, SPARK_TOP_GAP);
-                entry.sparkLine.setAttribute('points', points);
-                entry.sparkArea.setAttribute('points', areaPoints(points, SPARK_WIDTH, SPARK_HEIGHT));
                 const up = trendOf(item) >= 0;
-                entry.spark.classList.toggle('is-positive', up);
-                entry.spark.classList.toggle('is-negative', !up);
+                updateSparkline(entry.spark, item.history, up);
                 const newDir = up ? 'up' : 'down';
                 const prevDir = entry.row.dataset.direction;
                 entry.changeEl.classList.toggle('is-positive', up);
