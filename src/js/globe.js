@@ -2,6 +2,8 @@ import { motionPreference } from './motion.js';
 import { DEG_R, makeProgram, decodeElevation } from './globe-gl.js';
 import { MESH_VS, MESH_FS } from './globe-shaders.js';
 import { createGlobeMarkers } from './globe-markers.js';
+import { getPois } from './poi-data.js';
+import { getLocalization } from './loc.js';
 import { holdLoadingScreen } from './loading-screen.js';
 /*
  * Interactive Earth sea-level globe renderer.
@@ -482,13 +484,24 @@ function main() {
   // ---------------------------------------------------------- markers, terrain
   (async () => {
     try {
-      const { default: definitions } = await import('../../data/globe-markers.json', {
-        with: { type: 'json' },
-      });
-      markers.add(definitions);
+      // POIs with a globe block get a marker, labeled with their localized name. Without
+      // the localization the markers still show, labeled with their ids.
+      const [pois, localization] = await Promise.all([
+        getPois(),
+        getLocalization().catch((err) => {
+          console.warn('Globe markers are labeled with POI ids: the localization did not load.', err);
+          return {};
+        }),
+      ]);
+      markers.add(pois.filter((poi) => poi.globe).map((poi) => ({
+        id: poi.id,
+        label: typeof localization[poi.id] === 'string' ? localization[poi.id] : poi.id,
+        icon: poi.icon,
+        ...poi.globe,
+      })));
       dirty = true;
     } catch (err) {
-      console.error('Failed to load globe marker data.', err);
+      console.error('Failed to load the POI data for the globe markers.', err);
     }
   })();
 

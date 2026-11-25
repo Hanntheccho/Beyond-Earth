@@ -2,7 +2,7 @@
 // Project sanity checks. Put this file in tools/ and run it from anywhere:
 //
 //   node tools/validate.mjs          errors and warnings
-//   node tools/validate.mjs --info   also lists POI stubs and marker/panel links
+//   node tools/validate.mjs --info   also lists POI stubs and which POIs have globe markers
 //
 // Errors are things that break the page and make the exit code 1. Warnings are
 // suspicious but not fatal. Needs Node 20.10 or newer (for the JSON import syntax),
@@ -164,98 +164,141 @@ function checkLocalization() {
 
 // ------------------------------------------------------------------------ POIs
 
-function checkPois(loc) {
-    const keys = Object.keys(loc);
-    // Same rule as pois.js: top-level POIs start with "poi" and do not end in "-desc".
-    const topLevel = keys.filter(k => k.startsWith('poi') && !k.endsWith('-desc'));
-    const topSet = new Set(topLevel);
+// Same rules as src/js/poi-data.js, which logs and drops a bad field (or the whole entry,
+// for a bad id), so a problem that loses a button, panel or marker is an error here.
+const POI_FIELDS = new Set(['id', 'icon', 'background', 'children', 'globe']);
 
-    topLevel.forEach(id => {
-        if (typeof loc[`${id}-desc`] !== 'string') error('pois', `"${id}" has no "${id}-desc"`);
+function checkPois(loc) {
+    const rel = 'data/pois.json';
+    const hasText = key => typeof loc[key] === 'string';
+    const list = readJson(rel);
+    if (list && !Array.isArray(list)) error('pois', `${rel} must contain an array`);
+
+    const ids = new Set();
+    const shown = [];
+    const parentOf = new Map();
+    const withMarker = [];
+    const withoutMarker = [];
+    (Array.isArray(list) ? list : []).forEach((entry, index) => {
+        if (!entry || typeof entry !== 'object' || typeof entry.id !== 'string' || !entry.id) {
+            error('pois', `${rel} entry #${index} has no id, so it is skipped`);
+            return;
+        }
+        const { id } = entry;
+        const where = `POI "${id}"`;
+        if (ids.has(id)) {
+            error('pois', `${where} appears more than once in ${rel}; only the first is used`);
+            return;
+        }
+        ids.add(id);
+
+        const unknown = Object.keys(entry).filter(field => !POI_FIELDS.has(field));
+        if (unknown.length) warn('pois', `${where}: unknown field(s) ${unknown.join(', ')} are ignored`);
+
+        if (!hasText(id)) {
+            warn('pois', `${where} has no "${id}" localization, so it gets no button or panel${entry.globe !== undefined ? ' and its globe marker is labeled with its id' : ''}`);
+        } else {
+            shown.push(id);
+            if (!hasText(`${id}-desc`)) error('pois', `${where} has no "${id}-desc", so its panel is empty`);
+        }
+
+        const hasIcon = typeof entry.icon === 'string' && entry.icon.length > 0;
+        if (entry.icon !== undefined && !hasIcon) {
+            error('pois', `${where}: "icon" must be a non-empty path`);
+        } else if (hasIcon && !exists(path.resolve(ROOT, stripQuery(entry.icon)))) {
+            // poi-data.js resolves icons against the project root.
+            error('pois', `${where}: icon "${entry.icon}" not found (resolved from the project root)`);
+        }
+
+        if (entry.background !== undefined) {
+            const background = entry.background;
+            if (!background || typeof background !== 'object' || Array.isArray(background)) {
+                error('pois', `${where}: "background" must be an object, so its panel has no background`);
+            } else {
+                if (!Number.isFinite(background.size) || background.size <= 0 || background.size > 100) {
+                    error('pois', `${where}: background size must be a percentage above 0 and at most 100, so its panel has no background`);
+                }
+                if (!hasIcon) error('pois', `${where}: a background needs an icon, so its panel has no background`);
+            }
+        }
+
+        if (entry.children !== undefined) {
+            if (!Array.isArray(entry.children)) {
+                error('pois', `${where}: "children" must be an array of ids, so it has no nested POIs`);
+            } else {
+                entry.children.forEach(child => {
+                    if (typeof child !== 'string' || !child) {
+                        error('pois', `${where}: a child id is not a non-empty string and is skipped`);
+                        return;
+                    }
+                    if (parentOf.has(child)) warn('pois', `"${child}" is a child of both "${parentOf.get(child)}" and "${id}"`);
+                    else parentOf.set(child, id);
+                    if (!hasText(`${child}-desc`)) {
+                        warn('pois', `${where}: child "${child}" has no "${child}-desc", so pois.js skips it`);
+                    } else if (!hasText(child)) {
+                        error('pois', `${where}: child "${child}" has no "${child}" localization, so its button has no label`);
+                    }
+                });
+            }
+        }
+
+        if (entry.globe === undefined) {
+            withoutMarker.push(id);
+            return;
+        }
+        const globe = entry.globe;
+        if (!globe || typeof globe !== 'object' || Array.isArray(globe)) {
+            error('pois', `${where}: "globe" must be an object, so it has no globe marker`);
+            return;
+        }
+        const number = (field, ok, rule) => {
+            if (!Number.isFinite(globe[field]) || !ok(globe[field])) error('pois', `${where}: globe ${field} ${rule}, so it has no globe marker`);
+        };
+        number('lat', v => v >= -90 && v <= 90, 'must be a number from -90 to 90');
+        number('lon', v => v >= -180 && v <= 180, 'must be a number from -180 to 180');
+        number('altitudeKm', v => v >= 0 && v <= 100000, 'must be a number from 0 to 100000');
+        number('size', v => v > 0 && v <= 256, 'must be above 0 and at most 256');
+        if (!hasIcon) error('pois', `${where}: a globe marker needs an icon, so it has no globe marker`);
+        withMarker.push(id);
     });
 
-    keys.filter(k => k.endsWith('-desc')).forEach(descKey => {
+    parentOf.forEach((parent, child) => {
+        if (ids.has(child)) warn('pois', `"${child}" is both a POI of its own and a child of "${parent}"`);
+    });
+
+    // Nested POI ids are their parent's id plus a number ("poiFRA" -> "poiFRA001").
+    const isNestedId = (key, parent) => key.startsWith(parent) && /^\d+$/.test(key.slice(parent.length));
+    ids.forEach(id => {
+        if (!id.startsWith('poi')) warn('pois', `POI "${id}" does not start with "poi" like the other ids`);
+    });
+    parentOf.forEach((parent, child) => {
+        if (!isNestedId(child, parent)) warn('pois', `child "${child}" of "${parent}" is not named "${parent}" plus a number`);
+    });
+
+    // Localized names that look like POIs but that no entry in data/pois.json uses.
+    Object.keys(loc).filter(key => key.startsWith('poi') && !key.endsWith('-desc')).forEach(key => {
+        if (ids.has(key) || parentOf.has(key)) return;
+        const parent = [...ids].find(id => isNestedId(key, id));
+        if (parent) {
+            warn('pois', `"${key}" is localized but not in the "children" of "${parent}" in ${rel}, so it never appears`);
+        } else {
+            warn('pois', `"${key}" is localized but not in ${rel}, so it never appears`);
+        }
+    });
+
+    Object.keys(loc).filter(k => k.endsWith('-desc')).forEach(descKey => {
         const base = descKey.slice(0, -5);
         const text = loc[descKey];
         if (typeof text !== 'string') return;
-        const isPoiKey = /^(?:poi|[A-Za-z0-9]+poi\d+$)/.test(base);
+        const isPoiKey = ids.has(base) || parentOf.has(base) || base.startsWith('poi');
         if ((isPoiKey || text.includes('{{title}}')) && typeof loc[base] !== 'string') {
             error('pois', `"${descKey}" has no matching title key "${base}"`);
         }
     });
 
-    // Nested POIs like FRApoi001 become tooltip buttons inside poiFRA's panel.
-    const nested = new Map();
-    keys.forEach(key => {
-        const match = /^([A-Za-z0-9]+)poi(\d+)$/.exec(key);
-        if (!match) return;
-        if (!nested.has(match[1])) nested.set(match[1], []);
-        nested.get(match[1]).push({ key, n: Number(match[2]) });
-    });
-    nested.forEach((items, prefix) => {
-        if (!topSet.has(`poi${prefix}`)) {
-            error('pois', `${items.length} nested POI(s) use the prefix "${prefix}" but "poi${prefix}" does not exist, so they never appear`);
-        }
-        const numbers = items.map(item => item.n).sort((a, b) => a - b);
-        const gaps = numbers.filter((n, i) => n !== i + 1);
-        if (gaps.length) warn('pois', `${prefix}poiNNN numbering is not 001, 002, 003... (found ${numbers.join(', ')})`);
-        items.forEach(({ key }) => {
-            if (typeof loc[`${key}-desc`] !== 'string') warn('pois', `"${key}" has no "${key}-desc", so pois.js skips it`);
-        });
-    });
-
-    const stubs = topLevel.filter(id => typeof loc[`${id}-desc`] === 'string' && !loc[`${id}-desc`].includes('<p'));
-    if (stubs.length) info('pois', `${stubs.length} of ${topLevel.length} panels are still stubs (title only): ${stubs.join(', ')}`);
-
-    return topSet;
-}
-
-// --------------------------------------------------------------------- markers
-
-function checkMarkers(poiIds) {
-    // globe-markers.js throws on the first invalid marker and then shows none at all,
-    // so every problem here is an error.
-    const markers = readJson('data/globe-markers.json');
-    if (!markers) return;
-    if (!Array.isArray(markers)) {
-        error('markers', 'data/globe-markers.json must contain an array');
-        return;
-    }
-
-    const ids = new Set();
-    const withPanel = [];
-    const withoutPanel = [];
-    markers.forEach((marker, index) => {
-        if (!marker || typeof marker.id !== 'string' || !marker.id) {
-            error('markers', `marker #${index} has no id`);
-            return;
-        }
-        const where = `marker "${marker.id}"`;
-        if (ids.has(marker.id)) error('markers', `${where}: duplicate id`);
-        ids.add(marker.id);
-
-        if (typeof marker.label !== 'string' || !marker.label) error('markers', `${where}: missing label`);
-        if (typeof marker.icon !== 'string' || !marker.icon) {
-            error('markers', `${where}: missing icon`);
-        } else if (!exists(path.resolve(abs('src/js'), marker.icon))) {
-            // globe-markers.js resolves icons against its own location, src/js/.
-            error('markers', `${where}: icon "${marker.icon}" not found (resolved from src/js/)`);
-        }
-
-        const number = (field, ok, rule) => {
-            if (!Number.isFinite(marker[field]) || !ok(marker[field])) error('markers', `${where}: ${field} ${rule}`);
-        };
-        number('lon', v => v >= -180 && v <= 180, 'must be a number from -180 to 180');
-        number('lat', v => v >= -90 && v <= 90, 'must be a number from -90 to 90');
-        number('altitudeKm', v => v >= 0 && v <= 100000, 'must be a number from 0 to 100000');
-        number('size', v => v > 0 && v <= 256, 'must be above 0 and at most 256');
-
-        (poiIds.has(marker.id) ? withPanel : withoutPanel).push(marker.id);
-    });
-
-    info('markers', `${withPanel.length} marker(s) open a panel; no panel for: ${withoutPanel.join(', ') || 'none'}`);
-    const unmarked = [...poiIds].filter(id => !ids.has(id));
-    info('markers', `panels without a globe marker: ${unmarked.join(', ') || 'none'}`);
+    const stubs = shown.filter(id => hasText(`${id}-desc`) && !loc[`${id}-desc`].includes('<p'));
+    if (stubs.length) info('pois', `${stubs.length} of ${shown.length} panels are still stubs (title only): ${stubs.join(', ')}`);
+    info('pois', `${withMarker.length} POI(s) have a globe marker; none for: ${withoutMarker.join(', ') || 'none'}`);
 }
 
 // -------------------------------------------------------------------- treemaps
@@ -767,7 +810,7 @@ function checkModules() {
                 });
         }
 
-        // Dynamic imports of local files (the globe's marker JSON, for example).
+        // Dynamic imports of local files (the POI JSON, for example).
         for (const match of code.matchAll(/\bimport\(\s*['"](\.[^'"]+)['"]/g)) {
             if (!exists(path.resolve(dir, match[1]))) error('modules', `${rel} dynamically imports "${match[1]}" which does not exist`);
         }
@@ -781,8 +824,7 @@ function checkModules() {
 // ------------------------------------------------------------------------ main
 
 const loc = checkLocalization();
-const poiIds = checkPois(loc);
-checkMarkers(poiIds);
+checkPois(loc);
 const html = checkHtmlAndAssets(loc);
 checkStylesheets(html);
 checkTreemaps(html);

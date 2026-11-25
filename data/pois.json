@@ -1,0 +1,236 @@
+[
+  {
+    "id": "poiBE",
+    "icon": "be-icon.svg",
+    "background": { "size": 80 },
+    "globe": { "lat": 30, "lon": 70, "altitudeKm": 2000, "size": 50 }
+  },
+  {
+    "id": "poiMIT",
+    "icon": "assets/mit.svg",
+    "background": { "size": 50 },
+    "globe": { "lat": 49, "lon": 12, "altitudeKm": 100, "size": 20 }
+  },
+  {
+    "id": "poiPAPA",
+    "icon": "assets/papa.svg",
+    "background": { "size": 50 },
+    "globe": { "lat": 44, "lon": 5, "altitudeKm": 100, "size": 20 }
+  },
+  {
+    "id": "poiIII",
+    "icon": "assets/III.svg",
+    "background": { "size": 50 },
+    "globe": { "lat": 51, "lon": 2, "altitudeKm": 100, "size": 20 }
+  },
+  {
+    "id": "poiWCRB",
+    "icon": "assets/WCRB.svg",
+    "background": { "size": 50 },
+    "globe": { "lat": 47, "lon": 8, "altitudeKm": 4000, "size": 30 }
+  },
+  {
+    "id": "poiGPGP",
+    "icon": "assets/GPGP.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiGPGP001", "poiGPGP002", "poiGPGP003"
+    ],
+    "globe": { "lat": 25, "lon": -140, "altitudeKm": 10, "size": 80 }
+  },
+  {
+    "id": "poiFRA",
+    "icon": "assets/FRA.svg",
+    "background": { "size": 70 },
+    "children": [
+      "poiFRA001", "poiFRA002", "poiFRA003", "poiFRA004", "poiFRA005", "poiFRA006",
+      "poiFRA007", "poiFRA008", "poiFRA009", "poiFRA010", "poiFRA011", "poiFRA012",
+      "poiFRA013"
+    ],
+    "globe": { "lat": 41, "lon": -5, "altitudeKm": 200, "size": 50 }
+  },
+  {
+    "id": "poiGER",
+    "icon": "assets/GER.svg",
+    "background": { "size": 70 },
+    "children": [
+      "poiGER001", "poiGER002", "poiGER003", "poiGER004", "poiGER005", "poiGER006",
+      "poiGER007", "poiGER008", "poiGER009", "poiGER010", "poiGER011", "poiGER012",
+      "poiGER013"
+    ],
+    "globe": { "lat": 54, "lon": 18, "altitudeKm": 200, "size": 50 }
+  },
+  {
+    "id": "poiNAU",
+    "icon": "assets/NAU.svg",
+    "background": { "size": 100 },
+    "children": [
+      "poiNAU001", "poiNAU002", "poiNAU003", "poiNAU004", "poiNAU005", "poiNAU006",
+      "poiNAU007", "poiNAU008", "poiNAU009", "poiNAU010", "poiNAU011", "poiNAU012",
+      "poiNAU013", "poiNAU014", "poiNAU015", "poiNAU016", "poiNAU017", "poiNAU018",
+      "poiNAU019", "poiNAU020", "poiNAU021", "poiNAU022", "poiNAU023", "poiNAU024",
+      "poiNAU025", "poiNAU026", "poiNAU027", "poiNAU028", "poiNAU029", "poiNAU030",
+      "poiNAU031", "poiNAU032"
+    ],
+    "globe": { "lat": 45, "lon": -100, "altitudeKm": 400, "size": 90 }
+  },
+  {
+    "id": "poiBRA",
+    "icon": "assets/BRA.svg",
+    "background": { "size": 80 },
+    "children": [
+      "poiBRA001", "poiBRA002", "poiBRA003", "poiBRA004", "poiBRA005", "poiBRA006",
+      "poiBRA007", "poiBRA008", "poiBRA009", "poiBRA010", "poiBRA011", "poiBRA012",
+      "poiBRA013", "poiBRA014"
+    ],
+    "globe": { "lat": -20, "lon": -51, "altitudeKm": 200, "size": 60 }
+  },
+  {
+    "id": "poiSLA",
+    "icon": "assets/SLA.svg",
+    "background": { "size": 80 },
+    "children": [
+      "poiSLA001", "poiSLA002", "poiSLA003", "poiSLA004", "poiSLA005", "poiSLA006",
+      "poiSLA007", "poiSLA008", "poiSLA009", "poiSLA010", "poiSLA011", "poiSLA012",
+      "poiSLA013", "poiSLA014", "poiSLA015", "poiSLA016", "poiSLA017", "poiSLA018"
+    ],
+    "globe": { "lat": 56, "lon": 39, "altitudeKm": 300, "size": 50 }
+  },
+  {
+    "id": "poiARC",
+    "icon": "assets/ARC.svg",
+    "background": { "size": 80 },
+    "children": [
+      "poiARC001", "poiARC002", "poiARC003", "poiARC004", "poiARC005"
+    ],
+    "globe": { "lat": 38, "lon": -74, "altitudeKm": 300, "size": 50 }
+  },
+  {
+    "id": "poiANC",
+    "icon": "assets/ANC.svg",
+    "background": { "size": 80 },
+    "children": [
+      "poiANC001", "poiANC002", "poiANC003", "poiANC004", "poiANC005", "poiANC006",
+      "poiANC007", "poiANC008", "poiANC009"
+    ],
+    "globe": { "lat": -8, "lon": -77, "altitudeKm": 300, "size": 60 }
+  },
+  {
+    "id": "poiCHI",
+    "icon": "assets/CHI.svg",
+    "background": { "size": 100 },
+    "children": [
+      "poiCHI001", "poiCHI002", "poiCHI003", "poiCHI004", "poiCHI005", "poiCHI006",
+      "poiCHI007", "poiCHI008", "poiCHI009", "poiCHI010", "poiCHI011"
+    ],
+    "globe": { "lat": 35, "lon": 109, "altitudeKm": 400, "size": 100 }
+  },
+  {
+    "id": "poiPAU",
+    "icon": "assets/PAU.svg",
+    "background": { "size": 80 },
+    "children": [
+      "poiPAU001", "poiPAU002", "poiPAU003", "poiPAU004", "poiPAU005", "poiPAU006",
+      "poiPAU007"
+    ],
+    "globe": { "lat": -17, "lon": 37, "altitudeKm": 400, "size": 80 }
+  },
+  {
+    "id": "poiHYD",
+    "icon": "assets/HYD.svg",
+    "background": { "size": 80 },
+    "children": [
+      "poiHYD001", "poiHYD002", "poiHYD003", "poiHYD004", "poiHYD005", "poiHYD006",
+      "poiHYD007", "poiHYD008", "poiHYD009", "poiHYD010", "poiHYD011", "poiHYD012",
+      "poiHYD013", "poiHYD014", "poiHYD015", "poiHYD016", "poiHYD017"
+    ],
+    "globe": { "lat": 24, "lon": 79, "altitudeKm": 300, "size": 50 }
+  },
+  {
+    "id": "poiNSA",
+    "icon": "assets/NSA.svg",
+    "background": { "size": 70 },
+    "children": [
+      "poiNSA001", "poiNSA002", "poiNSA003", "poiNSA004", "poiNSA005", "poiNSA006",
+      "poiNSA007"
+    ],
+    "globe": { "lat": 62, "lon": -7, "altitudeKm": 200, "size": 50 }
+  },
+  {
+    "id": "poiCAF",
+    "icon": "assets/CAF.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiCAF001", "poiCAF002", "poiCAF003", "poiCAF004", "poiCAF005", "poiCAF006",
+      "poiCAF007"
+    ],
+    "globe": { "lat": 41, "lon": 63, "altitudeKm": 300, "size": 50 }
+  },
+  {
+    "id": "poiAFL",
+    "icon": "assets/AFL.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiAFL001", "poiAFL002", "poiAFL003"
+    ],
+    "globe": { "lat": 29, "lon": 40, "altitudeKm": 300, "size": 50 }
+  },
+  {
+    "id": "poiPLY",
+    "icon": "assets/PLY.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiPLY001", "poiPLY002", "poiPLY003", "poiPLY004", "poiPLY005", "poiPLY006",
+      "poiPLY007", "poiPLY008", "poiPLY009", "poiPLY010"
+    ],
+    "globe": { "lat": -6, "lon": 127, "altitudeKm": 300, "size": 50 }
+  },
+  {
+    "id": "poiKIM",
+    "icon": "assets/KIM.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiKIM001", "poiKIM002", "poiKIM003", "poiKIM004"
+    ],
+    "globe": { "lat": 0, "lon": 18, "altitudeKm": 300, "size": 50 }
+  },
+  {
+    "id": "poiCNS",
+    "icon": "assets/CNS.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiCNS001", "poiCNS002"
+    ],
+    "globe": { "lat": -38, "lon": -66, "altitudeKm": 300, "size": 40 }
+  },
+  {
+    "id": "poiANTT",
+    "icon": "assets/ANTT.svg",
+    "background": { "size": 70 },
+    "children": [
+      "poiANTT001", "poiANTT002", "poiANTT003", "poiANTT004", "poiANTT005", "poiANTT006"
+    ],
+    "globe": { "lat": -90, "lon": 0, "altitudeKm": 400, "size": 60 }
+  },
+  {
+    "id": "poiCOOP",
+    "icon": "assets/COOP.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiCOOP001", "poiCOOP002", "poiCOOP003", "poiCOOP004", "poiCOOP005"
+    ],
+    "globe": { "lat": -15, "lon": -70, "altitudeKm": 200, "size": 30 }
+  },
+  {
+    "id": "poiBMK",
+    "icon": "assets/BMK.svg",
+    "background": { "size": 60 },
+    "children": [
+      "poiBMK001", "poiBMK002", "poiBMK003", "poiBMK004", "poiBMK005", "poiBMK006"
+    ],
+    "globe": { "lat": 13, "lon": -4, "altitudeKm": 300, "size": 40 }
+  },
+  {
+    "id": "poiAFFY"
+  }
+]

@@ -8,7 +8,7 @@
     max-width: var(--max-width);
     min-height: 100vh;
     margin: 0 auto;
-    padding-bottom: calc(var(--fnt-size-bttn) * 2);
+    padding-bottom: calc(var(--fnt-size-bttn) * 2 + var(--space-m) / 2);
     box-shadow: 0 0 600px var(--box-shadow-clr), 0 0 600px var(--box-shadow-clr);
 }
 /* Tiled art across the top of the page, anchored to the top. Its height follows the
@@ -79,7 +79,7 @@
     overflow-y: auto;
     padding: 0;
 }
-/* POI panel with a matching globe marker: its icon, faded, behind the text (pois.js). */
+/* POI panel with a background in data/pois.json: its icon, faded, behind the text (pois.js). */
 .div-desc-win.has-icon {
     position: relative;
     isolation: isolate;
@@ -89,8 +89,8 @@
     inset: calc(var(--space-m) * 4);
     z-index: -1;
     background-image: var(--poi-icon);
-    /* Proportional to the marker's size, capped at the panel's width. */
-    background-size: clamp(50%, calc(var(--poi-icon-size, 20) * 1%), 100%);
+    /* The POI's background size, a percentage set by pois.js. */
+    background-size: var(--poi-icon-size);
 }
 .div-desc {
     max-height: 666px;

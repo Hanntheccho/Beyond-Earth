@@ -1,16 +1,17 @@
-// pois.js - Builds the POI buttons and description panels from POI localization data, so
-// adding a POI only means adding its "poiXXX" and "poiXXX-desc" keys to a localization JSON.
-// Top-level POIs are the keys starting with "poi" that do not end in "-desc".
-// Nested POIs (e.g. "FRApoi001") are tooltip buttons in their parent's panel.
+// pois.js - Builds the POI buttons and description panels from data/pois.json (read by
+// poi-data.js), in its order. Adding a POI means adding its entry there and its "<id>" and
+// "<id>-desc" keys to a localization JSON. A POI without a localized name gets no button
+// or panel (it can still have a globe marker). Its "children" are tooltip buttons in its
+// panel; a child without a localized description is skipped.
 //
 // index.html only needs an empty <div class="div-desc-win grid" data-poi-buttons></div>;
 // the panels are inserted right after it. The elements carry the same classes
 // loc.js already fills ("poiXXX" for the title, "poiXXX-desc" for the text), and
 // loc.js waits for them to be built (localizeAfter) before it localizes the page.
-// A panel whose id matches a globe marker (data/globe-markers.json) shows that marker's
-// icon as its background, scaled by the marker's size (the "has-icon" class, --poi-icon
-// and --poi-icon-size, styled in layout.css).
+// A POI with a "background" shows its icon behind its panel text at that size (the
+// "has-icon" class, --poi-icon and --poi-icon-size, styled in layout.css).
 import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
+import { getPois } from './poi-data.js';
 
 (function () {
     const buttonHost = document.querySelector('[data-poi-buttons]');
@@ -45,37 +46,14 @@ import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
         return button;
     }
 
-    // Marker icons by id; a failed load only drops the backgrounds, not the POIs.
-    async function loadMarkerIcons() {
-        try {
-            const { default: markers } = await import('../../data/globe-markers.json', {
-                with: { type: 'json' },
-            });
-            const icons = new Map();
-            for (const marker of Array.isArray(markers) ? markers : []) {
-                if (typeof marker?.id === 'string' && typeof marker.icon === 'string' && marker.icon) {
-                    // Icons are resolved from src/js/, like globe-markers.js does.
-                    icons.set(marker.id, {
-                        url: new URL(marker.icon, import.meta.url).href,
-                        size: Number.isFinite(marker.size) && marker.size > 0 ? marker.size : null,
-                    });
-                }
-            }
-            return icons;
-        } catch (error) {
-            console.error('Could not load globe marker icons for POI panels:', error);
-            return new Map();
-        }
-    }
-
-    function buildPanel(id, active, nestedIds, icon) {
+    function buildPanel(poi, active, nestedIds) {
+        const { id, icon, background } = poi;
         const panel = document.createElement('div');
         panel.className = 'div-desc-win';
-        if (icon) {
+        if (background) {
             panel.classList.add('has-icon');
-            panel.style.setProperty('--poi-icon', `url("${icon.url}")`);
-            // Unitless marker size in px; layout.css turns it into a background size.
-            if (icon.size) panel.style.setProperty('--poi-icon-size', String(icon.size));
+            panel.style.setProperty('--poi-icon', `url("${icon}")`);
+            panel.style.setProperty('--poi-icon-size', `${background.size}%`);
         }
         panel.id = id;
         panel.dataset.panelGroup = POI_PANEL_GROUP;
@@ -94,21 +72,17 @@ import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
 
     localizeAfter((async function () {
         try {
-            const [pois, markerIcons] = await Promise.all([getLocalization(), loadMarkerIcons()]);
-            const keys = Object.keys(pois);
-            const ids = keys.filter(key => key.startsWith('poi') && !key.endsWith('-desc'));
+            const [localization, pois] = await Promise.all([getLocalization(), getPois()]);
+            const hasText = key => typeof localization[key] === 'string';
+            const shown = pois.filter(poi => hasText(poi.id));
 
             const buttons = [];
             const panels = [];
-            ids.forEach((id, index) => {
+            shown.forEach((poi, index) => {
                 const active = index === 0;
-                // "poiFRA" -> nested keys "FRApoi001", "FRApoi002"... that have a description.
-                const nestedPrefix = `${id.slice(3)}poi`;
-                const nestedIds = keys.filter(key => key.startsWith(nestedPrefix) &&
-                    /^\d+$/.test(key.slice(nestedPrefix.length)) &&
-                    Object.hasOwn(pois, `${key}-desc`));
-                buttons.push(buildButton(id, active));
-                panels.push(buildPanel(id, active, nestedIds, markerIcons.get(id)));
+                const nestedIds = poi.children.filter(child => hasText(`${child}-desc`));
+                buttons.push(buildButton(poi.id, active));
+                panels.push(buildPanel(poi, active, nestedIds));
             });
 
             buttonHost.replaceChildren(...buttons);

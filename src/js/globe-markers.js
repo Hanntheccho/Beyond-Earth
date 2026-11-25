@@ -3,7 +3,8 @@
  *
  * Markers are HTML buttons in #globe-markers, positioned each frame with the
  * same flat-map/globe blend as the mesh shader. globe-markers-link.js relies on
- * the data-id set on each button.
+ * the data-id set on each button. globe.js passes one entry per POI with a globe
+ * marker, already checked by poi-data.js: { id, label, icon, lat, lon, altitudeKm, size }.
  */
 
 import { DEG_R, EARTH_RADIUS_KM } from './globe-gl.js';
@@ -22,8 +23,8 @@ export function createGlobeMarkers(layer, canvas) {
     button.dataset.id = entry.id;
     button.title = entry.label;
     const image = document.createElement('img');
-    // Icons are resolved from src/js/, this file's directory.
-    image.src = new URL(entry.icon, import.meta.url);
+    // poi-data.js has already resolved the icon to a full URL.
+    image.src = entry.icon;
     image.alt = '';
     image.draggable = false;
     image.addEventListener('error', () => {
@@ -34,27 +35,11 @@ export function createGlobeMarkers(layer, canvas) {
     return button;
   }
 
-  // Throws on the first invalid marker, before any are added.
   function add(definitions) {
     if (!Array.isArray(definitions)) {
-      throw new TypeError('Globe marker JSON must contain an array.');
+      throw new TypeError('Globe markers must be given as an array.');
     }
-    const ids = new Set();
-    const entries = definitions.map((marker, index) => {
-      if (!marker || typeof marker.id !== 'string' || !marker.id
-        || ids.has(marker.id)
-        || typeof marker.label !== 'string' || !marker.label
-        || typeof marker.icon !== 'string' || !marker.icon
-        || !Number.isFinite(marker.lon) || marker.lon < -180 || marker.lon > 180
-        || !Number.isFinite(marker.lat) || marker.lat < -90 || marker.lat > 90
-        || !Number.isFinite(marker.altitudeKm) || marker.altitudeKm < 0 || marker.altitudeKm > 100000
-        || !Number.isFinite(marker.size) || marker.size <= 0 || marker.size > 256) {
-        throw new TypeError(`Invalid globe marker at JSON index ${index}.`);
-      }
-      ids.add(marker.id);
-      return { ...marker };
-    });
-    entries.forEach((entry) => {
+    definitions.map((marker) => ({ ...marker })).forEach((entry) => {
       // The wrap-around copies only matter on the flat map, so every copy except the
       // main one is created the first time it is on screen.
       const copies = [];

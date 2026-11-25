@@ -11,3 +11,6 @@ node_modules/
 # Static site / dist artifacts (if you add a build step later)
 dist/
 build/
+
+# Personal notes
+notes/

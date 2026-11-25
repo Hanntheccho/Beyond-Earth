@@ -1,6 +1,6 @@
 // globe-markers-link.js - Clicking a globe marker brings the content back and opens the
 // POI panel with the same id (for example the "poiFRA" marker opens the "poiFRA" panel).
-// Markers without a matching panel (poiANTT, poiNSA, poiCOOP, poiPLY...) do nothing.
+// Markers without a matching panel (a POI in data/pois.json with no localized name) do nothing.
 //
 // Uses event delegation, so it works for the markers globe-markers.js creates later.
 // Needs data-id on each marker button (set in createButton in globe-markers.js).

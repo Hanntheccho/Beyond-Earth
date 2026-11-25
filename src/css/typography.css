@@ -11,7 +11,7 @@ cite {
 
 p {
     font-size: var(--fnt-size-text);
-    letter-spacing: var(--letter-spacing);
+    letter-spacing: calc(var(--letter-spacing) / 2);
     line-height: 1.5;
     color: var(--clr-p);
     margin-block: 1em;
