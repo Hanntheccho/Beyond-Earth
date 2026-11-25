@@ -291,10 +291,35 @@ function checkPois(loc) {
         const text = loc[descKey];
         if (typeof text !== 'string') return;
         const isPoiKey = ids.has(base) || parentOf.has(base) || base.startsWith('poi');
-        if ((isPoiKey || text.includes('{{title}}')) && typeof loc[base] !== 'string') {
+        if (isPoiKey && typeof loc[base] !== 'string') {
             error('pois', `"${descKey}" has no matching title key "${base}"`);
         }
     });
+
+    // Inline POI links, {{id|text}} or {{id}}; the same pattern as in src/js/loc.js, which
+    // shows a link to a POI without a description as plain text.
+    const POI_LINK = /\{\{([^{}|]+)(?:\|([^{}]*))?\}\}/g;
+    const linkedChildren = new Set();
+    Object.entries(loc).forEach(([key, text]) => {
+        if (typeof text !== 'string' || !text.includes('{{')) return;
+        const rest = text.replace(POI_LINK, '');
+        if (rest.includes('{{') || rest.includes('}}')) {
+            warn('pois', `"${key}" has a "{{" or "}}" that is not a complete {{id|text}} link, so it shows as typed`);
+        }
+        const owner = key.endsWith('-desc') ? key.slice(0, -5) : null;
+        for (const [, rawId, rawText] of text.matchAll(POI_LINK)) {
+            const id = rawId.trim();
+            if (!hasText(`${id}-desc`)) {
+                warn('pois', `"${key}" links to "${id}", which has no "${id}-desc", so the link shows as plain text`);
+                continue;
+            }
+            if (!rawText?.trim() && !hasText(id)) {
+                warn('pois', `"${key}" links to "${id}" without a text and "${id}" has no name, so the link shows the id`);
+            }
+            if (owner && parentOf.get(id) === owner) linkedChildren.add(id);
+        }
+    });
+    if (parentOf.size) info('pois', `${linkedChildren.size} of ${parentOf.size} nested POI(s) are linked from their parent's text`);
 
     const stubs = shown.filter(id => hasText(`${id}-desc`) && !loc[`${id}-desc`].includes('<p'));
     if (stubs.length) info('pois', `${stubs.length} of ${shown.length} panels are still stubs (title only): ${stubs.join(', ')}`);

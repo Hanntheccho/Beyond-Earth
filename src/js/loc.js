@@ -3,6 +3,9 @@
 // Keywords (keywords-ph1/2/3.json) are highlighted in descriptions when they are first
 // shown, so the cost is only paid for the panels and tooltips people actually open.
 // Matching ignores case, except for keywords written with a leading "=" ("=Trust").
+// Inline POI links: "{{poiFRA005|Padania}}" in any text becomes a tooltip button that
+// opens poiFRA005's description, and "{{poiFRA005}}" uses its localized name as the text.
+// Keywords are not highlighted inside links.
 //
 // Exports for other modules:
 //   getLocalization()            the merged localization data (fetched once)
@@ -53,6 +56,29 @@ async function fetchLocalizationFiles() {
     return Object.assign({}, ...entries);
 }
 
+// Class of the inline POI link buttons (styled in pois.css).
+const POI_LINK_CLASS = 'poi-link';
+const POI_LINK = /\{\{([^{}|]+)(?:\|([^{}]*))?\}\}/g;
+
+// Replace each {{id|text}} with a tooltip button for "<id>-desc". A link to a key without
+// a description is left as its plain text and logged.
+function applyPoiLinks(localization) {
+    for (const [key, value] of Object.entries(localization)) {
+        if (typeof value !== 'string' || !value.includes('{{')) continue;
+        localization[key] = value.replace(POI_LINK, (match, rawId, rawText) => {
+            const id = rawId.trim();
+            const name = localization[id];
+            const text = rawText?.trim() || (typeof name === 'string' ? name : id);
+            if (typeof localization[`${id}-desc`] !== 'string') {
+                console.warn(`Localization "${key}" links to "${id}", which has no "${id}-desc"; it is shown as plain text.`);
+                return text;
+            }
+            return `<button type="button" class="${POI_LINK_CLASS} has-tooltip" data-tooltip="${escapeHtml(id)}-desc">${text}</button>`;
+        });
+    }
+    return localization;
+}
+
 // Put each description's localized title in front of it as a heading.
 function applyDescriptionTitles(localization) {
     for (const [key, description] of Object.entries(localization)) {
@@ -70,6 +96,7 @@ let localizationPromise = null;
 // loading or already done. A failed request is retried on the next call.
 export function getLocalization() {
     localizationPromise ??= fetchLocalizationFiles()
+        .then(applyPoiLinks)
         .then(applyDescriptionTitles)
         .catch(error => {
             localizationPromise = null;
@@ -142,7 +169,7 @@ function wrapKeywords(root, { matcher, selector, tag, className }) {
     });
 
     for (const textNode of textNodes) {
-        if (textNode.parentElement?.closest(selector)) continue;
+        if (textNode.parentElement?.closest(`${selector}, .${POI_LINK_CLASS}`)) continue;
         const text = textNode.nodeValue;
         matcher.lastIndex = 0;
         if (!matcher.test(text)) continue;

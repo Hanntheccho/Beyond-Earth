@@ -1,0 +1,70 @@
+/* pois.css - POI panels and their nested POIs (see src/js/pois.js, poi-data.js, loc.js).
+   The panel and description boxes themselves are in layout.css; the faint icon behind a
+   panel uses the shared artwork rule in base.css. Loaded after layout.css and tooltip.css,
+   whose rules these override. */
+
+/* ------------------------------------------------------------- panel background */
+/* POI panel with a background in data/pois.json: its icon, faded, behind the text. */
+.div-desc-win.has-icon {
+    position: relative;
+    isolation: isolate;
+}
+/* Shared faint-artwork rule in base.css; below the text, which is not positioned. */
+.div-desc-win.has-icon::before {
+    inset: calc(var(--space-m) * 4);
+    z-index: -1;
+    background-image: var(--poi-icon);
+    /* The POI's background size, a percentage set by pois.js. */
+    background-size: var(--poi-icon-size);
+}
+
+/* ------------------------------------------------------------ nested POIs */
+/* The "See also" list: stays at the bottom of the scrolling description,
+   edge to edge over its padding, with a background so the text scrolls under it. Stacked
+   above the tooltip triggers in that text (tooltip.css), which are positioned too. */
+.poi-children {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin: var(--space-m) calc(-1 * var(--space-m)) 0;
+    padding: var(--space-s) var(--space-m);
+    border-top: var(--border);
+    background-color: var(--clr-background);
+}
+.poi-children summary {
+    cursor: pointer;
+    color: var(--clr-p);
+    font-size: var(--fnt-size-bttn);
+    text-transform: uppercase;
+}
+/* A long open list scrolls on its own instead of covering the description. */
+.poi-children-list {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 30vh;
+    overflow-y: auto;
+}
+
+/* ------------------------------------------------------ inline POI links */
+/* Inline POI links in descriptions ({{id|text}}, see loc.js): read as part of the text,
+   undoing the button look from controls.css and the inline-block trigger from
+   tooltip.css, and open the linked POI's tooltip. */
+.poi-link {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-indent: 0;
+    text-transform: none;
+    text-align: inherit;
+    text-decoration: underline dotted;
+    text-underline-offset: 0.2em;
+    cursor: help;
+}
+.poi-link:hover { transform: none; }
+.poi-link:hover,
+.poi-link:focus-visible { text-decoration-style: solid; }

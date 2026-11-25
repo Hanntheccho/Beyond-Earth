@@ -7,23 +7,23 @@
       "tag": "ARC",
       "children": [
         {
-          "name": "ARC Energy",
-          "tag": "ARCEN",
+          "name": "ARC Helios",
+          "tag": "ARCHE",
           "value": 700
         },
         {
           "name": "ARC Vita",
-          "tag": "ARCVT",
+          "tag": "ARCVI",
           "value": 1900
         },
         {
           "name": "ARC Terra",
-          "tag": "ARCTA",
+          "tag": "ARCTE",
           "value": 1750
         },
         {
           "name": "ARC Aegis",
-          "tag": "ARCAG",
+          "tag": "ARCAE",
           "value": 1600
         },
         {
@@ -32,13 +32,13 @@
           "value": 1250
         },
         {
-          "name": "ARC Restoration",
-          "tag": "ARCRS",
+          "name": "ARC Renova",
+          "tag": "ARCRE",
           "value": 950
         },
         {
           "name": "ARC Orbis",
-          "tag": "ARCOB",
+          "tag": "ARCOR",
           "value": 800
         },
         {
@@ -47,8 +47,8 @@
           "value": 2300
         },
         {
-          "name": "ARC Resettlement",
-          "tag": "ARCRT",
+          "name": "ARC Colonia",
+          "tag": "ARCCO",
           "value": 500
         },
         {

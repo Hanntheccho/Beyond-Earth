@@ -1,21 +1,25 @@
 // pois.js - Builds the POI buttons and description panels from data/pois.json (read by
 // poi-data.js), in its order. Adding a POI means adding its entry there and its "<id>" and
 // "<id>-desc" keys to a localization JSON. A POI without a localized name gets no button
-// or panel (it can still have a globe marker). Its "children" are tooltip buttons in its
-// panel; a child without a localized description is skipped.
+// or panel (it can still have a globe marker). Its "children" are tooltip buttons in a
+// collapsed "See also" list after its description, which stays in view at the bottom of
+// the scrolling text; a child without a localized description is skipped. The list's
+// label is CHILDREN_LABEL.
 //
 // index.html only needs an empty <div class="div-desc-win grid" data-poi-buttons></div>;
 // the panels are inserted right after it. The elements carry the same classes
 // loc.js already fills ("poiXXX" for the title, "poiXXX-desc" for the text), and
 // loc.js waits for them to be built (localizeAfter) before it localizes the page.
 // A POI with a "background" shows its icon behind its panel text at that size (the
-// "has-icon" class, --poi-icon and --poi-icon-size, styled in layout.css).
+// "has-icon" class, --poi-icon and --poi-icon-size, styled in pois.css).
 import { getLocalization, localizeAfter, POI_PANEL_GROUP } from './loc.js';
 import { getPois } from './poi-data.js';
 
 (function () {
     const buttonHost = document.querySelector('[data-poi-buttons]');
     if (!buttonHost) return;
+
+    const CHILDREN_LABEL = ':datalinks';
 
     function buildLabel(id) {
         const label = document.createElement('span');
@@ -46,6 +50,26 @@ import { getPois } from './poi-data.js';
         return button;
     }
 
+    function buildChildren(nestedIds) {
+        const details = document.createElement('details');
+        details.className = 'poi-children';
+
+        const summary = document.createElement('summary');
+        const label = document.createElement('span');
+        label.textContent = CHILDREN_LABEL;
+        const count = document.createElement('span');
+        count.className = 'poi-children-count';
+        count.textContent = ` (${nestedIds.length})`;
+        summary.append(label, count);
+
+        const list = document.createElement('div');
+        list.className = 'poi-children-list';
+        list.append(...nestedIds.map(buildTooltipButton));
+
+        details.append(summary, list);
+        return details;
+    }
+
     function buildPanel(poi, active, nestedIds) {
         const { id, icon, background } = poi;
         const panel = document.createElement('div');
@@ -64,7 +88,8 @@ import { getPois } from './poi-data.js';
         desc.className = 'div-desc';
         const text = document.createElement('span');
         text.className = `${id}-desc`;
-        desc.append(text, ...nestedIds.map(buildTooltipButton));
+        desc.append(text);
+        if (nestedIds.length) desc.append(buildChildren(nestedIds));
 
         panel.append(desc);
         return panel;
