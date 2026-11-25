@@ -2,37 +2,37 @@
   {
     "id": "poiBE",
     "icon": "be-icon.svg",
-    "background": { "size": 80 },
+    "background": { "size": 70 },
     "globe": { "lat": 30, "lon": 70, "altitudeKm": 2000, "size": 50 }
   },
   {
     "id": "poiMIT",
     "icon": "assets/mit.svg",
-    "background": { "size": 50 },
+    "background": { "size": 40 },
     "globe": { "lat": 49, "lon": 12, "altitudeKm": 100, "size": 20 }
   },
   {
     "id": "poiPAPA",
     "icon": "assets/papa.svg",
-    "background": { "size": 50 },
+    "background": { "size": 40 },
     "globe": { "lat": 44, "lon": 5, "altitudeKm": 100, "size": 20 }
   },
   {
     "id": "poiIII",
     "icon": "assets/III.svg",
-    "background": { "size": 50 },
+    "background": { "size": 40 },
     "globe": { "lat": 51, "lon": 2, "altitudeKm": 100, "size": 20 }
   },
   {
     "id": "poiWCRB",
     "icon": "assets/WCRB.svg",
-    "background": { "size": 50 },
+    "background": { "size": 40 },
     "globe": { "lat": 47, "lon": 8, "altitudeKm": 4000, "size": 30 }
   },
   {
     "id": "poiGPGP",
     "icon": "assets/GPGP.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiGPGP001", "poiGPGP002", "poiGPGP003"
     ],
@@ -41,7 +41,7 @@
   {
     "id": "poiFRA",
     "icon": "assets/FRA.svg",
-    "background": { "size": 70 },
+    "background": { "size": 60 },
     "children": [
       "poiFRA001", "poiFRA002", "poiFRA003", "poiFRA004", "poiFRA005", "poiFRA006",
       "poiFRA007", "poiFRA008", "poiFRA009", "poiFRA010", "poiFRA011", "poiFRA012",
@@ -52,7 +52,7 @@
   {
     "id": "poiGER",
     "icon": "assets/GER.svg",
-    "background": { "size": 70 },
+    "background": { "size": 60 },
     "children": [
       "poiGER001", "poiGER002", "poiGER003", "poiGER004", "poiGER005", "poiGER006",
       "poiGER007", "poiGER008", "poiGER009", "poiGER010", "poiGER011", "poiGER012",
@@ -63,7 +63,7 @@
   {
     "id": "poiNAU",
     "icon": "assets/NAU.svg",
-    "background": { "size": 100 },
+    "background": { "size": 90 },
     "children": [
       "poiNAU001", "poiNAU002", "poiNAU003", "poiNAU004", "poiNAU005", "poiNAU006",
       "poiNAU007", "poiNAU008", "poiNAU009", "poiNAU010", "poiNAU011", "poiNAU012",
@@ -77,7 +77,7 @@
   {
     "id": "poiBRA",
     "icon": "assets/BRA.svg",
-    "background": { "size": 80 },
+    "background": { "size": 70 },
     "children": [
       "poiBRA001", "poiBRA002", "poiBRA003", "poiBRA004", "poiBRA005", "poiBRA006",
       "poiBRA007", "poiBRA008", "poiBRA009", "poiBRA010", "poiBRA011", "poiBRA012",
@@ -88,7 +88,7 @@
   {
     "id": "poiSLA",
     "icon": "assets/SLA.svg",
-    "background": { "size": 80 },
+    "background": { "size": 70 },
     "children": [
       "poiSLA001", "poiSLA002", "poiSLA003", "poiSLA004", "poiSLA005", "poiSLA006",
       "poiSLA007", "poiSLA008", "poiSLA009", "poiSLA010", "poiSLA011", "poiSLA012",
@@ -99,7 +99,7 @@
   {
     "id": "poiARC",
     "icon": "assets/ARC.svg",
-    "background": { "size": 80 },
+    "background": { "size": 70 },
     "children": [
       "poiARC001", "poiARC002", "poiARC003", "poiARC004", "poiARC005"
     ],
@@ -108,7 +108,7 @@
   {
     "id": "poiANC",
     "icon": "assets/ANC.svg",
-    "background": { "size": 80 },
+    "background": { "size": 70 },
     "children": [
       "poiANC001", "poiANC002", "poiANC003", "poiANC004", "poiANC005", "poiANC006",
       "poiANC007", "poiANC008", "poiANC009"
@@ -118,7 +118,7 @@
   {
     "id": "poiCHI",
     "icon": "assets/CHI.svg",
-    "background": { "size": 100 },
+    "background": { "size": 90 },
     "children": [
       "poiCHI001", "poiCHI002", "poiCHI003", "poiCHI004", "poiCHI005", "poiCHI006",
       "poiCHI007", "poiCHI008", "poiCHI009", "poiCHI010", "poiCHI011"
@@ -128,7 +128,7 @@
   {
     "id": "poiPAU",
     "icon": "assets/PAU.svg",
-    "background": { "size": 80 },
+    "background": { "size": 70 },
     "children": [
       "poiPAU001", "poiPAU002", "poiPAU003", "poiPAU004", "poiPAU005", "poiPAU006",
       "poiPAU007"
@@ -138,7 +138,7 @@
   {
     "id": "poiHYD",
     "icon": "assets/HYD.svg",
-    "background": { "size": 80 },
+    "background": { "size": 70 },
     "children": [
       "poiHYD001", "poiHYD002", "poiHYD003", "poiHYD004", "poiHYD005", "poiHYD006",
       "poiHYD007", "poiHYD008", "poiHYD009", "poiHYD010", "poiHYD011", "poiHYD012",
@@ -149,7 +149,7 @@
   {
     "id": "poiNSA",
     "icon": "assets/NSA.svg",
-    "background": { "size": 70 },
+    "background": { "size": 60 },
     "children": [
       "poiNSA001", "poiNSA002", "poiNSA003", "poiNSA004", "poiNSA005", "poiNSA006",
       "poiNSA007"
@@ -159,7 +159,7 @@
   {
     "id": "poiCAF",
     "icon": "assets/CAF.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiCAF001", "poiCAF002", "poiCAF003", "poiCAF004", "poiCAF005", "poiCAF006",
       "poiCAF007"
@@ -169,7 +169,7 @@
   {
     "id": "poiAFL",
     "icon": "assets/AFL.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiAFL001", "poiAFL002", "poiAFL003"
     ],
@@ -178,7 +178,7 @@
   {
     "id": "poiPLY",
     "icon": "assets/PLY.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiPLY001", "poiPLY002", "poiPLY003", "poiPLY004", "poiPLY005", "poiPLY006",
       "poiPLY007", "poiPLY008", "poiPLY009", "poiPLY010"
@@ -188,7 +188,7 @@
   {
     "id": "poiKIM",
     "icon": "assets/KIM.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiKIM001", "poiKIM002", "poiKIM003", "poiKIM004"
     ],
@@ -197,7 +197,7 @@
   {
     "id": "poiCNS",
     "icon": "assets/CNS.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiCNS001", "poiCNS002"
     ],
@@ -206,7 +206,7 @@
   {
     "id": "poiANTT",
     "icon": "assets/ANTT.svg",
-    "background": { "size": 70 },
+    "background": { "size": 60 },
     "children": [
       "poiANTT001", "poiANTT002", "poiANTT003", "poiANTT004", "poiANTT005", "poiANTT006"
     ],
@@ -215,7 +215,7 @@
   {
     "id": "poiCOOP",
     "icon": "assets/COOP.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiCOOP001", "poiCOOP002", "poiCOOP003", "poiCOOP004", "poiCOOP005"
     ],
@@ -224,7 +224,7 @@
   {
     "id": "poiBMK",
     "icon": "assets/BMK.svg",
-    "background": { "size": 60 },
+    "background": { "size": 50 },
     "children": [
       "poiBMK001", "poiBMK002", "poiBMK003", "poiBMK004", "poiBMK005", "poiBMK006"
     ],
