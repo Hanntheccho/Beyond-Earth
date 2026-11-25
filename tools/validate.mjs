@@ -234,7 +234,7 @@ function checkPois(loc) {
                     if (parentOf.has(child)) warn('pois', `"${child}" is a child of both "${parentOf.get(child)}" and "${id}"`);
                     else parentOf.set(child, id);
                     if (!hasText(`${child}-desc`)) {
-                        warn('pois', `${where}: child "${child}" has no "${child}-desc", so pois.js skips it`);
+                        warn('pois', `${where}: child "${child}" has no "${child}-desc", so it has nothing to show`);
                     } else if (!hasText(child)) {
                         error('pois', `${where}: child "${child}" has no "${child}" localization, so its button has no label`);
                     }
@@ -297,9 +297,10 @@ function checkPois(loc) {
     });
 
     // Inline POI links, {{id|text}} or {{id}}; the same pattern as in src/js/loc.js, which
-    // shows a link to a POI without a description as plain text.
+    // shows a link to a POI without a description as plain text. They are the only way
+    // to reach a nested POI, so each one needs a link in some other text.
     const POI_LINK = /\{\{([^{}|]+)(?:\|([^{}]*))?\}\}/g;
-    const linkedChildren = new Set();
+    const linked = new Set();
     Object.entries(loc).forEach(([key, text]) => {
         if (typeof text !== 'string' || !text.includes('{{')) return;
         const rest = text.replace(POI_LINK, '');
@@ -316,10 +317,15 @@ function checkPois(loc) {
             if (!rawText?.trim() && !hasText(id)) {
                 warn('pois', `"${key}" links to "${id}" without a text and "${id}" has no name, so the link shows the id`);
             }
-            if (owner && parentOf.get(id) === owner) linkedChildren.add(id);
+            // A description linking to its own POI does not make it reachable.
+            if (id !== owner) linked.add(id);
         }
     });
-    if (parentOf.size) info('pois', `${linkedChildren.size} of ${parentOf.size} nested POI(s) are linked from their parent's text`);
+    parentOf.forEach((parent, child) => {
+        if (hasText(`${child}-desc`) && !linked.has(child)) {
+            warn('pois', `child "${child}" of "${parent}" is not linked from any text with {{${child}|text}}, so it cannot be reached`);
+        }
+    });
 
     const stubs = shown.filter(id => hasText(`${id}-desc`) && !loc[`${id}-desc`].includes('<p'));
     if (stubs.length) info('pois', `${stubs.length} of ${shown.length} panels are still stubs (title only): ${stubs.join(', ')}`);

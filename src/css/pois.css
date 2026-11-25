@@ -1,4 +1,5 @@
-/* pois.css - POI panels and their nested POIs (see src/js/pois.js, poi-data.js, loc.js).
+/* pois.css - POI panels and the inline links to nested POIs (see src/js/pois.js,
+   poi-data.js, loc.js).
    The .div-win box itself is in layout.css; the faint icon behind a panel uses the shared
    artwork rule in base.css. Loaded after layout.css and tooltip.css, whose rules these
    override. */
@@ -6,11 +7,7 @@
 /* ------------------------------------------------------------- description */
 /* The scrolling text box inside a POI panel. The quote box in index.html uses it too,
    with .quote undoing the square shape. */
-/* A flex column, so the nested POI list (below) can sit at the bottom of a box whose text
-   is shorter than the box; the gap keeps it off the text when the text is longer. */
 .poi-desc {
-    display: flex;
-    flex-direction: column;
     aspect-ratio: 1/1;
     margin: var(--space-m);
     overflow-y: auto;
@@ -36,52 +33,6 @@
     background-image: var(--poi-icon);
     /* The POI's background size, a percentage set by pois.js. */
     background-size: var(--poi-icon-size);
-}
-
-/* ------------------------------------------------------------ nested POIs */
-/* The nested POI list and its toggle (pois.js): at the bottom of the description box,
-   pushed down by the auto top margin when the text is short and kept there by sticky when
-   it scrolls. It grows from the bottom, so opening the list extends it up over the text
-   while the toggle stays put. Edge to edge over the box's padding, with a background so
-   the text scrolls under it, and stacked above the tooltip triggers in that text
-   (tooltip.css), which are positioned too. */
-.poi-children {
-    position: sticky;
-    bottom: 0;
-    z-index: 2;
-    flex-shrink: 0;
-    margin: auto calc(-1 * var(--space-m)) 0;
-    padding: 0 var(--space-s);
-    border-top: var(--border);
-    border-bottom: var(--border);
-    background-color: var(--clr-background);
-}
-/* Reads as a label rather than a button: undoes the button look from controls.css. */
-.poi-children-toggle {
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    text-align: left;
-    text-indent: 0;
-    color: var(--clr-p);
-    font-size: var(--fnt-size-bttn);
-    text-transform: none;
-    font-weight: normal;
-    min-height: 2lh;
-}
-.poi-children-toggle:hover { transform: none; }
-.poi-children-toggle::before { content: "▸ "; }
-.poi-children-toggle[aria-expanded="true"]::before { content: "▾ "; }
-/* A long open list scrolls on its own instead of covering the description. */
-.poi-children-list {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: var(--space-s);
-    margin-bottom: var(--space-s);
-    overflow-y: auto;
 }
 
 /* ------------------------------------------------------ inline POI links */

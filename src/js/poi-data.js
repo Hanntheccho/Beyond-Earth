@@ -8,7 +8,8 @@
 //   icon        image path from the project root
 //   background  { size } to show the icon behind the panel text, size in % of the panel's
 //               width; needs an icon
-//   children    ids of nested POIs, shown as tooltip buttons in this POI's panel
+//   children    ids of nested POIs, reached through {{id|text}} links in the text (see
+//               loc.js); tools/validate.mjs checks that each one is linked
 //   globe       { lat, lon, altitudeKm, size } of its globe marker; needs an icon
 //
 // A bad field is logged and dropped (a bad id drops the whole entry), so one typo does
