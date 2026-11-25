@@ -2,7 +2,7 @@
 // data/scenario-data.json (explained in data/scenario-data.md): name, unit, axis
 // bounds and trend direction from `series`, events and eras from `timeline`, and
 // the values from `points`. One button and panel is built per series that has points.
-// index.html only needs an empty <div class="div-desc-win grid" data-chart-buttons></div>;
+// index.html only needs an empty <div class="div-win grid" data-chart-buttons></div>;
 // the panels are inserted right after it.
 //
 // Events and eras are drawn in red by default. Add `"positive": true` to one in the
@@ -312,7 +312,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             buttons.push(button);
 
             const panel = document.createElement('div');
-            panel.className = 'div-desc-win';
+            panel.className = 'div-win';
             panel.id = id;
             panel.dataset.panelGroup = PANEL_GROUP;
             panel.hidden = !active;

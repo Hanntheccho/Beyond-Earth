@@ -2,11 +2,11 @@
 // poi-data.js), in its order. Adding a POI means adding its entry there and its "<id>" and
 // "<id>-desc" keys to a localization JSON. A POI without a localized name gets no button
 // or panel (it can still have a globe marker). Its "children" are tooltip buttons in a
-// collapsed "See also" list after its description, which stays in view at the bottom of
-// the scrolling text; a child without a localized description is skipped. The list's
-// label is CHILDREN_LABEL.
+// collapsed list whose toggle stays at the bottom of the description box and opens the
+// list upward, over the text; a child without a localized description is skipped. The
+// toggle's label is CHILDREN_LABEL.
 //
-// index.html only needs an empty <div class="div-desc-win grid" data-poi-buttons></div>;
+// index.html only needs an empty <div class="div-win grid" data-poi-buttons></div>;
 // the panels are inserted right after it. The elements carry the same classes
 // loc.js already fills ("poiXXX" for the title, "poiXXX-desc" for the text), and
 // loc.js waits for them to be built (localizeAfter) before it localizes the page.
@@ -50,30 +50,43 @@ import { getPois } from './poi-data.js';
         return button;
     }
 
-    function buildChildren(nestedIds) {
-        const details = document.createElement('details');
-        details.className = 'poi-children';
+    // The list comes before its toggle, so it opens above it instead of pushing it down.
+    // A button rather than <details>, whose content always follows its summary.
+    function buildChildren(id, nestedIds) {
+        const box = document.createElement('div');
+        box.className = 'poi-children';
 
-        const summary = document.createElement('summary');
+        const list = document.createElement('div');
+        list.className = 'poi-children-list';
+        list.id = `${id}-children`;
+        list.hidden = true;
+        list.append(...nestedIds.map(buildTooltipButton));
+
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'poi-children-toggle';
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-controls', list.id);
         const label = document.createElement('span');
         label.textContent = CHILDREN_LABEL;
         const count = document.createElement('span');
         count.className = 'poi-children-count';
         count.textContent = ` (${nestedIds.length})`;
-        summary.append(label, count);
+        toggle.append(label, count);
+        toggle.addEventListener('click', () => {
+            const expanded = list.hidden;
+            list.hidden = !expanded;
+            toggle.setAttribute('aria-expanded', String(expanded));
+        });
 
-        const list = document.createElement('div');
-        list.className = 'poi-children-list';
-        list.append(...nestedIds.map(buildTooltipButton));
-
-        details.append(summary, list);
-        return details;
+        box.append(list, toggle);
+        return box;
     }
 
     function buildPanel(poi, active, nestedIds) {
         const { id, icon, background } = poi;
         const panel = document.createElement('div');
-        panel.className = 'div-desc-win';
+        panel.className = 'div-win';
         if (background) {
             panel.classList.add('has-icon');
             panel.style.setProperty('--poi-icon', `url("${icon}")`);
@@ -85,11 +98,11 @@ import { getPois } from './poi-data.js';
         panel.setAttribute('aria-hidden', String(!active));
 
         const desc = document.createElement('div');
-        desc.className = 'div-desc';
+        desc.className = 'poi-desc';
         const text = document.createElement('span');
         text.className = `${id}-desc`;
         desc.append(text);
-        if (nestedIds.length) desc.append(buildChildren(nestedIds));
+        if (nestedIds.length) desc.append(buildChildren(id, nestedIds));
 
         panel.append(desc);
         return panel;

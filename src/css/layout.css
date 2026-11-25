@@ -1,4 +1,4 @@
-/* layout.css - Page frame: .div-main, titles, panels, description blocks. */
+/* layout.css - Page frame: .div-main, titles, panels (.div-win); POI text boxes are in pois.css. */
 
 .div-main {
     position: relative;
@@ -64,27 +64,17 @@
     margin: 0 auto;
 }
 
-.div-desc-win,
-.div-desc {
+.div-win {
     margin: var(--space-m);
-}
-.div-desc-win {
     padding: var(--space-m);
     border: var(--border);
     border-left-width: var(--border-left);
 }
-.div-desc-win.grid {
+.div-win.grid {
     display: flex;
     flex-wrap: wrap;
     overflow-y: auto;
     padding: 0;
-}
-.div-desc {
-    max-height: 666px;
-    overflow-y: auto;
-    padding: 0 var(--space-m);
-    border: 0 solid var(--clr-border);
-    border-left-width: var(--border-left);
 }
 
 /* Status bar above a panel's content: the treemap panels, the options menu and the

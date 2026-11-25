@@ -1,16 +1,35 @@
 /* pois.css - POI panels and their nested POIs (see src/js/pois.js, poi-data.js, loc.js).
-   The panel and description boxes themselves are in layout.css; the faint icon behind a
-   panel uses the shared artwork rule in base.css. Loaded after layout.css and tooltip.css,
-   whose rules these override. */
+   The .div-win box itself is in layout.css; the faint icon behind a panel uses the shared
+   artwork rule in base.css. Loaded after layout.css and tooltip.css, whose rules these
+   override. */
+
+/* ------------------------------------------------------------- description */
+/* The scrolling text box inside a POI panel. The quote box in index.html uses it too,
+   with .quote undoing the square shape. */
+/* A flex column, so the nested POI list (below) can sit at the bottom of a box whose text
+   is shorter than the box; the gap keeps it off the text when the text is longer. */
+.poi-desc {
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 1/1;
+    margin: var(--space-m);
+    overflow-y: auto;
+    padding: 0 var(--space-m);
+    border: 0 solid var(--clr-border);
+    border-left-width: var(--border-left);
+}
+.poi-desc.quote {
+    aspect-ratio: auto;
+}
 
 /* ------------------------------------------------------------- panel background */
 /* POI panel with a background in data/pois.json: its icon, faded, behind the text. */
-.div-desc-win.has-icon {
+.div-win.has-icon {
     position: relative;
     isolation: isolate;
 }
 /* Shared faint-artwork rule in base.css; below the text, which is not positioned. */
-.div-desc-win.has-icon::before {
+.div-win.has-icon::before {
     inset: calc(var(--space-m) * 4);
     z-index: -1;
     background-image: var(--poi-icon);
@@ -19,29 +38,45 @@
 }
 
 /* ------------------------------------------------------------ nested POIs */
-/* The "See also" list: stays at the bottom of the scrolling description,
-   edge to edge over its padding, with a background so the text scrolls under it. Stacked
-   above the tooltip triggers in that text (tooltip.css), which are positioned too. */
+/* The nested POI list and its toggle (pois.js): at the bottom of the description box,
+   pushed down by the auto top margin when the text is short and kept there by sticky when
+   it scrolls. It grows from the bottom, so opening the list extends it up over the text
+   while the toggle stays put. Edge to edge over the box's padding, with a background so
+   the text scrolls under it, and stacked above the tooltip triggers in that text
+   (tooltip.css), which are positioned too. */
 .poi-children {
     position: sticky;
     bottom: 0;
     z-index: 2;
-    margin: var(--space-m) calc(-1 * var(--space-m)) 0;
+    flex-shrink: 0;
+    margin: auto calc(-1 * var(--space-m)) 0;
     padding: var(--space-s) var(--space-m);
     border-top: var(--border);
     background-color: var(--clr-background);
 }
-.poi-children summary {
-    cursor: pointer;
+/* Reads as a label rather than a button: undoes the button look from controls.css. */
+.poi-children-toggle {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    text-indent: 0;
     color: var(--clr-p);
     font-size: var(--fnt-size-bttn);
-    text-transform: uppercase;
+    text-transform: none;
+    font-weight: normal;
 }
+.poi-children-toggle:hover { transform: none; }
+.poi-children-toggle::before { content: "▸ "; }
+.poi-children-toggle[aria-expanded="true"]::before { content: "▾ "; }
 /* A long open list scrolls on its own instead of covering the description. */
 .poi-children-list {
     display: flex;
     flex-wrap: wrap;
-    max-height: 30vh;
+    margin-bottom: var(--space-s);
     overflow-y: auto;
 }
 
@@ -56,14 +91,16 @@
     border: 0;
     background: none;
     font: inherit;
-    color: inherit;
-    letter-spacing: inherit;
+    color: var(--clr-ph2);
+    letter-spacing: var(--letter-spacing);
     text-indent: 0;
-    text-transform: none;
+    text-transform: uppercase;
     text-align: inherit;
     text-decoration: underline dotted;
-    text-underline-offset: 0.2em;
+    text-underline-offset: .2em;
     cursor: help;
+    font-size: var(--fnt-size-h3);
+    font-weight: bold;
 }
 .poi-link:hover { transform: none; }
 .poi-link:hover,

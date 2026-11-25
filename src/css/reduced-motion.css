@@ -12,7 +12,7 @@
         transition: none !important;
     }
     :is(
-        .div-desc-win,
+        .div-win,
         .tooltip-popup,
         .globe-preview,
         .globe-canvas,
@@ -41,7 +41,7 @@
     transition: none !important;
 }
 body.reduced-motion :is(
-    .div-desc-win,
+    .div-win,
     .tooltip-popup,
     .globe-preview,
     .globe-canvas,
