@@ -105,6 +105,9 @@
     cursor: help;
     font-size: var(--fnt-size-h3);
     font-weight: bold;
+    /* Within the paragraph's line height: buttons lay out as inline-blocks, so a taller
+       link would make its whole line taller. */
+    line-height: 1;
 }
 .poi-link:hover { transform: none; }
 .poi-link:hover,

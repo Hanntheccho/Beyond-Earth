@@ -32,17 +32,19 @@ h2 {
     color: var(--clr-h2);
 }
 
+/* Keyword highlights (loc.js). line-height: 1 keeps them within the paragraph's line
+   height, so a highlight never makes its line taller. */
 .ph1 {
     font-size: var(--fnt-size-h2);
     color: var(--clr-ph1);
-    line-height: 0;
+    line-height: 1;
 }
 .ph2 {
     font-size: var(--fnt-size-h3);
     color: var(--clr-ph2);
-    line-height: 0;
+    line-height: 1;
 }
 .ph3 {
     color: var(--clr-ph3);
-    line-height: 0;
+    line-height: 1;
 }
