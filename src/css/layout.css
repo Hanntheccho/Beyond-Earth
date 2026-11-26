@@ -82,7 +82,7 @@
 .div-win-top {
     display: grid;
     align-items: center;
-    min-height: 2lh;
+    min-height: var(--row-height);
     margin-block: 0;
     border-top: var(--border);
     border-bottom: var(--border);

@@ -1,11 +1,11 @@
 {
   "series": {
-    "ecobalance": { "name": "Global Ecobalance", "unit": "index", "min": 0, "max": 100 },
-    "temperature": { "name": "Surface Temperature", "unit": "°C", "trend": "negative" },
-    "population": { "name": "World Population", "unit": "billion", "min": 0 },
-    "seaLevel": { "name": "Mean Sea Level", "unit": "meters", "trend": "negative", "min": 0 },
-    "iceVolume": { "name": "Total Ice Volume", "unit": "Mkm³", "min": 0 },
-    "worldOutput": { "name": "Gross Domestic Product", "unit": "%" }
+    "ecobalance": { "name": "Global Ecobalance", "short": ":eco", "unit": "index", "min": 0, "max": 100 },
+    "temperature": { "name": "Surface Temperature", "short": ":tem", "unit": "°C", "trend": "negative" },
+    "population": { "name": "World Population", "short": ":pop", "unit": "billion", "min": 0 },
+    "seaLevel": { "name": "Mean Sea Level", "short": ":sea", "unit": "meters", "trend": "negative", "min": 0 },
+    "iceVolume": { "name": "Total Ice Volume", "short": ":ice", "unit": "Mkm³", "min": 0 },
+    "worldOutput": { "name": "Gross Domestic Product", "short": ":gdp", "unit": "%" }
   },
   "timeline": {
     "baselineYear": 2070,

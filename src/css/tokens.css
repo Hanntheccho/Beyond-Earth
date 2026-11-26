@@ -35,6 +35,10 @@
     --space-s: 10px;
     --gap-m: 12px;
     --gap-s: 8px;
+    /* Height of one bar or row of text (status bars, ledger rows, tab strips, the
+       ticker), in line heights. Unregistered, so lh resolves where it is used and
+       follows each element's own font size. */
+    --row-height: 2lh;
     --btn-size: 74px;
     /* One slot in the fixed column of header buttons: a button and the gap above it. */
     --header-step: calc(var(--space-s) + var(--btn-size));

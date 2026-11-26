@@ -308,7 +308,14 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             button.dataset.panelGroup = PANEL_GROUP;
             button.dataset.panelTarget = id;
             button.setAttribute('aria-pressed', String(active));
-            button.textContent = name;
+            // The short label is what the tab strip shows; the full name stays the
+            // accessible name and the hover tooltip.
+            const short = seriesMeta[key].short;
+            button.textContent = short || name;
+            if (short) {
+                button.setAttribute('aria-label', name);
+                button.title = name;
+            }
             buttons.push(button);
 
             const panel = document.createElement('div');

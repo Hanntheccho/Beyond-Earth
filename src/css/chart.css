@@ -107,3 +107,54 @@
     fill: color-mix(in srgb, var(--clr-positive) 20%, var(--clr));
     stroke: var(--clr-positive);
 }
+
+/* Chart tab strip: the button row built by chart.js forms the top edge of the chart
+   window. The selected tab has no bottom border so it opens into the panel below;
+   the others keep theirs and sit slightly recessed. Overrides the global button look
+   (no margins, no hover lift). On narrow screens the strip scrolls sideways. */
+.div-win.grid[data-chart-buttons] {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(max-content, 1fr);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    margin-bottom: 0;
+    border-bottom: none;
+    counter-reset: chart-tab;
+}
+[data-chart-buttons] > button {
+    margin: 0;
+    min-height: var(--row-height);
+    padding-left: var(--space-s);
+    border: none;
+    border-right: var(--border-thin);
+    border-bottom: var(--border);
+    text-align: left;
+    text-transform: none;
+    scroll-snap-align: start;
+    counter-increment: chart-tab;
+    transition: color var(--transition-time) ease, box-shadow var(--transition-time) ease, background-color var(--transition-time) ease;
+    font-weight: normal;
+}
+[data-chart-buttons] > button:last-child { border-right: none; }
+/* Index number before each label, dim until its tab is selected. */
+[data-chart-buttons] > button::before {
+    content: counter(chart-tab, decimal-leading-zero) " ";
+    opacity: .5;
+}
+[data-chart-buttons] > button:hover {
+    transform: none;
+    color: var(--clr-ph1);
+}
+[data-chart-buttons] > button[aria-pressed="true"] {
+    border-bottom-color: transparent;
+    background-color: transparent;
+    color: var(--clr-ph1);
+    box-shadow: inset 0 3px 0 var(--clr-ph1);
+}
+/* The chart panels sit flush under the strip. */
+[data-chart-buttons] ~ [data-panel-group="charts"] {
+    margin-top: 0;
+    border-top: none;
+}

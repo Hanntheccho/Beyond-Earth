@@ -13,7 +13,7 @@
     grid-template-columns: 1fr 7ch 10ch 10ch;
     align-items: center;
     gap: 1ch;
-    min-height: 2lh;
+    min-height: var(--row-height);
     border-bottom: var(--border);
 }
 /* Live ledgers (data-ledger) add a sparkline as the last column. Keyed on the ledger

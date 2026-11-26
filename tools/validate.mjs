@@ -417,6 +417,10 @@ function checkScenario() {
     });
     Object.keys(series).forEach(key => {
         if (!range[key]) warn(rel, `series "${key}" has no usable points, so its button is skipped`);
+        const short = series[key].short;
+        if (short !== undefined && (typeof short !== 'string' || !short.trim())) {
+            warn(rel, `series "${key}": "short" must be a non-empty string, so the button falls back to "name"`);
+        }
     });
 
     const unknownSeries = (item, kind, label) => (item.series || []).filter(s => {
