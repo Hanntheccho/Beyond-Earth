@@ -380,7 +380,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     }
 
     function statusFor(host) {
-        return host?.closest('[data-treemap-panel]')?.querySelector('.data-status') || null;
+        return host?.closest('[data-treemap-panel]')?.querySelector('.div-win-top') || null;
     }
 
     // Draws the treemap the first time it is on screen, then follows its feed.
