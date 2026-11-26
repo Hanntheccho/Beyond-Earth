@@ -114,6 +114,8 @@
 .div-win[data-chart-buttons] {
     padding: 0;
     margin-bottom: 0;
+    border-top: none;
+    border-right: none;
     border-bottom: none;
 }
 [data-chart-buttons] > button { text-transform: none; }

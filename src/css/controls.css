@@ -150,6 +150,7 @@ input[type="range"]::-moz-range-thumb {
     margin: 0;
     padding-inline: var(--space-s);
     border: none;
+    border-top: var(--border);
     border-right: var(--border);
     border-bottom: var(--border);
     font-weight: normal;
@@ -162,8 +163,6 @@ input[type="range"]::-moz-range-thumb {
     flex: 1 0 0;
     min-width: max-content;
 }
-/* A filled strip ends at the panel's own border; elsewhere the divider closes the last cell. */
-.btn-strip.is-fill > button:last-child { border-right: none; }
 .btn-strip > button::before { opacity: .5; }
 .btn-strip > button:hover { color: var(--clr-ph1); }
 .btn-strip > button:is([aria-pressed="true"], [aria-current]) {
