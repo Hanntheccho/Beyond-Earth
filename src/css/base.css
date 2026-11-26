@@ -15,6 +15,7 @@ body {
     font-family: var(--fnt);
     color: var(--clr-body);
     background-color: var(--clr-body-background);
+    transition: background-color var(--transition-time) ease;
 }
 body::before,
 body::after {
