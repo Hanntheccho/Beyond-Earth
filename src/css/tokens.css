@@ -35,7 +35,7 @@
     --space-s: 10px;
     --gap-m: 12px;
     --gap-s: 8px;
-    /* Height of one bar or row of text (status bars, ledger rows, tab strips, the
+    /* Height of one bar or row of text (status bars, ledger rows, button strips, the
        ticker), in line heights. Unregistered, so lh resolves where it is used and
        follows each element's own font size. */
     --row-height: 2lh;

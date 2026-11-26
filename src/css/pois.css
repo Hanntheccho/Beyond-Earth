@@ -4,27 +4,6 @@
    artwork rule in base.css. Loaded after layout.css and tooltip.css, whose rules these
    override. */
 
-/* ------------------------------------------------------------- buttons */
-/* POI buttons: a wrapping .btn-strip (controls.css) in a window of its own, apart from
-   the POI panels under it. Each button is a closed cell with space around it, sized by
-   its label alone, with none of the strip's padding, row height or top bar. */
-.div-win[data-poi-buttons] {
-    padding: 0;
-}
-[data-poi-buttons] > button {
-    min-height: 0;
-    margin: calc(var(--space-s) / 10);
-    padding: 2px 4px;
-    border-left: var(--border);
-}
-/* The pressed button, and the one with keyboard focus, keep a background and their
-   bottom border, so the current POI stands out among the rows. */
-[data-poi-buttons] > button:is([aria-pressed="true"], :focus-visible) {
-    border-bottom-color: var(--clr-border);
-    background-color: var(--btn-pressed-background);
-    box-shadow: none;
-}
-
 /* ------------------------------------------------------------- description */
 /* The scrolling text box inside a POI panel. The quote box in index.html uses it too,
    with .quote undoing the square shape. */

@@ -68,7 +68,7 @@ input[type="range"]::-moz-range-thumb {
     --btn-pressed-border-color: var(--clr-pressed-border);
     --btn-lift: -3px;
     cursor: pointer;
-    margin: 4px;
+    margin: 2px;
     padding: 2px 4px;
     border: 2px solid var(--btn-border-color);
     border-bottom-width: 4px;
@@ -123,20 +123,30 @@ input[type="range"]::-moz-range-thumb {
     text-transform: inherit;
 }
 
-/* Button strip: a row of flat cells on one shared baseline that forms the top edge of a
-   panel (treemap breadcrumbs). The current cell (pressed, or aria-current) has no
-   bottom border, so it opens into the panel below. Cells take their content width and
-   the filler after them draws the rest of the baseline. A variant adds a dim prefix
-   before each label by giving the buttons' ::before a content (breadcrumb markers).
-   On narrow screens the strip scrolls sideways.
-   .is-wrap is for strips with too many cells for one row (POI buttons): the cells wrap
-   onto more rows instead of scrolling, with no filler, and the strip stands on its own
-   instead of forming a panel's edge. */
+/* Button strip: a row of flat cells on one shared baseline that forms the top edge of
+   the panel right after it (treemap breadcrumbs). As a .div-win, the strip drops its
+   padding and outer borders, and that panel its top margin and border, so the two read
+   as one window. The current cell (pressed, or aria-current) has no bottom border, so
+   it opens into the panel. Cells take their content width and the filler after them
+   draws the rest of the baseline. A variant adds a dim prefix before each label by
+   giving the buttons' ::before a content (breadcrumb markers). On narrow screens the
+   strip scrolls sideways. */
 .btn-strip {
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
+}
+.div-win.btn-strip {
+    padding: 0;
+    margin-bottom: 0;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+}
+.div-win.btn-strip + .div-win {
+    margin-top: 0;
+    border-top: none;
 }
 .btn-strip::after {
     content: "";
@@ -155,12 +165,6 @@ input[type="range"]::-moz-range-thumb {
     scroll-snap-align: start;
     transition: color var(--transition-time) ease, box-shadow var(--transition-time) ease, background-color var(--transition-time) ease;
 }
-.btn-strip.is-wrap {
-    flex-wrap: wrap;
-    overflow: visible;
-    scroll-snap-type: none;
-}
-.btn-strip.is-wrap::after { content: none; }
 .btn-strip > button::before { opacity: .5; }
 .btn-strip > button:hover { color: var(--clr-ph1); }
 .btn-strip > button:is([aria-pressed="true"], [aria-current]) {
