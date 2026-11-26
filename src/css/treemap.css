@@ -1,9 +1,18 @@
 /* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
 
-/* Breadcrumbs: a .btn-strip (controls.css) under the status bar. The current level
-   (aria-current, set by treemap.js) opens into the treemap below, and each deeper level
-   gets a path marker. The empty alt text keeps the marker out of what screen readers
-   announce. */
+/* Breadcrumbs: a .btn-strip (controls.css) window that forms the top edge of the treemap
+   window under it, like the chart tabs. The current level (aria-current, set by
+   treemap.js) opens into the treemap, and each deeper level gets a path marker. The
+   empty alt text keeps the marker out of what screen readers announce. */
+.div-win.treemap-breadcrumbs {
+    padding: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+}
+.treemap-breadcrumbs + [data-treemap-panel] {
+    margin-top: 0;
+    border-top: none;
+}
 .treemap-breadcrumbs > button:not(:first-child)::before { content: "› " / ""; }
 /* treemap.js rebuilds the crumbs on every drill, so the current one is always a new
    button and the strip's box-shadow transition has nothing to start from. This gives
@@ -16,6 +25,14 @@
 .treemap {
     position: relative;
     width: 100%;
+}
+/* Loading message in index.html, replaced by the board on its first render; treemap.js
+   writes the load error here instead when a feed fails. */
+.treemap-message {
+    padding-block: var(--space-m);
+    color: var(--clr-data);
+    font-size: var(--fnt-size-bttn);
+    letter-spacing: var(--letter-spacing);
 }
 /* Background art: the shared rule is in base.css. */
 .treemap::before {

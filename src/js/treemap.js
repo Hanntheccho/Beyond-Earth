@@ -130,7 +130,6 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
         const getLabel = node => node.label || getName(node);
         const keyOf = node => node.tag || node.name;
         const breadcrumbs = options.breadcrumbs || null;
-        const status = options.status || null;
 
         // Persistent render state: tiles survive between ticks and only get new targets.
         const tiles = new Map();
@@ -310,7 +309,6 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             const current = path.length ? path[path.length - 1] : { node: options.root, depth: -1 };
             const children = getChildren(current.node);
             const items = children.length ? children : [current.node];
-            const total = items.reduce((sum, node) => sum + getValue(node), 0);
             if (options.feedId) {
                 host.dispatchEvent(new CustomEvent('treemap:items', {
                     bubbles: true,
@@ -363,11 +361,6 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                 if (!tile.painted) { tile.painted = true; paint(tile); } // avoid an empty first frame
             });
             startLoop();
-
-            if (status) {
-                const totalText = `€$${numberFormat.format(total)}B`;
-                status.textContent = `${getName(current.node)} · ${totalText} · ${items.length} ${items.length === 1 ? 'A01' : 'A10'}`;
-            }
         }
         render();
         return { update: render };
@@ -377,13 +370,10 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
         return id ? document.querySelector(`.treemap[data-treemap="${CSS.escape(id)}"]`) : null;
     }
 
-    function statusFor(host) {
-        return host?.closest('[data-treemap-panel]')?.querySelector('.div-win-top') || null;
-    }
-
-    // Draws the treemap the first time it is on screen, then follows its feed.
+    // Draws the treemap the first time it is on screen, then follows its feed. The
+    // board's first render replaces the loading message inside the host. The
+    // breadcrumbs are the strip window above the board, in the same feed panel.
     function mountTree(host, root) {
-        const panel = host.closest('[data-treemap-panel]');
         const wrapper = host.closest('[data-panel-group]');
         let chart = null;
         let inViewport = false;
@@ -398,8 +388,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                 root,
                 feedId: host.dataset.treemap,
                 rootLabel: root.name,
-                breadcrumbs: panel?.querySelector('.treemap-breadcrumbs') || null,
-                status: statusFor(host),
+                breadcrumbs: wrapper?.querySelector('.treemap-breadcrumbs') || null,
                 accessible: true
             });
         }
@@ -419,8 +408,8 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     });
     window.addEventListener('feeds:error', event => {
         const { id, url } = event.detail || {};
-        const status = statusFor(findHost(id));
-        if (status) status.textContent = `${id || 'Treemap'} data could not be loaded. Check ${url || 'the data url'}.`;
+        const message = findHost(id)?.querySelector('.treemap-message');
+        if (message) message.textContent = `${id || 'Treemap'} data could not be loaded. Check ${url || 'the data url'}.`;
     });
 })();
 

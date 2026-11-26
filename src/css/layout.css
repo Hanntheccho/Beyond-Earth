@@ -77,8 +77,9 @@
     padding: 0;
 }
 
-/* Status bar above a panel's content: the treemap panels, the options menu and the
-   scenario summary in the briefing. Kept last in this file, after the panel rules. */
+/* Status bar above a panel's content: the ledgers (ledger.js adds the total), the
+   options menu and the scenario summary in the briefing. Kept last in this file, after
+   the panel rules. */
 .div-win-top {
     display: grid;
     align-items: center;

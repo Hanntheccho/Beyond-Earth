@@ -4,6 +4,8 @@
 // the sort order changes (FLIP technique via the Web Animations API).
 // The change column and the colors follow each item's trend change (trendPercent in
 // simulation.js), and a sparkline of its recent history ends each row.
+// The ledger's status bar (.div-win-top) adds the total of the rows to its title,
+// tweened with them.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
@@ -27,6 +29,9 @@ import { createSparkline, updateSparkline } from './sparkline.js';
         const wrapper = host.closest('[data-panel-group]');
         const feed = simulation.getFeed(feedId);
         const rows = new Map();
+        const titleEl = host.closest('.div-win')?.querySelector('.div-win-top > span') || null;
+        const title = titleEl?.textContent || '';
+        let lastTotalText = null;
         let displayedItems = null;
         let raf = 0;
         let inViewport = false;
@@ -76,17 +81,28 @@ import { createSparkline, updateSparkline } from './sparkline.js';
             }
         }
 
+        function paintTotal(total) {
+            if (!titleEl) return;
+            const totalText = `${title} · €$${valueFormat.format(total)}B`;
+            if (totalText === lastTotalText) return;
+            lastTotalText = totalText;
+            titleEl.textContent = totalText;
+        }
+
         function step(now) {
             const reduced = motionPreference.matches;
             let active = false;
+            let total = 0;
             rows.forEach(entry => {
                 const progress = reduced ? 1 : Math.min(1, (now - entry.t0) / DURATION);
                 const eased = ease(progress);
                 entry.cur.value = lerp(entry.from.value, entry.to.value, eased);
                 entry.cur.pct = lerp(entry.from.pct, entry.to.pct, eased);
                 paint(entry);
+                total += entry.cur.value;
                 if (progress < 1) active = true;
             });
+            paintTotal(total);
             raf = active && !document.hidden && inViewport ? requestAnimationFrame(step) : 0;
         }
 
