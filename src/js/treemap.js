@@ -287,23 +287,21 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
 
         // Breadcrumbs only depend on the path, so they are rebuilt when it changes
         // (not on every tick, which would also drop keyboard focus from them).
+        // The level on screen is marked aria-current; the path markers between levels
+        // are drawn by src/css/treemap.css.
         function renderBreadcrumbs() {
             if (!breadcrumbs) return;
             breadcrumbs.replaceChildren();
-            const addCrumb = (name, onClick, pressed) => {
+            const addCrumb = (name, onClick, current) => {
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.textContent = name;
-                button.setAttribute('aria-pressed', String(pressed));
+                if (current) button.setAttribute('aria-current', 'location');
                 button.addEventListener('click', onClick);
                 breadcrumbs.appendChild(button);
             };
             addCrumb(options.rootLabel || 'World', () => { path = []; render(); }, path.length === 0);
             path.forEach((entry, index) => {
-                const separator = document.createElement('span');
-                separator.textContent = ' | ';
-                separator.setAttribute('aria-hidden', 'true');
-                breadcrumbs.appendChild(separator);
                 addCrumb(getName(entry.node), () => { path = path.slice(0, index + 1); render(); }, index === path.length - 1);
             });
         }

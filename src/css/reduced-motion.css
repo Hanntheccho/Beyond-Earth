@@ -31,7 +31,7 @@
         transition: none !important;
         animation-delay: 0ms !important;
     }
-    button:hover { transform: none; }
+    button:hover { translate: none; }
 }
 
 /* scroll-reveal-ready is set on <html>, so it sits above body here. */
@@ -60,4 +60,4 @@ body.reduced-motion .loading-bar::after {
     transition: none !important;
     animation-delay: 0ms !important;
 }
-body.reduced-motion button:hover { transform: none; }
+body.reduced-motion button:hover { translate: none; }

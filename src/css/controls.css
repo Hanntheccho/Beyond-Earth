@@ -1,4 +1,5 @@
-/* controls.css - Form controls: scrollbar, range input, buttons, header toggles, options menu. */
+/* controls.css - Form controls: scrollbar, range input, buttons and button strips, header
+   toggles, options menu. */
 
 /* Chrome, Edge and Safari use ::-webkit-scrollbar; Firefox only takes the standard
    properties. They are kept apart because Chrome ignores ::-webkit-scrollbar as soon
@@ -50,44 +51,128 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
 }
 
-button {
+/* Buttons. The base look (a raised key that lifts on hover) is wrapped in :where(), so it
+   has no specificity and any class or attribute selector overrides it, without restating
+   :hover or the pressed state.
+   The colors the pressed state swaps are custom properties: a variant changes --btn-*
+   and its pressed state keeps working. Everything else (margin, padding, borders, font)
+   is overridden directly. --btn-lift is how far a button rises on hover; variants that
+   should stay put cancel it. The --btn-* values are declared on every button, so set
+   them on the button itself: a value set on a parent does not reach it. */
+:where(button) {
+    --btn-background: var(--clr-background);
+    --btn-color: var(--clr-data);
+    --btn-border-color: var(--clr-border);
+    --btn-pressed-background: var(--clr-pressed-background);
+    --btn-pressed-color: var(--clr-ph1);
+    --btn-pressed-border-color: var(--clr-pressed-border);
+    --btn-lift: -3px;
     cursor: pointer;
-    text-transform: uppercase;
-    text-align: center;
-    box-shadow: none;
-    background-color: var(--clr-background);
-    font-family: var(--fnt);
     margin: 4px;
     padding: 2px 4px;
+    border: 2px solid var(--btn-border-color);
+    border-bottom-width: 4px;
+    background-color: var(--btn-background);
+    box-shadow: none;
+    color: var(--btn-color);
+    font-family: var(--fnt);
     font-size: var(--fnt-size-bttn);
-    color: var(--clr-data);
+    font-weight: bold;
     letter-spacing: var(--letter-spacing);
     text-indent: var(--letter-spacing);
-    border: 2px solid;
-    border-bottom-width: 4px;
-    border-color: var(--clr-border);
-    transition: transform var(--transition-time) ease, color var(--transition-time) ease, background-color var(--transition-time) ease;
-    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    /* translate, not transform, so the lift adds to a variant's own transform. */
+    transition: translate var(--transition-time) ease, color var(--transition-time) ease, background-color var(--transition-time) ease;
 }
-button:hover { transform: translateY(-3px); }
+:where(button:hover) { translate: 0 var(--btn-lift); }
 /* Pressed and open states share one look. */
-button[aria-pressed="true"],
-.main-visibility-toggle[aria-expanded="true"],
-.options-toggle[aria-expanded="true"] {
-    border-color: var(--clr-pressed-border);
-    background-color: var(--clr-pressed-background);
-    color: var(--clr-ph1);
+:where(
+    button[aria-pressed="true"],
+    .main-visibility-toggle[aria-expanded="true"],
+    .options-toggle[aria-expanded="true"]
+) {
+    border-color: var(--btn-pressed-border-color);
+    background-color: var(--btn-pressed-background);
+    color: var(--btn-pressed-color);
 }
-button img {
+:where(button img) {
     display: block;
     width: 100%;
     height: auto;
 }
-button:has(img) {
+:where(button:has(img)) {
     padding: var(--space-s);
     width: var(--btn-size);
     height: var(--btn-size);
 }
+
+/* No key look: a button that reads as part of what surrounds it (inline POI links,
+   globe markers). Add the class, then style only what the variant needs. */
+.btn-plain {
+    --btn-lift: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    text-indent: 0;
+    text-transform: inherit;
+}
+
+/* Button strip: a row of flat cells on one shared baseline that forms the top edge of a
+   panel (chart tabs, treemap breadcrumbs). The current cell (pressed, or aria-current)
+   has no bottom border, so it opens into the panel below. Cells take their content
+   width and the filler after them draws the rest of the baseline; .is-fill spreads the
+   cells over the whole row instead. A variant adds a dim prefix before each label by
+   giving the buttons' ::before a content; the strip-item counter numbers the cells.
+   On narrow screens the strip scrolls sideways. */
+.btn-strip {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    counter-reset: strip-item;
+}
+.btn-strip::after {
+    content: "";
+    flex: 1 0 auto;
+    border-bottom: var(--border);
+}
+.btn-strip.is-fill::after { content: none; }
+.btn-strip > button {
+    --btn-lift: 0;
+    flex: none;
+    min-height: var(--row-height);
+    margin: 0;
+    padding-inline: var(--space-s);
+    border: none;
+    border-right: var(--border-thin);
+    border-bottom: var(--border);
+    font-weight: normal;
+    text-align: left;
+    scroll-snap-align: start;
+    counter-increment: strip-item;
+    transition: color var(--transition-time) ease, box-shadow var(--transition-time) ease, background-color var(--transition-time) ease;
+}
+.btn-strip.is-fill > button {
+    flex: 1 0 0;
+    min-width: max-content;
+}
+/* A filled strip ends at the panel's own border; elsewhere the divider closes the last cell. */
+.btn-strip.is-fill > button:last-child { border-right: none; }
+.btn-strip > button::before { opacity: .5; }
+.btn-strip > button:hover { color: var(--clr-ph1); }
+.btn-strip > button:is([aria-pressed="true"], [aria-current]) {
+    border-bottom-color: transparent;
+    background-color: transparent;
+    color: var(--clr-ph1);
+    box-shadow: inset 0 3px 0 var(--clr-ph1);
+}
+.btn-strip > button:is([aria-pressed="true"], [aria-current])::before { opacity: 1; }
 
 .main-visibility-toggle,
 .options-toggle,

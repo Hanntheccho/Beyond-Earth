@@ -1,10 +1,18 @@
 /* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
 
-.treemap-breadcrumbs {
-    color: var(--clr-p);
-    font-size: var(--fnt-size-bttn);
+/* Breadcrumbs: a .btn-strip (controls.css) under the status bar. The current level
+   (aria-current, set by treemap.js) opens into the treemap below, and each deeper level
+   gets a path marker. The empty alt text keeps the marker out of what screen readers
+   announce. */
+.treemap-breadcrumbs > button:not(:first-child)::before { content: "› " / ""; }
+/* treemap.js rebuilds the crumbs on every drill, so the current one is always a new
+   button and the strip's box-shadow transition has nothing to start from. This gives
+   it a starting state, so its top bar grows in the way a chart tab's does. */
+@starting-style {
+    .treemap-breadcrumbs > button[aria-current] { box-shadow: inset 0 0 0 var(--clr-ph1); }
 }
-.treemap-breadcrumbs button { margin-right: 4px; }
+/* The root level keeps the case it has in the data. */
+.treemap-breadcrumbs > button:first-child { text-transform: none; }
 .treemap {
     position: relative;
     width: 100%;

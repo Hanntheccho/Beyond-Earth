@@ -42,6 +42,7 @@
     opacity: 0;
     transition-duration: var(--transition-time-quick);
 }
+/* A plain button (.btn-plain in controls.css): only the icon shows. */
 .globe-marker {
     position: absolute;
     top: 0;
@@ -51,16 +52,7 @@
     place-items: center;
     width: var(--marker-size);
     height: var(--marker-size);
-    margin: 0;
-    padding: 0;
-    border: 0;
     border-radius: 50%;
-    background: transparent;
-    box-shadow: none;
-    color: inherit;
-    text-transform: none;
-    letter-spacing: normal;
-    text-indent: 0;
     pointer-events: none;
     /* globe-markers.js replaces this with an inline transform that also moves the marker
        to its position, and sets the opacity, on every frame. */

@@ -36,21 +36,14 @@
 }
 
 /* ------------------------------------------------------ inline POI links */
-/* Inline POI links in descriptions ({{id|text}}, see loc.js): read as part of the text,
-   undoing the button look from controls.css and the inline-block trigger from
+/* Inline POI links in descriptions ({{id|text}}, see loc.js): plain buttons (.btn-plain
+   in controls.css) that read as part of the text, undo the inline-block trigger from
    tooltip.css, and open the linked POI's tooltip. */
 .poi-link {
     display: inline;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    font: inherit;
     color: var(--clr-ph2);
     letter-spacing: var(--letter-spacing);
-    text-indent: 0;
     text-transform: uppercase;
-    text-align: inherit;
     text-decoration: underline dotted;
     text-underline-offset: .2em;
     cursor: help;
@@ -60,6 +53,5 @@
        link would make its whole line taller. */
     line-height: 1;
 }
-.poi-link:hover { transform: none; }
 .poi-link:hover,
 .poi-link:focus-visible { text-decoration-style: solid; }

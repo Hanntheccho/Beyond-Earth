@@ -73,7 +73,7 @@ function applyPoiLinks(localization) {
                 console.warn(`Localization "${key}" links to "${id}", which has no "${id}-desc"; it is shown as plain text.`);
                 return text;
             }
-            return `<button type="button" class="${POI_LINK_CLASS} has-tooltip" data-tooltip="${escapeHtml(id)}-desc">${text}</button>`;
+            return `<button type="button" class="${POI_LINK_CLASS} btn-plain has-tooltip" data-tooltip="${escapeHtml(id)}-desc">${text}</button>`;
         });
     }
     return localization;

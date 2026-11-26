@@ -2,8 +2,9 @@
 // data/scenario-data.json (explained in data/scenario-data.md): name, unit, axis
 // bounds and trend direction from `series`, events and eras from `timeline`, and
 // the values from `points`. One button and panel is built per series that has points.
-// index.html only needs an empty <div class="div-win grid" data-chart-buttons></div>;
-// the panels are inserted right after it.
+// index.html only needs an empty <div class="div-win btn-strip is-fill" data-chart-buttons></div>
+// (the tab strip, styled in src/css/controls.css and chart.css); the panels are
+// inserted right after it.
 //
 // Events and eras are drawn in red by default. Add `"positive": true` to one in the
 // timeline to draw it in green instead (the .is-positive class).

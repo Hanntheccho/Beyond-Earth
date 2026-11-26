@@ -14,7 +14,7 @@ export function createGlobeMarkers(layer, canvas) {
 
   function createButton(entry) {
     const button = document.createElement('button');
-    button.className = 'globe-marker';
+    button.className = 'globe-marker btn-plain';
     button.type = 'button';
     button.hidden = true;
     button.style.setProperty('--marker-size', `${entry.size}px`);
