@@ -298,16 +298,21 @@ function checkPois(loc) {
 
     // Inline POI links, {{id|text}} or {{id}}; the same pattern as in src/js/loc.js, which
     // shows a link to a POI without a description as plain text. They are the only way
-    // to reach a nested POI, so each one needs a link in some other text.
+    // to reach a nested POI, so each one needs a link in a text the reader can get to:
+    // a panel, a text that is not a POI's, or a POI reached that way in turn.
     const POI_LINK = /\{\{([^{}|]+)(?:\|([^{}]*))?\}\}/g;
+    const isPoi = key => ids.has(key) || parentOf.has(key);
     const linked = new Set();
+    const linksFrom = new Map();
+    const reached = new Set(shown);
     Object.entries(loc).forEach(([key, text]) => {
         if (typeof text !== 'string' || !text.includes('{{')) return;
         const rest = text.replace(POI_LINK, '');
         if (rest.includes('{{') || rest.includes('}}')) {
             warn('pois', `"${key}" has a "{{" or "}}" that is not a complete {{id|text}} link, so it shows as typed`);
         }
-        const owner = key.endsWith('-desc') ? key.slice(0, -5) : null;
+        const base = key.endsWith('-desc') ? key.slice(0, -5) : key;
+        const owner = isPoi(base) ? base : null;
         for (const [, rawId, rawText] of text.matchAll(POI_LINK)) {
             const id = rawId.trim();
             if (!hasText(`${id}-desc`)) {
@@ -318,12 +323,30 @@ function checkPois(loc) {
                 warn('pois', `"${key}" links to "${id}" without a text and "${id}" has no name, so the link shows the id`);
             }
             // A description linking to its own POI does not make it reachable.
-            if (id !== owner) linked.add(id);
+            if (id === owner) continue;
+            linked.add(id);
+            if (!owner) reached.add(id);
+            else {
+                if (!linksFrom.has(owner)) linksFrom.set(owner, new Set());
+                linksFrom.get(owner).add(id);
+            }
         }
     });
+    const queue = [...reached];
+    while (queue.length) {
+        (linksFrom.get(queue.shift()) ?? []).forEach(id => {
+            if (reached.has(id)) return;
+            reached.add(id);
+            queue.push(id);
+        });
+    }
     parentOf.forEach((parent, child) => {
-        if (hasText(`${child}-desc`) && !linked.has(child)) {
+        if (!hasText(`${child}-desc`) || reached.has(child)) return;
+        if (!linked.has(child)) {
             warn('pois', `child "${child}" of "${parent}" is not linked from any text with {{${child}|text}}, so it cannot be reached`);
+        } else {
+            const from = [...linksFrom].filter(([, targets]) => targets.has(child)).map(([owner]) => owner);
+            warn('pois', `child "${child}" of "${parent}" is only linked from ${from.join(', ')}, which cannot be reached either; link it, or one of them, from a text that can`);
         }
     });
 

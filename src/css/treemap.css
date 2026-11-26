@@ -4,7 +4,7 @@
    window under it. The current level (aria-current, set by treemap.js) opens into the
    treemap, and each deeper level gets a path marker. The empty alt text keeps the
    marker out of what screen readers announce. */
-.treemap-breadcrumbs > button:not(:first-child)::before { content: "› " / ""; }
+.treemap-breadcrumbs > button::before { content: "> " / ""; }
 /* treemap.js rebuilds the crumbs on every drill, so the current one is always a new
    button and the strip's box-shadow transition has nothing to start from. This gives
    it a starting state, so its top bar grows in instead of appearing at once.

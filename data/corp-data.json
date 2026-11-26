@@ -9,17 +9,17 @@
         {
           "name": "ARC Helios",
           "tag": "ARCHE",
-          "value": 700
+          "value": 900
         },
         {
           "name": "ARC Vita",
           "tag": "ARCVI",
-          "value": 1900
+          "value": 2400
         },
         {
           "name": "ARC Terra",
           "tag": "ARCTE",
-          "value": 1750
+          "value": 1500
         },
         {
           "name": "ARC Aegis",
@@ -29,22 +29,22 @@
         {
           "name": "ARC Nexus",
           "tag": "ARCNX",
-          "value": 1250
+          "value": 1300
         },
         {
           "name": "ARC Renova",
           "tag": "ARCRE",
-          "value": 950
+          "value": 1800
         },
         {
           "name": "ARC Orbis",
           "tag": "ARCOR",
-          "value": 800
+          "value": 700
         },
         {
           "name": "ARC Proxima",
           "tag": "ARCPX",
-          "value": 2300
+          "value": 1400
         },
         {
           "name": "ARC Colonia",
@@ -66,7 +66,7 @@
     {
       "name": "Bharat Blackrock",
       "tag": "BHB",
-      "value": 260
+      "value": 450
     },
     {
       "name": "Sub-Orbital Contractors",
@@ -131,7 +131,38 @@
     {
       "name": "Morgan Industries",
       "tag": "MOR",
-      "value": 3010
+      "children": [
+        {
+          "name": "Biafran Holdings",
+          "tag": "MORBH",
+          "value": 900
+        },
+        {
+          "name": "Morgan Security",
+          "tag": "MORSE",
+          "value": 600
+        },
+        {
+          "name": "Adamawa Portfolio",
+          "tag": "MORAD",
+          "value": 400
+        },
+        {
+          "name": "Morgan Food Brokerage",
+          "tag": "MORFB",
+          "value": 300
+        },
+        {
+          "name": "Morgan SafeHaven",
+          "tag": "MORSH",
+          "value": 250
+        },
+        {
+          "name": "Morgan Media",
+          "tag": "MORME",
+          "value": 150
+        }
+      ]
     },
     {
       "name": "Pioneer Habitat Works",
@@ -211,27 +242,27 @@
         {
           "name": "Casino Obrero Minero",
           "tag": "COOPC",
-          "value": 3100
+          "value": 1100
         },
         {
           "name": "Distrito Minero C2",
           "tag": "COOP2",
-          "value": 410
+          "value": 500
         },
         {
           "name": "Distrito Minero C4",
           "tag": "COOP4",
-          "value": 670
+          "value": 800
         },
         {
           "name": "Distrito Minero A3",
           "tag": "COOP3",
-          "value": 390
+          "value": 480
         },
         {
           "name": "Distritos Mineros Libres",
           "tag": "COOPL",
-          "value": 210
+          "value": 260
         }
       ]
     },
@@ -254,6 +285,16 @@
       "name": "Pacific Patch Market",
       "tag": "PPM",
       "value": 82
+    },
+    {
+      "name": "Ayame Keiretsu",
+      "tag": "AYA",
+      "value": 900
+    },
+    {
+      "name": "Reilly Heavy Industries",
+      "tag": "RHI",
+      "value": 400
     }
   ]
 }

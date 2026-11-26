@@ -12,8 +12,8 @@
     "events": [
       { "year": 2070, "label": "The Great Mistake" },
       { "year": 2074, "label": "Satellites Fall", "y": 100, "series": ["worldOutput"] },
-      { "year": 2075, "label": "Nuclear Ashfall", "y": 260, "series": ["temperature"] },
-      { "year": 2084, "label": "Siege of Washington", "y": 270, "series": ["worldOutput", "population"] },
+      { "year": 2075, "label": "Nuclear Ashfall", "y": 265, "series": ["temperature"] },
+      { "year": 2084, "label": "Siege of Washington", "y": 265, "series": ["worldOutput", "population"] },
       { "year": 2088, "label": "Hamburg Flood", "y": 120, "series": ["seaLevel", "population"] },
       { "year": 2089, "label": "INTEGR Founded", "y": 180, "series": ["ecobalance"], "positive": true },
       { "year": 2090, "label": "Antarctic Collapse", "y": 190, "series": ["iceVolume", "seaLevel"] },

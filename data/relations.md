@@ -29,37 +29,38 @@ TUNG
 SILICA
 HELIUM
 COAL
+GRAIN
 
 # BLOC | (WEIGHT)GOOD
-Al-Falah | +++OIL +++GAS ++SULFUR ++PHOSPHA ++CHROM +BAUX ++HELIUM
+Al-Falah | +++OIL +++GAS ++SULFUR ++PHOSPHA ++CHROM +BAUX ++HELIUM -GRAIN
 Central Asian Federation | ++OIL +++GAS ++URANIUM +++CHROM +SULFUR +COPPER +IRON +COAL
 North Sea Alliance | +OIL ++GAS +URANIUM ++IRON +COPPER +++REE ++++COAL ++TITAN +GRAPH
-Slavic Federation | +OIL +++GAS +URANIUM +++HELIUM ++IRON ++COAL +COPPER ++NICK +COBALT ++TITAN +PHOSPHA +SULFUR +MANGA +CHROM
+Slavic Federation | +OIL +++GAS +URANIUM +++HELIUM ++IRON ++COAL +COPPER ++NICK +COBALT ++TITAN +PHOSPHA +SULFUR +MANGA +CHROM +GRAIN
 Kimpwanza League | +URANIUM +++COPPER ++++COBALT ++++CHROM +++MANGA ++TITAN ++COAL +IRON +OIL +REE
 INTEGR | ---OIL ---GAS -URANIUM +IRON +COPPER +CHROM +NICK -PHOSPHA +TUNG +SILICA
-Pact of Hyderabad | -OIL -GAS +URANIUM ++IRON ++COAL ++BAUX ++CHROM +MANGA +TITAN +GRAPH
+Pact of Hyderabad | -OIL -GAS +URANIUM ++IRON ++COAL ++BAUX ++CHROM +MANGA +TITAN +GRAPH --GRAIN
 Pan-Asian Cooperative | -OIL +URANIUM ++IRON +LITHIUM +REE +COAL +++GRAPH ++++TUNG ++PHOSPHA +++TITAN +SULFUR +SILICA +BAUX +NICK +MANGA
 North American Union | +OIL -GAS -URANIUM +IRON +COAL +COPPER +LITHIUM +PHOSPHA +SULFUR +NICK +SILICA ++HELIUM +REE
 Mediterranean Bloc | -OIL +GAS +IRON +COPPER ++BAUX +TUNG +++PHOSPHA -SULFUR
 Polystralia | +OIL -GAS ++URANIUM ++++IRON +++COAL ++LITHIUM +++BAUX +++NICK ++MANGA ++COBALT ++TITAN +COPPER +SILICA
 Brasilia | ++OIL +++IRON +COPPER ++BAUX ++NICK +MANGA +GRAPH +PHOSPHA
-Conosur | -OIL -GAS +++COPPER +LITHIUM
+Conosur | -OIL -GAS +++COPPER +LITHIUM +GRAIN
 People's African Union | +OIL +GAS +URANIUM ++COPPER +COBALT ++GRAPH +COAL +REE +TITAN +NICK
 Andean Compact | +IRON ++LITHIUM +REE +COAL ++COPPER +TUNG +PHOSPHA
 Bamako Compact | ++OIL +GAS +URANIUM +++IRON ++BAUX ++MANGA +LITHIUM
 
 # CORP | (WEIGHT)GOOD
-ARC International | ---OIL ---GAS -URANIUM -IRON --LITHIUM ---REE -COBALT
+ARC International | ---OIL ---GAS -URANIUM -IRON --LITHIUM ---REE -COBALT -GRAIN
 Pavlov Energy | --OIL --GAS ---URANIUM --LITHIUM
 Westralian Logistics | --OIL -GAS -IRON ---LITHIUM
-AutoFarm International | -GAS -LITHIUM --PHOSPHA -SULFUR
+AutoFarm International | -GAS -LITHIUM --PHOSPHA -SULFUR ++GRAIN
 PLENFOR Armor & Steel | --IRON -COPPER -LITHIUM -NICK -MANGA -TITAN -CHROM -TUNG
 Vostok Heavy Industries | ---IRON -LITHIUM -MANGA
 LOW Artillery Foundries | --IRON -LITHIUM -MANGA -TITAN --TUNG
 Antarctica Trust | +OIL ++GAS +URANIUM ++++REE ++++HELIUM +IRON +COAL +COPPER
 North Sea Construction | ---IRON -COPPER -MANGA -SILICA
 Cooperativa Minera de Lima | +IRON +COPPER ++++LITHIUM ++REE +COAL
-Morgan Industries | ++COBALT +COPPER +OIL -PHOSPHA
+Morgan Industries | ++COBALT +COPPER +OIL -PHOSPHA ++GRAIN
 NADL Industries | -IRON -SILICA
 INTRCD |
 Compact Corporation | +COPPER +LITHIUM
@@ -74,6 +75,8 @@ Permafrost Reconstruction | -IRON -GAS
 Ark Initiative |
 ABTBIA | -IRON -COPPER
 University of Eurasia Fund |
+Ayame Keiretsu | -IRON -TITAN
+Reilly Heavy Industries | -IRON
 
 # INTERPRETATIONS (added with the extra relations)
 Names in relations.json follow data/bloc-data.json and data/corp-data.json exactly (Al-Falah, LOW Artillery Foundries, ...). The lists above were typed with older spellings in places.
@@ -101,6 +104,8 @@ Names in relations.json follow data/bloc-data.json and data/corp-data.json exact
 ## Company readings
 Readings marked (lore) follow the POI text in data/loc/pois, and readings marked (mod) follow the company descriptions in the original Beyond Earth mod. The others are still assumptions, because neither source says anything about them.
 - Morgan Industries (lore, BMK panel): Nwabudike Morgan's Biafran conglomerate. It propped up Biafra, is buying its way into Benin and Adamawa, and was thrown out of Sokoto, so it grows with the Bamako Compact. It earns from cobalt, copper and Biafran oil and pays for fertiliser (phosphate) for its Adamawa farms. The Kimpwanza League still sells cobalt through its brokers but distrusts it, so that link is weak. It stays a rival of the People's African Union and ABTBIA. It has no INTEGR link: nothing in the lore connects them, and Morgan's free-market creed is the opposite of INTEGR's green austerity.
+- Ayame Keiretsu (lore, CHI panel): Iwata Masahiro's keiretsu, which made him one of the richest men in Japan before he became Prime Minister. His government rebuilds and promotes mechanical augmentation, so it pays for iron and titanium and moves with the Pan-Asian Cooperative.
+- Reilly Heavy Industries (lore, BMK panel): the fortune T.M., Nwabudike Morgan's nephew, married into. Only that marriage places it, so it gets one good link (it pays for iron), a small link from the Bamako Compact and a smaller one from Morgan Industries.
 - NADL Industries (mod): "the leading provider of fortifications in the world". It pays for iron and silica (steel and concrete) and grows with the powers building forts in the lore: the Andean Compact (forts along the Brazilian border), Brasilia (the Salles Line and the Andean front) and the People's African Union (its borders with the Kimpwanza League). It is not North American heavy industry, and has no NAU or ARC links.
 - PLENFOR Armor & Steel (mod): the leading maker of armed and armored vehicles since the 2050s. It pays for the metals that go into armor and grows with the powers rearming in the lore: Brasilia (the mobilized junta), the Andean Compact (its army review found too few armored vehicles) and the People's African Union (the second-largest army in the world). Nothing places it in Conosur, so that link was removed.
 - Pavlov Energy and University of Eurasia Fund (mod): Moscow-based corporations that field mercenary battalions for Eurasia. The University's cliques are also Eurasia's main political parties, so both move strongly with the Slavic Federation. The University courts the Central Asian Federation's government. Pavlov's old Al-Falah link had no basis in the lore and was removed.
