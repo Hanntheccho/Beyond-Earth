@@ -39,8 +39,11 @@
        ticker), in line heights. Unregistered, so lh resolves where it is used and
        follows each element's own font size. */
     --row-height: 2lh;
+    /* Width and height of an icon key (.btn-icon in buttons.css), unless its
+       --btn-icon-size says otherwise. */
     --btn-size: 74px;
-    /* One slot in the fixed column of header buttons: a button and the gap above it. */
+    /* One slot in the fixed column of header buttons (header.css): a button and the gap
+       above it. */
     --header-step: calc(var(--space-s) + var(--btn-size));
     --track-height: 4px;
     --slider-width: 200px;
@@ -76,7 +79,7 @@
     --clr-cite: var(--clr-body);
     --clr-data: color-mix(in srgb, var(--clr-body) 60%, var(--clr));
     --clr-background: color-mix(in srgb, var(--clr-body-background), transparent var(--clr-background-transparency));
-    /* Pressed buttons and open toggles. */
+    /* The on state of buttons: pressed, open or current (buttons.css). */
     --clr-pressed-border: color-mix(in srgb, var(--clr-border), var(--clr-body) 60%);
     --clr-pressed-background: color-mix(in srgb, var(--clr-background), var(--clr-body) 20%);
     --border: 2px solid var(--clr-border);

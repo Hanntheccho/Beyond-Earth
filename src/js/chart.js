@@ -3,11 +3,12 @@
 // bounds and trend direction from `series`, events and eras from `timeline`, and the
 // values from `points`. One button and panel is built per series that has points.
 // index.html only needs the chart window with an empty tab group in it:
-// <div class="chart-window"><div class="chart-tabs" data-chart-buttons></div></div>
-// (styled in src/css/chart.css); the panels are inserted right after the tabs, which
+// <div class="chart-window"><div class="chart-tabs btn-group is-column" data-chart-buttons></div></div>
+// (placed in src/css/chart.css); the panels are inserted right after the tabs, which
 // float over them.
-// The tabs show only the series icon; the name is their accessible name and their
-// browser tooltip (title).
+// The tabs are icon keys (.btn-icon with an .icon-mask, src/css/buttons.css) showing
+// only the series icon; the name is their accessible name and their browser tooltip
+// (title).
 //
 // Events and eras are drawn in red by default. Add `"positive": true` to one in the
 // timeline to draw it in green instead (the .is-positive class).
@@ -35,7 +36,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const PANEL_GROUP = 'charts';
     // Series icons are paths from the project root, made absolute here as poi-data.js
     // does: a relative url() in the inline --icon can resolve against the stylesheet
-    // that uses it (chart.css) instead of the page.
+    // that uses it (buttons.css) instead of the page.
     const ROOT_URL = new URL('../../', import.meta.url);
 
     // Chart layout, in pixels. The plot area keeps CHART_MARGIN free on every side for
@@ -313,15 +314,16 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
 
             const button = document.createElement('button');
             button.type = 'button';
+            button.className = 'btn-icon';
             button.dataset.panelGroup = PANEL_GROUP;
             button.dataset.panelTarget = id;
             button.setAttribute('aria-pressed', String(active));
             button.setAttribute('aria-label', name);
             button.title = name;
-            // The icon is a mask filled with the button's text color (chart.css), so
+            // The icon is a mask filled with the button's text color (buttons.css), so
             // it follows the tab states and the theme.
             const icon = document.createElement('span');
-            icon.className = 'chart-tab-icon';
+            icon.className = 'icon-mask';
             icon.setAttribute('aria-hidden', 'true');
             if (seriesMeta[key].icon) {
                 icon.style.setProperty('--icon', `url("${new URL(seriesMeta[key].icon, ROOT_URL).href}")`);

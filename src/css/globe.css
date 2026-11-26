@@ -42,7 +42,7 @@
     opacity: 0;
     transition-duration: var(--transition-time-quick);
 }
-/* A plain button (.btn-plain in controls.css): only the icon shows. */
+/* A plain button (.btn-plain in buttons.css): only the icon shows. */
 .globe-marker {
     position: absolute;
     top: 0;

@@ -1,0 +1,184 @@
+/* buttons.css - The button system. Every <button> starts as a raised key (the base look
+   below); a variant class gives it another look, a container class lays a set of
+   buttons out, and its ARIA attributes set its state. Where a button sits on the page
+   (the header column, the chart tabs' corner) is up to its component's stylesheet,
+   which loads after this one.
+
+   Classes
+     .btn-icon     on a button: a square key holding only an icon (an <img> or an
+                   .icon-mask). A button with neither variant is a text key.
+     .btn-plain    on a button: no key look at all, for buttons that read as part of
+                   what surrounds them (inline POI links, globe markers).
+     .icon-mask    an icon drawn in the text color from an image's shape (--icon).
+     .btn-group    on a container: its buttons in a row that wraps, or stacked in a
+                   column with .is-column.
+     .btn-strip    on a container: flat cells that form the top edge of the panel
+                   after it.
+
+   States: aria-pressed="true" (toggles, tabs), aria-expanded="true" (buttons that open
+   something) and aria-current (the current item of a trail) share one "on" look, so no
+   state class is needed. A new kind of state goes in the list in the base rules (and
+   in the strip's copy of it).
+
+   Settings: these custom properties change a button without restating its states.
+   They inherit, so they can be set on the button or on any ancestor (a group, a
+   component); each falls back to a default in the rules below.
+     --btn-color, --btn-background, --btn-border-color   colors at rest
+     --btn-pressed-color, --btn-pressed-background,
+     --btn-pressed-border-color                          colors when on
+     --btn-lift          how far the key rises on hover; buttons that stay put cancel it
+     --btn-shadow        its box-shadow; keys floating over the page use --box-shadow
+     --btn-icon-size     width and height of a .btn-icon (--btn-size by default)
+     --btn-icon-padding  space between a .btn-icon's border and its icon
+     --btn-gap           space between the buttons of a .btn-group */
+
+/* ------------------------------------------------------------- base */
+/* Wrapped in :where(), so the base has no specificity and any class or attribute
+   selector overrides it. */
+:where(button) {
+    cursor: pointer;
+    margin: 0;
+    padding: 2px 4px;
+    border: 2px solid var(--btn-border-color, var(--clr-border));
+    border-bottom-width: 4px;
+    background-color: var(--btn-background, var(--clr-background));
+    box-shadow: var(--btn-shadow, none);
+    color: var(--btn-color, var(--clr-data));
+    font-family: var(--fnt);
+    font-size: var(--fnt-size-bttn);
+    font-weight: bold;
+    letter-spacing: var(--letter-spacing);
+    text-indent: var(--letter-spacing);
+    text-align: center;
+    text-transform: uppercase;
+    /* translate, not transform, so the lift adds to a variant's own transform. */
+    transition:
+        translate var(--transition-time) ease,
+        color var(--transition-time) ease,
+        background-color var(--transition-time) ease,
+        border-color var(--transition-time) ease,
+        box-shadow var(--transition-time) ease;
+}
+:where(button:hover) { translate: 0 var(--btn-lift, -3px); }
+/* The on state. */
+:where(
+    button[aria-pressed="true"],
+    button[aria-expanded="true"],
+    button[aria-current]:not([aria-current="false"])
+) {
+    border-color: var(--btn-pressed-border-color, var(--clr-pressed-border));
+    background-color: var(--btn-pressed-background, var(--clr-pressed-background));
+    color: var(--btn-pressed-color, var(--clr-ph1));
+}
+
+/* ------------------------------------------------------------- variants */
+/* Icon key: square, with the icon filling it inside the padding. */
+.btn-icon {
+    width: var(--btn-icon-size, var(--btn-size));
+    height: var(--btn-icon-size, var(--btn-size));
+    padding: var(--btn-icon-padding, var(--space-s));
+}
+.btn-icon > img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.btn-icon > .icon-mask {
+    width: 100%;
+    height: 100%;
+}
+
+/* Plain: no key look. Add the class, then style only what the component needs. */
+.btn-plain {
+    --btn-lift: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    text-indent: 0;
+    text-transform: inherit;
+}
+
+/* ------------------------------------------------------------- icons */
+/* An icon drawn in the text color: only the shape of the image in --icon (set by the
+   script that builds it) is used, so it dims, lights up and follows the theme with
+   its button. A relative url() in --icon may resolve against this stylesheet rather
+   than the page, so the scripts pass absolute ones. */
+.icon-mask {
+    display: block;
+    background-color: currentColor;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+}
+
+/* ------------------------------------------------------------- containers */
+/* Group: buttons in a row that wraps onto as many rows as it needs, spaced by the gap
+   alone. .is-column stacks them instead. */
+.btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--btn-gap, var(--space-s));
+}
+.btn-group.is-column {
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+/* Strip: a row of flat cells on one shared baseline that forms the top edge of the
+   panel right after it (treemap breadcrumbs). As a .div-win, the strip drops its
+   padding and outer borders, and that panel its top margin and border, so the two read
+   as one window. Cells stay put on hover and only light up. The current cell (on) has
+   no bottom border, so it opens into the panel, and a bar along its top marks it.
+   Cells take their content width and the filler after them draws the rest of the
+   baseline. A component adds a dim prefix before each label by giving the cells'
+   ::before a content (breadcrumb markers). On narrow screens the strip scrolls
+   sideways. */
+.btn-strip {
+    --btn-lift: 0;
+    --btn-pressed-background: transparent;
+    --btn-pressed-color: var(--clr-ph1);
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+}
+.div-win.btn-strip {
+    padding: 0;
+    margin-bottom: 0;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+}
+.div-win.btn-strip + .div-win {
+    margin-top: 0;
+    border-top: none;
+}
+.btn-strip::after {
+    content: "";
+    flex: 1 0 auto;
+    border-bottom: var(--border);
+}
+.btn-strip > button {
+    flex: none;
+    min-height: var(--row-height);
+    padding-inline: var(--space-s);
+    border: var(--border);
+    border-left: none;
+    font-weight: normal;
+    scroll-snap-align: start;
+}
+.btn-strip > button::before { opacity: .5; }
+.btn-strip > button:hover { color: var(--clr-ph1); }
+/* The base on list again, for the parts of the on look only cells have. */
+.btn-strip > button:is(
+    [aria-pressed="true"],
+    [aria-expanded="true"],
+    [aria-current]:not([aria-current="false"])
+) {
+    border-bottom-color: transparent;
+    box-shadow: inset 0 3px 0 var(--clr-ph1);
+}

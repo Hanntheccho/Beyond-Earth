@@ -4,6 +4,14 @@
    artwork rule in base.css. Loaded after layout.css and tooltip.css, whose rules these
    override. */
 
+/* ------------------------------------------------------------- buttons */
+/* POI buttons: text keys in a wrapping .btn-group (buttons.css), in a window of their
+   own above the POI panels. */
+.div-win[data-poi-buttons] {
+    --btn-gap: calc(var(--gap-s) / 2);
+    padding: var(--space-s);
+}
+
 /* ------------------------------------------------------------- description */
 /* The scrolling text box inside a POI panel. The quote box in index.html uses it too,
    with .quote undoing the square shape. */
@@ -37,7 +45,7 @@
 
 /* ------------------------------------------------------ inline POI links */
 /* Inline POI links in descriptions ({{id|text}}, see loc.js): plain buttons (.btn-plain
-   in controls.css) that read as part of the text, undo the inline-block trigger from
+   in buttons.css) that read as part of the text, undo the inline-block trigger from
    tooltip.css, and open the linked POI's tooltip. */
 .poi-link {
     display: inline;

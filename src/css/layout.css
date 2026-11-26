@@ -70,14 +70,6 @@
     border: var(--border);
     border-left-width: var(--border-left);
 }
-/* A window of buttons in the base button look (controls.css), wrapping onto as many
-   rows as they need (the POI buttons). */
-.div-win.grid {
-    display: flex;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    padding: var(--space-s);
-}
 
 /* Status bar above a panel's content: the ledgers (ledger.js adds the total), the
    options menu and the scenario summary in the briefing. Kept last in this file, after

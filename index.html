@@ -18,7 +18,9 @@
     <link rel="stylesheet" href="src/css/tokens.css">
     <link rel="stylesheet" href="src/css/tokens-light.css">
     <link rel="stylesheet" href="src/css/base.css">
+    <link rel="stylesheet" href="src/css/buttons.css">
     <link rel="stylesheet" href="src/css/controls.css">
+    <link rel="stylesheet" href="src/css/header.css">
     <link rel="stylesheet" href="src/css/typography.css">
     <link rel="stylesheet" href="src/css/layout.css">
     <link rel="stylesheet" href="src/css/scroll-reveal.css">
@@ -65,26 +67,29 @@
 
     <!-- Header -->
     <header class="app-header">
-        <button class="main-visibility-toggle" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true">
-            <img src="assets/btn/btn01.svg" alt="">
-        </button>
-        <button id="options-toggle" class="options-toggle" type="button" aria-label="Open options" aria-controls="options-menu" aria-expanded="false">
-            <img src="assets/btn/btn05.svg" alt="">
-        </button>
-        <button id="data-view-toggle" class="data-view-toggle" type="button" aria-label="Show data view" aria-controls="data-view" aria-pressed="false">
-            <img src="assets/btn/btn02.svg" alt="">
-        </button>
-        <!-- Data categories: shown under the data view toggle while the data view is open -->
-        <div class="data-tabs" role="group" aria-label="Data categories">
-            <button type="button" aria-label="Bloc data" data-panel-group="data-categories" data-panel-target="data-blocs" aria-pressed="true">
-                <img src="assets/btn/btn03.svg" alt="">
+        <!-- Toggle column (header.css) -->
+        <div class="header-controls btn-group is-column">
+            <button class="main-visibility-toggle btn-icon" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true">
+                <img src="assets/btn/btn01.svg" alt="">
             </button>
-            <button type="button" aria-label="Corp data" data-panel-group="data-categories" data-panel-target="data-corps" aria-pressed="false">
-                <img src="assets/btn/btn04.svg" alt="">
+            <button id="options-toggle" class="options-toggle btn-icon" type="button" aria-label="Open options" aria-controls="options-menu" aria-expanded="false">
+                <img src="assets/btn/btn05.svg" alt="">
             </button>
-            <button type="button" aria-label="Good data" data-panel-group="data-categories" data-panel-target="data-goods" aria-pressed="false">
-                <img src="assets/btn/btn07.svg" alt="">
+            <button id="data-view-toggle" class="data-view-toggle btn-icon" type="button" aria-label="Show data view" aria-controls="data-view" aria-pressed="false">
+                <img src="assets/btn/btn02.svg" alt="">
             </button>
+            <!-- Data categories: shown under the data view toggle while the data view is open -->
+            <div class="data-tabs btn-group is-column" role="group" aria-label="Data categories">
+                <button class="btn-icon" type="button" aria-label="Bloc data" data-panel-group="data-categories" data-panel-target="data-blocs" aria-pressed="true">
+                    <img src="assets/btn/btn03.svg" alt="">
+                </button>
+                <button class="btn-icon" type="button" aria-label="Corp data" data-panel-group="data-categories" data-panel-target="data-corps" aria-pressed="false">
+                    <img src="assets/btn/btn04.svg" alt="">
+                </button>
+                <button class="btn-icon" type="button" aria-label="Good data" data-panel-group="data-categories" data-panel-target="data-goods" aria-pressed="false">
+                    <img src="assets/btn/btn07.svg" alt="">
+                </button>
+            </div>
         </div>
         <div class="back-title"><span>BYOND UNiTY :HTML</span></div>
     </header>
@@ -158,11 +163,11 @@
                     </div>
 
                     <!-- Points of Interest -->
-                    <div class="div-win grid" data-poi-buttons></div>
+                    <div class="div-win btn-group" data-poi-buttons></div>
 
                     <!-- Müninstek Data Panels -->
                     <div class="chart-window">
-                        <div class="chart-tabs" role="group" aria-label="Scenario charts" data-chart-buttons></div>
+                        <div class="chart-tabs btn-group is-column" role="group" aria-label="Scenario charts" data-chart-buttons></div>
                     </div>
                     <div class="div-win">
                         <div class="div-win-top"><span>MÜNINSTEK EcoData & Model · 2070 to 2200 outlook</span></div>

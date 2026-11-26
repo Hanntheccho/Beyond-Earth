@@ -1,0 +1,95 @@
+/* header.css - The app header: the fixed column of toggles on the right (content,
+   options and data view, then the data category tabs) and the options menu that opens
+   beside it. The buttons' look is in buttons.css; this file only places them. */
+
+/* ------------------------------------------------------------- toggle column */
+/* A .btn-group.is-column of .btn-icon keys. They float over the page, so they get the
+   drop shadow the other floating boxes have (options menu, globe readouts, tooltips).
+   Its gap is the one --header-step counts with, so the options menu lines up with the
+   options toggle. */
+.header-controls {
+    --btn-gap: var(--space-s);
+    --btn-shadow: var(--box-shadow);
+    position: fixed;
+    top: var(--space-s);
+    right: var(--space-s);
+    z-index: var(--z-header);
+}
+/* Data category tabs: the last group in the column. Shown only while the data view is
+   open and the main content is visible. */
+.data-tabs { display: none; }
+.app-header:has(.data-view-toggle[aria-pressed="true"]):has(.main-visibility-toggle[aria-expanded="true"]) .data-tabs {
+    display: flex;
+}
+
+/* ------------------------------------------------------------- options menu */
+/* Opens to the left of the options toggle, styled like the globe readouts. */
+.options-menu {
+    position: fixed;
+    top: calc(var(--space-s) + var(--header-step));
+    right: calc(var(--space-s) + var(--header-step));
+    z-index: var(--z-header);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-s);
+    padding: var(--gap-s) var(--space-s);
+    border: var(--border-thin);
+    background: var(--clr-background);
+    color: var(--clr-data);
+    font-size: var(--fnt-size-data);
+    box-shadow: var(--box-shadow);
+}
+.options-row {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-m);
+}
+.options-label { min-width: 6ch; }
+
+/* Checkbox toggles: square box, filled with an inner square when checked. */
+.options-check {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-s);
+    cursor: pointer;
+    user-select: none;
+}
+.options-check input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    border: 2px solid var(--clr-border);
+    border-radius: 0;
+    background: var(--clr-background);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+}
+.options-check input[type="checkbox"]::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: var(--clr-ph1);
+    transform: scale(0);
+    transition: transform var(--transition-time) ease;
+}
+.options-check input[type="checkbox"]:checked::before { transform: scale(1); }
+.options-check input[type="checkbox"]:focus-visible {
+    outline: 1px solid var(--clr-ph1);
+    outline-offset: 2px;
+}
+.options-check:hover input[type="checkbox"] { border-color: var(--clr-data); }
+/* Locked by a system setting (e.g. the OS already asks for reduced motion). */
+.options-check:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: .6;
+}
+.options-check input[type="checkbox"]:disabled { cursor: not-allowed; }
+.options-row input[type="range"] { width: 120px; }
+.options-readout {
+    min-width: 5ch;
+    text-align: right;
+}

@@ -1,6 +1,6 @@
 /* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
 
-/* Breadcrumbs: a .btn-strip (controls.css) window that forms the top edge of the treemap
+/* Breadcrumbs: a .btn-strip (buttons.css) window that forms the top edge of the treemap
    window under it. The current level (aria-current, set by treemap.js) opens into the
    treemap, and each deeper level gets a path marker. The empty alt text keeps the
    marker out of what screen readers announce. */

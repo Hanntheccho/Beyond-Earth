@@ -486,6 +486,16 @@ function checkHtmlAndAssets(loc) {
         if (!exists(abs(stripQuery(match[1])))) error('assets', `index.html references "${match[1]}" which does not exist`);
     }
 
+    // A button only fits an image to itself when its class says how (src/css/buttons.css):
+    // btn-icon for an icon key, btn-plain for a button with no key look.
+    for (const match of html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g)) {
+        if (!/<img\b/.test(match[2])) continue;
+        const classes = (/\bclass="([^"]*)"/.exec(match[1])?.[1] || '').split(/\s+/);
+        if (classes.includes('btn-icon') || classes.includes('btn-plain')) continue;
+        const label = /\b(?:id|aria-label)="([^"]*)"/.exec(match[1])?.[1] || 'a button';
+        warn('html', `index.html: "${label}" holds an image but has neither the btn-icon nor the btn-plain class, so the image is drawn at its own size`);
+    }
+
     // Stylesheets: every url() must resolve and every @import must point at a real file.
     // url()s resolve against the stylesheet that contains them, so each file is checked in its own directory.
     for (const file of listCss('src/css')) {

@@ -110,39 +110,21 @@
 
 /* Chart window: the chart panels, with their tabs floating over the top right corner
    of the one on screen. The tabs take no space: they sit in the plot's right margin,
-   which nothing else is drawn in, as raised keys like the header toggles (the base
-   button look in controls.css, with the same drop shadow). The window keeps the
-   panels' outer margin, so the tabs are placed from the panel's own edges. */
+   which nothing else is drawn in, as a column of small floating icon keys (a
+   .btn-group.is-column of .btn-icon with an .icon-mask each, buttons.css). The window
+   keeps the panels' outer margin, so the tabs are placed from the panel's own edges. */
 .chart-window {
     position: relative;
     margin: var(--space-m);
 }
 .chart-window > .div-win { margin: 0; }
 .chart-tabs {
-    /* Width and height of one tab. */
-    --chart-tab-size: calc(var(--btn-size) / 2);
+    --btn-icon-size: calc(var(--btn-size) / 2);
+    --btn-icon-padding: calc(var(--space-s) / 2);
+    --btn-gap: var(--gap-s);
+    --btn-shadow: var(--box-shadow);
     position: absolute;
     top: var(--space-s);
     right: var(--space-s);
     z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-s);
-}
-.chart-tabs > button {
-    width: var(--chart-tab-size);
-    height: var(--chart-tab-size);
-    margin: 0;
-    padding: calc(var(--space-s) / 2);
-    box-shadow: var(--box-shadow);
-}
-/* The series icon (chart.js sets --icon): only its shape is used, filled with the tab's
-   text color, so it dims, lights up and follows the theme with the tab. */
-.chart-tab-icon {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-color: currentColor;
-    -webkit-mask: var(--icon) center / contain no-repeat;
-    mask: var(--icon) center / contain no-repeat;
 }
