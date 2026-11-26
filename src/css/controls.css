@@ -150,7 +150,7 @@ input[type="range"]::-moz-range-thumb {
     margin: 0;
     padding-inline: var(--space-s);
     border: none;
-    border-right: var(--border-thin);
+    border-right: var(--border);
     border-bottom: var(--border);
     font-weight: normal;
     text-align: left;
