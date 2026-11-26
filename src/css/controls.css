@@ -127,8 +127,8 @@ input[type="range"]::-moz-range-thumb {
    panel (treemap breadcrumbs). The current cell (pressed, or aria-current) has no
    bottom border, so it opens into the panel below. Cells take their content width and
    the filler after them draws the rest of the baseline. A variant adds a dim prefix
-   before each label by giving the buttons' ::before a content (POI codes, breadcrumb
-   markers). On narrow screens the strip scrolls sideways.
+   before each label by giving the buttons' ::before a content (breadcrumb markers).
+   On narrow screens the strip scrolls sideways.
    .is-wrap is for strips with too many cells for one row (POI buttons): the cells wrap
    onto more rows instead of scrolling, with no filler, and the strip stands on its own
    instead of forming a panel's edge. */

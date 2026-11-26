@@ -29,8 +29,6 @@ import { getPois } from './poi-data.js';
         button.dataset.panelGroup = POI_PANEL_GROUP;
         button.dataset.panelTarget = id;
         button.setAttribute('aria-pressed', String(active));
-        // Short code shown before the name (pois.css): the id without its "poi" prefix.
-        button.dataset.code = id.replace(/^poi/, '');
         button.append(buildLabel(id));
         return button;
     }

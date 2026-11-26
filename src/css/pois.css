@@ -17,12 +17,6 @@
     padding: 2px 4px;
     border-left: var(--border);
 }
-/* The POI's code before its name (data-code, set by pois.js), dimmed by the strip and
-   followed by a colon. The empty alt text keeps it out of what screen readers announce. */
-[data-poi-buttons] > button::before {
-    content: attr(data-code) ":" / "";
-    display: inline-block;
-}
 /* The pressed button, and the one with keyboard focus, keep a background and their
    bottom border, so the current POI stands out among the rows. */
 [data-poi-buttons] > button:is([aria-pressed="true"], :focus-visible) {
