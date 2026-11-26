@@ -130,7 +130,8 @@ input[type="range"]::-moz-range-thumb {
    prefix before each label by giving the buttons' ::before a content; the strip-item
    counter numbers the cells. On narrow screens the strip scrolls sideways.
    .is-wrap is for strips with too many cells for one row (POI buttons): the cells wrap
-   onto more rows instead of scrolling, with no filler. */
+   onto more rows instead of scrolling, with no filler, and the strip stands on its own
+   instead of forming a panel's edge. */
 .btn-strip {
     display: flex;
     overflow-x: auto;
@@ -149,10 +150,8 @@ input[type="range"]::-moz-range-thumb {
     min-height: var(--row-height);
     margin: 0;
     padding-inline: var(--space-s);
-    border: none;
-    border-top: var(--border);
-    border-right: var(--border);
-    border-bottom: var(--border);
+    border: var(--border);
+    border-left: none;
     font-weight: normal;
     scroll-snap-align: start;
     counter-increment: strip-item;

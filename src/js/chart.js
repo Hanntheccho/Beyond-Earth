@@ -1,7 +1,7 @@
 // chart.js - Scenario chart renderer. Everything a chart shows comes from
-// data/scenario-data.json (explained in data/scenario-data.md): name, unit, axis
-// bounds and trend direction from `series`, events and eras from `timeline`, and
-// the values from `points`. One button and panel is built per series that has points.
+// data/scenario-data.json (explained in data/scenario-data.md): name, short label,
+// unit, axis bounds and trend direction from `series`, events and eras from
+// `timeline`, and the values from `points`. One button and panel is built per series that has points.
 // index.html only needs an empty <div class="div-win btn-strip" data-chart-buttons></div>
 // (the tab strip, styled in src/css/controls.css and chart.css); the panels are
 // inserted right after it.

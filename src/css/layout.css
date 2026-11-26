@@ -70,12 +70,6 @@
     border: var(--border);
     border-left-width: var(--border-left);
 }
-.div-win.grid {
-    display: flex;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    padding: 0;
-}
 
 /* Status bar above a panel's content: the ledgers (ledger.js adds the total), the
    options menu and the scenario summary in the briefing. Kept last in this file, after
