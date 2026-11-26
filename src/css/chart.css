@@ -108,7 +108,7 @@
     stroke: var(--clr-positive);
 }
 
-/* Chart tabs: a filled .btn-strip (controls.css) that forms the top edge of the chart
+/* Chart tabs: a .btn-strip (controls.css) that forms the top edge of the chart
    window, with the chart panels flush under it. Labels keep the case they have in the
    data. */
 .div-win[data-chart-buttons] {
@@ -119,10 +119,9 @@
     border-bottom: none;
 }
 [data-chart-buttons] > button { text-transform: none; }
-/* Index number before each label, dim until its tab is selected. The empty alt text
-   keeps it out of what screen readers announce. */
+/* Dim index number before each label, followed by a colon. */
 [data-chart-buttons] > button::before {
-    content: counter(strip-item, decimal-leading-zero) " " / "";
+    content: counter(strip-item, decimal-leading-zero) ":";
 }
 /* The chart panels sit flush under the strip. */
 [data-chart-buttons] ~ [data-panel-group="charts"] {

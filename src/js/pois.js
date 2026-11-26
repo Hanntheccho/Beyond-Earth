@@ -4,7 +4,7 @@
 // or panel (it can still have a globe marker). Its "children" are reached through the
 // inline {{id|text}} links in the description text (see loc.js), not listed in the panel.
 //
-// index.html only needs an empty <div class="div-win grid" data-poi-buttons></div>;
+// index.html only needs an empty <div class="div-win btn-strip is-wrap" data-poi-buttons></div>;
 // the panels are inserted right after it. The elements carry the same classes
 // loc.js already fills ("poiXXX" for the title, "poiXXX-desc" for the text), and
 // loc.js waits for them to be built (localizeAfter) before it localizes the page.
@@ -29,6 +29,8 @@ import { getPois } from './poi-data.js';
         button.dataset.panelGroup = POI_PANEL_GROUP;
         button.dataset.panelTarget = id;
         button.setAttribute('aria-pressed', String(active));
+        // Short code shown before the name (pois.css): the id without its "poi" prefix.
+        button.dataset.code = id.replace(/^poi/, '');
         button.append(buildLabel(id));
         return button;
     }
