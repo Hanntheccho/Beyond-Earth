@@ -1,10 +1,13 @@
 // chart.js - Scenario chart renderer. Everything a chart shows comes from
-// data/scenario-data.json (explained in data/scenario-data.md): name, short label,
-// unit, axis bounds and trend direction from `series`, events and eras from
-// `timeline`, and the values from `points`. One button and panel is built per series that has points.
-// index.html only needs an empty <div class="div-win btn-strip" data-chart-buttons></div>
-// (the tab strip, styled in src/css/controls.css and chart.css); the panels are
-// inserted right after it.
+// data/scenario-data.json (explained in data/scenario-data.md): name, icon, unit, axis
+// bounds and trend direction from `series`, events and eras from `timeline`, and the
+// values from `points`. One button and panel is built per series that has points.
+// index.html only needs the chart window with an empty tab group in it:
+// <div class="chart-window"><div class="chart-tabs" data-chart-buttons></div></div>
+// (styled in src/css/chart.css); the panels are inserted right after the tabs, which
+// float over them.
+// The tabs show only the series icon; the name is their accessible name and their
+// browser tooltip (title).
 //
 // Events and eras are drawn in red by default. Add `"positive": true` to one in the
 // timeline to draw it in green instead (the .is-positive class).
@@ -30,6 +33,10 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const changeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, signDisplay: 'always' });
 
     const PANEL_GROUP = 'charts';
+    // Series icons are paths from the project root, made absolute here as poi-data.js
+    // does: a relative url() in the inline --icon can resolve against the stylesheet
+    // that uses it (chart.css) instead of the page.
+    const ROOT_URL = new URL('../../', import.meta.url);
 
     // Chart layout, in pixels. The plot area keeps CHART_MARGIN free on every side for
     // the axis labels and event tags. Text is placed by its vertical center
@@ -290,7 +297,7 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         });
     }
 
-    // Build the button row and chart panels from the series, in key order.
+    // Build the tabs and chart panels from the series, in key order.
     function buildChartUi() {
         const buttonHost = document.querySelector('[data-chart-buttons]');
         if (!buttonHost) return;
@@ -309,14 +316,17 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             button.dataset.panelGroup = PANEL_GROUP;
             button.dataset.panelTarget = id;
             button.setAttribute('aria-pressed', String(active));
-            // The short label is what the tab strip shows; the full name stays the
-            // accessible name and the hover tooltip.
-            const short = seriesMeta[key].short;
-            button.textContent = short || name;
-            if (short) {
-                button.setAttribute('aria-label', name);
-                button.title = name;
+            button.setAttribute('aria-label', name);
+            button.title = name;
+            // The icon is a mask filled with the button's text color (chart.css), so
+            // it follows the tab states and the theme.
+            const icon = document.createElement('span');
+            icon.className = 'chart-tab-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            if (seriesMeta[key].icon) {
+                icon.style.setProperty('--icon', `url("${new URL(seriesMeta[key].icon, ROOT_URL).href}")`);
             }
+            button.append(icon);
             buttons.push(button);
 
             const panel = document.createElement('div');

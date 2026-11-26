@@ -8,8 +8,8 @@
 
 One entry per indicator, keyed by series id.
 
-- `name`: full label, shown in the summary ledger and as the chart button's tooltip and accessible name
-- `short`: optional short label shown on the chart button (falls back to `name`)
+- `name`: label shown in the summary ledger, and as the chart button's tooltip and accessible name
+- `icon`: path to the SVG shown on the chart button, from the project root. Only its shape is used: it is drawn in the button's text color.
 - `unit`: unit shown in tooltips and the summary ledger
 - `trend`: `"positive"` (higher is better, the default) or `"negative"` (higher is worse). It decides which changes are drawn green and which red.
 - `min` / `max`: optional fixed y-axis bounds

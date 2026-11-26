@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+  <g id="arm">
+    <path d="M12 2V22"/>
+    <path d="M9.5 4.5L12 7L14.5 4.5M9.5 19.5L12 17L14.5 19.5"/>
+  </g>
+  <use href="#arm" transform="rotate(60 12 12)"/>
+  <use href="#arm" transform="rotate(120 12 12)"/>
+</svg>

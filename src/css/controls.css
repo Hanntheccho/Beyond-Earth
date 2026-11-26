@@ -124,11 +124,11 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Button strip: a row of flat cells on one shared baseline that forms the top edge of a
-   panel (chart tabs, treemap breadcrumbs). The current cell (pressed, or aria-current)
-   has no bottom border, so it opens into the panel below. Cells take their content
-   width and the filler after them draws the rest of the baseline. A variant adds a dim
-   prefix before each label by giving the buttons' ::before a content; the strip-item
-   counter numbers the cells. On narrow screens the strip scrolls sideways.
+   panel (treemap breadcrumbs). The current cell (pressed, or aria-current) has no
+   bottom border, so it opens into the panel below. Cells take their content width and
+   the filler after them draws the rest of the baseline. A variant adds a dim prefix
+   before each label by giving the buttons' ::before a content (POI codes, breadcrumb
+   markers). On narrow screens the strip scrolls sideways.
    .is-wrap is for strips with too many cells for one row (POI buttons): the cells wrap
    onto more rows instead of scrolling, with no filler, and the strip stands on its own
    instead of forming a panel's edge. */
@@ -137,7 +137,6 @@ input[type="range"]::-moz-range-thumb {
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    counter-reset: strip-item;
 }
 .btn-strip::after {
     content: "";
@@ -154,7 +153,6 @@ input[type="range"]::-moz-range-thumb {
     border-left: none;
     font-weight: normal;
     scroll-snap-align: start;
-    counter-increment: strip-item;
     transition: color var(--transition-time) ease, box-shadow var(--transition-time) ease, background-color var(--transition-time) ease;
 }
 .btn-strip.is-wrap {

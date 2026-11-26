@@ -417,9 +417,12 @@ function checkScenario() {
     });
     Object.keys(series).forEach(key => {
         if (!range[key]) warn(rel, `series "${key}" has no usable points, so its button is skipped`);
-        const short = series[key].short;
-        if (short !== undefined && (typeof short !== 'string' || !short.trim())) {
-            warn(rel, `series "${key}": "short" must be a non-empty string, so the button falls back to "name"`);
+        // The chart button shows nothing but the icon, so a missing one leaves it blank.
+        const icon = series[key].icon;
+        if (typeof icon !== 'string' || !icon.trim()) {
+            error(rel, `series "${key}": "icon" must be a non-empty path, or its chart button is blank`);
+        } else if (!exists(path.resolve(ROOT, stripQuery(icon)))) {
+            error(rel, `series "${key}": icon "${icon}" not found (resolved from the project root)`);
         }
     });
 
