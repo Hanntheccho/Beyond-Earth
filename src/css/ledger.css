@@ -1,5 +1,5 @@
-/* ledger.css - Ledgers: rows of name, unit, value and change. The live bloc, corp and
-   good ledgers come from src/js/ledger.js; the scenario summary in the briefing is
+/* ledger.css - Ledgers: rows of name, unit, value and change. The live bloc and corp
+   ledgers come from src/js/ledger.js; the scenario summary in the briefing is
    built by src/js/chart.js with the same classes. */
 
 .ledger {

@@ -13,9 +13,11 @@ async function loadFeeds() {
         console.error('[Feeds] Failed to load relations.', error);
     }
 
-    const hosts = Array.from(document.querySelectorAll('.treemap[data-url]'));
+    // Every element with a data-url declares a feed: a treemap names it in data-treemap,
+    // any other consumer (the ticker, for the goods) in data-feed.
+    const hosts = Array.from(document.querySelectorAll('[data-url][data-treemap], [data-url][data-feed]'));
     const loaded = await Promise.all(hosts.map(async host => {
-        const id = host.dataset.treemap;
+        const id = host.dataset.treemap || host.dataset.feed;
         const url = host.dataset.url;
         try {
             const { root, parentValues } = await loadTree(url, host.dataset.useTags === 'true');

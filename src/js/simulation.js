@@ -1,7 +1,8 @@
 // simulation.js - the live data simulation engine.
 //
 // OVERVIEW
-// feed-loader.js loads and registers the treemap datasets (blocs, corps, goods).
+// feed-loader.js loads and registers the datasets (the blocs and corps treemaps, and the
+// goods behind the ticker and the goods ledgers).
 // This file then simulates live movement on top of those trees: on every tick
 // (interval set in startClock) each leaf value moves randomly and is pulled gently
 // back toward its resting value (its starting value, shifted by how far its linked
@@ -31,6 +32,10 @@
 //   getFeed(id)    -> feed object with getSnapshot/subscribe/publish
 //   registerTree(id, root)            register a tree to simulate
 //   setRelations(data)                load data/relations.json
+//   getRelationsTo(node) -> the relations that push a registered node, as
+//                           [{ from, weight }] with the live "from" nodes
+//   distanceFromStart(node) -> log distance of a node (or a snapshot copy) from its
+//                           starting value, as the relations measure it
 //   start / stop / tick / render      control the clock manually
 export const simulation = (function () {
     // All registered trees used by the simulation and derived views.
@@ -238,6 +243,12 @@ export const simulation = (function () {
         return resolved;
     }
 
+    // The relations that push a node (an empty list when nothing does). The views use
+    // it to show what moves an item; the list is shared, so it must not be changed.
+    function getRelationsTo(node) {
+        return getResolvedRelations().byTarget.get(node) || [];
+    }
+
     // One simulation step. Runs in four passes over all registered trees:
     //   1. random movement of every leaf, and a pull back toward its resting value
     //   2. incoming relations push their targets
@@ -386,6 +397,8 @@ export const simulation = (function () {
         getFeed,
         registerTree,
         setRelations,
+        getRelationsTo,
+        distanceFromStart,
         tick: computeValues,
         render: publishFeeds,
         start: startClock,

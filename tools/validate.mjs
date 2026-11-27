@@ -362,8 +362,9 @@ function checkTreemaps(html) {
     // value. Anything above this is probably a percent typed as a fraction.
     const MAX_VOLATILITY = 0.05;
 
-    // The files and tag settings come from the treemap <div>s in index.html.
-    const treemapFiles = [...html.matchAll(/<div[^>]*\bclass="treemap"[^>]*>/g)]
+    // The files and tag settings come from the elements in index.html that declare a feed:
+    // the treemaps (data-treemap) and other consumers such as the ticker (data-feed).
+    const treemapFiles = [...html.matchAll(/<[a-z][\w-]*\b[^>]*\bdata-(?:treemap|feed)="[^"]*"[^>]*>/g)]
         .map(match => ({
             file: (/data-url="([^"]+)"/.exec(match[0]) || [])[1],
             useTags: /data-use-tags="true"/.test(match[0])
@@ -408,6 +409,34 @@ function checkTreemaps(html) {
             }
         };
         walk(root, []);
+    });
+}
+
+// ---------------------------------------------------------------------- feeds
+
+// A feed only loads when an element in index.html declares it with a data-url: a treemap
+// (data-treemap) or another consumer (data-feed). A ledger or a script that reads an
+// undeclared feed stays empty without an error in the browser.
+function checkFeeds(html) {
+    if (!html) return;
+    const declared = new Set();
+    for (const match of html.matchAll(/<[a-z][\w-]*\b[^>]*>/g)) {
+        const tag = match[0];
+        if (!/\bdata-url="/.test(tag)) continue;
+        const id = /\bdata-(?:treemap|feed)="([^"]+)"/.exec(tag)?.[1];
+        if (id) declared.add(id);
+    }
+    for (const match of html.matchAll(/\bdata-ledger="([^"]+)"/g)) {
+        if (!declared.has(match[1])) {
+            warn('html', `index.html: data-ledger="${match[1]}" names a feed that no element declares with a data-url (data-treemap or data-feed), so the ledger stays empty`);
+        }
+    }
+    listJs('src/js').forEach(rel => {
+        for (const match of read(abs(rel)).matchAll(/\bgetFeed\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+            if (!declared.has(match[1])) {
+                warn('html', `${rel} reads the "${match[1]}" feed, which no element in index.html declares with a data-url (data-treemap or data-feed)`);
+            }
+        }
     });
 }
 
@@ -899,6 +928,7 @@ checkPois(loc);
 const html = checkHtmlAndAssets(loc);
 checkStylesheets(html);
 checkTreemaps(html);
+checkFeeds(html);
 checkDataFileDuplicates('data/good-data.json');
 checkDataFileDuplicates('data/corp-data.json');
 checkDataFileDuplicates('data/bloc-data.json');

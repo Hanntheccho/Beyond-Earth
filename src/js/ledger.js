@@ -1,11 +1,15 @@
 // ledger.js - Live ledgers, one per <div data-ledger="feed id"> in index.html (the
-// blocs, corps and goods panels). Rows are persistent (keyed by tag/name): value and
+// blocs and corps panels). Rows are persistent (keyed by tag/name): value and
 // change numbers are tweened between ticks, and rows slide to their new position when
 // the sort order changes (FLIP technique via the Web Animations API).
 // The change column and the colors follow each item's trend change (trendPercent in
 // simulation.js), and a sparkline of its recent history ends each row.
 // The ledger's status bar (.div-win-top) adds the total of the rows to its title,
 // tweened with them.
+// Each row's browser tooltip lists the goods that push its item or an entry above it
+// (data/relations.json), with the link weight and the effect: how far the good's move
+// from its start shifts where the item rests, in percent. It is filled when the pointer
+// enters the row, since the browser closes a tooltip whose text changes.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
@@ -14,6 +18,7 @@ import { createSparkline, updateSparkline } from './sparkline.js';
 (function () {
     const valueFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const percentFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
+    const weightFormat = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' });
 
     // Keep both durations well below the feed tick interval.
     const DURATION = 700;
@@ -22,6 +27,9 @@ import { createSparkline, updateSparkline } from './sparkline.js';
     const lerp = (a, b, t) => a + (b - a) * t;
     const keyOf = item => item.tag || item.name;
     const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
+    // A shift of where an item rests, in log terms (weight x log distance, as
+    // restingShifts() in simulation.js sums it), as a percent.
+    const toPercent = shift => (Math.exp(shift) - 1) * 100;
 
     function renderLedger(host) {
         const feedId = host.dataset.ledger;
@@ -36,6 +44,47 @@ import { createSparkline, updateSparkline } from './sparkline.js';
         let raf = 0;
         let inViewport = false;
         let renderQueued = false;
+        // Every node of the feed's tree by key, with its parent, so a row (a snapshot copy
+        // or a node the treemap reports) leads to the live nodes the relations target.
+        // Built once the tree is loaded; trees never change shape.
+        let nodesByKey = null;
+
+        function indexTree() {
+            if (nodesByKey || !feed.root) return nodesByKey;
+            nodesByKey = new Map();
+            const visit = (node, parent) => {
+                nodesByKey.set(keyOf(node), { node, parent });
+                node.children.forEach(child => visit(child, node));
+            };
+            feed.root.children.forEach(child => visit(child, null));
+            return nodesByKey;
+        }
+
+        // A row's tooltip: the combined effect of the goods that push the item or an entry
+        // above it, then each good with its link weight and effect, the biggest first.
+        function goodsTooltip(item) {
+            const goods = simulation.getFeed('goods').root;
+            const index = indexTree();
+            let entry = index ? index.get(keyOf(item)) : null;
+            if (!goods || !entry) return '';
+            const own = new Set(goods.children);
+            const weights = new Map();
+            while (entry) {
+                simulation.getRelationsTo(entry.node).forEach(({ from, weight }) => {
+                    if (own.has(from)) weights.set(from, (weights.get(from) || 0) + weight);
+                });
+                entry = entry.parent ? index.get(keyOf(entry.parent)) : null;
+            }
+            if (!weights.size) return `${item.name}: no goods links`;
+            const links = [...weights]
+                .map(([good, weight]) => ({ good, weight, shift: weight * simulation.distanceFromStart(good) }))
+                .sort((a, b) => Math.abs(b.shift) - Math.abs(a.shift));
+            const total = links.reduce((sum, link) => sum + link.shift, 0);
+            return [
+                `${item.name} · goods effect ${percentFormat.format(toPercent(total))}%`,
+                ...links.map(link => `${link.good.name}: link ${weightFormat.format(link.weight)}, effect ${percentFormat.format(toPercent(link.shift))}%`)
+            ].join('\n');
+        }
 
         function createRow(item, key) {
             const row = document.createElement('div');
@@ -54,8 +103,9 @@ import { createSparkline, updateSparkline } from './sparkline.js';
             const changeEl = cell('ledger-change');
             // The sparkline is the last column (sparkline.js).
             const spark = createSparkline(row, 'ledger-spark');
-            return {
+            const entry = {
                 row,
+                item,
                 spark,
                 valueEl,
                 changeEl,
@@ -66,6 +116,10 @@ import { createSparkline, updateSparkline } from './sparkline.js';
                 lastValueText: null,
                 lastChangeText: null
             };
+            // The tooltip is a snapshot taken on entering the row (entry.item is the
+            // latest item, set on every render).
+            row.addEventListener('pointerenter', () => { row.title = goodsTooltip(entry.item); });
+            return entry;
         }
 
         function paint(entry) {
@@ -150,6 +204,7 @@ import { createSparkline, updateSparkline } from './sparkline.js';
                 entry.from = { ...entry.cur };
                 entry.to = { value: item.value, pct: trendOf(item) };
                 entry.t0 = now;
+                entry.item = item;
                 const up = trendOf(item) >= 0;
                 updateSparkline(entry.spark, item.history, up);
                 const newDir = up ? 'up' : 'down';

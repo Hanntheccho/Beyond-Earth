@@ -82,13 +82,10 @@
             <!-- Data category tabs: shown below the toggles while the data view is open -->
             <div class="data-tabs btn-group is-column" role="group" aria-label="Data categories">
                 <button class="btn-icon" type="button" aria-label="Bloc data" data-panel-group="data-categories" data-panel-target="data-blocs" aria-pressed="true">
-                    <img src="assets/btn/btn03.svg" alt="">
+                    <img src="assets/btn/btn06.svg" alt="">
                 </button>
                 <button class="btn-icon" type="button" aria-label="Corp data" data-panel-group="data-categories" data-panel-target="data-corps" aria-pressed="false">
                     <img src="assets/btn/btn04.svg" alt="">
-                </button>
-                <button class="btn-icon" type="button" aria-label="Good data" data-panel-group="data-categories" data-panel-target="data-goods" aria-pressed="false">
-                    <img src="assets/btn/btn07.svg" alt="">
                 </button>
             </div>
         </div>
@@ -154,7 +151,8 @@
     <!-- Main Content: hidden and shown by the content toggle -->
     <main class="div-main" id="main-content">
         <h1 class="main-title">[BYOND UNiTY :HTML]</h1>
-        <div class="ticker"><div class="ticker-line"><span class="ticker-txt"></span></div></div>
+        <!-- Ticker: it declares the goods feed, which the ledger tooltips in the data view read too -->
+        <div class="ticker" data-feed="goods" data-url="data/good-data.json"><div class="ticker-line"><span class="ticker-txt"></span></div></div>
 
         <!-- Briefing View: quote, points of interest and scenario charts -->
         <article class="scenario-briefing" id="briefing-view">
@@ -179,11 +177,11 @@
             </div>
         </article>
 
-        <!-- Data View: a treemap and a ledger per data category -->
+        <!-- Data View: a treemap and a ledger per data category; a ledger row's tooltip lists the goods that push it -->
         <article class="data-view" id="data-view" hidden>
             <div class="div-submain">
                 <section id="data-view-panel">
-                    <!-- Category panels (blocs, corps, goods): the data tabs switch between them -->
+                    <!-- Category panels (blocs, corps): the data tabs switch between them -->
                     <div id="data-blocs" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
                         <nav class="div-win btn-strip treemap-breadcrumbs" aria-label="Blocs treemap location"></nav>
                         <div class="div-win" data-treemap-panel>
@@ -203,17 +201,6 @@
                         <div class="div-win">
                             <div class="div-win-top"><span>MONDAYMARKET · corps</span></div>
                             <div class="ledger" data-ledger="corps"></div>
-                        </div>
-                    </div>
-
-                    <div id="data-goods" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
-                        <nav class="div-win btn-strip treemap-breadcrumbs" aria-label="Goods treemap location"></nav>
-                        <div class="div-win" data-treemap-panel>
-                            <div class="treemap" data-treemap="goods" data-url="data/good-data.json" data-use-tags="false" role="group" aria-label="Goods treemap"><div class="treemap-message" role="status">Loading data…</div></div>
-                        </div>
-                        <div class="div-win">
-                            <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
-                            <div class="ledger" data-ledger="goods"></div>
                         </div>
                     </div>
                 </section>

@@ -158,6 +158,14 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             if (svg) { setBoardSize(); render(); }
         }).observe(host);
 
+        // A tile's tooltip: its name (with its label when that differs), value and change.
+        function tooltipText(item) {
+            const name = getName(item);
+            const label = getLabel(item);
+            const change = trendOf(item);
+            return `${label === name ? name : `${name} (${label})`}\n${tooltipNumberFormat.format(getValue(item))}\n${change >= 0 ? '+' : ''}${tooltipNumberFormat.format(change)}`;
+        }
+
         function createTile(item) {
             const canDrill = getChildren(item).length > 0;
             const group = add(svg, 'g', {
@@ -185,6 +193,9 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             tile.changeEl = add(group, 'text', { class: 'treemap-label treemap-label-change', 'text-anchor': 'middle' });
             tile.labels = [tile.nameEl, tile.valueEl, tile.changeEl];
             tile.titleEl = add(group, 'title');
+            // The browser closes a tooltip whose text changes, so the title is a snapshot
+            // taken on entering the tile instead of being rewritten every tick.
+            group.addEventListener('pointerenter', () => { tile.titleEl.textContent = tooltipText(tile.item); });
             if (canDrill) {
                 // Reads tile.item at click time so it never goes stale across ticks.
                 const drill = () => { path.push({ node: tile.item, depth: path.length }); render(); };
@@ -353,9 +364,6 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                 tile.fit = fitLabel(tile.words, numberFormat.format(value), percentFormat.format(change), w, h);
 
                 const name = getName(item);
-                const label = getLabel(item);
-                const tooltipLabel = label === name ? name : `${name} (${label})`;
-                tile.titleEl.textContent = `${tooltipLabel}\n${tooltipNumberFormat.format(value)}\n${change >= 0 ? '+' : ''}${tooltipNumberFormat.format(change)}`;
                 tile.group.setAttribute('aria-label', `${name}: ${numberFormat.format(value)}${tile.canDrill ? ', open details' : ''}`);
                 setDirection(tile, item);
                 if (!tile.painted) { tile.painted = true; paint(tile); } // avoid an empty first frame
