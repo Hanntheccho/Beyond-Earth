@@ -17,6 +17,7 @@
     padding-left: .4em;
     color: var(--clr-body);
 }
+.treemap-back:hover { translate: -4px 0; }
 .treemap {
     position: relative;
     width: 100%;
