@@ -163,7 +163,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             const name = getName(item);
             const label = getLabel(item);
             const change = trendOf(item);
-            return `${label === name ? name : `${name} (${label})`}\n${tooltipNumberFormat.format(getValue(item))}\n${change >= 0 ? '+' : ''}${tooltipNumberFormat.format(change)}`;
+            return `${label === name ? name : `${name} (${label})`}\n${tooltipNumberFormat.format(getValue(item))}\n${change >= 0 ? '+' : ''}${tooltipNumberFormat.format(change)}%`;
         }
 
         function createTile(item) {

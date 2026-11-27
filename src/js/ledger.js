@@ -75,14 +75,14 @@ import { createSparkline, updateSparkline } from './sparkline.js';
                 });
                 entry = entry.parent ? index.get(keyOf(entry.parent)) : null;
             }
-            if (!weights.size) return `${item.name}: no goods links`;
+            if (!weights.size) return `${item.name}`;
             const links = [...weights]
                 .map(([good, weight]) => ({ good, weight, shift: weight * simulation.distanceFromStart(good) }))
                 .sort((a, b) => Math.abs(b.shift) - Math.abs(a.shift));
             const total = links.reduce((sum, link) => sum + link.shift, 0);
             return [
-                `${item.name} · goods effect ${percentFormat.format(toPercent(total))}%`,
-                ...links.map(link => `${link.good.name}: link ${weightFormat.format(link.weight)}, effect ${percentFormat.format(toPercent(link.shift))}%`)
+                `${item.name} [${percentFormat.format(toPercent(total))}%]`,
+                ...links.map(link => `${link.good.name} (${weightFormat.format(link.weight)}) ${percentFormat.format(toPercent(link.shift))}%`)
             ].join('\n');
         }
 
