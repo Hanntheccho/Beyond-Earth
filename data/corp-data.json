@@ -94,16 +94,6 @@
       "value": 1090
     },
     {
-      "name": "INTRCD",
-      "tag": "INTR",
-      "value": 290
-    },
-    {
-      "name": "LOW Artillery Foundries",
-      "tag": "LOW",
-      "value": 980
-    },
-    {
       "name": "Permafrost Reconstruction",
       "tag": "PERM",
       "value": 420
@@ -163,11 +153,6 @@
           "value": 150
         }
       ]
-    },
-    {
-      "name": "Pioneer Habitat Works",
-      "tag": "PHW",
-      "value": 180
     },
     {
       "name": "Antarctica Trust",
