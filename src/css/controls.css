@@ -1,5 +1,5 @@
 /* controls.css - Form controls: the scrollbars and the range input. Buttons are in
-   buttons.css; the options menu and its checkboxes are in header.css. */
+   buttons.css; the options menu and its checkboxes are in options.css. */
 
 /* Chrome, Edge and Safari use ::-webkit-scrollbar; Firefox only takes the standard
    properties. They are kept apart because Chrome ignores ::-webkit-scrollbar as soon

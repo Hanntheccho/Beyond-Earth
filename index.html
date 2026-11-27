@@ -8,19 +8,20 @@
 
     <link rel="icon" href="be-icon.svg" type="image/svg+xml">
 
-    <!-- Connections: Google Fonts -->
+    <!-- Font hosts: connect early, before the font stylesheet asks for them -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- CSS: one link per stylesheet, so they all download at once (an @import chain
-         waits for its first file before it fetches the rest). The order is the cascade
-         order: tokens first, reduced-motion.css last. -->
+    <!-- Stylesheets: one link each, so they download in parallel (an @import chain
+         waits for its first file before it fetches the rest). The link order is the
+         cascade order: tokens first, reduced-motion.css last. -->
     <link rel="stylesheet" href="src/css/tokens.css">
     <link rel="stylesheet" href="src/css/tokens-light.css">
     <link rel="stylesheet" href="src/css/base.css">
     <link rel="stylesheet" href="src/css/buttons.css">
     <link rel="stylesheet" href="src/css/controls.css">
     <link rel="stylesheet" href="src/css/header.css">
+    <link rel="stylesheet" href="src/css/options.css">
     <link rel="stylesheet" href="src/css/typography.css">
     <link rel="stylesheet" href="src/css/layout.css">
     <link rel="stylesheet" href="src/css/scroll-reveal.css">
@@ -35,11 +36,11 @@
     <link rel="stylesheet" href="src/css/loading-screen.css">
     <link rel="stylesheet" href="src/css/reduced-motion.css">
 
-    <!-- Fonts -->
+    <!-- Font: Source Code Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap">
 </head>
 <body>
-    <!-- Loading Screen: loading-screen.js fills the bar as the page gets ready -->
+    <!-- Loading Screen: covers the page until it is ready (loading-screen.js) -->
     <div id="loading-screen">
         <div class="loading-spinner" aria-hidden="true"></div>
         <span>BYOND UNiTY :HTML</span>
@@ -48,7 +49,7 @@
         </div>
     </div>
 
-    <!-- VFX -->
+    <!-- Screen Effects: halftone, scanline and vignette overlays (vfx.css) -->
     <div id="vfx-container" aria-hidden="true">
         <div class="vfx-halftone"></div>
         <div class="vfx-overlay">
@@ -57,7 +58,7 @@
         </div>
     </div>
 
-    <!-- Globe -->
+    <!-- Globe: background map and its hotspot markers (globe.js) -->
     <section id="background-stage" aria-label="Global Visualization">
         <div class="globe-preview">
             <canvas id="map" class="globe-canvas" data-view="lon=-30&lat=15" data-update-url="false" aria-hidden="true"></canvas>
@@ -65,9 +66,9 @@
         </div>
     </section>
 
-    <!-- Header -->
+    <!-- Header: toggle column and background title (header.css) -->
     <header class="app-header">
-        <!-- Toggle column (header.css) -->
+        <!-- Toggle column: content, options and data view -->
         <div class="header-controls btn-group is-column">
             <button class="main-visibility-toggle btn-icon" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true">
                 <img src="assets/btn/btn01.svg" alt="">
@@ -78,7 +79,7 @@
             <button id="data-view-toggle" class="data-view-toggle btn-icon" type="button" aria-label="Show data view" aria-controls="data-view" aria-pressed="false">
                 <img src="assets/btn/btn02.svg" alt="">
             </button>
-            <!-- Data categories: shown under the data view toggle while the data view is open -->
+            <!-- Data category tabs: shown below the toggles while the data view is open -->
             <div class="data-tabs btn-group is-column" role="group" aria-label="Data categories">
                 <button class="btn-icon" type="button" aria-label="Bloc data" data-panel-group="data-categories" data-panel-target="data-blocs" aria-pressed="true">
                     <img src="assets/btn/btn03.svg" alt="">
@@ -94,7 +95,7 @@
         <div class="back-title"><span>BYOND UNiTY :HTML</span></div>
     </header>
 
-    <!-- Options Menu -->
+    <!-- Options Menu: theme, audio, screen effects and motion (options-menu.js) -->
     <div id="options-menu" class="options-menu" role="dialog" aria-label="Options" hidden>
         <span class="div-win-top">:options</span>
 
@@ -150,11 +151,12 @@
         </div>
     </div>
 
-    <!-- Main -->
+    <!-- Main Content: hidden and shown by the content toggle -->
     <main class="div-main" id="main-content">
         <h1 class="main-title">[BYOND UNiTY :HTML]</h1>
         <div class="ticker"><div class="ticker-line"><span class="ticker-txt"></span></div></div>
 
+        <!-- Briefing View: quote, points of interest and scenario charts -->
         <article class="scenario-briefing" id="briefing-view">
             <div class="div-submain">
                 <section id="main-view-panel" data-panel-group="main" aria-hidden="false">
@@ -162,10 +164,10 @@
                         <div id="quote-div" class="poi-desc quote"><span class="quote-txt"></span></div>
                     </div>
 
-                    <!-- Points of Interest -->
+                    <!-- Points of interest: buttons filled by pois.js -->
                     <div class="div-win btn-group" data-poi-buttons></div>
 
-                    <!-- Müninstek Data Panels -->
+                    <!-- Scenario charts and their summary ledger (chart.js) -->
                     <div class="chart-window">
                         <div class="chart-tabs btn-group is-column" role="group" aria-label="Scenario charts" data-chart-buttons></div>
                     </div>
@@ -177,11 +179,11 @@
             </div>
         </article>
 
-        <!-- Data View -->
+        <!-- Data View: a treemap and a ledger per data category -->
         <article class="data-view" id="data-view" hidden>
             <div class="div-submain">
                 <section id="data-view-panel">
-                    <!-- Feed panels (blocs, corps, goods) -->
+                    <!-- Category panels (blocs, corps, goods): the data tabs switch between them -->
                     <div id="data-blocs" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
                         <nav class="div-win btn-strip treemap-breadcrumbs" aria-label="Blocs treemap location"></nav>
                         <div class="div-win" data-treemap-panel>
@@ -219,11 +221,11 @@
         </article>
     </main>
 
-    <!-- Audio -->
+    <!-- Audio: background music and the UI click sound (audio.js) -->
     <audio id="music" loop preload="none"><source src="assets/sfx/sfx-music.ogg" type="audio/ogg"></audio>
     <audio id="audio"><source src="assets/sfx/sfx-click.wav" type="audio/wav"></audio>
 
-    <!-- JS -->
+    <!-- Scripts: default.js imports every module -->
     <script type="module" src="src/default.js"></script>
 </body>
 </html>

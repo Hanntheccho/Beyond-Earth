@@ -43,7 +43,7 @@
        --btn-icon-size says otherwise. */
     --btn-size: 74px;
     /* One slot in the fixed column of header buttons (header.css): a button and the gap
-       above it. */
+       above it. The options menu (options.css) lines up with it too. */
     --header-step: calc(var(--space-s) + var(--btn-size));
     --track-height: 4px;
     --slider-width: 200px;
