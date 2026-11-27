@@ -12,13 +12,10 @@
      .icon-mask    an icon drawn in the text color from an image's shape (--icon).
      .btn-group    on a container: its buttons in a row that wraps, or stacked in a
                    column with .is-column.
-     .btn-strip    on a container: flat cells that form the top edge of the panel
-                   after it.
 
    States: aria-pressed="true" (toggles, tabs), aria-expanded="true" (buttons that open
    something) and aria-current (the current item of a trail) share one "on" look, so no
-   state class is needed. A new kind of state goes in the list in the base rules (and
-   in the strip's copy of it).
+   state class is needed. A new kind of state goes in the list in the base rules.
 
    Settings: these custom properties change a button without restating its states.
    They inherit, so they can be set on the button or on any ancestor (a group, a
@@ -126,59 +123,4 @@
 .btn-group.is-column {
     flex-direction: column;
     flex-wrap: nowrap;
-}
-
-/* Strip: a row of flat cells on one shared baseline that forms the top edge of the
-   panel right after it (treemap breadcrumbs). As a .div-win, the strip drops its
-   padding and outer borders, and that panel its top margin and border, so the two read
-   as one window. Cells stay put on hover and only light up. The current cell (on) has
-   no bottom border, so it opens into the panel, and a bar along its top marks it.
-   Cells take their content width and the filler after them draws the rest of the
-   baseline. A component adds a dim prefix before each label by giving the cells'
-   ::before a content (breadcrumb markers). On narrow screens the strip scrolls
-   sideways. */
-.btn-strip {
-    --btn-lift: 0;
-    --btn-pressed-background: transparent;
-    --btn-pressed-color: var(--clr-ph1);
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-}
-.div-win.btn-strip {
-    padding: 0;
-    margin-bottom: 0;
-    border-top: none;
-    border-right: none;
-    border-bottom: none;
-}
-.div-win.btn-strip + .div-win {
-    margin-top: 0;
-    border-top: none;
-}
-.btn-strip::after {
-    content: "";
-    flex: 1 0 auto;
-    border-bottom: var(--border);
-}
-.btn-strip > button {
-    flex: none;
-    min-height: var(--row-height);
-    padding-inline: var(--space-s);
-    border: var(--border);
-    border-left: none;
-    font-weight: normal;
-    scroll-snap-align: start;
-}
-.btn-strip > button::before { opacity: .5; }
-.btn-strip > button:hover { color: var(--clr-ph1); }
-/* The base on list again, for the parts of the on look only cells have. */
-.btn-strip > button:is(
-    [aria-pressed="true"],
-    [aria-expanded="true"],
-    [aria-current]:not([aria-current="false"])
-) {
-    border-bottom-color: transparent;
-    box-shadow: inset 0 1px 0 var(--clr-ph1);
 }

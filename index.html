@@ -183,8 +183,8 @@
                 <section id="data-view-panel">
                     <!-- Category panels (blocs, corps): the data tabs switch between them -->
                     <div id="data-blocs" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
-                        <nav class="div-win btn-strip treemap-breadcrumbs" aria-label="Blocs treemap location"></nav>
                         <div class="div-win" data-treemap-panel>
+                            <button type="button" class="treemap-back" data-treemap-back hidden>❮❮❮</button>
                             <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"><div class="treemap-message" role="status">Loading data…</div></div>
                         </div>
                         <div class="div-win">
@@ -194,8 +194,8 @@
                     </div>
 
                     <div id="data-corps" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
-                        <nav class="div-win btn-strip treemap-breadcrumbs" aria-label="Corps treemap location"></nav>
                         <div class="div-win" data-treemap-panel>
+                            <button type="button" class="treemap-back" data-treemap-back hidden>❮❮❮</button>
                             <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="true" role="group" aria-label="Corps treemap"><div class="treemap-message" role="status">Loading data…</div></div>
                         </div>
                         <div class="div-win">

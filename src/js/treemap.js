@@ -129,7 +129,8 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
         const getName = node => node.name || node.label || '';
         const getLabel = node => node.label || getName(node);
         const keyOf = node => node.tag || node.name;
-        const breadcrumbs = options.breadcrumbs || null;
+        const backButton = options.backButton || null;
+        backButton?.addEventListener('click', () => { path.pop(); render(); });
 
         // Persistent render state: tiles survive between ticks and only get new targets.
         const tiles = new Map();
@@ -295,25 +296,13 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             if (!document.hidden && tiles.size) startLoop();
         });
 
-        // Breadcrumbs only depend on the path, so they are rebuilt when it changes
-        // (not on every tick, which would also drop keyboard focus from them).
-        // The level on screen is marked aria-current; the path markers between levels
-        // are drawn by src/css/treemap.css.
-        function renderBreadcrumbs() {
-            if (!breadcrumbs) return;
-            breadcrumbs.replaceChildren();
-            const addCrumb = (name, onClick, current) => {
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.textContent = name;
-                if (current) button.setAttribute('aria-current', 'location');
-                button.addEventListener('click', onClick);
-                breadcrumbs.appendChild(button);
-            };
-            addCrumb(options.rootLabel || 'World', () => { path = []; render(); }, path.length === 0);
-            path.forEach((entry, index) => {
-                addCrumb(getName(entry.node), () => { path = path.slice(0, index + 1); render(); }, index === path.length - 1);
-            });
+        // The back key only depends on the path, so it is updated when the path changes:
+        // shown below the root level, and named after the level it goes up to.
+        function updateBackButton() {
+            if (!backButton) return;
+            backButton.hidden = path.length === 0;
+            const parent = path.length > 1 ? path[path.length - 2].node : options.root;
+            backButton.setAttribute('aria-label', `Back to ${getName(parent)}`);
         }
 
         function render() {
@@ -342,7 +331,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                     'aria-label': options.accessible ? `${getName(current.node)} treemap` : null
                 });
                 setBoardSize();
-                renderBreadcrumbs();
+                updateBackButton();
             }
 
             const now = performance.now();
@@ -379,8 +368,8 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     }
 
     // Draws the treemap the first time it is on screen, then follows its feed. The
-    // board's first render replaces the loading message inside the host. The
-    // breadcrumbs are the strip window above the board, in the same feed panel.
+    // board's first render replaces the loading message inside the host. The back key
+    // sits beside the host in the treemap panel, outside what each render replaces.
     function mountTree(host, root) {
         const wrapper = host.closest('[data-panel-group]');
         let chart = null;
@@ -395,8 +384,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             chart = mount(host, {
                 root,
                 feedId: host.dataset.treemap,
-                rootLabel: root.name,
-                breadcrumbs: wrapper?.querySelector('.treemap-breadcrumbs') || null,
+                backButton: host.closest('[data-treemap-panel]')?.querySelector('[data-treemap-back]') || null,
                 accessible: true
             });
         }
