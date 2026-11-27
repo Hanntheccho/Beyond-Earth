@@ -18,9 +18,11 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     const lerp = (a, b, t) => a + (b - a) * t;
 
     // Tile layout, in pixels. Each tile's surface is inset by TILE_INSET on every side,
-    // which makes the gaps between tiles; labels keep LABEL_PADDING from the tile edge.
+    // which makes the gaps between tiles. Labels keep LABEL_PADDING, a fraction of the
+    // tile's size, from each edge: of its width on the left and right, of its height on
+    // the top and bottom.
     const TILE_INSET = 2;
-    const LABEL_PADDING = 8;
+    const LABEL_PADDING = 0.08;
 
     // Label sizing (see fitLabel). The font size is capped at a fraction of the tile's
     // label area, and tried from there downwards in LABEL_SIZE_STEP pixel steps. A tile
@@ -106,8 +108,8 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     // Largest font size at which the wrapped name, value and change fit the tile, or
     // null when they only fit below MIN_LABEL_SIZE.
     function fitLabel(words, valueText, changeText, w, h) {
-        const availableWidth = w - 2 * LABEL_PADDING;
-        const availableHeight = h - 2 * LABEL_PADDING;
+        const availableWidth = w * (1 - 2 * LABEL_PADDING);
+        const availableHeight = h * (1 - 2 * LABEL_PADDING);
         const longestWordLength = words.reduce((longest, word) => Math.max(longest, word.length), 1);
         // Use the widest unwrapped label to size all three labels consistently.
         const longestLabelLength = Math.max(longestWordLength, valueText.length, changeText.length);
