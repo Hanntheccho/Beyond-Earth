@@ -1,6 +1,6 @@
 // treemap.js - Shared treemap layout, labels, colors, and optional hierarchical navigation.
 // Tiles are persistent (keyed by tag/name) and tweened between feed ticks, so
-// geometry, value, and change numbers animate instead of being rebuilt each tick.
+// geometry and change numbers animate instead of being rebuilt each tick.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
@@ -13,7 +13,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
 
     // Tween settings. Keep DURATION well below the feed tick interval.
     const DURATION = 700;
-    const TWEEN_PROPS = ['x', 'y', 'w', 'h', 'value', 'pct'];
+    const TWEEN_PROPS = ['x', 'y', 'w', 'h', 'pct'];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -24,17 +24,19 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     const TILE_INSET = 2;
     const LABEL_PADDING = 0.08;
 
-    // Label sizing (see fitLabel). The font size is capped at a fraction of the tile's
-    // label area, and tried from there downwards in LABEL_SIZE_STEP pixel steps. A tile
-    // whose labels only fit below MIN_LABEL_SIZE pixels shows no labels.
-    const LABEL_SIZE_BY_WIDTH = 0.13;
-    const LABEL_SIZE_BY_HEIGHT = 0.16;
+    // Label sizing (see fitLabel). The font size starts at LABEL_SIZE times the square
+    // root of the tile's label area, so text grows with the tile's value whatever its
+    // shape, and is tried from there downwards in LABEL_SIZE_STEP pixel steps until the
+    // label fits. A tile whose label only fits below MIN_LABEL_SIZE pixels shows no label.
+    const LABEL_SIZE = 0.14;
     const LABEL_SIZE_STEP = 0.25;
     const MIN_LABEL_SIZE = 1;
-    // Spacing between wrapped name lines, and the height of the name's first line plus
-    // the value and change rows, both as fractions of the font size.
+    // Spacing between wrapped label lines, as a fraction of the font size.
     const LABEL_LINE_HEIGHT = 0.8;
-    const LABEL_BLOCK_HEIGHT = 2.8;
+
+    // A tile's fill grows with the size of its change, reaching full strength (see
+    // src/css/treemap.css) at FULL_STRENGTH_CHANGE percent either way.
+    const FULL_STRENGTH_CHANGE = 5;
 
     const splitWords = name => String(name).trim().split(/\s+/);
     // Tiles show and color by the trend change (trendPercent in simulation.js).
@@ -105,21 +107,23 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
         return rectangles;
     }
 
-    // Largest font size at which the wrapped name, value and change fit the tile, or
-    // null when they only fit below MIN_LABEL_SIZE.
-    function fitLabel(words, valueText, changeText, w, h) {
+    // Largest font size at which the label (the wrapped name, then the change on its own
+    // line) fits the tile, with the line width the name wraps at, or null when it only
+    // fits below MIN_LABEL_SIZE.
+    function fitLabel(words, changeText, w, h) {
         const availableWidth = w * (1 - 2 * LABEL_PADDING);
         const availableHeight = h * (1 - 2 * LABEL_PADDING);
-        const longestWordLength = words.reduce((longest, word) => Math.max(longest, word.length), 1);
-        // Use the widest unwrapped label to size all three labels consistently.
-        const longestLabelLength = Math.max(longestWordLength, valueText.length, changeText.length);
-        const maxSizeByLabelWidth = availableWidth / (longestLabelLength * CHAR_WIDTH);
-        const largestSize = Math.min(availableWidth * LABEL_SIZE_BY_WIDTH, availableHeight * LABEL_SIZE_BY_HEIGHT, maxSizeByLabelWidth);
+        // No line can be narrower than the longest word, as wrapping only breaks at spaces.
+        const longestWordLength = words.reduce((longest, word) => Math.max(longest, word.length), changeText.length);
+        const maxSizeByLabelWidth = availableWidth / (longestWordLength * CHAR_WIDTH);
+        const largestSize = Math.min(Math.sqrt(availableWidth * availableHeight) * LABEL_SIZE, maxSizeByLabelWidth);
         for (let size = largestSize; size >= MIN_LABEL_SIZE; size -= LABEL_SIZE_STEP) {
-            const lines = wrapWords(words, Math.max(1, Math.floor(availableWidth / (size * CHAR_WIDTH))));
+            const maxChars = Math.max(1, Math.floor(availableWidth / (size * CHAR_WIDTH)));
+            // The name's lines plus the change's.
+            const lineCount = wrapWords(words, maxChars).length + 1;
             const lineHeight = size * LABEL_LINE_HEIGHT;
-            const requiredHeight = (lines.length - 1) * lineHeight + size * LABEL_BLOCK_HEIGHT;
-            if (requiredHeight <= availableHeight) return { lines, size, lineHeight, requiredHeight };
+            const requiredHeight = (lineCount - 1) * lineHeight + size;
+            if (requiredHeight <= availableHeight) return { maxChars, size, lineHeight, requiredHeight };
         }
         return null;
     }
@@ -183,18 +187,13 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                 group,
                 name,
                 words: splitWords(name),
-                lastLines: '',
                 lastLineHeight: null,
                 lastSize: null,
                 lastVisibility: null,
-                lastValueText: null,
-                lastChangeText: null
+                lastStrength: null
             };
             tile.rect = add(group, 'rect', { class: 'treemap-surface' });
-            tile.nameEl = add(group, 'text', { class: 'treemap-label treemap-label-name', 'text-anchor': 'middle' });
-            tile.valueEl = add(group, 'text', { class: 'treemap-label treemap-label-value', 'text-anchor': 'middle' });
-            tile.changeEl = add(group, 'text', { class: 'treemap-label treemap-label-change', 'text-anchor': 'middle' });
-            tile.labels = [tile.nameEl, tile.valueEl, tile.changeEl];
+            tile.labelEl = add(group, 'text', { class: 'treemap-label', 'text-anchor': 'middle' });
             tile.titleEl = add(group, 'title');
             // The browser closes a tooltip whose text changes, so the title is a snapshot
             // taken on entering the tile instead of being rewritten every tick.
@@ -211,7 +210,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
         }
 
         function paint(tile) {
-            const { x, y, w, h, value, pct } = tile.cur;
+            const { x, y, w, h, pct } = tile.cur;
 
             tile.rect.setAttribute('x', x + TILE_INSET);
             tile.rect.setAttribute('y', y + TILE_INSET);
@@ -219,62 +218,51 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             tile.rect.setAttribute('height', Math.max(0, h - 2 * TILE_INSET));
 
             // The fit is fixed for the whole tween, so the label size and visibility
-            // only need writing when a new tick changes them. No fit hides the labels.
+            // only need writing when a new tick changes them. No fit hides the label.
             const fit = tile.fit;
             const visibility = fit ? 'visible' : 'hidden';
             if (visibility !== tile.lastVisibility) {
                 tile.lastVisibility = visibility;
-                tile.labels.forEach(element => element.setAttribute('visibility', visibility));
+                tile.labelEl.setAttribute('visibility', visibility);
             }
             if (visibility === 'hidden') return;
             if (fit.size !== tile.lastSize) {
                 tile.lastSize = fit.size;
-                const fontSize = `${fit.size}px`;
-                tile.labels.forEach(element => { element.style.fontSize = fontSize; });
+                tile.labelEl.style.fontSize = `${fit.size}px`;
             }
 
             const centerX = x + w / 2;
-            const topY = y + (h - fit.requiredHeight) / 2 + fit.size;
-            // These baseline offsets control the gaps from name to value and value to change.
-            const valueY = topY + (fit.lines.length - 1) * fit.lineHeight + fit.size;
+            tile.labelEl.setAttribute('x', centerX);
+            tile.labelEl.setAttribute('y', y + (h - fit.requiredHeight) / 2 + fit.size);
 
-            tile.nameEl.setAttribute('x', centerX);
-            tile.nameEl.setAttribute('y', topY);
-            const linesKey = fit.lines.join('|');
-            if (linesKey !== tile.lastLines) {
-                // Only rebuild the tspans when the wrapping actually changes.
-                tile.lastLines = linesKey;
-                tile.nameEl.replaceChildren();
-                fit.lines.forEach((line, index) => add(tile.nameEl, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
+            // One label: the name wrapped at the fit's line width, then the tweened change
+            // as the last line (shaded by src/css/treemap.css). The tspans are only
+            // rebuilt when the line count changes; otherwise each line's text is written
+            // only when it changes.
+            const lines = [...wrapWords(tile.words, fit.maxChars), percentFormat.format(pct)];
+            const spans = tile.labelEl.childNodes;
+            if (spans.length !== lines.length) {
+                tile.labelEl.replaceChildren();
+                lines.forEach((line, index) => add(tile.labelEl, 'tspan', { x: centerX, dy: index === 0 ? 0 : fit.lineHeight }, line));
             } else {
-                tile.nameEl.childNodes.forEach((span, index) => {
+                spans.forEach((span, index) => {
                     span.setAttribute('x', centerX);
                     if (fit.lineHeight !== tile.lastLineHeight) span.setAttribute('dy', index === 0 ? 0 : fit.lineHeight);
+                    if (span.textContent !== lines[index]) span.textContent = lines[index];
                 });
             }
             tile.lastLineHeight = fit.lineHeight;
-
-            const valueText = numberFormat.format(value);
-            tile.valueEl.setAttribute('x', centerX);
-            tile.valueEl.setAttribute('y', valueY);
-            if (valueText !== tile.lastValueText) {
-                tile.lastValueText = valueText;
-                tile.valueEl.textContent = valueText;
-            }
-
-            const changeText = percentFormat.format(pct);
-            tile.changeEl.setAttribute('x', centerX);
-            tile.changeEl.setAttribute('y', valueY + fit.size);
-            if (changeText !== tile.lastChangeText) {
-                tile.lastChangeText = changeText;
-                tile.changeEl.textContent = changeText;
-            }
         }
 
         function setDirection(tile, item) {
             const change = trendOf(item);
             const direction = Number.isFinite(change) ? (change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutrale')) : 'neutrale';
             if (tile.group.dataset.direction !== direction) tile.group.dataset.direction = direction;
+            const strength = Number.isFinite(change) ? Math.min(1, Math.abs(change) / FULL_STRENGTH_CHANGE).toFixed(2) : '0';
+            if (tile.lastStrength !== strength) {
+                tile.lastStrength = strength;
+                tile.group.style.setProperty('--treemap-strength', strength);
+            }
         }
 
         function step(now) {
@@ -341,7 +329,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                 const key = keyOf(item);
                 const value = getValue(item);
                 const change = trendOf(item);
-                const target = { x, y, w, h, value, pct: change };
+                const target = { x, y, w, h, pct: change };
                 let tile = tiles.get(key);
                 if (!tile) {
                     tile = createTile(item);
@@ -352,7 +340,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                 tile.from = { ...tile.cur };
                 tile.to = target;
                 tile.t0 = now;
-                tile.fit = fitLabel(tile.words, numberFormat.format(value), percentFormat.format(change), w, h);
+                tile.fit = fitLabel(tile.words, percentFormat.format(change), w, h);
 
                 const name = getName(item);
                 tile.group.setAttribute('aria-label', `${name}: ${numberFormat.format(value)}${tile.canDrill ? ', open details' : ''}`);

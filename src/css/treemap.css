@@ -41,27 +41,53 @@
     overflow: visible;
 }
 
-/* Each tile's color follows its direction and fades over a feed tick. */
+/* Each tile's color follows its direction, and its fill strength follows the size of
+   its change (--treemap-strength, from 0 to 1, set by treemap.js): from the faint fill
+   at no change up to --treemap-fill-opacity-full. Both fade over a feed tick.
+   Pointing at a tile (--treemap-hover) adds --treemap-fill-opacity-hover to its fill.
+   The three are registered so they can transition: the fill
+   opacity itself has no transition, as the strength would restart it on every frame. */
 @property --treemap-color {
     syntax: "<color>";
     inherits: true;
     /* Same hue as --clr-neutrale-base: @property cannot read a var(). */
     initial-value: #a0a0a0;
 }
+@property --treemap-strength {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+}
+@property --treemap-hover {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+}
+.treemap {
+    --treemap-fill-opacity-full: .24;
+    --treemap-fill-opacity-hover: .08;
+}
 .treemap-tile {
     color: var(--treemap-color, var(--clr-neutrale));
-    transition: --treemap-color var(--transition-time-clr) ease;
+    transition:
+        --treemap-color var(--transition-time-clr) ease,
+        --treemap-strength var(--transition-time-clr) ease,
+        --treemap-hover var(--transition-time-quick) ease;
 }
 .treemap-tile[data-direction="positive"] { --treemap-color: var(--clr-positive); }
 .treemap-tile[data-direction="negative"] { --treemap-color: var(--clr-negative); }
 .treemap-tile[data-direction="neutrale"] { --treemap-color: var(--clr-neutrale); }
 .treemap-tile.has-children { cursor: pointer; }
 .treemap-tile:hover,
-.treemap-tile:focus-visible { filter: var(--filter-dim); }
+.treemap-tile:focus-visible { --treemap-hover: 1; }
 .treemap-tile:focus { outline: none; }
 .treemap-surface {
     fill: var(--treemap-color, var(--clr-neutrale));
-    fill-opacity: var(--fill-opacity-faint);
+    fill-opacity: calc(
+        var(--fill-opacity-faint)
+        + var(--treemap-strength) * (var(--treemap-fill-opacity-full) - var(--fill-opacity-faint))
+        + var(--treemap-hover) * var(--treemap-fill-opacity-hover)
+    );
     stroke: var(--treemap-color, var(--clr-neutrale));
     stroke-width: var(--stroke-width);
 }
@@ -71,15 +97,16 @@
     stroke-dasharray: var(--stroke-dasharray);
 }
 
-/* The value and change labels are darker shades of the tile color. They are color-mixed
-   instead of using filter: brightness(), which would put every label in
-   its own filter layer and redraw it on each frame of a tween. */
+/* One label per tile: its name in the tile color, then its change on the last line
+   (treemap.js always puts it there), mixed toward the base color so it reads darker in
+   the dark theme and lighter in the light one. Mixed instead of using filter:
+   brightness(), which would put every label in its own filter layer and redraw it on
+   each frame of a tween. */
 .treemap-label {
     font-weight: bold;
     fill: var(--treemap-color);
+    text-transform: uppercase;
     pointer-events: none;
 }
-.treemap-label-name { text-transform: uppercase; }
-.treemap-label-value { fill: color-mix(in srgb, var(--treemap-color) 40%, var(--clr)); }
-.treemap-label-change { fill: color-mix(in srgb, var(--treemap-color) 60%, var(--clr)); }
+.treemap-label > tspan:last-child { fill: color-mix(in srgb, var(--treemap-color) 60%, var(--clr)); }
 

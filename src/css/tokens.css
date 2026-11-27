@@ -21,7 +21,6 @@
     --transition-time-clr: 900ms;
     --opacity-faint: .1;
     --fill-opacity-faint: .06;
-    --filter-dim: brightness(.5);
     --box-shadow-clr: color-mix(in srgb, black 50%, transparent);
     --letter-spacing: .1em;
     --fnt: 'Source Code Pro', monospace;
