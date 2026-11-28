@@ -1,11 +1,14 @@
 // ledger.js - Live ledgers, one per <div data-ledger="feed id"> in index.html (the
-// blocs and corps panels). Rows are persistent (keyed by tag/name): value and
-// change numbers are tweened between ticks, and rows slide to their new position when
-// the sort order changes (FLIP technique via the Web Animations API).
+// blocs, corps and goods ledgers of the data view). Rows are persistent (keyed by
+// tag/name): value and change numbers are tweened between ticks, and rows slide to
+// their new position when the sort order changes (FLIP technique via the Web
+// Animations API). data-sort picks the order: "value" (the default) or "change", both
+// biggest first.
 // The change column and the colors follow each item's trend change (trendPercent in
 // simulation.js), and a sparkline of its recent history ends each row.
-// The ledger's status bar (.div-win-top) adds the total of the rows to its title,
-// tweened with them.
+// When every row has the same unit, the ledger's status bar (.div-win-top) adds the
+// total of the rows to its title, tweened with them. Goods each have their own unit,
+// so their ledger shows no total.
 // Each row's browser tooltip lists the goods that push its item or an entry above it
 // (data/relations.json), with the link weight and the effect: how far the good's move
 // from its start shifts where the item rests, in percent. It is filled when the pointer
@@ -30,16 +33,26 @@ import { createSparkline, updateSparkline } from './sparkline.js';
     // A shift of where an item rests, in log terms (weight x log distance, as
     // restingShifts() in simulation.js sums it), as a percent.
     const toPercent = shift => (Math.exp(shift) - 1) * 100;
+    // Row orders for data-sort, biggest first.
+    const SORTS = {
+        value: (a, b) => b.value - a.value,
+        change: (a, b) => trendOf(b) - trendOf(a)
+    };
 
     function renderLedger(host) {
         const feedId = host.dataset.ledger;
         if (!feedId) return;
         const wrapper = host.closest('[data-panel-group]');
         const feed = simulation.getFeed(feedId);
+        const sortBy = host.dataset.sort || 'value';
+        if (!SORTS[sortBy]) console.warn(`Ledger "${feedId}": unknown data-sort="${sortBy}", sorting by value`);
+        const compare = SORTS[sortBy] || SORTS.value;
         const rows = new Map();
         const titleEl = host.closest('.div-win')?.querySelector('.div-win-top > span') || null;
         const title = titleEl?.textContent || '';
         let lastTotalText = null;
+        // Whether the rows share one unit, so their total means something.
+        let showTotal = false;
         let displayedItems = null;
         let raf = 0;
         let inViewport = false;
@@ -136,7 +149,7 @@ import { createSparkline, updateSparkline } from './sparkline.js';
         }
 
         function paintTotal(total) {
-            if (!titleEl) return;
+            if (!titleEl || !showTotal) return;
             const totalText = `${title} · €$${valueFormat.format(total)}B`;
             if (totalText === lastTotalText) return;
             lastTotalText = totalText;
@@ -166,7 +179,8 @@ import { createSparkline, updateSparkline } from './sparkline.js';
 
         function render(current) {
             if (!current.length) return;
-            const sorted = current.slice().sort((a, b) => b.value - a.value);
+            const sorted = current.slice().sort(compare);
+            showTotal = sorted.every(item => item.unit === sorted[0].unit);
             const keys = new Set(sorted.map(keyOf));
             const now = performance.now();
             const reduced = motionPreference.matches;

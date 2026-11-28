@@ -151,7 +151,7 @@
     <!-- Main Content: hidden and shown by the content toggle -->
     <main class="div-main" id="main-content">
         <h1 class="main-title">[BYOND UNiTY :HTML]</h1>
-        <!-- Ticker: it declares the goods feed, which the ledger tooltips in the data view read too; a click toggles the data view -->
+        <!-- Ticker: it declares the goods feed, which the goods ledgers and the ledger tooltips in the data view read too; a click toggles the data view -->
         <div class="ticker" data-feed="goods" data-url="data/good-data.json"><div class="ticker-line"><span class="ticker-txt"></span></div></div>
 
         <!-- Briefing View: quote, points of interest and scenario charts -->
@@ -177,7 +177,8 @@
             </div>
         </article>
 
-        <!-- Data View: a treemap and a ledger per data category; a ledger row's tooltip lists the goods that push it -->
+        <!-- Data View: a treemap and a ledger per data category, then the goods ledger; a ledger row's tooltip lists the goods that push it.
+             data-sort orders a ledger by "value" or "change" (ledger.js) -->
         <article class="data-view" id="data-view" hidden>
             <div class="div-submain">
                 <section id="data-view-panel">
@@ -189,7 +190,11 @@
                         </div>
                         <div class="div-win">
                             <div class="div-win-top"><span>MONDAYMARKET · blocs</span></div>
-                            <div class="ledger" data-ledger="blocs"></div>
+                            <div class="ledger" data-ledger="blocs" data-sort="value"></div>
+                        </div>
+                        <div class="div-win">
+                            <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
+                            <div class="ledger" data-ledger="goods" data-sort="change"></div>
                         </div>
                     </div>
 
@@ -200,7 +205,11 @@
                         </div>
                         <div class="div-win">
                             <div class="div-win-top"><span>MONDAYMARKET · corps</span></div>
-                            <div class="ledger" data-ledger="corps"></div>
+                            <div class="ledger" data-ledger="corps" data-sort="value"></div>
+                        </div>
+                        <div class="div-win">
+                            <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
+                            <div class="ledger" data-ledger="goods" data-sort="change"></div>
                         </div>
                     </div>
                 </section>

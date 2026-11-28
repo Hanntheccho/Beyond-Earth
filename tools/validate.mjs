@@ -431,6 +431,14 @@ function checkFeeds(html) {
             warn('html', `index.html: data-ledger="${match[1]}" names a feed that no element declares with a data-url (data-treemap or data-feed), so the ledger stays empty`);
         }
     }
+    // data-sort orders a ledger (ledger.js): "value" or "change".
+    for (const match of html.matchAll(/<[a-z][\w-]*\b[^>]*\bdata-sort="([^"]*)"[^>]*>/g)) {
+        if (!/\bdata-ledger="/.test(match[0])) {
+            warn('html', `index.html: data-sort="${match[1]}" is on an element without data-ledger, so nothing reads it`);
+        } else if (!['value', 'change'].includes(match[1])) {
+            warn('html', `index.html: data-sort="${match[1]}" is not "value" or "change", so the ledger sorts by value`);
+        }
+    }
     listJs('src/js').forEach(rel => {
         for (const match of read(abs(rel)).matchAll(/\bgetFeed\(\s*['"]([^'"]+)['"]\s*\)/g)) {
             if (!declared.has(match[1])) {
