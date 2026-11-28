@@ -15,7 +15,7 @@
      .btn-group    on a container: its buttons in a row that wraps, or stacked in a
                    column with .is-column.
      .nav-bar      on a container: a header row with a .btn-nav at each end and the
-                   name of what is on screen (an h2 with .nav-bar-name) centered
+                   name of what is on screen (an element with .nav-bar-name) centered
                    between them in square brackets. The treemaps, the chart window
                    and the POI panels each start with one.
 
@@ -107,14 +107,14 @@
     text-transform: inherit;
 }
 
-/* Nav glyph: no key look (border, background, shadow), just a large glyph. Instead of
-   rising on hover it moves the way it points: left, or right with .is-next. */
+/* Nav glyph: no key look (border, background, shadow), just the glyph, in the color
+   the nav bar's name uses too. Instead of rising on hover it moves the way it points:
+   left, or right with .is-next. */
 .btn-nav {
     --btn-color: var(--clr-body);
     border: 0;
     background: none;
     box-shadow: none;
-    font-size: var(--fnt-size-h2);
 }
 .btn-nav:hover { translate: calc(var(--btn-nudge, 4px) * -1) 0; }
 .btn-nav.is-next:hover { translate: var(--btn-nudge, 4px) 0; }
@@ -154,10 +154,14 @@
     grid-template-areas: "back name next";
     align-items: center;
     gap: var(--space-s);
-    margin-bottom: var(--space-s);
-    color: var(--btn-color);
-    border-top: 2px solid;
-    border-bottom: 2px solid;
+    margin-bottom: var(--space-m);
+    color: var(--clr-body);
+    border-top: var(--border);
+    border-bottom: var(--border);
+    min-height: var(--row-height);
+    font-size: var(--fnt-size-bttn);
+    text-transform: uppercase;
+    font-weight: bold;
 }
 .nav-bar > .btn-nav {
     grid-area: back;
@@ -173,6 +177,7 @@
     grid-area: name;
     margin: 0;
     text-align: center;
+    letter-spacing: var(--letter-spacing);
     text-indent: var(--letter-spacing);
 }
 /* The brackets around the name are drawn but not read out (their alternative text is

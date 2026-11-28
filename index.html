@@ -77,7 +77,7 @@
                 <img src="assets/btn/btn05.svg" alt="">
             </button>
             <button id="data-view-toggle" class="data-view-toggle btn-icon" type="button" aria-label="Show data view" aria-controls="data-view" aria-pressed="false">
-                <img src="assets/btn/btn02.svg" alt="">
+                <img src="assets/btn/btn08.svg" alt="">
             </button>
             <!-- Data category tabs: shown below the toggles while the data view is open -->
             <div class="data-tabs btn-group is-column" role="group" aria-label="Data categories">
@@ -169,7 +169,7 @@
                     <div class="div-win chart-window">
                         <div class="nav-bar">
                             <button type="button" class="btn-nav" data-chart-step="-1" hidden>[❮❮❮]</button>
-                            <h2 class="nav-bar-name" data-chart-name aria-live="polite"></h2>
+                            <div class="nav-bar-name" data-chart-name role="heading" aria-level="2" aria-live="polite"></div>
                             <button type="button" class="btn-nav is-next" data-chart-step="1" hidden>[❯❯❯]</button>
                         </div>
                         <div data-chart-panels></div>
@@ -190,7 +190,7 @@
                         <div class="div-win" data-treemap-panel>
                             <div class="nav-bar">
                                 <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
-                                <h2 class="nav-bar-name" data-treemap-name aria-live="polite"></h2>
+                                <div class="nav-bar-name" data-treemap-name role="heading" aria-level="2" aria-live="polite"></div>
                                 <button type="button" class="btn-nav is-next" aria-label="Show corp data" data-panel-group="data-categories" data-panel-target="data-corps">[❯❯❯]</button>
                             </div>
                             <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"><div class="treemap-message" role="status">Loading data…</div></div>
@@ -209,7 +209,7 @@
                         <div class="div-win" data-treemap-panel>
                             <div class="nav-bar">
                                 <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
-                                <h2 class="nav-bar-name" data-treemap-name aria-live="polite"></h2>
+                                <div class="nav-bar-name" data-treemap-name role="heading" aria-level="2" aria-live="polite"></div>
                                 <button type="button" class="btn-nav is-next" aria-label="Show bloc data" data-panel-group="data-categories" data-panel-target="data-blocs">[❯❯❯]</button>
                             </div>
                             <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="false" role="group" aria-label="Corps treemap"><div class="treemap-message" role="status">Loading data…</div></div>

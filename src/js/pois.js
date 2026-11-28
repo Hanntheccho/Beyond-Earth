@@ -64,7 +64,7 @@ import { getPois } from './poi-data.js';
         const back = buildNavKey('back', '[❮❮❮]');
         back.hidden = true;
         back.addEventListener('click', () => goBack(back));
-        const name = document.createElement('h2');
+        const name = document.createElement('div');
         name.className = 'nav-bar-name';
         name.append(buildLabel(id));
         const random = buildNavKey('random', '[❯❯❯]');
@@ -79,7 +79,7 @@ import { getPois } from './poi-data.js';
     function buildPanel(poi, active) {
         const { id, icon, background } = poi;
         const panel = document.createElement('div');
-        panel.className = 'div-win poi-panel';
+        panel.className = 'div-win';
         if (background) {
             panel.classList.add('has-icon');
             panel.style.setProperty('--poi-icon', `url("${icon}")`);

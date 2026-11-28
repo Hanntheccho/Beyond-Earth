@@ -79,16 +79,13 @@ function applyPoiLinks(localization) {
     return localization;
 }
 
-// Put each description's localized title in front of it as a heading, with the
-// DESC_TITLE_CLASS class: the tooltips show it, but a POI panel hides it (pois.css), as
-// its nav bar already names the POI.
-const DESC_TITLE_CLASS = 'desc-title';
+// Put each description's localized title in front of it as a heading.
 function applyDescriptionTitles(localization) {
     for (const [key, description] of Object.entries(localization)) {
         if (!key.endsWith('-desc') || typeof description !== 'string') continue;
         const title = localization[key.slice(0, -5)];
         if (typeof title !== 'string') continue;
-        localization[key] = `<h2 class="${DESC_TITLE_CLASS}">[${escapeHtml(title)}]</h2>${description}`;
+        localization[key] = `<h2>[${escapeHtml(title)}]</h2>${description}`;
     }
     return localization;
 }
