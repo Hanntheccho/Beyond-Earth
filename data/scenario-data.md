@@ -2,14 +2,13 @@
 
 `scenario-data.json` holds the fictional global indicators behind the scenario charts. The values are narrative estimates, not model output, and pre-modern values are especially approximate. The dip after the Great Mistake represents temporary nuclear-winter cooling, followed by recovery as ash settles.
 
-`src/js/chart.js` draws one chart per series that has points. `src/js/globe-sea-level.js` also reads the `seaLevel` points for the globe's year slider.
+`src/js/chart.js` draws one chart per series that has points, shown one at a time above the summary ledger. `src/js/globe-sea-level.js` also reads the `seaLevel` points for the globe's year slider.
 
 ## series
 
 One entry per indicator, keyed by series id.
 
-- `name`: label shown in the summary ledger, and as the chart button's tooltip and accessible name
-- `icon`: path to the SVG shown on the chart button, from the project root. Only its shape is used: it is drawn in the button's text color.
+- `name`: label shown in the chart window's nav bar and in the summary ledger, and in the accessible names of the chart and of the step keys that go to it
 - `unit`: unit shown in tooltips and the summary ledger
 - `trend`: `"positive"` (higher is better, the default) or `"negative"` (higher is worse). It decides which changes are drawn green and which red.
 - `min` / `max`: optional fixed y-axis bounds

@@ -454,6 +454,73 @@ function checkFeeds(html) {
     });
 }
 
+// ---------------------------------------------------------------- chart window
+
+// index.html without its comments, so the markup checks below only see real elements.
+const withoutComments = html => html.replace(/<!--[\s\S]*?-->/g, '');
+
+// chart.js puts the charts into [data-chart-panels], names the one on screen in
+// [data-chart-name] and steps through them with the [data-chart-step] keys (-1 for the
+// previous chart, 1 for the next).
+function checkChartWindow(html) {
+    if (!html) return;
+    const markup = withoutComments(html);
+    if (markup.includes('data-chart-summary') && !markup.includes('data-chart-panels')) {
+        warn('html', 'index.html: there is a data-chart-summary but no data-chart-panels, so no chart is drawn');
+    }
+    if (markup.includes('data-chart-panels') && !markup.includes('data-chart-name')) {
+        warn('html', 'index.html: there is a data-chart-panels but no data-chart-name, so the chart nav bar names no chart');
+    }
+    for (const match of markup.matchAll(/\sdata-chart-step="([^"]*)"/g)) {
+        if (!['-1', '1'].includes(match[1])) {
+            warn('html', `index.html: data-chart-step="${match[1]}" is not "-1" or "1", so the key does not step to another chart`);
+        }
+    }
+}
+
+// ---------------------------------------------------------------------- panels
+
+// panel-toggle.js shows the element whose id a button's data-panel-target names, but
+// only when that element is in the button's data-panel-group: otherwise the button
+// does nothing. pois.js builds the POI buttons, so only the ones in index.html are checked.
+function checkPanelTargets(html) {
+    if (!html) return;
+    const tags = [...withoutComments(html).matchAll(/<[a-z][\w-]*\b[^>]*>/g)].map(match => match[0]);
+    const idOf = tag => /\sid="([^"]*)"/.exec(tag)?.[1];
+    const groupOf = tag => /\sdata-panel-group="([^"]*)"/.exec(tag)?.[1];
+    const targetOf = tag => /\sdata-panel-target="([^"]*)"/.exec(tag)?.[1];
+    const panelGroups = new Map();
+    tags.forEach(tag => {
+        const id = idOf(tag);
+        if (id !== undefined && targetOf(tag) === undefined) panelGroups.set(id, groupOf(tag));
+    });
+    tags.forEach(tag => {
+        const target = targetOf(tag);
+        if (target === undefined) return;
+        const group = groupOf(tag);
+        if (!panelGroups.has(target)) {
+            warn('html', `index.html: data-panel-target="${target}" names no element in index.html, so its button shows nothing`);
+        } else if (panelGroups.get(target) !== group) {
+            warn('html', `index.html: data-panel-target="${target}" names an element outside the button's data-panel-group ("${group ?? ''}"), so the button shows nothing`);
+        }
+    });
+}
+
+// treemap.js fills the nav bar of each treemap panel: the level name (data-treemap-name)
+// and the back key (data-treemap-back).
+function checkTreemapPanels(html) {
+    if (!html) return;
+    const markup = withoutComments(html);
+    const count = name => markup.split(name).length - 1;
+    const panels = count('data-treemap-panel');
+    if (count('data-treemap-name') < panels) {
+        warn('html', 'index.html: a data-treemap-panel has no data-treemap-name, so its nav bar names no level');
+    }
+    if (count('data-treemap-back') < panels) {
+        warn('html', 'index.html: a data-treemap-panel has no data-treemap-back, so there is no key back up from a level');
+    }
+}
+
 // -------------------------------------------------------------- scenario data
 
 function checkScenario() {
@@ -482,14 +549,9 @@ function checkScenario() {
         }
     });
     Object.keys(series).forEach(key => {
-        if (!range[key]) warn(rel, `series "${key}" has no usable points, so its button is skipped`);
-        // The chart button shows nothing but the icon, so a missing one leaves it blank.
-        const icon = series[key].icon;
-        if (typeof icon !== 'string' || !icon.trim()) {
-            error(rel, `series "${key}": "icon" must be a non-empty path, or its chart button is blank`);
-        } else if (!exists(path.resolve(ROOT, stripQuery(icon)))) {
-            error(rel, `series "${key}": icon "${icon}" not found (resolved from the project root)`);
-        }
+        if (!range[key]) warn(rel, `series "${key}" has no usable points, so it gets no chart`);
+        // chart.js no longer shows series icons, so an icon is left over from the old chart tabs.
+        if ('icon' in series[key]) warn(rel, `series "${key}": "icon" is no longer used by the charts`);
     });
 
     const unknownSeries = (item, kind, label) => (item.series || []).filter(s => {
@@ -943,6 +1005,9 @@ const html = checkHtmlAndAssets(loc);
 checkStylesheets(html);
 checkTreemaps(html);
 checkFeeds(html);
+checkChartWindow(html);
+checkPanelTargets(html);
+checkTreemapPanels(html);
 checkDataFileDuplicates('data/good-data.json');
 checkDataFileDuplicates('data/corp-data.json');
 checkDataFileDuplicates('data/bloc-data.json');

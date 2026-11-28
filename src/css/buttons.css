@@ -1,17 +1,23 @@
 /* buttons.css - The button system. Every <button> starts as a raised key (the base look
    below); a variant class gives it another look, a container class lays a set of
    buttons out, and its ARIA attributes set its state. Where a button sits on the page
-   (the header column, the chart tabs' corner) is up to its component's stylesheet,
-   which loads after this one.
+   (the header column, for example) is up to its component's stylesheet, which loads
+   after this one.
 
    Classes
      .btn-icon     on a button: a square key holding only an icon (an <img> or an
                    .icon-mask). A button with neither variant is a text key.
      .btn-plain    on a button: no key look at all, for buttons that read as part of
                    what surrounds them (inline POI links, globe markers).
+     .btn-nav      on a button: a bare glyph that steps back, such as [❮❮❮]. With
+                   .is-next it steps forward instead, such as [❯❯❯].
      .icon-mask    an icon drawn in the text color from an image's shape (--icon).
      .btn-group    on a container: its buttons in a row that wraps, or stacked in a
                    column with .is-column.
+     .nav-bar      on a container: a header row with a .btn-nav at each end and the
+                   name of what is on screen (an h2 with .nav-bar-name) centered
+                   between them in square brackets. The treemaps, the chart window
+                   and the POI panels each start with one.
 
    States: aria-pressed="true" (toggles, tabs), aria-expanded="true" (buttons that open
    something) and aria-current (the current item of a trail) share one "on" look, so no
@@ -24,6 +30,7 @@
      --btn-pressed-color, --btn-pressed-background,
      --btn-pressed-border-color                          colors when on
      --btn-lift          how far the key rises on hover; buttons that stay put cancel it
+     --btn-nudge         how far a .btn-nav moves the way it points on hover
      --btn-shadow        its box-shadow; keys floating over the page use --box-shadow
      --btn-icon-size     width and height of a .btn-icon (--btn-size by default)
      --btn-icon-padding  space between a .btn-icon's border and its icon
@@ -100,6 +107,18 @@
     text-transform: inherit;
 }
 
+/* Nav glyph: no key look (border, background, shadow), just a large glyph. Instead of
+   rising on hover it moves the way it points: left, or right with .is-next. */
+.btn-nav {
+    --btn-color: var(--clr-body);
+    border: 0;
+    background: none;
+    box-shadow: none;
+    font-size: var(--fnt-size-h2);
+}
+.btn-nav:hover { translate: calc(var(--btn-nudge, 4px) * -1) 0; }
+.btn-nav.is-next:hover { translate: var(--btn-nudge, 4px) 0; }
+
 /* ------------------------------------------------------------- icons */
 /* An icon drawn in the text color: only the shape of the image in --icon (set by the
    script that builds it) is used, so it dims, lights up and follows the theme with
@@ -124,3 +143,41 @@
     flex-direction: column;
     flex-wrap: nowrap;
 }
+
+/* Nav bar: the back key in the first column, the name in the middle one and the next
+   key in the last. The outer columns share the rest of the row equally, so the name
+   stays centered whatever the keys' widths, and a key keeps its end of the row while
+   the other one is hidden. */
+.nav-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas: "back name next";
+    align-items: center;
+    gap: var(--space-s);
+    margin-bottom: var(--space-s);
+    color: var(--btn-color);
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+}
+.nav-bar > .btn-nav {
+    grid-area: back;
+    justify-self: start;
+}
+.nav-bar > .btn-nav.is-next {
+    grid-area: next;
+    justify-self: end;
+}
+/* The text-indent balances the letter-spacing after the last letter, as on the keys,
+   so the name is centered on its letters. */
+.nav-bar-name {
+    grid-area: name;
+    margin: 0;
+    text-align: center;
+    text-indent: var(--letter-spacing);
+}
+/* The brackets around the name are drawn but not read out (their alternative text is
+   empty). A name that is not filled in yet shows nothing, not empty brackets. */
+.nav-bar-name::before { content: "[" / ""; }
+.nav-bar-name::after { content: "]" / ""; }
+.nav-bar-name:empty { display: none; }
+

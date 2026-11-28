@@ -162,14 +162,17 @@
                         <div id="quote-div" class="poi-desc quote"><span class="quote-txt"></span></div>
                     </div>
 
-                    <!-- Points of interest: buttons filled by pois.js -->
+                    <!-- Points of interest: buttons filled by pois.js, which puts a panel per POI after them. Each panel's nav bar names its POI: [❮❮❮] goes back to the POI shown before it and [❯❯❯] shows a random one -->
                     <div class="div-win btn-group" data-poi-buttons></div>
 
-                    <!-- Scenario charts and their summary ledger (chart.js) -->
-                    <div class="chart-window">
-                        <div class="chart-tabs btn-group is-column" role="group" aria-label="Scenario charts" data-chart-buttons></div>
-                    </div>
-                    <div class="div-win">
+                    <!-- Scenario charts and their summary ledger in one window. Its nav bar names the chart on screen, and its keys show the previous and next chart (chart.js) -->
+                    <div class="div-win chart-window">
+                        <div class="nav-bar">
+                            <button type="button" class="btn-nav" data-chart-step="-1" hidden>[❮❮❮]</button>
+                            <h2 class="nav-bar-name" data-chart-name aria-live="polite"></h2>
+                            <button type="button" class="btn-nav is-next" data-chart-step="1" hidden>[❯❯❯]</button>
+                        </div>
+                        <div data-chart-panels></div>
                         <div class="div-win-top"><span>MÜNINSTEK EcoData & Model · 2070 to 2200 outlook</span></div>
                         <div class="ledger" data-chart-summary></div>
                     </div>
@@ -182,10 +185,14 @@
         <article class="data-view" id="data-view" hidden>
             <div class="div-submain">
                 <section id="data-view-panel">
-                    <!-- Category panels (blocs, corps): the data tabs switch between them -->
+                    <!-- Category panels (blocs, corps): the data tabs switch between them, and so does the [❯❯❯] key in each treemap's nav bar. The nav bar names the treemap level on screen, and its [❮❮❮] key goes up a level (treemap.js) -->
                     <div id="data-blocs" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
                         <div class="div-win" data-treemap-panel>
-                            <button type="button" class="treemap-back" data-treemap-back hidden>[❮❮❮]</button>
+                            <div class="nav-bar">
+                                <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
+                                <h2 class="nav-bar-name" data-treemap-name aria-live="polite"></h2>
+                                <button type="button" class="btn-nav is-next" aria-label="Show corp data" data-panel-group="data-categories" data-panel-target="data-corps">[❯❯❯]</button>
+                            </div>
                             <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"><div class="treemap-message" role="status">Loading data…</div></div>
                         </div>
                         <div class="div-win">
@@ -200,7 +207,11 @@
 
                     <div id="data-corps" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
                         <div class="div-win" data-treemap-panel>
-                            <button type="button" class="treemap-back" data-treemap-back hidden>[❮❮❮]</button>
+                            <div class="nav-bar">
+                                <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
+                                <h2 class="nav-bar-name" data-treemap-name aria-live="polite"></h2>
+                                <button type="button" class="btn-nav is-next" aria-label="Show bloc data" data-panel-group="data-categories" data-panel-target="data-blocs">[❯❯❯]</button>
+                            </div>
                             <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="false" role="group" aria-label="Corps treemap"><div class="treemap-message" role="status">Loading data…</div></div>
                         </div>
                         <div class="div-win">

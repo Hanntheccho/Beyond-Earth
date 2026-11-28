@@ -1,23 +1,6 @@
-/* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). */
+/* treemap.css - Treemap tiles, labels and color animation (see src/js/treemap.js). The
+   nav bar above each treemap is the shared one in buttons.css. */
 
-/* Back key: a bare glyph over the top left corner of the treemap, placed from the
-   treemap panel's edges. It drops the key look (border, background, shadow) but keeps
-   the hover lift. treemap.js shows it only below the root level, and each press goes
-   up one level. */
-[data-treemap-panel] { position: relative; }
-.treemap-back {
-    border: 0;
-    background: none;
-    box-shadow: none;
-    position: absolute;
-    top: calc(var(--space-s) * 2);
-    left: calc(var(--space-s) * 2);
-    z-index: 1;
-    font-size: var(--fnt-size-h2);
-    padding-left: .4em;
-    color: var(--clr-body);
-}
-.treemap-back:hover { translate: -4px 0; }
 .treemap {
     position: relative;
     width: 100%;

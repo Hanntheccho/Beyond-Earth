@@ -108,23 +108,3 @@
     stroke: var(--clr-positive);
 }
 
-/* Chart window: the chart panels, with their tabs floating over the top right corner
-   of the one on screen. The tabs take no space: they sit in the plot's right margin,
-   which nothing else is drawn in, as a column of small floating icon keys (a
-   .btn-group.is-column of .btn-icon with an .icon-mask each, buttons.css). The window
-   keeps the panels' outer margin, so the tabs are placed from the panel's own edges. */
-.chart-window {
-    position: relative;
-    margin: var(--space-m);
-}
-.chart-window > .div-win { margin: 0; }
-.chart-tabs {
-    --btn-icon-size: calc(var(--btn-size) / 2);
-    --btn-icon-padding: calc(var(--space-s) / 2);
-    --btn-gap: var(--gap-s);
-    --btn-shadow: var(--box-shadow);
-    position: absolute;
-    top: var(--space-s);
-    right: var(--space-s);
-    z-index: 1;
-}

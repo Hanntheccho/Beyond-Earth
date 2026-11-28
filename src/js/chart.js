@@ -1,14 +1,12 @@
 // chart.js - Scenario chart renderer. Everything a chart shows comes from
-// data/scenario-data.json (explained in data/scenario-data.md): name, icon, unit, axis
+// data/scenario-data.json (explained in data/scenario-data.md): name, unit, axis
 // bounds and trend direction from `series`, events and eras from `timeline`, and the
-// values from `points`. One button and panel is built per series that has points.
-// index.html only needs the chart window with an empty tab group in it:
-// <div class="chart-window"><div class="chart-tabs btn-group is-column" data-chart-buttons></div></div>
-// (placed in src/css/chart.css); the panels are inserted right after the tabs, which
-// float over them.
-// The tabs are icon keys (.btn-icon with an .icon-mask, src/css/buttons.css) showing
-// only the series icon; the name is their accessible name and their browser tooltip
-// (title).
+// values from `points`. One panel and one summary ledger row is built per series that
+// has points. index.html holds the chart window (.chart-window): a nav bar
+// (src/css/buttons.css) with the name of the chart on screen ([data-chart-name])
+// between its two step keys (data-chart-step, -1 or 1), an empty [data-chart-panels]
+// that the panels go into, and the summary ledger ([data-chart-summary]). One chart is
+// on screen at a time, and the step keys go round the charts in key order.
 //
 // Events and eras are drawn in red by default. Add `"positive": true` to one in the
 // timeline to draw it in green instead (the .is-positive class).
@@ -32,12 +30,6 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
     const baselineYear = Number.isFinite(timeline.baselineYear) ? timeline.baselineYear : 2070;
     const valueFormatter = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
     const changeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, signDisplay: 'always' });
-
-    const PANEL_GROUP = 'charts';
-    // Series icons are paths from the project root, made absolute here as poi-data.js
-    // does: a relative url() in the inline --icon can resolve against the stylesheet
-    // that uses it (buttons.css) instead of the page.
-    const ROOT_URL = new URL('../../', import.meta.url);
 
     // Chart layout, in pixels. The plot area keeps CHART_MARGIN free on every side for
     // the axis labels and event tags. Text is placed by its vertical center
@@ -298,45 +290,18 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
         });
     }
 
-    // Build the tabs and chart panels from the series, in key order.
-    function buildChartUi() {
-        const buttonHost = document.querySelector('[data-chart-buttons]');
-        if (!buttonHost) return;
+    // Build the chart panels from the series, in key order.
+    function buildChartPanels() {
+        const panelHost = document.querySelector('[data-chart-panels]');
+        if (!panelHost) return [];
 
         const keys = Object.keys(seriesMeta).filter(key => sortedPoints(key).length);
-        const buttons = [];
-        const panels = [];
-        keys.forEach((key, index) => {
-            const id = `chart-${key}`;
-            const active = index === 0;
+        const panels = keys.map(key => {
             const name = seriesMeta[key].name || key;
             const points = sortedPoints(key);
-
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'btn-icon';
-            button.dataset.panelGroup = PANEL_GROUP;
-            button.dataset.panelTarget = id;
-            button.setAttribute('aria-pressed', String(active));
-            button.setAttribute('aria-label', name);
-            button.title = name;
-            // The icon is a mask filled with the button's text color (buttons.css), so
-            // it follows the tab states and the theme.
-            const icon = document.createElement('span');
-            icon.className = 'icon-mask';
-            icon.setAttribute('aria-hidden', 'true');
-            if (seriesMeta[key].icon) {
-                icon.style.setProperty('--icon', `url("${new URL(seriesMeta[key].icon, ROOT_URL).href}")`);
-            }
-            button.append(icon);
-            buttons.push(button);
-
             const panel = document.createElement('div');
-            panel.className = 'div-win';
-            panel.id = id;
-            panel.dataset.panelGroup = PANEL_GROUP;
-            panel.hidden = !active;
-            panel.setAttribute('aria-hidden', String(!active));
+            panel.className = 'chart-panel';
+            panel.id = `chart-${key}`;
             const plot = document.createElement('div');
             plot.className = 'chart-plot';
             plot.dataset.series = key;
@@ -344,15 +309,52 @@ import scenario from '../../data/scenario-data.json' with { type: 'json' };
             plot.setAttribute('aria-label', `${name} chart, ${points[0].year} to ${points.at(-1).year}`);
             plot.style.aspectRatio = `${CHART_WIDTH} / ${CHART_HEIGHT}`;
             panel.append(plot);
-            panels.push(panel);
+            return panel;
         });
-        buttonHost.replaceChildren(...buttons);
-        buttonHost.after(...panels);
+        panelHost.replaceChildren(...panels);
+        return panels;
     }
 
-    buildChartUi();
-    const plots = [...document.querySelectorAll('.chart-plot[data-series]')];
+    // Shows one chart at a time and names it in the nav bar. The step keys stay hidden
+    // unless there is more than one chart to go to; each is named after the chart it
+    // shows next.
+    function setupSteps(panels) {
+        if (!panels.length) return;
+        const chartWindow = panels[0].closest('.chart-window');
+        const stepButtons = [...(chartWindow?.querySelectorAll('[data-chart-step]') || [])];
+        const nameElement = chartWindow?.querySelector('[data-chart-name]');
+        const keyOf = panel => panel.firstElementChild.dataset.series;
+        const nameOf = panel => seriesMeta[keyOf(panel)].name || keyOf(panel);
+        // Wraps an index round the panels, so stepping past either end goes on from the other.
+        const wrap = index => (index % panels.length + panels.length) % panels.length;
+        let current = 0;
+
+        function show(index) {
+            current = wrap(index);
+            panels.forEach((panel, panelIndex) => {
+                const isActive = panelIndex === current;
+                panel.hidden = !isActive;
+                panel.setAttribute('aria-hidden', String(!isActive));
+            });
+            if (nameElement) nameElement.textContent = nameOf(panels[current]);
+            stepButtons.forEach(button => {
+                const step = Number(button.dataset.chartStep) || 0;
+                const target = panels[wrap(current + step)];
+                button.setAttribute('aria-label', `${step < 0 ? 'Previous' : 'Next'} chart: ${nameOf(target)}`);
+            });
+        }
+
+        stepButtons.forEach(button => {
+            button.hidden = panels.length < 2;
+            button.addEventListener('click', () => show(current + (Number(button.dataset.chartStep) || 0)));
+        });
+        show(0);
+    }
+
+    const panels = buildChartPanels();
+    const plots = panels.map(panel => panel.firstElementChild);
     renderSummary(plots);
+    setupSteps(panels);
     plots.forEach(plot => {
         let drawnWidth = 0;
         const draw = () => {

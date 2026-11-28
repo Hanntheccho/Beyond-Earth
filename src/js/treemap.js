@@ -41,6 +41,8 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     const splitWords = name => String(name).trim().split(/\s+/);
     // Tiles show and color by the trend change (trendPercent in simulation.js).
     const trendOf = item => Number(item.trendPercent ?? item.changePercent) || 0;
+    // A node's name, for the nav bar, the back key and the treemap's accessible name.
+    const getName = node => node.name || node.label || '';
 
     // Wrap at spaces only; fitLabel accounts for long unbroken words by reducing the font size.
     function wrapWords(words, maxChars) {
@@ -132,10 +134,10 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
         let path = [];
         const getChildren = node => Array.isArray(node.children) ? node.children : [];
         const getValue = node => Number(node.value) || 0;
-        const getName = node => node.name || node.label || '';
         const getLabel = node => node.label || getName(node);
         const keyOf = node => node.tag || node.name;
         const backButton = options.backButton || null;
+        const nameElement = options.nameElement || null;
         backButton?.addEventListener('click', () => { path.pop(); render(); });
 
         // Persistent render state: tiles survive between ticks and only get new targets.
@@ -286,9 +288,11 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             if (!document.hidden && tiles.size) startLoop();
         });
 
-        // The back key only depends on the path, so it is updated when the path changes:
-        // shown below the root level, and named after the level it goes up to.
-        function updateBackButton() {
+        // The nav bar only depends on the path, so it is updated when the path changes:
+        // the name of the level on screen, and the back key, shown below the root level
+        // and named after the level it goes up to.
+        function updateNavBar(current) {
+            if (nameElement) nameElement.textContent = getName(current.node);
             if (!backButton) return;
             backButton.hidden = path.length === 0;
             const parent = path.length > 1 ? path[path.length - 2].node : options.root;
@@ -321,7 +325,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
                     'aria-label': options.accessible ? `${getName(current.node)} treemap` : null
                 });
                 setBoardSize();
-                updateBackButton();
+                updateNavBar(current);
             }
 
             const now = performance.now();
@@ -358,10 +362,15 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     }
 
     // Draws the treemap the first time it is on screen, then follows its feed. The
-    // board's first render replaces the loading message inside the host. The back key
-    // sits beside the host in the treemap panel, outside what each render replaces.
+    // board's first render replaces the loading message inside the host. The nav bar
+    // (back key and level name, see buttons.css) sits above the host in the treemap
+    // panel, outside what each render replaces, and names the root as soon as the feed
+    // loads. Its other key shows the other category panel through panel-toggle.js.
     function mountTree(host, root) {
         const wrapper = host.closest('[data-panel-group]');
+        const panel = host.closest('[data-treemap-panel]');
+        const nameElement = panel?.querySelector('[data-treemap-name]') || null;
+        if (nameElement) nameElement.textContent = getName(root);
         let chart = null;
         let inViewport = false;
 
@@ -374,7 +383,8 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
             chart = mount(host, {
                 root,
                 feedId: host.dataset.treemap,
-                backButton: host.closest('[data-treemap-panel]')?.querySelector('[data-treemap-back]') || null,
+                backButton: panel?.querySelector('[data-treemap-back]') || null,
+                nameElement,
                 accessible: true
             });
         }

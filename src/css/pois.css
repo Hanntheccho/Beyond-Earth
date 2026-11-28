@@ -27,6 +27,9 @@
 .poi-desc.quote {
     aspect-ratio: auto;
 }
+/* loc.js puts each POI's title in front of its description (.desc-title), which the
+   tooltips show. A POI panel's nav bar already names the POI, so the panel hides it. */
+.poi-panel .desc-title { display: none; }
 
 /* ------------------------------------------------------------- panel background */
 /* POI panel with a background in data/pois.json: its icon, faded, behind the text. */
@@ -63,3 +66,4 @@
 }
 .poi-link:hover,
 .poi-link:focus-visible { text-decoration-style: solid; }
+
