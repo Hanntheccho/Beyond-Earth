@@ -3,6 +3,8 @@
 // Keywords (keywords-ph1/2/3.json) are highlighted in descriptions when they are first
 // shown, so the cost is only paid for the panels and tooltips people actually open.
 // Matching ignores case, except for keywords written with a leading "=" ("=Trust").
+// Where keywords overlap, the longest one is highlighted whole ("Central Asian
+// Federation" beats "=Central" and "=Federation"), whichever lists they are in.
 // Inline POI links: "{{poiFRA005|Padania}}" in any text becomes a tooltip button that
 // opens poiFRA005's description, and "{{poiFRA005}}" uses its localized name as the text.
 // Keywords are not highlighted inside links.
@@ -21,7 +23,8 @@ import { holdLoadingScreen } from './loading-screen.js';
 const MANIFEST_PATH = 'data/loc/manifest.json';
 // Panel group of the POI buttons and panels; pois.js and globe-markers-link.js import it.
 export const POI_PANEL_GROUP = 'pois';
-// Applied in this order. Text already inside a highlight of the same list is skipped.
+// All lists are matched in one pass and the longest keyword wins where two overlap;
+// this order only settles keywords of the same length (the earlier list wins).
 const KEYWORD_LISTS = [
     { path: 'data/loc/keywords-ph3.json', selector: '.ph3' },
     { path: 'data/loc/keywords-ph2.json', selector: '.ph2' },
@@ -118,33 +121,39 @@ function parseWrapper(selector) {
 // not "trust"); all others ignore case.
 const EXACT_CASE_PREFIX = '=';
 
-// One regex for a group of keywords, longest first so they win over their substrings.
+// A scanner for a group of keywords. The match is an empty lookahead, so it finds a
+// keyword at every place a word can start, even inside or across another keyword
+// ("Central Asian Federation" and the "Federation" in it are both found). The
+// alternatives go longest first, so at each start it captures the longest keyword there.
 // Unicode letters, numbers, and underscores count as word characters.
-function buildMatcher(keywords, flags) {
-    const escaped = keywords
+function buildScanner(keywords, flags) {
+    const escaped = [...new Set(keywords)]
         .sort((a, b) => b.length - a.length)
         .map(keyword => keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
     if (!escaped.length) return null;
-    return new RegExp(`(?<![\\p{L}\\p{N}_])(${escaped.join('|')})(?![\\p{L}\\p{N}_])`, flags);
+    return new RegExp(`(?<![\\p{L}\\p{N}_])(?=(${escaped.join('|')})(?![\\p{L}\\p{N}_]))`, flags);
 }
 
-// Up to two regexes per list: case-insensitive keywords first, then exact-case ones,
-// so a longer case-insensitive phrase ("Antarctica Trust") is wrapped whole before the
-// exact-case pass sees what is left.
-function buildMatchers(keywords) {
-    if (!Array.isArray(keywords)) return [];
+// Up to two scanners per list: one for its case-insensitive keywords, one for its
+// exact-case ones.
+function buildScanners(keywords, path) {
+    if (!Array.isArray(keywords)) {
+        console.warn(`Keyword list ${path} is not an array; its keywords are not highlighted.`);
+        return [];
+    }
     const valid = keywords.filter(keyword => typeof keyword === 'string' && keyword.length > 0);
     const exact = valid
         .filter(keyword => keyword.startsWith(EXACT_CASE_PREFIX))
         .map(keyword => keyword.slice(EXACT_CASE_PREFIX.length))
         .filter(Boolean);
     const anyCase = valid.filter(keyword => !keyword.startsWith(EXACT_CASE_PREFIX));
-    return [buildMatcher(anyCase, 'giu'), buildMatcher(exact, 'gu')].filter(Boolean);
+    return [buildScanner(anyCase, 'giu'), buildScanner(exact, 'gu')].filter(Boolean);
 }
 
 let keywordFormatters = null;
 
-// Fetches the keyword lists and compiles their regexes once, on first use.
+// Fetches the keyword lists and compiles their scanners once, on first use. The
+// formatters keep the order of KEYWORD_LISTS, which breaks ties between lists.
 function getKeywordFormatters() {
     keywordFormatters ??= Promise.all(KEYWORD_LISTS.map(async list => {
         let keywords = [];
@@ -154,14 +163,41 @@ function getKeywordFormatters() {
             console.warn(`Could not load shared localization keywords from ${list.path}:`, error);
         }
         const wrapper = parseWrapper(list.selector);
-        return buildMatchers(keywords).map(matcher => ({ ...list, ...wrapper, matcher }));
+        return buildScanners(keywords, list.path).map(scanner => ({ ...list, ...wrapper, scanner }));
     })).then(formatters => formatters.flat());
     return keywordFormatters;
 }
 
+// The keywords to highlight in one text, in reading order. Every list is scanned at
+// once, then overlaps are settled: the longest keyword wins, so a phrase is never cut
+// up by the shorter keywords inside it, whatever list or case rule each one has. Of two
+// keywords the same length, the one from the earlier list wins, then the earlier one
+// in the text.
+function findKeywords(text, formatters) {
+    const candidates = [];
+    formatters.forEach((formatter, priority) => {
+        for (const match of text.matchAll(formatter.scanner)) {
+            const start = match.index;
+            candidates.push({ start, end: start + match[1].length, formatter, priority });
+        }
+    });
+    if (!candidates.length) return candidates;
+
+    candidates.sort((a, b) =>
+        (b.end - b.start) - (a.end - a.start) || a.priority - b.priority || a.start - b.start);
+    const chosen = [];
+    for (const candidate of candidates) {
+        const overlaps = chosen.some(other => candidate.start < other.end && other.start < candidate.end);
+        if (!overlaps) chosen.push(candidate);
+    }
+    return chosen.sort((a, b) => a.start - b.start);
+}
+
 // Wrap whole keyword matches in text nodes, leaving existing HTML markup intact.
-// Keywords are for descriptive copy only, so only text inside paragraphs is touched.
-function wrapKeywords(root, { matcher, selector, tag, className }) {
+// Keywords are for descriptive copy only, so only text inside paragraphs is touched,
+// and text already inside a highlight or a POI link is left alone.
+function wrapKeywords(root, formatters) {
+    const skipSelector = [...new Set(formatters.map(formatter => formatter.selector)), `.${POI_LINK_CLASS}`].join(', ');
     const textNodes = [];
     root.querySelectorAll('p').forEach(paragraph => {
         const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
@@ -169,21 +205,20 @@ function wrapKeywords(root, { matcher, selector, tag, className }) {
     });
 
     for (const textNode of textNodes) {
-        if (textNode.parentElement?.closest(`${selector}, .${POI_LINK_CLASS}`)) continue;
+        if (textNode.parentElement?.closest(skipSelector)) continue;
         const text = textNode.nodeValue;
-        matcher.lastIndex = 0;
-        if (!matcher.test(text)) continue;
-        matcher.lastIndex = 0;
+        const keywords = findKeywords(text, formatters);
+        if (!keywords.length) continue;
 
         const replacement = document.createDocumentFragment();
         let lastIndex = 0;
-        for (const match of text.matchAll(matcher)) {
-            replacement.append(text.slice(lastIndex, match.index));
-            const wrapper = document.createElement(tag);
-            if (className) wrapper.className = className;
-            wrapper.textContent = match[0];
+        for (const { start, end, formatter } of keywords) {
+            replacement.append(text.slice(lastIndex, start));
+            const wrapper = document.createElement(formatter.tag);
+            if (formatter.className) wrapper.className = formatter.className;
+            wrapper.textContent = text.slice(start, end);
             replacement.append(wrapper);
-            lastIndex = match.index + match[0].length;
+            lastIndex = end;
         }
         replacement.append(text.slice(lastIndex));
         textNode.replaceWith(replacement);
@@ -203,7 +238,7 @@ export function formatLocalizationValue(key) {
         if (!value || !formatters.length) return value;
         const template = document.createElement('template');
         template.innerHTML = value;
-        formatters.forEach(formatter => wrapKeywords(template.content, formatter));
+        wrapKeywords(template.content, formatters);
         return template.innerHTML;
     });
     formattedLocalization.set(key, formatted);
