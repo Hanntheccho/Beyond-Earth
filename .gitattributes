@@ -1,2 +1,8 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Auto detect text files, store them with LF and check them out with LF on every OS
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.webp binary
+*.wav binary
+*.ogg binary
