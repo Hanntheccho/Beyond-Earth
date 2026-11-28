@@ -1,6 +1,6 @@
-/* ledger.css - Ledgers: rows of name, unit, value and change. The live bloc, corp and
-   goods ledgers come from src/js/ledger.js; the scenario summary in the briefing is
-   built by src/js/chart.js with the same classes. */
+/* ledger.css - Ledgers: rows of name, unit, value and change (compact ledgers: name
+   and change). The live bloc, corp and goods ledgers come from src/js/ledger.js; the
+   scenario summary in the briefing is built by src/js/chart.js with the same classes. */
 
 .ledger {
     display: grid;
@@ -21,6 +21,12 @@
    number tweens. */
 .ledger[data-ledger] .ledger-row {
     grid-template-columns: 1fr 6ch 10ch 7ch 4ch;
+}
+/* Compact ledgers (data-compact) leave out unit and value, so their rows fit three
+   columns: name, change and sparkline. */
+.ledger[data-compact] { grid-template-columns: repeat(4, 1fr); }
+.ledger[data-ledger][data-compact] .ledger-row {
+    grid-template-columns: 1fr 7ch 4ch;
 }
 
 .ledger-unit,

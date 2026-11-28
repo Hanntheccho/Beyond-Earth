@@ -439,6 +439,12 @@ function checkFeeds(html) {
             warn('html', `index.html: data-sort="${match[1]}" is not "value" or "change", so the ledger sorts by value`);
         }
     }
+    // data-compact trims a ledger to name and change (ledger.js, ledger.css).
+    for (const match of html.matchAll(/<[a-z][\w-]*\b[^>]*\bdata-compact\b[^>]*>/g)) {
+        if (!/\bdata-ledger="/.test(match[0])) {
+            warn('html', 'index.html: data-compact is on an element without data-ledger, so nothing reads it');
+        }
+    }
     listJs('src/js').forEach(rel => {
         for (const match of read(abs(rel)).matchAll(/\bgetFeed\(\s*['"]([^'"]+)['"]\s*\)/g)) {
             if (!declared.has(match[1])) {

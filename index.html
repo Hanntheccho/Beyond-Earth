@@ -178,7 +178,7 @@
         </article>
 
         <!-- Data View: a treemap and a ledger per data category, then the goods ledger; a ledger row's tooltip lists the goods that push it.
-             data-sort orders a ledger by "value" or "change" (ledger.js) -->
+             data-sort orders a ledger by "value" or "change"; data-compact leaves out unit and value, which the row tooltip gives instead (ledger.js) -->
         <article class="data-view" id="data-view" hidden>
             <div class="div-submain">
                 <section id="data-view-panel">
@@ -194,7 +194,7 @@
                         </div>
                         <div class="div-win">
                             <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
-                            <div class="ledger" data-ledger="goods" data-sort="change"></div>
+                            <div class="ledger" data-ledger="goods" data-sort="change" data-compact></div>
                         </div>
                     </div>
 
@@ -209,7 +209,7 @@
                         </div>
                         <div class="div-win">
                             <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
-                            <div class="ledger" data-ledger="goods" data-sort="change"></div>
+                            <div class="ledger" data-ledger="goods" data-sort="change" data-compact></div>
                         </div>
                     </div>
                 </section>

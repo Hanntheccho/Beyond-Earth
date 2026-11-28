@@ -3,16 +3,18 @@
 // tag/name): value and change numbers are tweened between ticks, and rows slide to
 // their new position when the sort order changes (FLIP technique via the Web
 // Animations API). data-sort picks the order: "value" (the default) or "change", both
-// biggest first.
+// biggest first. A data-compact ledger shows only name, change and sparkline, in
+// three columns (ledger.css); its rows' tooltips give the hidden value and unit.
 // The change column and the colors follow each item's trend change (trendPercent in
 // simulation.js), and a sparkline of its recent history ends each row.
 // When every row has the same unit, the ledger's status bar (.div-win-top) adds the
 // total of the rows to its title, tweened with them. Goods each have their own unit,
 // so their ledger shows no total.
-// Each row's browser tooltip lists the goods that push its item or an entry above it
-// (data/relations.json), with the link weight and the effect: how far the good's move
-// from its start shifts where the item rests, in percent. It is filled when the pointer
-// enters the row, since the browser closes a tooltip whose text changes.
+// Each other row's browser tooltip lists the goods that push its item or an entry
+// above it (data/relations.json), with the link weight and the effect: how far the
+// good's move from its start shifts where the item rests, in percent. Tooltips are
+// filled when the pointer enters the row, since the browser closes a tooltip whose
+// text changes.
 import { motionPreference } from './motion.js';
 import { simulation } from './simulation.js';
 import { observeVisibility } from './viewport-visibility.js';
@@ -47,6 +49,7 @@ import { createSparkline, updateSparkline } from './sparkline.js';
         const sortBy = host.dataset.sort || 'value';
         if (!SORTS[sortBy]) console.warn(`Ledger "${feedId}": unknown data-sort="${sortBy}", sorting by value`);
         const compare = SORTS[sortBy] || SORTS.value;
+        const compact = 'compact' in host.dataset;
         const rows = new Map();
         const titleEl = host.closest('.div-win')?.querySelector('.div-win-top > span') || null;
         const title = titleEl?.textContent || '';
@@ -99,6 +102,11 @@ import { createSparkline, updateSparkline } from './sparkline.js';
             ].join('\n');
         }
 
+        // A compact row's tooltip: the name, then the value and unit the row leaves out.
+        function valueTooltip(item) {
+            return `${item.name} · ${valueFormat.format(item.value)} ${item.unit || ''}`.trim();
+        }
+
         function createRow(item, key) {
             const row = document.createElement('div');
             row.className = 'ledger-row';
@@ -111,8 +119,8 @@ import { createSparkline, updateSparkline } from './sparkline.js';
                 return span;
             };
             cell('ledger-name', item.name);
-            cell('ledger-unit', item.unit || '');
-            const valueEl = cell('ledger-value');
+            if (!compact) cell('ledger-unit', item.unit || '');
+            const valueEl = compact ? null : cell('ledger-value');
             const changeEl = cell('ledger-change');
             // The sparkline is the last column (sparkline.js).
             const spark = createSparkline(row, 'ledger-spark');
@@ -131,12 +139,14 @@ import { createSparkline, updateSparkline } from './sparkline.js';
             };
             // The tooltip is a snapshot taken on entering the row (entry.item is the
             // latest item, set on every render).
-            row.addEventListener('pointerenter', () => { row.title = goodsTooltip(entry.item); });
+            row.addEventListener('pointerenter', () => {
+                row.title = compact ? valueTooltip(entry.item) : goodsTooltip(entry.item);
+            });
             return entry;
         }
 
         function paint(entry) {
-            const valueText = valueFormat.format(entry.cur.value);
+            const valueText = entry.valueEl ? valueFormat.format(entry.cur.value) : null;
             if (valueText !== entry.lastValueText) {
                 entry.lastValueText = valueText;
                 entry.valueEl.textContent = valueText;
