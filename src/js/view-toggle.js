@@ -1,11 +1,13 @@
 // view-toggle.js - Data view toggle: inside <main>, swaps the scenario briefing article
 // (#briefing-view) for the data article (#data-view) with the treemaps and
-// ledgers. The title, ticker and layout of <main> are shared.
+// ledgers. The title, ticker and layout of <main> are shared. Clicking the ticker
+// toggles the data view too.
 import { isMainVisible, setMainVisible } from './main-visibility.js';
 
 const toggle = document.getElementById('data-view-toggle');
 const briefingView = document.getElementById('briefing-view');
 const dataView = document.getElementById('data-view');
+const ticker = document.querySelector('.ticker');
 
 export function isDataViewOpen() {
     return toggle?.getAttribute('aria-pressed') === 'true';
@@ -25,4 +27,5 @@ export function setDataViewOpen(open) {
 }
 
 toggle?.addEventListener('click', () => setDataViewOpen(!isDataViewOpen()));
+ticker?.addEventListener('click', () => setDataViewOpen(!isDataViewOpen()));
 

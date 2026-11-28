@@ -18,6 +18,7 @@
     background-color: var(--clr-background);
     box-shadow: var(--box-shadow);
     border-top: var(--border);
+    cursor: pointer; /* a click toggles the data view (view-toggle.js) */
 }
 .ticker-line { flex: none; }
 .ticker-val { transition: color var(--transition-time-clr) ease; }

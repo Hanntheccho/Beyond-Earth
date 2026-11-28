@@ -7,8 +7,9 @@ const MUSIC_VOLUME_STORAGE_KEY = 'be-music-volume';
 const SFX_STORAGE_KEY = 'be-sfx';
 const SFX_VOLUME_STORAGE_KEY = 'be-sfx-volume';
 
-// Clicks on these play the click sound (globe markers are buttons too).
-const CLICK_SOUND_TARGETS = 'button, input[type="checkbox"], .treemap-tile.has-children';
+// Clicks on these play the click sound (globe markers are buttons too; the ticker
+// toggles the data view).
+const CLICK_SOUND_TARGETS = 'button, input[type="checkbox"], .treemap-tile.has-children, .ticker';
 
 const backgroundMusic = document.getElementById('music');
 const clickSound = document.getElementById('audio');
