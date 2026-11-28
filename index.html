@@ -68,7 +68,7 @@
 
     <!-- Header: toggle column and background title (header.css) -->
     <header class="app-header">
-        <!-- Toggle column: content, options and data view -->
+        <!-- Toggle column: content, options, briefing view and data view -->
         <div class="header-controls btn-group is-column">
             <button class="main-visibility-toggle btn-icon" type="button" aria-label="Hide content" aria-controls="main-content" aria-expanded="true">
                 <img src="assets/btn/btn01.svg" alt="">
@@ -76,18 +76,12 @@
             <button id="options-toggle" class="options-toggle btn-icon" type="button" aria-label="Open options" aria-controls="options-menu" aria-expanded="false">
                 <img src="assets/btn/btn05.svg" alt="">
             </button>
+            <button id="briefing-view-toggle" class="briefing-view-toggle btn-icon" type="button" aria-label="Show briefing view" aria-controls="briefing-view" aria-pressed="true">
+                <img src="assets/btn/btn03.svg" alt="">
+            </button>
             <button id="data-view-toggle" class="data-view-toggle btn-icon" type="button" aria-label="Show data view" aria-controls="data-view" aria-pressed="false">
                 <img src="assets/btn/btn08.svg" alt="">
             </button>
-            <!-- Data category tabs: shown below the toggles while the data view is open -->
-            <div class="data-tabs btn-group is-column" role="group" aria-label="Data categories">
-                <button class="btn-icon" type="button" aria-label="Bloc data" data-panel-group="data-categories" data-panel-target="data-blocs" aria-pressed="true">
-                    <img src="assets/btn/btn06.svg" alt="">
-                </button>
-                <button class="btn-icon" type="button" aria-label="Corp data" data-panel-group="data-categories" data-panel-target="data-corps" aria-pressed="false">
-                    <img src="assets/btn/btn04.svg" alt="">
-                </button>
-            </div>
         </div>
         <div class="back-title"><span>BYOND UNiTY :HTML</span></div>
     </header>
@@ -180,48 +174,39 @@
             </div>
         </article>
 
-        <!-- Data View: a treemap and a ledger per data category, then the goods ledger; a ledger row's tooltip lists the goods that push it.
+        <!-- Data View: one page with the blocs treemap and ledger, the corps treemap and ledger, then the goods ledger; a ledger row's tooltip lists the goods that push it.
              data-sort orders a ledger by "value" or "change"; data-compact leaves out unit and value, which the row tooltip gives instead (ledger.js) -->
         <article class="data-view" id="data-view" hidden>
             <div class="div-submain">
                 <section id="data-view-panel">
-                    <!-- Category panels (blocs, corps): the data tabs switch between them, and so does the [❯❯❯] key in each treemap's nav bar. The nav bar names the treemap level on screen, and its [❮❮❮] key goes up a level (treemap.js) -->
-                    <div id="data-blocs" data-panel-group="data-categories" aria-hidden="false" class="data-group-panel">
-                        <div class="div-win" data-treemap-panel>
-                            <div class="nav-bar">
-                                <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
-                                <div class="nav-bar-name" data-treemap-name role="heading" aria-level="2" aria-live="polite"></div>
-                                <button type="button" class="btn-nav is-next" aria-label="Show corp data" data-panel-group="data-categories" data-panel-target="data-corps">[❯❯❯]</button>
-                            </div>
-                            <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"><div class="treemap-message" role="status">Loading data…</div></div>
+                    <!-- Each treemap's nav bar names the level on screen, and its [❮❮❮] key goes up a level (treemap.js) -->
+                    <div class="div-win" data-treemap-panel>
+                        <div class="nav-bar">
+                            <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
+                            <div class="nav-bar-name" data-treemap-name role="heading" aria-level="2" aria-live="polite"></div>
                         </div>
-                        <div class="div-win">
-                            <div class="div-win-top"><span>MONDAYMARKET · blocs</span></div>
-                            <div class="ledger" data-ledger="blocs" data-sort="value"></div>
-                        </div>
-                        <div class="div-win">
-                            <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
-                            <div class="ledger" data-ledger="goods" data-sort="change" data-compact></div>
-                        </div>
+                        <div class="treemap" data-treemap="blocs" data-url="data/bloc-data.json" data-use-tags="false" role="group" aria-label="Blocs treemap"><div class="treemap-message" role="status">Loading data…</div></div>
+                    </div>
+                    <div class="div-win">
+                        <div class="div-win-top"><span>MONDAYMARKET · blocs</span></div>
+                        <div class="ledger" data-ledger="blocs" data-sort="value"></div>
                     </div>
 
-                    <div id="data-corps" data-panel-group="data-categories" hidden aria-hidden="true" class="data-group-panel">
-                        <div class="div-win" data-treemap-panel>
-                            <div class="nav-bar">
-                                <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
-                                <div class="nav-bar-name" data-treemap-name role="heading" aria-level="2" aria-live="polite"></div>
-                                <button type="button" class="btn-nav is-next" aria-label="Show bloc data" data-panel-group="data-categories" data-panel-target="data-blocs">[❯❯❯]</button>
-                            </div>
-                            <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="false" role="group" aria-label="Corps treemap"><div class="treemap-message" role="status">Loading data…</div></div>
+                    <div class="div-win" data-treemap-panel>
+                        <div class="nav-bar">
+                            <button type="button" class="btn-nav" data-treemap-back hidden>[❮❮❮]</button>
+                            <div class="nav-bar-name" data-treemap-name role="heading" aria-level="2" aria-live="polite"></div>
                         </div>
-                        <div class="div-win">
-                            <div class="div-win-top"><span>MONDAYMARKET · corps</span></div>
-                            <div class="ledger" data-ledger="corps" data-sort="value"></div>
-                        </div>
-                        <div class="div-win">
-                            <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
-                            <div class="ledger" data-ledger="goods" data-sort="change" data-compact></div>
-                        </div>
+                        <div class="treemap" data-treemap="corps" data-url="data/corp-data.json" data-use-tags="false" role="group" aria-label="Corps treemap"><div class="treemap-message" role="status">Loading data…</div></div>
+                    </div>
+                    <div class="div-win">
+                        <div class="div-win-top"><span>MONDAYMARKET · corps</span></div>
+                        <div class="ledger" data-ledger="corps" data-sort="value"></div>
+                    </div>
+
+                    <div class="div-win">
+                        <div class="div-win-top"><span>MONDAYMARKET · goods</span></div>
+                        <div class="ledger" data-ledger="goods" data-sort="change" data-compact></div>
                     </div>
                 </section>
             </div>

@@ -22,8 +22,8 @@
 .ledger[data-ledger] .ledger-row {
     grid-template-columns: 1fr 6ch 10ch 7ch 4ch;
 }
-/* Compact ledgers (data-compact) leave out unit and value, so their rows fit three
-   columns: name, change and sparkline. */
+/* Compact ledgers (data-compact) leave out unit and value, so their rows (name,
+   change and sparkline) fit more columns side by side. */
 .ledger[data-compact] { grid-template-columns: repeat(4, 1fr); }
 .ledger[data-ledger][data-compact] .ledger-row {
     grid-template-columns: 1fr 7ch 4ch;

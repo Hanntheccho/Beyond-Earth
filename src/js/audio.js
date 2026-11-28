@@ -87,3 +87,4 @@ document.body.addEventListener('click', event => {
         console.error('Click sound failed:', error);
     }
 });
+

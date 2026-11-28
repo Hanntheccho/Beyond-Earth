@@ -365,7 +365,7 @@ import { CHAR_WIDTH, appendSvg as add } from './svg.js';
     // board's first render replaces the loading message inside the host. The nav bar
     // (back key and level name, see buttons.css) sits above the host in the treemap
     // panel, outside what each render replaces, and names the root as soon as the feed
-    // loads. Its other key shows the other category panel through panel-toggle.js.
+    // loads.
     function mountTree(host, root) {
         const wrapper = host.closest('[data-panel-group]');
         const panel = host.closest('[data-treemap-panel]');

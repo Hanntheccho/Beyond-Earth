@@ -1,6 +1,6 @@
 /* header.css - The app header: the fixed column of toggles on the right (content,
-   options and data view, then the data category tabs). The buttons' look is in
-   buttons.css; this file only places them. The options menu is in options.css. */
+   options, briefing view and data view). The buttons' look is in buttons.css; this
+   file only places them. The options menu is in options.css. */
 
 /* ------------------------------------------------------------- toggle column */
 /* A .btn-group.is-column of .btn-icon keys. They float over the page, so they get the
@@ -15,9 +15,4 @@
     right: var(--space-s);
     z-index: var(--z-header);
 }
-/* Data category tabs: the last group in the column. Shown only while the data view is
-   open and the main content is visible. */
-.data-tabs { display: none; }
-.app-header:has(.data-view-toggle[aria-pressed="true"]):has(.main-visibility-toggle[aria-expanded="true"]) .data-tabs {
-    display: flex;
-}
+

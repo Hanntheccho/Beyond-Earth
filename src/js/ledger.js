@@ -3,8 +3,8 @@
 // tag/name): value and change numbers are tweened between ticks, and rows slide to
 // their new position when the sort order changes (FLIP technique via the Web
 // Animations API). data-sort picks the order: "value" (the default) or "change", both
-// biggest first. A data-compact ledger shows only name, change and sparkline, in
-// three columns (ledger.css); its rows' tooltips give the hidden value and unit.
+// biggest first. A data-compact ledger shows only name, change and sparkline, so more
+// rows fit side by side (ledger.css); its rows' tooltips give the hidden value and unit.
 // The change column and the colors follow each item's trend change (trendPercent in
 // simulation.js), and a sparkline of its recent history ends each row.
 // When every row has the same unit, the ledger's status bar (.div-win-top) adds the
